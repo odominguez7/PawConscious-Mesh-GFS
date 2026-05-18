@@ -91,7 +91,11 @@ The mesh exposes a public A2A v0.3 agent card at `/.well-known/agent-card.json` 
 
 ## What we learned
 
-1. **The infrastructure positioning matters more than the product features.** Being "the agentic engine" is a $20-50M ARR ceiling. Being "the verifiable claim infrastructure for consumer goods" is the path to $100M+. Pet is the wedge; the protocol is the moonshot.
+1. **Structural independence is the moat.** Trust infrastructure that's captured by the parties being verified (Trustpilot, Yelp, in-house retailer trust marks) erodes credibility over time. ACP is third-party: brands pay per claim, retailers pay platform fees, neither side can alter the rubric, the audit trail is public, the vet panel is academic. See `docs/INDEPENDENCE.md`. This is the answer to Series A capture risk and to regulator evidence-grade questions.
+
+2. **Scraping is the bridge, not the destination.** httpx + Firecrawl together cover ~95% of US pet supplement BRAND PDPs directly. Major retailers (Chewy, Amazon, Petco) actively block all scraping at the Akamai/PerimeterX layer — even Firecrawl stealth proxies. The Y2 enterprise path: retailers PUSH catalog to us via authenticated API as part of $500k-2M/yr platform contracts, motivated by competitive pressure once 20%+ of their supplement category is ACP-verified at the brand source.
+
+3. **The infrastructure positioning matters more than the product features.** Being "the agentic engine" is a $20-50M ARR ceiling. Being "the verifiable claim infrastructure for consumer goods" is the path to $100M+. Pet is the wedge; the protocol is the moonshot.
 
 2. **Pet → human → every consumer vertical is mechanically defensible.** The same JSON-LD schema, the same agent architecture, the same Cloud Run stack works for human supplements (chondroitin/omega-3/MSM ingredient overlap is literal), then beauty (dermatologist-tested = same claim shape as vet-formulated), then functional food, then wellness devices.
 

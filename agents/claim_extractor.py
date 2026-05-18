@@ -32,36 +32,100 @@ PDP_USER_AGENT = (
     "(KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
 )
 
+FIRECRAWL_SECRET_RESOURCE = (
+    "projects/pawconscious-mesh-2026/secrets/acp-firecrawl-key/versions/latest"
+)
+
+
+def _load_firecrawl_key() -> str | None:
+    """Load Firecrawl API key from env or Secret Manager."""
+    import os as _os
+    env_key = _os.environ.get("FIRECRAWL_API_KEY")
+    if env_key:
+        return env_key
+    try:
+        from google.cloud import secretmanager
+        client = secretmanager.SecretManagerServiceClient()
+        response = client.access_secret_version(request={"name": FIRECRAWL_SECRET_RESOURCE})
+        return response.payload.data.decode("utf-8").strip()
+    except Exception as e:
+        print(f"[claim-extractor] firecrawl key unavailable: {e}")
+        return None
+
+
+async def _fetch_via_firecrawl(url: str) -> str:
+    """Fallback for retailer PDPs that block direct httpx (Chewy/Petco/Amazon).
+
+    Uses Firecrawl /v2/scrape endpoint — returns clean markdown of the page.
+    """
+    key = _load_firecrawl_key()
+    if not key:
+        raise RuntimeError("Firecrawl key not configured; cannot fall back from blocked PDP")
+    async with httpx.AsyncClient(timeout=60.0) as client:
+        response = await client.post(
+            "https://api.firecrawl.dev/v2/scrape",
+            headers={"Authorization": f"Bearer {key}", "Content-Type": "application/json"},
+            json={
+                "url": url,
+                "formats": ["markdown"],
+                "onlyMainContent": True,
+            },
+        )
+        response.raise_for_status()
+        payload = response.json()
+        data = payload.get("data", {})
+        markdown = data.get("markdown") or ""
+        if not markdown:
+            raise RuntimeError(f"Firecrawl returned no markdown for {url}")
+        return markdown[:20000]
+
 
 async def fetch_pdp_html(url: str) -> str:
     """Fetch a product detail page and return cleaned text content.
 
-    Strips scripts/styles, keeps headings + body text. If the fetch fails (403, 429,
-    timeout), raises an exception the agent can report back honestly.
+    Strategy:
+    1. httpx + BeautifulSoup (free, ~99% success on brand DTC sites, fast)
+    2. Firecrawl fallback on 4xx/5xx (residential proxies + headless, handles
+       Akamai/Cloudflare/PerimeterX anti-bot on retailers like Chewy/Petco)
+
+    Per codex G7 P0.7 + G14 economics: Firecrawl is the bridge to brand-push
+    architecture (Shopify App / PIM integrations). Never the long-term primary.
     """
     headers = {
         "User-Agent": PDP_USER_AGENT,
         "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
         "Accept-Language": "en-US,en;q=0.9",
     }
-    async with httpx.AsyncClient(follow_redirects=True, timeout=30.0) as client:
-        response = await client.get(url, headers=headers)
-        response.raise_for_status()
-        html = response.text
+    try:
+        async with httpx.AsyncClient(follow_redirects=True, timeout=30.0) as client:
+            response = await client.get(url, headers=headers)
+            response.raise_for_status()
+            html = response.text
+    except httpx.HTTPStatusError as e:
+        if e.response.status_code in (403, 429, 503):
+            print(f"[claim-extractor] httpx {e.response.status_code} on {url}; falling back to Firecrawl")
+            return await _fetch_via_firecrawl(url)
+        raise
+    except (httpx.ConnectError, httpx.TimeoutException) as e:
+        print(f"[claim-extractor] httpx network error ({e}); falling back to Firecrawl")
+        return await _fetch_via_firecrawl(url)
 
     soup = BeautifulSoup(html, "lxml")
     # Strip script / style / nav / footer noise
     for tag in soup(["script", "style", "noscript", "nav", "footer", "header"]):
         tag.decompose()
 
-    # Keep only main content; many PDPs have <main> or product detail divs
     main = soup.find("main") or soup.find(attrs={"role": "main"}) or soup.body
     if main is None:
-        return soup.get_text(separator="\n", strip=True)[:20000]
+        text = soup.get_text(separator="\n", strip=True)[:20000]
+    else:
+        text = main.get_text(separator="\n", strip=True)[:20000]
 
-    text = main.get_text(separator="\n", strip=True)
-    # Truncate to avoid blowing context window
-    return text[:20000]
+    # If the body text is suspiciously short (anti-bot block page), retry via Firecrawl
+    if len(text.strip()) < 400:
+        print(f"[claim-extractor] httpx returned thin body ({len(text)}c); falling back to Firecrawl")
+        return await _fetch_via_firecrawl(url)
+    return text
 
 
 CLAIM_EXTRACTION_PROMPT = """You are the claim-extractor agent in the PawConscious Mesh / ACP system.

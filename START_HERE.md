@@ -1,9 +1,16 @@
 # START HERE — PawConscious Mesh (ACP for Pet)
-## The complete picture, in one doc, written for the founder at 1am
+## The complete picture, in one doc
 
-**You are here:** Day 0 of an 18-day push to ship a Google for Startups hackathon submission that doubles as the launchpad for a $100M+ business.
 **Deadline:** June 5, 2026 noon PT.
-**Status:** Plan absorbed 3 codex sweeps; ready to execute pending your sign-off.
+**Status:** Phase 1-9.5 LIVE on Cloud Run. 11+ codex sweeps cleared. Path B (program-manager + evidence-infra) executing.
+
+## The independence principle (read this first)
+
+ACP is **structurally independent** of the parties being verified. Brands pay us per claim. Retailers pay platform fees. Neither side can alter the rubric. The audit trail is public. The vet panel is academic.
+
+This is how SOC2, PCI-DSS, and C2PA work. It is why we avoid the Trustpilot pay-for-reviews trap from day one.
+
+See `docs/INDEPENDENCE.md` for the full 6-commitment architecture.
 
 ---
 
