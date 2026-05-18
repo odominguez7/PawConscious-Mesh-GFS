@@ -1,14 +1,15 @@
-"""Compliance Agent (THIN per PLAN.md §2 — codex G7 P0.7 + G7.2).
+"""Compliance Agent (GROUNDED via Vertex AI Search per codex G13 Phase 8).
 
-Maps each claim to public-redistributable regulator/standard language:
-- FTC 16 CFR §255 (Endorsement Guides, 2023 update — federal text, public domain)
-- AAFCO Model Regulations PF7 + PF9 (public-side ingredient definitions)
-- NASC Quality Seal program public-side substantiation requirements
+Maps each claim to public-redistributable regulator/standard language using
+Vertex AI Search RAG over a corpus of:
+- FTC 16 CFR §255.0, .1, .2, .3, .5 (Endorsement Guides, 2023 update)
+- AAFCO PF7 Substantiation of Claims (public summary)
+- NASC Quality Seal program public-side requirements
 
-NO licensed handbook ingest (codex G7 P0.7 explicit). v0.1 ships with prompt-only;
-Vertex AI Search corpus ingest is Phase 5 work.
+NO licensed handbook ingest (codex G7 P0.7). All sources public-redistributable.
+Data store: projects/40952019806/locations/global/.../acp-regulator-corpus
 
-Model: gemini-2.5-pro.
+Model: gemini-2.5-pro with vertex_ai_search retrieval grounding.
 """
 from __future__ import annotations
 
@@ -16,6 +17,7 @@ import asyncio
 import json
 import sys
 from pathlib import Path
+from typing import Optional
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 from shared.pcec_schema import Claim, ClaimKind, ComplianceMapping  # noqa: E402
@@ -63,14 +65,75 @@ Return ONLY valid JSON, no markdown.
 """
 
 
+VERTEX_SEARCH_PROJECT = "40952019806"
+VERTEX_SEARCH_LOCATION = "global"
+VERTEX_SEARCH_DATA_STORE = "acp-regulator-corpus"
+
+
 def _client() -> genai.Client:
     return genai.Client(vertexai=True, project="pawconscious-mesh-2026", location="us-central1")
 
 
+def _search_data_store_path() -> str:
+    return (
+        f"projects/{VERTEX_SEARCH_PROJECT}/locations/{VERTEX_SEARCH_LOCATION}/"
+        f"collections/default_collection/dataStores/{VERTEX_SEARCH_DATA_STORE}/"
+        f"servingConfigs/default_serving_config"
+    )
+
+
+async def retrieve_grounding_passages(claim: Claim, max_results: int = 3) -> list[str]:
+    """Direct Vertex AI Search retrieval — returns top-K passages with citations.
+
+    Manual-retrieval pattern because Gemini's vertex_ai_search Tool is incompatible
+    with response_mime_type='application/json' (controlled generation). We call
+    Search directly, inject passages into the prompt, then Gemini with JSON mode.
+    """
+    try:
+        from google.cloud import discoveryengine
+        from google.api_core.client_options import ClientOptions
+
+        client_options = ClientOptions(api_endpoint="discoveryengine.googleapis.com")
+        client = discoveryengine.SearchServiceClient(client_options=client_options)
+
+        # Build query from claim text + kind for better retrieval
+        query = f"{claim.text} {claim.kind.value} endorsement substantiation"
+
+        request = discoveryengine.SearchRequest(
+            serving_config=_search_data_store_path(),
+            query=query,
+            page_size=max_results,
+        )
+        response = client.search(request=request)
+        passages: list[str] = []
+        for result in response.results:
+            doc = result.document
+            # Extract derivedStructData snippets (the retrieved passage text)
+            derived = doc.derived_struct_data or {}
+            snippets = derived.get("snippets", [])
+            for s in snippets[:1]:  # top snippet per doc
+                snippet_text = s.get("snippet", "")
+                if snippet_text:
+                    doc_id = doc.id or doc.name.split("/")[-1]
+                    passages.append(f"[Source: {doc_id}]\n{snippet_text}")
+        return passages
+    except Exception as e:
+        print(f"[compliance] retrieval failed: {e}")
+        return []
+
+
 async def map_claim(claim: Claim) -> ComplianceMapping:
-    """Map one claim to FTC/AAFCO/NASC standards."""
+    """Map one claim to FTC/AAFCO/NASC standards with manual Vertex AI Search grounding."""
+    # Step 1: retrieve grounding passages from the regulator corpus
+    passages = await retrieve_grounding_passages(claim)
+    grounding_block = (
+        "GROUNDED REGULATORY PASSAGES (from Vertex AI Search over public corpus):\n---\n"
+        + "\n\n".join(passages) + "\n---\n"
+    ) if passages else "(grounding unavailable — using prompt-only knowledge)\n"
+
+    # Step 2: Gemini call with JSON mode + grounded passages in prompt
     client = _client()
-    prompt = COMPLIANCE_PROMPT.format(
+    prompt = grounding_block + "\n" + COMPLIANCE_PROMPT.format(
         claim_text=claim.text,
         claim_kind=claim.kind.value,
         claim_context=claim.raw_context or "(no surrounding context)",
@@ -84,6 +147,7 @@ async def map_claim(claim: Claim) -> ComplianceMapping:
         ),
     )
     payload = json.loads(response.text)
+
     return ComplianceMapping(
         claim=claim,
         ftc_section=payload.get("ftc_section") if payload.get("ftc_section") != "none" else None,

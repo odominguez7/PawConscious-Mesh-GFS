@@ -1,0 +1,32 @@
+# NASC Quality Seal Program — Public-Side Summary
+
+The National Animal Supplement Council (NASC) operates a quality assurance program for the animal supplement industry. The NASC Quality Seal is awarded to member brands meeting the program's requirements.
+
+## Public-side program requirements
+
+1. **Biennial Independent Third-Party Audit:** NASC members must pass an independent on-site audit every two years covering manufacturing, quality control, recordkeeping, and labeling practices.
+
+2. **Written Standard Operating Procedures (SOPs):** Members must maintain documented SOPs covering all manufacturing and quality processes.
+
+3. **Adverse Event Reporting (AER) System:** Members must operate an AER system to track consumer-reported issues. NASC aggregates AER data across the industry to identify safety signals.
+
+4. **Labeling Compliance:** Members must conform to NASC labeling guidelines, which align with AAFCO Model Regulations and FDA-CVM expectations for non-drug animal products.
+
+5. **Random Product Testing for Label Accuracy:** NASC contracts independent laboratories to test member products for label accuracy (active ingredient quantities, absence of contaminants).
+
+## What NASC does NOT certify
+
+The NASC Quality Seal is a manufacturing-quality and labeling-compliance program. It does NOT certify:
+
+- Clinical efficacy of supplement health claims.
+- Substantiation of "supports joint health" or similar structure-function claims.
+- Veterinary endorsement validity.
+- FTC §255 endorsement substantiation requirements.
+
+Claims-side substantiation is the brand's separate responsibility under FTC §255 (federal trade regulation) and AAFCO PF7 (state feed regulation).
+
+## Industry coverage
+
+NASC reports having approximately 300 audited member brands as of 2026. The animal supplement industry includes thousands of total brands; the NASC seal represents a subset of the most quality-conscious manufacturers.
+
+Source: NASC Quality Seal Program (public-side summary from NASC.cc).

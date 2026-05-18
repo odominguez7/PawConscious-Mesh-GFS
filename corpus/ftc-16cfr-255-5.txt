@@ -1,0 +1,25 @@
+# 16 CFR § 255.5 - Disclosure of Material Connections
+
+(a) Core Requirement: When an endorser has a connection to a product seller that could materially affect credibility, and audiences wouldn't reasonably expect it, disclosure is required. The regulation defines material connections broadly: "Material connections can include a business, family, or personal relationship" as well as monetary payments, free products, early access, or other benefits.
+
+The disclosure must "clearly communicate the nature of the connection sufficiently for consumers to evaluate its significance," though complete details aren't necessary.
+
+(b) Fourteen Illustrative Examples cover scenarios such as:
+
+- Funded research: Drug companies must disclose when they fund studies cited in advertisements
+- Celebrity compensation: Standard commercial payments typically don't require disclosure, but unusual arrangements (equity stakes, ongoing royalties) do
+- Medical endorsements: Healthcare influencers must disclose paid spokesperson relationships
+- Social media posts: Influencers receiving free products must disclose the arrangement
+- Employee endorsements: Company employees promoting products online must reveal their employment relationship
+- Incentivized reviews: Programs paying consumers for reviews require clear disclosure of compensation
+- Affiliate links: Bloggers earning commissions from product links must disclose this arrangement
+
+## Implications for pet brand endorsements
+
+For pet supplements:
+- A veterinarian on retainer with a brand must disclose the relationship.
+- "Vet-recommended" or "vet-formulated" claims with material connections require disclosure.
+- Influencers receiving free pet products must disclose the arrangement.
+- Funded clinical studies on pet products cited in advertising must disclose the funding source.
+
+Source: 16 CFR Part 255, FTC Endorsement Guides (2023 update). Federal regulation, public domain.

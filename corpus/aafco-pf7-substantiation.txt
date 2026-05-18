@@ -1,0 +1,32 @@
+# AAFCO PF7 — Substantiation of Claims (public-side summary)
+
+The Association of American Feed Control Officials (AAFCO) Model Regulations PF7 requires that claims made on pet food and supplement labels be substantiated with scientifically valid evidence. PF7 governs general substantiation requirements for all label claims and advertising claims for animal feed and supplement products.
+
+## Key requirements
+
+1. Claims must be truthful and not misleading.
+2. Substantiation must consist of competent and reliable scientific evidence.
+3. The level of substantiation required depends on the specificity and disease-related nature of the claim.
+4. Disease prevention or treatment claims require evidence approaching the level of drug substantiation (typically falls under FDA-CVM jurisdiction, not AAFCO).
+5. Structure-function claims (e.g., "supports joint health," "promotes calm demeanor") require credible scientific evidence specific to the species, but typically not full clinical trials.
+
+## "Veterinarian-recommended" claim
+
+AAFCO requires that "veterinarian-recommended" or "vet-recommended" claims be backed by a statistically significant, professionally sound survey of veterinarians. Surveys must be representative of the veterinary community making the recommendation. Marketing the product with this claim without survey evidence violates PF7.
+
+## "Veterinarian-formulated" claim
+
+AAFCO permits "vet-formulated" claims when at least one veterinarian was involved in the formulation of the product. The brand must have documentation of veterinary involvement (consulting agreement, product development records, signed attestation).
+
+## Ingredient-based claims
+
+Claims about specific ingredients (chondroitin, glucosamine, omega-3, etc.) must be supported by credible scientific evidence in the target species or closely related species. Extrapolation from human or rodent studies alone is insufficient for canine or feline efficacy claims absent confirmatory species-specific evidence.
+
+## Implications for pet supplement brands
+
+- "Supports joint health" requires species-specific scientific evidence (canine or feline depending on target).
+- Vet-formulated requires documented veterinary involvement.
+- Vet-recommended requires statistically valid vet survey.
+- All claims must be in the advertiser's possession before making them.
+
+Source: AAFCO Model Regulations Section PF7 (public-side summary, no member-only content).

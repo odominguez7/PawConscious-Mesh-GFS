@@ -1,0 +1,13 @@
+# 16 CFR § 255.2 - Consumer Endorsements
+
+(a) Substantiation Requirement: Advertisements using consumer endorsements must be supported by adequate substantiation. The advertiser must possess competent and reliable scientific evidence to support claims, just as if making them directly without endorsements. "Consumer endorsements themselves are not competent and reliable scientific evidence."
+
+(b) Representativeness of Experience: When endorsements depict a central product attribute, they're interpreted as representing typical consumer results. If the endorser's experience isn't representative, the ad must "clearly and conspicuously disclose the generally expected performance" with adequate substantiation.
+
+(c) Actual Consumers: Ads claiming to feature "actual consumers" must use real consumers in audio and video, or "clearly and conspicuously disclose that the persons in such advertisements are not actual consumers."
+
+(d) Review Manipulation: Advertisers must not take actions "that have the effect of distorting or otherwise misrepresenting what consumers think of their products" through review suppression, boosting, or editing.
+
+(e) Examples include eleven illustrative scenarios covering fake reviews, inadequate disclaimers, misleading rating systems, and coercive practices against reviewers.
+
+Source: 16 CFR Part 255, FTC Endorsement Guides (2023 update). Federal regulation, public domain.

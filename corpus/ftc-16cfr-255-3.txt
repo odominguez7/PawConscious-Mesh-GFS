@@ -1,0 +1,30 @@
+# 16 CFR § 255.3 - Expert Endorsements
+
+(a) When an advertisement claims expertise, the endorser's qualifications must actually provide that expertise regarding the endorsement message.
+
+(b) Expert endorsers may consider factors outside their expertise (taste, price), but must demonstrate actual expertise through examination or testing comparable to standards in their field. Product evaluations must be as extensive as experts with similar credentials would conduct. When comparisons are implied, they must have occurred, with conclusions that the endorsed product equals or surpasses competitors' products on relevant consumer-available features. If superiority is conveyed, it must be factually established.
+
+(c) Examples:
+
+(1) An automobile engineer endorsement implies professional training in automobile design and performance. A chemical engineer's endorsement would be deceptive.
+
+(2) A doctor endorsing hearing aids implies audiology expertise. Without such expertise, disclosure of limitations is required.
+
+(3) "American Institute of Science" approval implies independent testing. If established by manufacturers or lacking valid testing, endorsement is deceptive.
+
+(4) Hospital selection based on packaging unavailable to consumers is deceptive without consumer disclosure.
+
+(5) Commercial cleaning service president endorsing cleansers represents superior consumer knowledge, requiring actual competitor experience and documented performance equality or superiority.
+
+(6) Medical doctor claims require appropriate scientific evidence; consumer letters or animal studies alone constitute deception, making both advertiser and endorser liable.
+
+## Implications for veterinary endorsements
+
+For pet supplements claiming "veterinarian endorsed" or "vet-formulated":
+- The veterinarian must have actual expertise in the relevant claim domain (e.g., clinical nutrition for joint health claims).
+- Product evaluation must be as extensive as veterinary experts with comparable credentials would conduct.
+- If comparison claims are implied or stated, those comparisons must have occurred with documented results.
+- Consumer letters and animal studies alone are insufficient substantiation for medical claims.
+- Both the brand and the veterinarian endorser can be liable for unsubstantiated claims.
+
+Source: 16 CFR Part 255, FTC Endorsement Guides (2023 update). Federal regulation, public domain.
