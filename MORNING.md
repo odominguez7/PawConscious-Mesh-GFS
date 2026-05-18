@@ -53,14 +53,20 @@ cp /private/tmp/.../bwetmwlqo.output ~/Desktop/PawConscious-GFS/reviews/codex-G8
 
 ## What's still open (TODOs)
 
-1. **Codex G8 verdict** — pending or hung; needs your call
-2. **GUARDIAN un-pushed work** — 8 modified files in `~/Desktop/GFS - guardIAn/` working tree + untracked `reviews/v9-CEO-pivot.md`. Should be committed to a `final-archive` branch on `odominguez7/guardian` GitHub before we delete the GCP project. Defer to Phase 1.5 cleanup.
-3. **Brand-outreach emails (8, 9, 10)** — locked until live Cloud Run demo URL exists (Phase 5 dependency)
-4. **API key gaps for Phase 2-3:**
-   - AI2 Asta MCP — free tier; should work without manual key for hackathon volume. Verify on first call.
-   - Firecrawl MCP — paid service. Free tier exists but limited. Phase 2 fallback: use `httpx` + `beautifulsoup4` for simple HTML scrape; switch to Firecrawl only if JS-rendered pages break the simple scrape.
-   - BioMCP — open source, no key needed
-5. **Devpost hackathon ID 3197 verification** — your admin URL is the only source; please confirm track name + deadline + prize pool when you wake up
+1. **Codex G8 returned CLEAR** with amendments fully absorbed (commit `e1a4bf9`). Codex G9 returned CLEAR-WITH-AMENDMENTS (commit set after `dc9a845`).
+2. **Phase 2.5 amendments per codex G9 (BLOCKING for hackathon credibility, NOT blocking for Phase 3 build):**
+   - **MCP-server-wrap for BioMCP:** evidence-grader currently calls BioMCP via direct Python lib import. Hackathon mandates "MCP integration" — proper protocol usage requires `biomcp serve` + MCP client connection. Refactor scheduled Phase 2.5. Notes in `reviews/codex-G9-verdict.txt`.
+   - **AI2 Asta MCP enable:** citation-count + influential-citation-count currently 0/0 (deferred from Phase 2). Wire Asta MCP for the grading enrichment before demo recording.
+   - **"Run in 3 commands" script + env checklist:** ✅ DONE — see `RUN.md`.
+   - **Retry/timeout wrapper for Gemini calls:** ✅ DONE — see `shared/llm_retry.py`.
+3. **GUARDIAN un-pushed work** — 8 modified files in `~/Desktop/GFS - guardIAn/` working tree + untracked `reviews/v9-CEO-pivot.md`. Should be committed to a `final-archive` branch on `odominguez7/guardian` GitHub before we delete the GCP project. Defer to Phase 1.5 cleanup.
+4. **Brand-outreach emails (8, 9, 10)** — locked until live Cloud Run demo URL exists (Phase 5 dependency)
+5. **API key gaps for Phase 3-5:**
+   - AI2 Asta MCP — free tier exists. Phase 2.5 enablement.
+   - Firecrawl MCP — not needed for v0.1; we use httpx + bs4 successfully against Native Pet
+   - BioMCP — open source, no key needed; works via lib (P2.5 wrap needed for protocol compliance)
+6. **Devpost hackathon ID 3197 verification** — your admin URL is the only source; please confirm track name + deadline + prize pool when you wake up
+7. **Gemini 3 Pro vs 2.5 Pro:** codex G9 #2 — can't verify hard requirement without exact rubric/Startup Tech Guide section. Switch to 3 Pro if rule says so; 2.5 Pro defensible otherwise. Worth checking the gated Devpost rules at your admin URL.
 
 ## Files committed overnight (9 commits visible on GitHub PRIVATE repo)
 
