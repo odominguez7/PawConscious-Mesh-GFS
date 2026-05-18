@@ -1,0 +1,285 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>PawConscious Mesh — ACP Console</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <style>
+    :root {
+      --bg: #0b0f1a;
+      --panel: #131a2b;
+      --border: #1f2a44;
+      --text: #e6edf7;
+      --dim: #7d8aab;
+      --accent: #5eead4;
+      --warn: #fbbf24;
+      --bad: #f87171;
+      --ok: #4ade80;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0; padding: 0; background: var(--bg); color: var(--text);
+      font: 14px/1.5 ui-monospace, SFMono-Regular, Menlo, monospace;
+    }
+    header {
+      padding: 18px 24px; border-bottom: 1px solid var(--border);
+      display: flex; justify-content: space-between; align-items: center;
+    }
+    header h1 { margin: 0; font-size: 18px; font-weight: 600; }
+    header h1 span { color: var(--accent); }
+    header .meta { color: var(--dim); font-size: 12px; }
+    .container { padding: 24px; max-width: 1200px; margin: 0 auto; }
+    .input-row {
+      display: flex; gap: 8px; margin-bottom: 16px;
+    }
+    input[type="text"] {
+      flex: 1; padding: 10px 14px; background: var(--panel);
+      border: 1px solid var(--border); color: var(--text);
+      border-radius: 6px; font: inherit;
+    }
+    input[type="text"]:focus { outline: 2px solid var(--accent); outline-offset: -2px; }
+    select {
+      padding: 10px 14px; background: var(--panel); color: var(--text);
+      border: 1px solid var(--border); border-radius: 6px; font: inherit;
+    }
+    button {
+      padding: 10px 18px; background: var(--accent); color: #06111e;
+      border: 0; border-radius: 6px; font: inherit; font-weight: 600;
+      cursor: pointer;
+    }
+    button:disabled { opacity: 0.5; cursor: not-allowed; }
+    .status-line {
+      padding: 12px 16px; background: var(--panel); border: 1px solid var(--border);
+      border-radius: 6px; margin-bottom: 16px; font-size: 13px;
+    }
+    .status-line.working { border-color: var(--warn); }
+    .status-line.completed { border-color: var(--ok); }
+    .status-line.failed { border-color: var(--bad); }
+    .agents-grid {
+      display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px;
+      margin-bottom: 24px;
+    }
+    .agent-card {
+      padding: 14px; background: var(--panel); border: 1px solid var(--border);
+      border-radius: 6px; min-height: 110px;
+    }
+    .agent-card .name { font-weight: 600; color: var(--accent); margin-bottom: 6px; font-size: 13px; }
+    .agent-card .body { color: var(--dim); font-size: 12px; }
+    .claims-list {
+      background: var(--panel); border: 1px solid var(--border); border-radius: 6px;
+      padding: 12px; max-height: 400px; overflow-y: auto;
+    }
+    .claim-row {
+      padding: 10px; border-bottom: 1px solid var(--border);
+    }
+    .claim-row:last-child { border-bottom: 0; }
+    .claim-row .text { font-weight: 600; margin-bottom: 6px; }
+    .badges { display: flex; gap: 6px; flex-wrap: wrap; }
+    .badge {
+      padding: 2px 8px; border-radius: 4px; font-size: 11px;
+      background: #1c2540; border: 1px solid var(--border);
+    }
+    .badge.violation { background: #2b1416; border-color: var(--bad); color: var(--bad); }
+    .badge.ok { background: #122b1d; border-color: var(--ok); color: var(--ok); }
+    .badge.warn { background: #2b2410; border-color: var(--warn); color: var(--warn); }
+    pre { color: var(--dim); font-size: 11px; overflow-x: auto; }
+    .footer {
+      margin-top: 32px; padding-top: 16px; border-top: 1px solid var(--border);
+      color: var(--dim); font-size: 11px; display: flex; justify-content: space-between;
+    }
+    .footer a { color: var(--accent); text-decoration: none; }
+    h2 { font-size: 14px; color: var(--dim); margin: 24px 0 8px 0; font-weight: 500; text-transform: uppercase; letter-spacing: 0.05em; }
+    .signature-block {
+      background: var(--panel); border: 1px solid var(--border); border-radius: 6px;
+      padding: 12px; font-size: 11px; word-break: break-all;
+    }
+    .signature-block .label { color: var(--dim); margin-bottom: 4px; }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>PawConscious <span>Mesh</span> · ACP Console</h1>
+    <div class="meta">A2A v0.3 · Cloud Run · <span id="version-tag">v0.1.0</span></div>
+  </header>
+  <div class="container">
+    <div class="input-row">
+      <input type="text" id="urlInput" placeholder="https://www.nativepet.com/products/hip-joint"
+             value="https://www.nativepet.com/products/hip-joint">
+      <select id="maxClaims">
+        <option value="1">1 claim · ~30s</option>
+        <option value="2" selected>2 claims · ~60s</option>
+        <option value="3">3 claims · ~90s</option>
+        <option value="5">5 claims · ~150s</option>
+      </select>
+      <button id="runBtn" onclick="runMesh()">Verify</button>
+    </div>
+
+    <div class="status-line" id="statusLine">
+      Paste a pet product PDP URL and click Verify. The mesh fans out 5 agents via A2A v0.3 async lifecycle.
+    </div>
+
+    <h2>Agent fan-out</h2>
+    <div class="agents-grid">
+      <div class="agent-card" data-agent="claim-extractor">
+        <div class="name">claim-extractor</div>
+        <div class="body">Pulls every health/efficacy claim from PDP via Gemini 2.5 Pro</div>
+      </div>
+      <div class="agent-card" data-agent="evidence-grader">
+        <div class="name">evidence-grader</div>
+        <div class="body">Real PubMed citations via BioMCP (MCP protocol) + relevance grading</div>
+      </div>
+      <div class="agent-card" data-agent="vet-panel">
+        <div class="name">vet-panel</div>
+        <div class="body">5-vet rubric simulation 1-5 scale with escalation flags</div>
+      </div>
+      <div class="agent-card" data-agent="compliance">
+        <div class="name">compliance</div>
+        <div class="body">FTC §255 + AAFCO PF7 + NASC grounded via Vertex AI Search</div>
+      </div>
+      <div class="agent-card" data-agent="auditor">
+        <div class="name">auditor</div>
+        <div class="body">Direction-only Falsifier v0 — catches citation mismatches</div>
+      </div>
+    </div>
+
+    <h2>Per-claim verdicts</h2>
+    <div class="claims-list" id="claimsList">
+      <div class="claim-row" style="color: var(--dim);">No claims yet. Run Verify above.</div>
+    </div>
+
+    <h2>Signed bundle</h2>
+    <div class="signature-block" id="signatureBlock">
+      <div class="label">Bundle hash:</div>
+      <div id="bundleHash">—</div>
+      <div class="label" style="margin-top: 10px;">Ed25519 signature:</div>
+      <div id="bundleSig">—</div>
+    </div>
+
+    <div class="footer">
+      <div>did:web:mesh-api-40952019806.us-central1.run.app · <a href="/.well-known/did.json">/.well-known/did.json</a></div>
+      <div><a href="/.well-known/agent-card.json">A2A agent card</a> · <a href="https://github.com/odominguez7/PawConscious-Mesh-GFS">GitHub</a></div>
+    </div>
+  </div>
+
+  <script>
+    const STATUS = document.getElementById('statusLine');
+    const CLAIMS = document.getElementById('claimsList');
+    const RUN_BTN = document.getElementById('runBtn');
+    const URL_INPUT = document.getElementById('urlInput');
+    const MAX_CLAIMS = document.getElementById('maxClaims');
+
+    async function runMesh() {
+      const url = URL_INPUT.value.trim();
+      const max_claims = parseInt(MAX_CLAIMS.value, 10);
+      if (!url) return;
+      RUN_BTN.disabled = true;
+      setStatus('Submitting A2A task...', 'working');
+      resetView();
+
+      try {
+        const resp = await fetch('/a2a/v1/tasks/send', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'X-API-Key': 'demo-key-2026-06',
+          },
+          body: JSON.stringify({
+            skill: 'verify_claim',
+            input: { product_url: url, max_claims },
+          }),
+        });
+        if (!resp.ok) throw new Error(`HTTP ${resp.status}: ${await resp.text()}`);
+        const { task_id, status } = await resp.json();
+        setStatus(`Task submitted (${task_id}). Polling status...`, 'working');
+        await pollUntilDone(task_id);
+      } catch (e) {
+        setStatus('Error: ' + e.message, 'failed');
+      } finally {
+        RUN_BTN.disabled = false;
+      }
+    }
+
+    async function pollUntilDone(task_id) {
+      const start = Date.now();
+      while (true) {
+        await sleep(3000);
+        const resp = await fetch(`/a2a/v1/tasks/get/${task_id}`);
+        if (!resp.ok) {
+          setStatus('Poll failed', 'failed');
+          return;
+        }
+        const data = await resp.json();
+        const elapsed = ((Date.now() - start) / 1000).toFixed(0);
+        setStatus(`Task ${task_id.slice(0, 18)}… · ${data.status} · ${data.progress_message || ''} · ${elapsed}s`, data.status);
+        if (data.status === 'completed') {
+          renderBundle(data);
+          return;
+        }
+        if (data.status === 'failed' || data.status === 'canceled') {
+          setStatus(`Task ${data.status}: ${data.error || ''}`, 'failed');
+          return;
+        }
+      }
+    }
+
+    function setStatus(text, kind) {
+      STATUS.textContent = text;
+      STATUS.className = 'status-line ' + (kind || '');
+    }
+
+    function resetView() {
+      CLAIMS.innerHTML = '<div class="claim-row" style="color: var(--dim);">Awaiting agent fan-out...</div>';
+      document.getElementById('bundleHash').textContent = '—';
+      document.getElementById('bundleSig').textContent = '—';
+    }
+
+    function renderBundle(data) {
+      const out = data.output || {};
+      const claims = out.claims || [];
+      const evidence = out.evidence || [];
+      const vetScores = out.vet_scores || [];
+      const compliance = out.compliance || [];
+      const audit = out.audit || [];
+
+      CLAIMS.innerHTML = '';
+      for (let i = 0; i < claims.length; i++) {
+        const c = claims[i];
+        const ev = evidence[i] || {};
+        const vet = vetScores[i] || {};
+        const comp = compliance[i] || {};
+        const aud = audit[i] || {};
+        const row = document.createElement('div');
+        row.className = 'claim-row';
+        const violationBadge = comp.violation_flag ? '<span class="badge violation">FTC violation</span>' : '<span class="badge ok">FTC OK</span>';
+        const escalateBadge = vet.escalate_to_human_vet ? '<span class="badge warn">escalate vet</span>' : '';
+        const verdictBadge = `<span class="badge ${aud.verdict === 'PASS' ? 'ok' : 'warn'}">audit ${aud.verdict}</span>`;
+        const pmidCount = (ev.papers || []).length;
+        const sourceCount = (comp.grounding_sources || []).length;
+        row.innerHTML = `
+          <div class="text">${escapeHtml(c.text || '')}</div>
+          <div class="badges">
+            <span class="badge">${c.kind || ''}</span>
+            <span class="badge">${pmidCount} PMIDs</span>
+            <span class="badge">vet ${vet.score || '-'}/5</span>
+            ${escalateBadge}
+            <span class="badge">${comp.ftc_section || 'no FTC §'}</span>
+            ${violationBadge}
+            ${sourceCount ? `<span class="badge">${sourceCount} grounded sources</span>` : ''}
+            ${verdictBadge}
+          </div>
+          <div style="margin-top: 6px; color: var(--dim); font-size: 11px;">${escapeHtml((comp.rationale || '').slice(0, 200))}…</div>
+        `;
+        CLAIMS.appendChild(row);
+      }
+
+      document.getElementById('bundleHash').textContent = data.bundle_hash || '—';
+      document.getElementById('bundleSig').textContent = data.bundle_signature || '—';
+    }
+
+    function escapeHtml(s) {
+      return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+    }
+    function sleep(ms) { return new Promise(r => setTimeout(r, ms)); }
+  </script>
+</body>
+</html>

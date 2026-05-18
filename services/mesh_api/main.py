@@ -381,15 +381,28 @@ async def resolve_claim(urn: str) -> JSONResponse:
 # Root index
 # ---------------------------------------------------------------------------
 
-@app.get("/", response_class=PlainTextResponse)
-async def root() -> str:
+from fastapi.responses import HTMLResponse, FileResponse
+
+
+@app.get("/", response_class=HTMLResponse)
+async def root() -> HTMLResponse:
+    """Mesh Console UI — paste a PDP URL, watch agent fan-out live."""
+    console_path = Path(__file__).parent / "static" / "console.html"
+    return HTMLResponse(content=console_path.read_text(encoding="utf-8"))
+
+
+@app.get("/api-info", response_class=PlainTextResponse)
+async def api_info() -> str:
     return (
         "PawConscious Mesh — ACP v0.1\n\n"
         "Public endpoints:\n"
+        "  GET  /                              Mesh Console UI\n"
         "  GET  /.well-known/agent-card.json   A2A v0.3 agent card\n"
         "  GET  /.well-known/did.json          DID document\n"
-        "  POST /a2a/v1/tasks/send             A2A task endpoint (X-API-Key required)\n"
-        "  GET  /pcec/v0/claim/{urn}           PCEC v0.1 resolver\n"
+        "  POST /a2a/v1/tasks/send             A2A task entry (X-API-Key, returns 202+task_id)\n"
+        "  GET  /a2a/v1/tasks/get/{task_id}    Poll task status\n"
+        "  POST /a2a/v1/tasks/cancel/{task_id} Cancel task (best-effort)\n"
+        "  GET  /pcec/v0/claim/{urn}           PCEC v0.1 resolver (501 in v0.1)\n"
         "  GET  /health                        Health probe\n\n"
         "Repo: https://github.com/odominguez7/PawConscious-Mesh-GFS\n"
     )
