@@ -176,3 +176,24 @@ Track 3 hard mandates 100% satisfied. Key Considerations 4/5 satisfied (Agent En
 - Vertex AI Search: projects/40952019806/locations/global/.../acp-regulator-corpus
 
 **See MORNING.md for the morning brief + checklist.**
+
+---
+
+## Day 2 evening session — 2026-05-18 (post-disconnect resume)
+
+Context restored from memory `project_pawconscious_mesh_overnight` after browser disconnect. Working tree had 4 uncommitted files (1487 lines) from in-flight Phase 9 v2 UI work. Sequence:
+
+| Time | Phase | Event | Codex |
+|---|---|---|---|
+| resume | 9 v2 | WIP checkpoint commit `71c6b54` to preserve overnight UI work | – |
+| audit | 9 v2 | console.html (962 lines) audited — Vellum/Slate system, animated mesh, wax-seal cert, chain anchor expand/copy, FTC verdict rows, independence banner all functionally complete | – |
+| verify | 9 v2 | Live UI on revision 00015-xqz browser-verified end-to-end. Hip-Joint claim → wax-seal cert + 157s sign time + PASS verdict | – |
+| sweep | 9 v2 | Codex G20 sweep run. Verdict: **CLEAR WITH AMENDMENTS** — P1 chain anchor displaying bundle hash, P2 cosmetic agent walker desync, P3a PASS verdict without context, P3b latency copy underpromises. No P0. | G20 CLEAR-with-amendments |
+| absorb | 9 v2 | P1: backend captures chain_anchor from append_bundle_async return, plumbs through task state → A2A status response → cert render. P2: rotating active-node interval (1.4s) loops until completion. P3a: "PASS · directional" label + conditional low-evidence callout (pmid=0 or vet<3). P3b: hero lede now "one to three minutes; cold starts may take longer". | G20 absorbed |
+| build | 9 v2 | Cloud Build `v0.1.0-g20` SUCCESS (3m24s). | – |
+| deploy | 9 v2 | Cloud Run revision `mesh-api-00016-caw` LIVE, 100% traffic. | – |
+| verify | 9 v2 | End-to-end live verify confirmed chain_anchor `sha256:c2f991cf…` distinct from bundle_hash `sha256:4bdb71ee…`. Browser ceremony rotation + cert + verdict rows all rendering G20 fixes. | – |
+| commit | 9 v2 | Two clean commits: `bb9ef89` G20 absorption, `b55d3b6` deck polish carry-over. Pushed `4d1ace5..b55d3b6` to `origin/main`. | – |
+
+**Phase 9 v2 SHIPPED.** Next per locked queue: Phase 10 AI2 Asta MCP citation grading (G21).
+
