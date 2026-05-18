@@ -17,6 +17,8 @@ RUN pip install --no-cache-dir --upgrade pip && \
       google-adk \
       google-cloud-aiplatform \
       google-cloud-secret-manager \
+      google-cloud-discoveryengine \
+      google-cloud-firestore \
       httpx \
       beautifulsoup4 \
       lxml \

@@ -1,0 +1,797 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>PawConscious Mesh — Investor Pitch</title>
+<meta name="viewport" content="width=1920">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,300;0,6..72,400;0,6..72,500;1,6..72,300;1,6..72,400&family=Geist:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+
+<link rel="stylesheet" href="styles.css">
+
+<script src="deck-stage.js"></script>
+</head>
+<body style="margin:0;background:#0a0a0a;">
+
+<deck-stage>
+
+<!-- ============================================================ -->
+<!-- 0. COVER                                                     -->
+<!-- ============================================================ -->
+<section data-screen-label="00 Cover">
+  <div class="slide watermark cover" data-comment-anchor="cover">
+
+    <div class="cover-stack">
+      <div class="seal-wrap">
+        <div class="seal">
+          <div class="seal-mesh">
+            <svg viewBox="0 0 100 100" fill="none">
+              <!-- Three node mesh, two thin connecting lines -->
+              <line x1="22" y1="68" x2="78" y2="68" stroke="rgba(245,220,170,0.5)" stroke-width="1.5"/>
+              <line x1="22" y1="68" x2="50" y2="26" stroke="rgba(245,220,170,0.5)" stroke-width="1.5"/>
+              <line x1="78" y1="68" x2="50" y2="26" stroke="rgba(245,220,170,0.5)" stroke-width="1.5"/>
+              <circle cx="50" cy="26" r="6" fill="rgba(245,220,170,0.92)"/>
+              <circle cx="22" cy="68" r="6" fill="rgba(245,220,170,0.92)"/>
+              <circle cx="78" cy="68" r="6" fill="rgba(245,220,170,0.92)"/>
+            </svg>
+          </div>
+        </div>
+      </div>
+
+      <div class="wordmark">PawConscious&nbsp;Mesh</div>
+      <div class="subhead">The verifiable claim infrastructure for consumer goods.<br>Starting with pet.</div>
+    </div>
+
+    <div class="cover-footer">
+      <span>Cofounders · Omar Dominguez &amp; Jennifer Fremont Smith</span>
+      <span>Boston · MIT Sloan</span>
+      <span>ACP for pet</span>
+      <span>May 2026</span>
+    </div>
+
+  </div>
+</section>
+
+<!-- ============================================================ -->
+<!-- 1. HOOK / BUSINESS OVERVIEW                                  -->
+<!-- ============================================================ -->
+<section data-screen-label="01 Hook">
+  <div class="slide watermark hook" data-comment-anchor="s1">
+
+    <div class="hook-left">
+      <div>
+        <div class="eyebrow"><span class="dot"></span> 01 · Hook<span class="rule"></span>Business overview</div>
+        <h1 class="display" style="font-size:96px;max-width:1100px;">
+          The verifiable claim infrastructure for consumer goods. Starting with every claim that leaves a pet brand.
+        </h1>
+      </div>
+
+      <p class="display-italic" style="font-size:32px;color:var(--moss);max-width:1050px;">
+        Two hundred fifty thousand US pet brands. Eleven and a half million dollars already paid by one defendant. Every AI shopping agent needs a callable trust oracle by 2028. PawConscious Mesh signs the evidence chain in ninety seconds.
+      </p>
+    </div>
+
+    <div class="hook-right">
+      <div class="caption" style="margin-top:8px;">Before &nbsp;/&nbsp; After</div>
+      <div class="dual-panel" style="flex:1;">
+        <div class="panel before">
+          <div style="font-family:var(--mono);font-size:9px;letter-spacing:.18em;color:var(--slate);opacity:.55;">product · detail · page</div>
+          <div class="doc-line"></div>
+          <div class="doc-line short"></div>
+          <div class="doc-line"></div>
+          <div class="claim-mark"></div>
+          <div class="doc-line shorter"></div>
+          <div class="doc-line"></div>
+          <div class="doc-line short"></div>
+          <div class="doc-line shorter"></div>
+          <div style="margin-top:auto;font-family:var(--mono);font-size:9px;letter-spacing:.18em;color:var(--signal);">unsigned · claim flagged</div>
+        </div>
+
+        <div class="arrow">
+          <svg viewBox="0 0 32 32" fill="none">
+            <path d="M2 16 H28 M22 10 L28 16 L22 22" stroke="currentColor" stroke-width="3" stroke-linecap="square"/>
+          </svg>
+        </div>
+
+        <div class="panel">
+          <div class="corner-seal">
+            <div class="seal" style="width:56px;height:56px;box-shadow:inset -2px -3px 6px rgba(70,40,4,.55), inset 2px 2px 4px rgba(255,220,160,.18);">
+              <div class="seal-mesh">
+                <svg viewBox="0 0 100 100" fill="none">
+                  <circle cx="50" cy="26" r="9" fill="rgba(245,220,170,.92)"/>
+                  <circle cx="22" cy="68" r="9" fill="rgba(245,220,170,.92)"/>
+                  <circle cx="78" cy="68" r="9" fill="rgba(245,220,170,.92)"/>
+                </svg>
+              </div>
+            </div>
+          </div>
+          <div style="font-family:var(--mono);font-size:9px;letter-spacing:.18em;color:var(--slate);opacity:.55;">product · detail · page</div>
+          <div class="doc-line"></div>
+          <div class="doc-line short"></div>
+          <div class="doc-line"></div>
+          <div class="doc-line amber" style="width:48%"></div>
+          <div class="doc-line shorter"></div>
+          <div class="doc-line"></div>
+          <div class="doc-line short"></div>
+          <div class="doc-line shorter"></div>
+          <div style="margin-top:auto;font-family:var(--mono);font-size:9px;letter-spacing:.18em;color:var(--amber);">PCEC bundle · ed25519 signed</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="slide-num">01 / 09</div>
+    <div class="source">
+      Packaged Facts 2024 · Topclassactions Cosequin 2024 · Argus internal benchmark
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================ -->
+<!-- 2. MARKET OPPORTUNITY                                        -->
+<!-- ============================================================ -->
+<section data-screen-label="02 Market">
+  <div class="slide watermark market" data-comment-anchor="s2">
+
+    <div>
+      <div class="eyebrow"><span class="dot"></span> 02 · Market opportunity<span class="rule"></span>Why this, why now</div>
+      <h1 class="display" style="font-size:92px;max-width:1500px;">
+        The plaintiff bar already collected. The AI shopping shift arrives next.
+      </h1>
+    </div>
+
+    <div class="proofs">
+      <div class="proof">
+        <div class="caption">Settlement paid · 2024</div>
+        <div class="num">$11.5M</div>
+        <div class="label">paid by Cosequin to settle joint mobility claims with no signed evidence chain</div>
+      </div>
+      <div class="proof">
+        <div class="caption">Opening claim · NY AG 2024</div>
+        <div class="num">$165M</div>
+        <div class="label">sought by NY Attorney General James against Prevagen for unsubstantiated memory claims</div>
+      </div>
+      <div class="proof">
+        <div class="caption">Considered purchases · 2028</div>
+        <div class="num">15 – 30%</div>
+        <div class="label">routed through an agentic intermediary that needs a callable trust oracle to answer</div>
+      </div>
+    </div>
+
+    <div class="market-hero">
+      <div class="number-line">
+        <div>
+          <div class="caption" style="margin-bottom:14px;">US pet supplement category · retail revenue</div>
+          <div class="big">$2.8B</div>
+        </div>
+        <p class="annotation">
+          In this segment, the compliance officer is the brand founder. That is why every past substantiation tool failed.
+        </p>
+      </div>
+
+      <div class="split-bar">
+        <div class="seg">Brands with signed evidence chains</div>
+        <div class="seg right">Brands that invent evidence under deposition</div>
+      </div>
+    </div>
+
+    <div class="slide-num">02 / 09</div>
+    <div class="source">
+      Packaged Facts · Topclassactions · NY Attorney General James 2024 · Gartner emerging consensus 2026
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================ -->
+<!-- 3. VALUE PROPOSITION                                         -->
+<!-- ============================================================ -->
+<section data-screen-label="03 Value Proposition">
+  <div class="slide watermark value" data-comment-anchor="s3">
+
+    <div class="value-left">
+      <div>
+        <div class="eyebrow"><span class="dot"></span> 03 · Value proposition<span class="rule"></span>What we built</div>
+        <h1 class="display" style="font-size:84px;max-width:1300px;">
+          A brand pastes a product URL. The mesh signs the evidence chain in ninety seconds.
+        </h1>
+      </div>
+
+      <div class="storyboard">
+        <!-- Panel 1: INPUT -->
+        <div class="panel">
+          <p class="ttl">01 · Input</p>
+          <div style="display:flex;flex-direction:column;gap:6px;flex:1;justify-content:flex-start;">
+            <div style="font-family:var(--mono);font-size:9px;letter-spacing:.16em;color:var(--slate);opacity:.5;">product url + claim</div>
+            <div class="doc-line" style="height:6px;background:rgba(26,29,30,.18);"></div>
+            <div class="doc-line" style="height:6px;width:62%;background:rgba(26,29,30,.18);"></div>
+            <div class="doc-line" style="height:6px;background:rgba(26,29,30,.18);"></div>
+            <div style="height:8px"></div>
+            <div style="font-family:var(--mono);font-size:9px;letter-spacing:.16em;color:var(--slate);opacity:.5;">PubMed · paper</div>
+            <div class="doc-line" style="height:6px;width:80%;background:rgba(26,29,30,.18);"></div>
+            <div class="doc-line" style="height:6px;width:55%;background:rgba(26,29,30,.18);"></div>
+            <div class="doc-line" style="height:6px;background:rgba(26,29,30,.18);"></div>
+          </div>
+          <div style="font-family:var(--mono);font-size:9px;letter-spacing:.2em;color:var(--slate);opacity:.5;text-transform:uppercase;">t = 0s</div>
+        </div>
+
+        <!-- Panel 2: THE MESH -->
+        <div class="panel" style="background:rgba(166,112,26,0.04);">
+          <p class="ttl">02 · The mesh · five agents</p>
+          <svg class="mesh-svg" viewBox="0 0 320 200" fill="none" preserveAspectRatio="xMidYMid meet">
+            <!-- thin connector lines -->
+            <g stroke="rgba(26,29,30,0.45)" stroke-width="1">
+              <line x1="60" y1="40" x2="160" y2="100"/>
+              <line x1="60" y1="100" x2="160" y2="100"/>
+              <line x1="60" y1="160" x2="160" y2="100"/>
+              <line x1="160" y1="100" x2="260" y2="60"/>
+              <line x1="160" y1="100" x2="260" y2="140"/>
+            </g>
+            <!-- nodes -->
+            <circle cx="60" cy="40" r="14" fill="#1A1D1E"/>
+            <text x="60" y="44" font-family="JetBrains Mono" font-size="11" font-weight="600" fill="#F2EDE0" text-anchor="middle">1</text>
+            <circle cx="60" cy="100" r="14" fill="#A6701A"/>
+            <text x="60" y="104" font-family="JetBrains Mono" font-size="11" font-weight="600" fill="#F2EDE0" text-anchor="middle">2</text>
+            <circle cx="60" cy="160" r="14" fill="#A6701A"/>
+            <text x="60" y="164" font-family="JetBrains Mono" font-size="11" font-weight="600" fill="#F2EDE0" text-anchor="middle">3</text>
+            <circle cx="160" cy="100" r="16" fill="#13322B"/>
+            <text x="160" y="104" font-family="JetBrains Mono" font-size="11" font-weight="600" fill="#F2EDE0" text-anchor="middle">★</text>
+            <circle cx="260" cy="60" r="14" fill="#1A1D1E"/>
+            <text x="260" y="64" font-family="JetBrains Mono" font-size="11" font-weight="600" fill="#F2EDE0" text-anchor="middle">4</text>
+            <circle cx="260" cy="140" r="14" fill="#A6701A"/>
+            <text x="260" y="144" font-family="JetBrains Mono" font-size="11" font-weight="600" fill="#F2EDE0" text-anchor="middle">5</text>
+          </svg>
+          <div style="font-family:var(--mono);font-size:9px;letter-spacing:.2em;color:var(--slate);opacity:.5;text-transform:uppercase;">t = 0 → 90s</div>
+        </div>
+
+        <!-- Panel 3: OUTPUT -->
+        <div class="panel">
+          <p class="ttl">03 · Output</p>
+          <div style="position:relative;flex:1;">
+            <div style="display:flex;flex-direction:column;gap:6px;">
+              <div style="font-family:var(--mono);font-size:9px;letter-spacing:.16em;color:var(--slate);opacity:.5;">signed bundle</div>
+              <div class="doc-line" style="height:6px;background:rgba(26,29,30,.18);"></div>
+              <div class="doc-line" style="height:6px;width:80%;background:rgba(166,112,26,.85);"></div>
+              <div class="doc-line" style="height:6px;background:rgba(26,29,30,.18);"></div>
+              <div class="doc-line" style="height:6px;width:70%;background:rgba(26,29,30,.18);"></div>
+              <div class="doc-line" style="height:6px;width:55%;background:rgba(166,112,26,.85);"></div>
+              <div class="doc-line" style="height:6px;background:rgba(26,29,30,.18);"></div>
+            </div>
+            <div style="position:absolute;top:-8px;right:-8px;">
+              <div class="seal" style="width:60px;height:60px;box-shadow:inset -2px -3px 6px rgba(70,40,4,.55), inset 2px 2px 4px rgba(255,220,160,.18);">
+                <div class="seal-mesh">
+                  <svg viewBox="0 0 100 100" fill="none">
+                    <circle cx="50" cy="26" r="9" fill="rgba(245,220,170,.92)"/>
+                    <circle cx="22" cy="68" r="9" fill="rgba(245,220,170,.92)"/>
+                    <circle cx="78" cy="68" r="9" fill="rgba(245,220,170,.92)"/>
+                  </svg>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div style="font-family:var(--mono);font-size:9px;letter-spacing:.2em;color:var(--amber);text-transform:uppercase;">ed25519 · brand DID · audit PDF</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="value-right">
+      <div style="margin-top:-8px;">
+        <div class="caption" style="color:var(--amber);">The five agents</div>
+        <div class="agent-list">
+          <div class="agent"><span class="n">1</span><div><div class="a-title">Claim extractor</div><div class="a-desc">Pulls every health claim from the product detail page.</div></div></div>
+          <div class="agent amber"><span class="n">2</span><div><div class="a-title">Evidence grader</div><div class="a-desc">Queries PubMed live through BioMCP and grades each citation by influence.</div></div></div>
+          <div class="agent amber"><span class="n">3</span><div><div class="a-title">Vet panel</div><div class="a-desc">Runs a five vet rubric on every claim and flags any that need a human review.</div></div></div>
+          <div class="agent"><span class="n">4</span><div><div class="a-title">Compliance mapper</div><div class="a-desc">Maps each claim to FTC 16 CFR Part 255, AAFCO PF7, NASC.</div></div></div>
+          <div class="agent amber"><span class="n">5</span><div><div class="a-title">Auditor</div><div class="a-desc">Catches hallucinated citations and direction mismatches in the evidence.</div></div></div>
+        </div>
+      </div>
+
+      <div class="mechanic" style="border-top:1px solid var(--slate);padding-top:18px;">
+        <div class="label">Runs natively on Google Cloud</div>
+        <div class="body" style="font-size:18px;">ADK 2.0, Gemini 2.5 Pro, Vertex AI Agent Engine, A2A protocol v0.3.</div>
+      </div>
+      <div class="mechanic">
+        <div class="label">Real citations · real vets</div>
+        <div class="body" style="font-size:18px;">Live PubMed retrieval. Five vet rubric. FTC 255 grounded over a public corpus.</div>
+      </div>
+      <div class="mechanic">
+        <div class="label">Verifiable from brand DID</div>
+        <div class="body" style="font-size:18px;">Every bundle is Ed25519 signed and verifiable from the brand domain.</div>
+      </div>
+    </div>
+
+    <div class="slide-num">03 / 09</div>
+    <div class="source">
+      Argus live deployment · Cloud Run revision 00009 · May 2026
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================ -->
+<!-- 4. TEAM                                                      -->
+<!-- ============================================================ -->
+<section data-screen-label="04 Team">
+  <div class="slide watermark team" data-comment-anchor="s4">
+
+    <div class="team-head">
+      <div class="eyebrow"><span class="dot"></span> 04 · Team<span class="rule"></span>Why we win</div>
+      <h1 class="display" style="font-size:54px;max-width:1720px;">
+        Two MIT Sloan cofounders who have shipped in this segment. An academic vet panel built into the protocol from day one.
+      </h1>
+    </div>
+
+    <div class="team-pair">
+
+      <div class="team-card">
+        <div class="portrait">
+          <img src="assets/omar.png" alt="Omar Dominguez">
+        </div>
+        <div>
+          <div class="team-name">Omar Dominguez</div>
+          <div class="team-role">Cofounder &amp; CEO</div>
+          <div class="team-creds">
+            <span class="line">MIT Sloan MBA 2026</span>
+            <span class="line">Twelve plus years in operations</span>
+            <span class="line">Built and shipped PawConscious Mesh on Google Cloud in eighteen days</span>
+            <span class="line">First place · Subconscious + Natoma hackathon · May 2026</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="team-card">
+        <div class="portrait">
+          <img src="assets/jennifer.jpeg" alt="Jennifer Fremont Smith">
+        </div>
+        <div>
+          <div class="team-name">Jennifer Fremont Smith</div>
+          <div class="team-role">Cofounder &amp; COO</div>
+          <div class="team-creds">
+            <span class="line">MIT Sloan Lecturer</span>
+            <span class="line">Built WECO · 5.5M meals · Bessemer backed</span>
+            <span class="line">Built Smarterer · Google Ventures · acquired by Pluralsight</span>
+            <span class="line">Two decade operator across consumer and edtech</span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <p class="team-together">
+      <strong>Together</strong>
+      Two MIT Sloan operators. One built the protocol. One scaled the brand.
+    </p>
+
+    <div class="acad-strip">
+      <div class="acad-lbl">Academic credibility panel</div>
+      <div class="acad-inst">Tufts Cummings<small>School of Veterinary Medicine</small></div>
+      <div class="acad-inst">Cornell University<small>College of Veterinary Medicine</small></div>
+      <div class="acad-inst">University of Pennsylvania<small>PennVet</small></div>
+      <div class="acad-inst">MIT Sloan<small>School of Management</small></div>
+    </div>
+
+    <div class="team-footer">
+      <span>04 / 09</span>
+      <span class="center">Every institution relationship at the time of deck publication is named above. Unsigned asks are omitted.</span>
+      <span>Sources · institutional brand pages</span>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================ -->
+<!-- 5. BUSINESS MODEL                                            -->
+<!-- ============================================================ -->
+<section data-screen-label="05 Business Model">
+  <div class="slide watermark model" data-comment-anchor="s5">
+
+    <div>
+      <div class="eyebrow"><span class="dot"></span> 05 · Business model<span class="rule"></span>How we make money</div>
+      <h1 class="display" style="font-size:78px;max-width:1620px;">
+        Four revenue streams. One mesh. Brands pay per claim. Retailers pay a platform fee. Insurers pay for the feed. AI agents call the protocol free.
+      </h1>
+    </div>
+
+    <div class="rev-table">
+      <div class="row head">
+        <div class="cell">Stream</div>
+        <div class="cell">Buyer</div>
+        <div class="cell">ACV</div>
+        <div class="cell" style="justify-content:flex-end;">Gross margin</div>
+      </div>
+
+      <div class="row">
+        <div class="cell stream">Per claim subscription · Starter</div>
+        <div class="cell">Pet brand SMB founder or compliance officer</div>
+        <div class="cell acv">$1,200 / yr</div>
+        <div class="cell margin">86%</div>
+      </div>
+      <div class="row">
+        <div class="cell stream">Continuous monitoring · Pro</div>
+        <div class="cell">Pet brand mid market general counsel</div>
+        <div class="cell acv">$24K – $100K / yr</div>
+        <div class="cell margin">86%</div>
+      </div>
+      <div class="row">
+        <div class="cell stream">Retailer catalog platform</div>
+        <div class="cell">VP Trust &amp; Safety at Chewy, Petco, Amazon Pet, Faire</div>
+        <div class="cell acv">$250K – $2M / yr</div>
+        <div class="cell margin">93%</div>
+      </div>
+      <div class="row">
+        <div class="cell stream" style="border-bottom:none;">Insurer claims feed</div>
+        <div class="cell" style="border-bottom:none;">Chief Underwriting Officer · Trupanion, Nationwide, MetLife Pet</div>
+        <div class="cell acv" style="border-bottom:none;">$500K – $3M / yr</div>
+        <div class="cell margin" style="border-bottom:none;">90%</div>
+      </div>
+    </div>
+
+    <div class="unit-econ">
+      <div class="ue-cell">
+        <div class="ue-num">24&ndash;36×</div>
+        <div class="ue-lbl">LTV · CAC · SMB tier</div>
+      </div>
+      <div class="ue-cell">
+        <div class="ue-num">40&ndash;80×</div>
+        <div class="ue-lbl">LTV · CAC · Enterprise</div>
+      </div>
+      <div class="ue-cell">
+        <div class="ue-num">&lt; 3mo</div>
+        <div class="ue-lbl">Payback period</div>
+      </div>
+      <div class="ue-note">
+        AI shopping agents call our protocol free. Brands pay for the traffic those agents send them.
+      </div>
+    </div>
+
+    <div class="slide-num">05 / 09</div>
+    <div class="source">
+      Argus pricing sheet · Comparable Vanta, Plaid, Truepic public reporting
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================ -->
+<!-- 6. GO TO MARKET                                              -->
+<!-- ============================================================ -->
+<section data-screen-label="06 Go to Market">
+  <div class="slide watermark gtm" data-comment-anchor="s6">
+
+    <div class="gtm-left">
+      <div>
+        <div class="eyebrow"><span class="dot"></span> 06 · Go to market<span class="rule"></span>How we get customers</div>
+        <h1 class="display" style="font-size:78px;max-width:1100px;">
+          Fifty pet brands signed through the same Boston veterinary network the founder already operates in.
+        </h1>
+      </div>
+
+      <div class="timeline" style="margin-top:32px;">
+        <div class="t-marker amber">
+          <div class="when">Q3 2026 · live now</div>
+          <div class="what">First ten paying pilots.</div>
+          <div class="sub">Founder sold. No SDRs.</div>
+        </div>
+        <div class="t-marker amber">
+          <div class="when">Q4 2026</div>
+          <div class="what">Fifty paying brands. NASC technical bulletin conversation opens.</div>
+          <div class="sub">Series seed closed.</div>
+        </div>
+        <div class="t-marker">
+          <div class="when">Q2 2027</div>
+          <div class="what">Two hundred paying brands. First retailer pilot live. First insurer pilot live.</div>
+          <div class="sub">Cross channel proof established.</div>
+        </div>
+        <div class="t-marker">
+          <div class="when">Q4 2027</div>
+          <div class="what">Three hundred fifty brands. First Chewy catalog API contract.</div>
+          <div class="sub">Defensive matching from Petco and Amazon Pet within two quarters.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="gtm-right">
+      <div class="caption" style="color:var(--amber);">Three plays</div>
+      <div class="play">
+        <div class="n">1</div>
+        <div class="body">Founder sales to one hundred owner operators. No SDRs. The compliance officer is the founder. The founder talks to the founder.</div>
+      </div>
+      <div class="play">
+        <div class="n">2</div>
+        <div class="body">Plaintiff docket outbound. Topclassactions and PACER feed name every brand under active or settled exposure. We email the general counsel within seventy two hours of a class action filing.</div>
+      </div>
+      <div class="play">
+        <div class="n">3</div>
+        <div class="body">NASC channel partnership. A co authored technical bulletin opens access to roughly three hundred NASC member brands.</div>
+      </div>
+    </div>
+
+    <div class="traction">
+      <div class="item">
+        <div class="big">12</div>
+        <div class="lbl">Adversarial codex sweeps cleared</div>
+      </div>
+      <div class="item">
+        <div class="big">5</div>
+        <div class="lbl">Vet schools contacted</div>
+      </div>
+      <div class="item">
+        <div class="big">10</div>
+        <div class="lbl">Named brand outreach drafts ready</div>
+      </div>
+    </div>
+
+    <div class="slide-num">06 / 09</div>
+    <div class="source" style="bottom:24px;">
+      Argus live prospect list 2026-05 · Internal sales pipeline
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================ -->
+<!-- 7. MARKET SIZE                                               -->
+<!-- ============================================================ -->
+<section data-screen-label="07 Market Size">
+  <div class="slide watermark tam" data-comment-anchor="s7">
+
+    <div>
+      <div class="eyebrow"><span class="dot"></span> 07 · Market size<span class="rule"></span>Underscore market grid</div>
+      <h1 class="display" style="font-size:72px;max-width:1620px;">
+        One protocol. Seven verticals. Mechanical expansion, not strategic pivot.
+      </h1>
+    </div>
+
+    <div>
+      <div class="tam-grid">
+        <!-- Header row -->
+        <div class="head row-label" style="border-right:1px solid rgba(26,29,30,.25);">
+          <span style="font-family:var(--mono);font-size:10px;letter-spacing:.2em;color:var(--moss);text-transform:uppercase;">Product · segment</span>
+        </div>
+        <div class="head">Pet SMB brand<small>$1M – $10M ARR</small></div>
+        <div class="head">Pet mid market<small>$10M – $50M ARR</small></div>
+        <div class="head">Pet retailer<small>Chewy · Petco · Amazon · Faire</small></div>
+        <div class="head">Pet insurer<small>Trupanion · Nationwide · MetLife</small></div>
+        <div class="head">Agentic shopper<small>Rufus · Operator · Perplexity</small></div>
+        <div class="head" style="background:rgba(26,29,30,.04);">Market</div>
+        <div class="head" style="background:rgba(26,29,30,.04);">Pricing</div>
+
+        <!-- Row 1: per claim verification -->
+        <div class="row-label">Per claim verification<small>Product 1</small></div>
+        <div class="stage1 beachhead"><strong>Per claim sub</strong><div class="lbl">Where we start</div></div>
+        <div class="stage2">Focus area</div>
+        <div class="stage3">Focus area</div>
+        <div class="stage3">Focus area</div>
+        <div class="agent-cell live">Free callable</div>
+        <div class="market">$1.5B</div>
+        <div class="pricing">Per claim sub</div>
+
+        <!-- Row 2 -->
+        <div class="row-label">Continuous monitoring<small>Product 2</small></div>
+        <div class="stage2">Focus area</div>
+        <div class="stage1"><strong>Continuous monitoring</strong></div>
+        <div class="stage3">Focus area</div>
+        <div class="stage3">Focus area</div>
+        <div class="agent-cell live">Free callable</div>
+        <div class="market">$9.6B</div>
+        <div class="pricing">Per month tier</div>
+
+        <!-- Row 3 -->
+        <div class="row-label">Retailer catalog platform<small>Product 3</small></div>
+        <div class="stage3">Focus area</div>
+        <div class="stage3">Focus area</div>
+        <div class="stage1"><strong>Catalog platform</strong></div>
+        <div class="stage3">Focus area</div>
+        <div class="agent-cell live">Free callable</div>
+        <div class="market">$4.8B</div>
+        <div class="pricing">Platform fee</div>
+
+        <!-- Row 4 -->
+        <div class="row-label">Insurer claims feed<small>Product 4</small></div>
+        <div class="stage3">Focus area</div>
+        <div class="stage3">Focus area</div>
+        <div class="stage3">Focus area</div>
+        <div class="stage1"><strong>Claims feed</strong></div>
+        <div class="agent-cell live">Free callable</div>
+        <div class="market">$3.0B</div>
+        <div class="pricing">Per year contract</div>
+
+        <!-- Row 5 -->
+        <div class="row-label">Verify oracle for agents<small>Product 5</small></div>
+        <div class="stage3">Focus area</div>
+        <div class="stage3">Focus area</div>
+        <div class="stage3">Focus area</div>
+        <div class="stage3">Focus area</div>
+        <div class="agent-cell live"><strong>Verify oracle</strong></div>
+        <div class="market" style="opacity:.55;">—</div>
+        <div class="pricing">Free · brand pays</div>
+      </div>
+
+      <div class="tam-adjacent">
+        <div class="label">Adjacent verticals</div>
+        <div class="verticals">Human supplements · beauty · functional food · wellness devices · athletic performance · baby &amp; infant care</div>
+        <div class="big">$640B+</div>
+        <div class="note">Future optionality</div>
+      </div>
+    </div>
+
+    <div class="slide-num">07 / 09</div>
+    <div class="source">
+      Packaged Facts · APPA · Grand View Research · Internal ARPU model
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================ -->
+<!-- 8. COMPETITION                                               -->
+<!-- ============================================================ -->
+<section data-screen-label="08 Competition">
+  <div class="slide watermark compete" data-comment-anchor="s8">
+
+    <div>
+      <div class="eyebrow"><span class="dot"></span> 08 · Competition<span class="rule"></span>Why us, not them</div>
+      <h1 class="display" style="font-size:74px;max-width:1620px;">
+        Every existing trust mark is either captured by the brand it scores or priced out of the market that needs it.
+      </h1>
+    </div>
+
+    <div class="matrix" style="margin: 24px 96px 56px 96px;">
+      <div class="axis-end tl">AI agent native</div>
+      <div class="axis-end tr">AI agent native &amp; independent</div>
+      <div class="axis-end bl">Captured · human only</div>
+      <div class="axis-end br">Independent · human only</div>
+
+      <div class="quad-line-h"></div>
+      <div class="quad-line-v"></div>
+
+      <!-- PawConscious Mesh in upper right -->
+      <div class="plot amber-plot" style="left:82%;top:22%;">
+        <div class="dot amber"></div>
+        <div class="lab">PawConscious Mesh<small>Structural independence · A2A callable</small></div>
+      </div>
+
+      <!-- Truepic lower right -->
+      <div class="plot" style="left:78%;top:74%;">
+        <div class="dot"></div>
+        <div class="lab">Truepic<small>C2PA · verifies images, not claims</small></div>
+      </div>
+
+      <!-- NSF / USP / ConsumerLab lower center -->
+      <div class="plot" style="left:62%;top:80%;">
+        <div class="dot"></div>
+        <div class="lab">NSF · USP · ConsumerLab<small>Real testing, slow, human only</small></div>
+      </div>
+
+      <!-- Brand in-house quality teams center -->
+      <div class="plot" style="left:45%;top:48%;">
+        <div class="dot linen"></div>
+        <div class="lab" style="font-size:16px;">Brand in house quality<small>Conflicted by employer</small></div>
+      </div>
+
+      <!-- Trustpilot lower left -->
+      <div class="plot" style="left:16%;top:72%;">
+        <div class="dot signal"></div>
+        <div class="lab" style="color:var(--signal);">Trustpilot<small>Captured by paid placements</small></div>
+      </div>
+
+      <div class="axis-x">
+        <span>captured</span>
+        <span style="font-size:10px;opacity:.6;">←&nbsp;structurally independent&nbsp;→</span>
+        <span>third party</span>
+      </div>
+      <div class="axis-y">
+        <span>human only</span>
+        <span style="font-size:10px;opacity:.6;">←&nbsp;AI agent native&nbsp;→</span>
+        <span>protocol callable</span>
+      </div>
+    </div>
+
+    <div class="edges">
+      <div class="edge">
+        <div class="n">1</div>
+        <div class="txt">Brands pay per claim. Retailers pay a platform fee. The vet panel is academic. The rubric cannot be purchased. Independence is structural, not stated.</div>
+      </div>
+      <div class="edge">
+        <div class="n">2</div>
+        <div class="txt">The mesh is callable by any A2A v0.3 compatible agent. Rufus, Operator, Perplexity Shopping, Gemini Shopping integrate the protocol they already implement.</div>
+      </div>
+      <div class="edge">
+        <div class="n">3</div>
+        <div class="txt">The PCEC spec is open source MIT and on a path to Linux Foundation donation. Adobe did this with C2PA. We do it with claims.</div>
+      </div>
+    </div>
+
+    <div class="slide-num">08 / 09</div>
+    <div class="source">
+      Public pricing pages · Crunchbase · Industry interviews 2026
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================ -->
+<!-- 9. FINANCING PLAN & ASK                                      -->
+<!-- ============================================================ -->
+<section data-screen-label="09 Ask">
+  <div class="slide watermark ask" data-comment-anchor="s9">
+
+    <div>
+      <div class="eyebrow"><span class="dot"></span> 09 · Financing plan<span class="rule"></span>The ask</div>
+      <h1 class="display" style="font-size:80px;max-width:1620px;">
+        Raising <span style="color:var(--amber);">$1.5M</span> to put PawConscious Mesh in fifty paying brands and to sign the first accredited certifier letter of intent by day one hundred twenty.
+      </h1>
+    </div>
+
+    <div class="use">
+      <div class="item">
+        <div class="lbl">Engineering &amp; infra</div>
+        <div class="amt">$700K</div>
+        <div class="desc">One additional engineer plus the cloud build out for two hundred brands.</div>
+      </div>
+      <div class="item">
+        <div class="lbl">Vet network &amp; pilots</div>
+        <div class="amt">$500K</div>
+        <div class="desc">Stipends for Tufts, Cornell, UPenn academic advisors plus first twenty pilot brand support cycles.</div>
+      </div>
+      <div class="item">
+        <div class="lbl">Go to market</div>
+        <div class="amt">$300K</div>
+        <div class="desc">Founder led brand outbound and the NASC channel partnership.</div>
+      </div>
+    </div>
+
+    <div>
+      <div class="caption" style="color:var(--amber);margin-bottom:8px;">Twelve month milestones</div>
+      <div class="ms-wrap">
+        <div class="ms-bar"></div>
+        <div class="ms-arrow"></div>
+        <div class="ms-row">
+          <div class="stop">
+            <div class="pin"></div>
+            <div class="when">Month 3</div>
+            <div class="what">Ten paying pilots. First academic advisor signed.</div>
+          </div>
+          <div class="stop">
+            <div class="pin"></div>
+            <div class="when">Month 6</div>
+            <div class="what">Twenty five paying brands. NASC bulletin draft circulated.</div>
+          </div>
+          <div class="stop">
+            <div class="pin"></div>
+            <div class="when">Month 9</div>
+            <div class="what">Forty paying brands. First accredited certifier letter of intent signed.</div>
+          </div>
+          <div class="stop">
+            <div class="pin"></div>
+            <div class="when">Month 12</div>
+            <div class="what">Fifty paying brands. $250K ARR. Series A story live.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <p class="closing">
+      The claim is the door. Behind it is the agentic trust infrastructure for consumer goods.
+    </p>
+
+    <div class="echo-seal">
+      <div class="seal" style="width:140px;height:140px;opacity:.4;">
+        <div class="seal-mesh">
+          <svg viewBox="0 0 100 100" fill="none">
+            <line x1="22" y1="68" x2="78" y2="68" stroke="rgba(245,220,170,0.5)" stroke-width="1.5"/>
+            <line x1="22" y1="68" x2="50" y2="26" stroke="rgba(245,220,170,0.5)" stroke-width="1.5"/>
+            <line x1="78" y1="68" x2="50" y2="26" stroke="rgba(245,220,170,0.5)" stroke-width="1.5"/>
+            <circle cx="50" cy="26" r="6" fill="rgba(245,220,170,0.92)"/>
+            <circle cx="22" cy="68" r="6" fill="rgba(245,220,170,0.92)"/>
+            <circle cx="78" cy="68" r="6" fill="rgba(245,220,170,0.92)"/>
+          </svg>
+        </div>
+      </div>
+    </div>
+
+    <div class="slide-num">09 / 09</div>
+    <div class="source">
+      Argus financial model · Underscore framework alignment
+    </div>
+  </div>
+</section>
+
+</deck-stage>
+
+</body>
+</html>
