@@ -268,6 +268,7 @@ class A2ATaskStatusResponse(BaseModel):
     error: Optional[str] = None
     bundle_hash: Optional[str] = None
     bundle_signature: Optional[str] = None
+    chain_anchor: Optional[str] = None
     created_at: float
     completed_at: Optional[float] = None
 
@@ -329,8 +330,11 @@ async def _run_verify_claim_background(task_id: str, product_url: str, max_claim
         bundle.bundle_urn = urn_for_hash(bundle_hash)
 
         # Append to Firestore transparency log (best effort; failure does not block A2A response)
+        # G20 P1: capture chain_anchor from the log entry so the certificate can
+        # display the real chain anchor (not bundle_hash) as judge-visible proof.
+        chain_anchor: Optional[str] = None
         try:
-            await append_bundle_async(
+            log_entry = await append_bundle_async(
                 urn=bundle.bundle_urn,
                 bundle_hash=bundle_hash,
                 bundle_signature=bundle.signature,
@@ -338,6 +342,7 @@ async def _run_verify_claim_background(task_id: str, product_url: str, max_claim
                 signer_did=SIGNER_DID,
                 issuer=bundle.issuer,
             )
+            chain_anchor = log_entry.get("chain_anchor") if isinstance(log_entry, dict) else None
         except Exception as log_err:
             print(f"[mesh_api] WARN: transparency log append failed: {log_err}")
 
@@ -348,6 +353,7 @@ async def _run_verify_claim_background(task_id: str, product_url: str, max_claim
             output=json.loads(bundle.model_dump_json()),
             bundle_hash=bundle_hash,
             bundle_signature=bundle.signature,
+            chain_anchor=chain_anchor,
         )
     except Exception as e:
         await task_store.update(
@@ -437,6 +443,7 @@ async def a2a_get(task_id: str) -> A2ATaskStatusResponse:
         error=state.error,
         bundle_hash=state.bundle_hash,
         bundle_signature=state.bundle_signature,
+        chain_anchor=state.chain_anchor,
         created_at=state.created_at,
         completed_at=state.completed_at,
     )

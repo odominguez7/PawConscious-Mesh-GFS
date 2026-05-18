@@ -459,6 +459,16 @@
     .stat-value.violation { color: var(--signal); }
     .stat-value.ok { color: var(--moss); }
     .stat-value.amber { color: var(--amber); }
+    .low-evidence {
+      grid-column: 1 / -1;
+      margin-top: 10px;
+      padding: 10px 14px;
+      background: var(--vellum-soft);
+      border-left: 2px solid var(--amber);
+      font: 400 12px/1.4 var(--body);
+      color: var(--slate-soft);
+    }
+    .low-evidence b { color: var(--amber); font-weight: 500; }
 
     /* ---------- independence banner ---------- */
     .independence {
@@ -570,7 +580,7 @@
   <section class="hero">
     <div>
       <h1>The signature your<br>general counsel hands<br>the plaintiff lawyer <em>in deposition</em>.</h1>
-      <p class="lede">Paste any pet supplement product page. Five agents on Google Cloud verify every health claim against PubMed, the FTC endorsement rule, AAFCO, and a five-vet rubric. You receive a signed evidence bundle in about a minute.</p>
+      <p class="lede">Paste any pet supplement product page. Five agents on Google Cloud verify every health claim against PubMed, the FTC endorsement rule, AAFCO, and a five-vet rubric. You receive a signed evidence bundle in one to three minutes. Cold starts may take longer.</p>
       <div class="ceremony-cta">
         <input type="text" id="urlInput" placeholder="https://www.nativepet.com/products/hip-joint"
                value="https://www.nativepet.com/products/hip-joint" autocomplete="off">
@@ -762,40 +772,48 @@
 
     async function pollUntilDone(task_id) {
       const start = Date.now();
-      let lastProgress = '';
-      let agentStep = 0;
-      while (true) {
-        await sleep(2200);
-        const resp = await fetch(`/a2a/v1/tasks/get/${task_id}`);
-        if (!resp.ok) { setStatus('Polling failed.', 'failed'); return; }
-        const data = await resp.json();
-        const elapsed = ((Date.now() - start) / 1000).toFixed(0);
+      // G20 P2: looping "working" animation. Agents rotate through active state
+      // indefinitely while the task is working — no node flips to "done" until
+      // the bundle is signed. Prevents the static-stuck-on-agent-5 effect on
+      // long runs (60-180s) that read as fake progress.
+      let activeIdx = 0;
+      let rotator = setInterval(() => {
+        AGENTS.forEach((a, i) => setAgentState(a.id, i === activeIdx ? 'active' : null));
+        activeIdx = (activeIdx + 1) % AGENTS.length;
+      }, 1400);
 
-        // animate agent fan-out progressively while task is working
-        if (data.status === 'working') {
-          if (agentStep < AGENTS.length) {
-            if (agentStep > 0) setAgentState(AGENTS[agentStep - 1].id, 'done');
-            setAgentState(AGENTS[agentStep].id, 'active');
-            agentStep++;
+      try {
+        while (true) {
+          await sleep(2200);
+          const resp = await fetch(`/a2a/v1/tasks/get/${task_id}`);
+          if (!resp.ok) { setStatus('Polling failed.', 'failed'); return; }
+          const data = await resp.json();
+          const elapsed = ((Date.now() - start) / 1000).toFixed(0);
+
+          if (data.status === 'working') {
+            setStatus(`Mesh working. ${data.progress_message || 'agents fanning out'}. ${elapsed}s elapsed.`, 'working');
           }
-          setStatus(`Mesh working. ${data.progress_message || 'agents fanning out'}. ${elapsed}s elapsed.`, 'working');
-        }
 
-        if (data.status === 'completed') {
-          AGENTS.forEach(a => setAgentState(a.id, 'done'));
-          MESH_CENTER.classList.add('done');
-          document.getElementById('centerLabelTop').textContent = 'Bundle';
-          document.getElementById('centerLabelMid').textContent = 'signed';
-          document.getElementById('centerLabelSub').textContent = 'Ed25519 ·';
-          renderCertificate(data);
-          renderVerdicts(data);
-          setStatus(`Verification complete. Bundle signed in ${elapsed}s. Anchored to the public transparency log.`, 'completed');
-          return;
+          if (data.status === 'completed') {
+            clearInterval(rotator); rotator = null;
+            AGENTS.forEach(a => setAgentState(a.id, 'done'));
+            MESH_CENTER.classList.add('done');
+            document.getElementById('centerLabelTop').textContent = 'Bundle';
+            document.getElementById('centerLabelMid').textContent = 'signed';
+            document.getElementById('centerLabelSub').textContent = 'Ed25519 ·';
+            renderCertificate(data);
+            renderVerdicts(data);
+            setStatus(`Verification complete. Bundle signed in ${elapsed}s. Anchored to the public transparency log.`, 'completed');
+            return;
+          }
+          if (data.status === 'failed' || data.status === 'canceled') {
+            clearInterval(rotator); rotator = null;
+            setStatus(`Task ${data.status}. ${data.error || ''}`, 'failed');
+            return;
+          }
         }
-        if (data.status === 'failed' || data.status === 'canceled') {
-          setStatus(`Task ${data.status}. ${data.error || ''}`, 'failed');
-          return;
-        }
+      } finally {
+        if (rotator) clearInterval(rotator);
       }
     }
 
@@ -824,6 +842,10 @@
       const urn = out.bundle_urn || '—';
       const issuer = out.issuer || '—';
       const signerDid = parseSignerFromSig(signature) || 'did:web:mesh-api-40952019806.us-central1.run.app#owner';
+      // G20 P1: chain anchor is sha256(bundle_hash + ':' + prev_chain_anchor),
+      // not the bundle hash. Falls back to bundle_hash for backward-compat with
+      // older revisions that don't return chain_anchor yet.
+      const chainAnchor = data.chain_anchor || bundleHash;
 
       CERT_EMPTY.style.display = 'none';
       // Wax seal SVG (renaissance-style emblem of three interconnected nodes)
@@ -873,10 +895,10 @@
         <div class="chain-anchor-row">
           <div class="chain-eyebrow">Transparency log · chain anchor</div>
           <div class="chain-short" id="chainShort" onclick="toggleChain()" title="Click to expand and copy">
-            ${escapeHtml(shortHash(bundleHash))}
+            ${escapeHtml(shortHash(chainAnchor))}
             <span class="copy-hint">click to expand</span>
           </div>
-          <div class="chain-long" id="chainLong">${escapeHtml(bundleHash)}</div>
+          <div class="chain-long" id="chainLong">${escapeHtml(chainAnchor)}</div>
         </div>
       `;
     }
@@ -916,6 +938,16 @@
         const violCls = comp.violation_flag ? 'violation' : 'ok';
         const violText = comp.violation_flag ? 'FTC §255 risk' : 'FTC §255 clear';
         const verdictCls = aud.verdict === 'PASS' ? 'ok' : (aud.verdict === 'FAIL' ? 'violation' : 'amber');
+        // G20 P3a: audit verdict is direction-only (does the claim's stated
+        // direction match the cited literature?) — it is not an endorsement of
+        // evidence sufficiency. Surface a low-evidence banner when citations=0
+        // or vet score is below the escalation threshold so a PASS doesn't
+        // read as "approved" to a non-technical viewer.
+        const vetScore = typeof vet.score === 'number' ? vet.score : null;
+        const lowEvidence = pmidCount === 0 || (vetScore !== null && vetScore < 3);
+        const evidenceNote = lowEvidence
+          ? `<div class="low-evidence"><b>Audit verdict is directional only.</b> ${pmidCount === 0 ? 'No PubMed citations were located for this claim. ' : ''}${vetScore !== null && vetScore < 3 ? `Vet rubric scored ${vetScore}/5 — escalated to human review. ` : ''}A PASS here means the claim's direction matches what evidence exists; it is not a sufficiency endorsement.</div>`
+          : '';
         const row = document.createElement('div');
         row.className = 'verdict-row';
         row.innerHTML = `
@@ -927,7 +959,8 @@
             <div class="verdict-stat"><div class="stat-label">Citations</div><div class="stat-value">${pmidCount} PubMed</div></div>
             <div class="verdict-stat"><div class="stat-label">Vet rubric</div><div class="stat-value">${vet.score ?? '—'} / 5${vet.escalate_to_human_vet ? ' · escalate' : ''}</div></div>
             <div class="verdict-stat"><div class="stat-label">FTC mapping</div><div class="stat-value ${violCls}">${escapeHtml(comp.ftc_section || violText)}</div></div>
-            <div class="verdict-stat"><div class="stat-label">Audit verdict</div><div class="stat-value ${verdictCls}">${escapeHtml(aud.verdict || '—')}</div></div>
+            <div class="verdict-stat"><div class="stat-label">Audit</div><div class="stat-value ${verdictCls}">${escapeHtml(aud.verdict || '—')} · directional</div></div>
+            ${evidenceNote}
           </div>
         `;
         VERDICT_LIST.appendChild(row);

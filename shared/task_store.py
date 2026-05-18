@@ -24,6 +24,7 @@ class TaskState:
     error: Optional[str] = None
     bundle_hash: Optional[str] = None
     bundle_signature: Optional[str] = None
+    chain_anchor: Optional[str] = None
     created_at: float = field(default_factory=time.time)
     completed_at: Optional[float] = None
     input: dict[str, Any] = field(default_factory=dict)
@@ -57,6 +58,7 @@ class TaskStore:
         error: Optional[str] = None,
         bundle_hash: Optional[str] = None,
         bundle_signature: Optional[str] = None,
+        chain_anchor: Optional[str] = None,
     ) -> None:
         async with self._lock:
             state = self._tasks.get(task_id)
@@ -76,6 +78,8 @@ class TaskStore:
                 state.bundle_hash = bundle_hash
             if bundle_signature is not None:
                 state.bundle_signature = bundle_signature
+            if chain_anchor is not None:
+                state.chain_anchor = chain_anchor
 
     async def _purge_expired_unlocked(self) -> None:
         """Caller must hold the lock."""
