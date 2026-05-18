@@ -1,0 +1,50 @@
+[05/18/26 01:49:02] INFO     AFC is enabled with max remote       models.py:6323
+                             calls: 10.                                         
+[05/18/26 01:49:39] INFO     AFC is enabled with max remote       models.py:6323
+                             calls: 10.                                         
+[orchestrator] Step 1: claim extraction from https://www.nativepet.com/products/hip-joint
+[orchestrator] Extracted 5 claims
+[orchestrator] Step 2: parallel fan-out across 5 claims...
+[orchestrator] Step 3: assemble bundle
+
+=== PawConscious Mesh — Bundle for https://www.nativepet.com/products/hip-joint ===
+
+Issued at: 2026-05-18T05:49:49.525441Z
+Issuer: did:web:pawconscious.com
+Total claims: 5
+
+Audit verdicts: 4 PASS / 1 CONDITIONAL / 0 FAIL
+Compliance flags: 2 violations
+Vet escalations: 5 claims need human vet review
+
+--- Per-claim detail ---
+
+1. [efficacy] 'Hip+Joint Inflammatory Care'
+   Evidence: 7 papers (real PMIDs)
+   Vet: 2/5 ESCALATE
+   Compliance: FTC §255.1 General ⚠ VIOLATION
+   Audit: PASS
+
+2. [efficacy] 'Targeted support for dogs with occasional joint discomfort or flare-ups.'
+   Evidence: 7 papers (real PMIDs)
+   Vet: 2/5 ESCALATE
+   Compliance: FTC §255.1 General 
+   Audit: PASS
+
+3. [efficacy] 'Helps ease stiffness by supporting a healthy inflammatory response.'
+   Evidence: 7 papers (real PMIDs)
+   Vet: 2/5 ESCALATE
+   Compliance: FTC §255.1 General ⚠ VIOLATION
+   Audit: CONDITIONAL (1 findings)
+
+4. [performance] "Dogs think it's a treat!"
+   Evidence: 7 papers (real PMIDs)
+   Vet: 1/5 ESCALATE
+   Compliance: FTC - 
+   Audit: PASS
+
+5. [efficacy] 'benefits that keep dogs doing everything they love'
+   Evidence: 6 papers (real PMIDs)
+   Vet: 1/5 ESCALATE
+   Compliance: FTC - 
+   Audit: PASS
