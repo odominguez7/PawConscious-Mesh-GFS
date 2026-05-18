@@ -7,8 +7,13 @@ node_modules/
 .DS_Store
 __pycache__/
 *.pyc
+*.pyo
+*.pyd
 .venv/
 venv/
+.python-version
+*.egg-info/
+*.egg
 dist/
 build/
 .vercel
@@ -29,3 +34,6 @@ service-account-*.json
 gcp-creds*.json
 research/raw/
 .cache/
+.adk-cache/
+.gemini-cache/
+.cloud-run-temp/
