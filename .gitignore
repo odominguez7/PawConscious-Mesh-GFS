@@ -37,3 +37,4 @@ research/raw/
 .adk-cache/
 .gemini-cache/
 .cloud-run-temp/
+.gstack/
