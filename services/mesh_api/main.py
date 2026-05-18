@@ -40,6 +40,10 @@ from shared.pcec_schema import EndorsementClaimBundle
 
 DEMO_API_KEY = os.environ.get("ACP_DEMO_API_KEY", "demo-key-2026-06")
 SERVICE_VERSION = "0.1.0"
+PUBLIC_BASE_URL = os.environ.get(
+    "ACP_PUBLIC_BASE_URL",
+    "https://mesh-api-40952019806.us-central1.run.app",
+)
 
 # Real Ed25519 public key — generated 2026-05-18, private in GCP Secret Manager
 # acp-bundle-signer-ed25519 (project pawconscious-mesh-2026)
@@ -70,7 +74,7 @@ A2A_AGENT_CARD = {
         "A2A trust mesh for expert-claim commerce. Verify endorsement claims on commerce "
         "SKUs against signed PCEC v0.1 evidence bundles. Pet supplement reference deployment."
     ),
-    "url": "https://mesh.pawconscious.com/a2a/v1",  # populates after Phase 5 deploy
+    "url": f"{PUBLIC_BASE_URL}/a2a/v1",
     "version": SERVICE_VERSION,
     "provider": {
         "organization": "PawConscious",
@@ -143,12 +147,12 @@ DID_DOC = {
         {
             "id": "did:web:pawconscious.com#pcec-resolver",
             "type": "PCECResolver",
-            "serviceEndpoint": "https://mesh.pawconscious.com/pcec/v0",
+            "serviceEndpoint": f"{PUBLIC_BASE_URL}/pcec/v0",
         },
         {
             "id": "did:web:pawconscious.com#a2a-mesh",
             "type": "A2AMeshEndpoint",
-            "serviceEndpoint": "https://mesh.pawconscious.com/a2a/v1",
+            "serviceEndpoint": f"{PUBLIC_BASE_URL}/a2a/v1",
         },
     ],
 }
@@ -266,16 +270,23 @@ async def a2a_send(
 # ---------------------------------------------------------------------------
 
 @app.get("/pcec/v0/claim/{urn}")
-async def resolve_claim(urn: str) -> dict[str, Any]:
-    """PCEC v0.1 resolver — returns signed bundle by URN. Phase 5 wires Firestore."""
-    return {
-        "urn": urn,
-        "status": "not_implemented_in_v0.1_local",
-        "note": (
-            "v0.1 resolver requires Firestore-backed transparency log (Phase 5 Cloud Run deployment). "
-            "For local testing, call POST /a2a/v1/tasks/send to issue + receive a bundle in one call."
-        ),
-    }
+async def resolve_claim(urn: str) -> JSONResponse:
+    """PCEC v0.1 resolver — Phase 5.5 wires Firestore. Per codex G12 #4 returns RFC 7807 problem detail."""
+    return JSONResponse(
+        status_code=501,
+        content={
+            "type": "https://github.com/odominguez7/PawConscious-Mesh-GFS/blob/main/docs/PCEC-v0.md#future-work",
+            "title": "Resolver not implemented in v0.1",
+            "status": 501,
+            "detail": (
+                "PCEC v0.1 resolver requires a Firestore-backed transparency log of issued bundles "
+                "(Phase 5.5 work). For end-to-end issuance + retrieval, POST /a2a/v1/tasks/send "
+                "returns the full signed bundle inline. The resolver endpoint will activate when "
+                "the transparency log lands post-hackathon."
+            ),
+            "urn": urn,
+        },
+    )
 
 
 # ---------------------------------------------------------------------------
