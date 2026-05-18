@@ -86,7 +86,7 @@ async def call_verify_claim(client: httpx.AsyncClient, product_url: str, max_cla
         f"{MESH_URL}/a2a/v1/tasks/send",
         json=payload,
         headers=headers,
-        timeout=180.0,  # mesh fan-out can take 60-90s
+        timeout=270.0,  # mesh fan-out scales with claim count + PubMed latency
     )
     latency_ms = int((time.monotonic() - t0) * 1000)
     response.raise_for_status()

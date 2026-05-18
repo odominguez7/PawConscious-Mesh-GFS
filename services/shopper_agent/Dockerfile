@@ -12,9 +12,9 @@ RUN pip install --no-cache-dir --upgrade pip && \
 
 COPY services/shopper_agent/ ./services/shopper_agent/
 
-ENV PORT=8081
 ENV PYTHONUNBUFFERED=1
 
-EXPOSE 8081
+EXPOSE 8080
 
-CMD ["uvicorn", "services.shopper_agent.main:app", "--host", "0.0.0.0", "--port", "8081"]
+# Cloud Run injects PORT env var; sh -c expands it
+CMD exec uvicorn services.shopper_agent.main:app --host 0.0.0.0 --port ${PORT:-8080}
