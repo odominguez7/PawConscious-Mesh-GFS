@@ -29,16 +29,24 @@
 | 01:48 | BioMCP 0.7.3 installed | ✅ |
 | 01:52 | evidence-grader debugged (capped PubMed terms, fixed JSON parsing) | ✅ |
 | 01:54 | evidence-grader **LIVE** — 4 real PMIDs graded against joint claim | ✅ |
-| 01:55 | Phase 2 complete; codex G9 firing | 🔄 |
+| 01:55 | Phase 2 complete; codex G9 firing | ✅ |
+| 01:58 | G9 returned **CLEAR-WITH-AMENDMENTS** (MCP-server-wrap + Asta deferred to Phase 2.5) | ✅ |
+| 02:00 | G9 absorbed: RUN.md + llm_retry.py | ✅ |
+| 02:02 | vet_panel.py **LIVE** — real scoring (3/5, 2/5, 1/5) with escalation logic | ✅ |
+| 02:04 | compliance.py **LIVE** — FTC §255 + AAFCO + NASC mapping working | ✅ |
+| 02:06 | auditor.py **LIVE** — PASS clean, CONDITIONAL caught real direction mismatch | ✅ |
+| 02:08 | orchestrator.py **FULL END-TO-END** — 5 claims in 50s on real Native Pet PDP | ✅ |
+| 02:10 | Phase 3 complete; codex G10 firing | 🔄 |
 
 ## Phase status
 
 - **Phase 1 (Foundation):** ✅ DONE + codex G8 CLEAR
-- **Phase 2 (ADK scaffold + 2 production agents):** ✅ DONE — codex G9 in flight
-- **Phase 3 (3 thin agents + orchestrator):** ⏸ BLOCKED on G9
-- **Phase 4 (A2A endpoint + ShopperAgent):** ⏸ awaits Phase 3
+- **Phase 2 (ADK scaffold + 2 production agents):** ✅ DONE + codex G9 CLEAR-WITH-AMENDMENTS
+- **Phase 2.5 (MCP wrap + Asta enable):** ⏳ DEFERRED — non-blocking, surfaced in MORNING.md
+- **Phase 3 (3 thin agents + orchestrator):** ✅ DONE end-to-end against real PDP — codex G10 in flight
+- **Phase 4 (A2A endpoint + ShopperAgent):** ⏸ BLOCKED on G10
 - **Phase 5 (Cloud Run deployment):** ⏸ awaits Phase 4
-- **Phase 6 (polish):** ✅ Mostly DONE in parallel — outreach + video script + MORNING + Devpost text
+- **Phase 6 (polish):** ✅ Mostly DONE in parallel — outreach + video script + MORNING + Devpost text + RUN.md
 
 ## Confirmed working
 
