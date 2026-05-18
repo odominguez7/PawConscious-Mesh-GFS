@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<title>PawConscious Mesh — Investor Pitch</title>
+<title>PawConscious — Investor Pitch</title>
 <meta name="viewport" content="width=1920">
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -28,19 +28,18 @@
         <div class="seal">
           <div class="seal-mesh">
             <svg viewBox="0 0 100 100" fill="none">
-              <!-- Three node mesh, two thin connecting lines -->
-              <line x1="22" y1="68" x2="78" y2="68" stroke="rgba(245,220,170,0.5)" stroke-width="1.5"/>
-              <line x1="22" y1="68" x2="50" y2="26" stroke="rgba(245,220,170,0.5)" stroke-width="1.5"/>
-              <line x1="78" y1="68" x2="50" y2="26" stroke="rgba(245,220,170,0.5)" stroke-width="1.5"/>
-              <circle cx="50" cy="26" r="6" fill="rgba(245,220,170,0.92)"/>
-              <circle cx="22" cy="68" r="6" fill="rgba(245,220,170,0.92)"/>
-              <circle cx="78" cy="68" r="6" fill="rgba(245,220,170,0.92)"/>
+              <!-- Editorial paw silhouette: wider flatter palm, elongated toes, slight asymmetry -->
+              <ellipse cx="50" cy="70" rx="28" ry="15" fill="rgba(245,220,170,0.92)"/>
+              <ellipse cx="22" cy="42" rx="7"   ry="11"   fill="rgba(245,220,170,0.92)"/>
+              <ellipse cx="40" cy="26" rx="6.5" ry="11.5" fill="rgba(245,220,170,0.92)"/>
+              <ellipse cx="60" cy="26" rx="6.5" ry="11.5" fill="rgba(245,220,170,0.92)"/>
+              <ellipse cx="78" cy="42" rx="7"   ry="11"   fill="rgba(245,220,170,0.92)"/>
             </svg>
           </div>
         </div>
       </div>
 
-      <div class="wordmark">PawConscious&nbsp;Mesh</div>
+      <div class="wordmark">PawConscious</div>
       <div class="subhead">The verifiable claim infrastructure for consumer goods<br>starting with pet</div>
     </div>
 
@@ -63,12 +62,12 @@
     <div class="hook-left">
       <div>
         <div class="eyebrow"><span class="dot"></span> 01 · Hook<span class="rule"></span>Business overview</div>
-        <h1 class="display" style="font-size:96px;max-width:1100px;">
+        <h1 class="display" style="font-size:76px;max-width:840px;">
           The trust layer every AI agent will call before it recommends a consumer product
         </h1>
       </div>
 
-      <p class="display-italic" style="font-size:34px;color:var(--moss);max-width:1050px;">
+      <p class="display-italic" style="font-size:30px;color:var(--moss);max-width:780px;">
         Starting with pet supplements, where the lawsuits already landed
       </p>
     </div>
@@ -101,9 +100,11 @@
             <div class="seal" style="width:56px;height:56px;box-shadow:inset -2px -3px 6px rgba(70,40,4,.55), inset 2px 2px 4px rgba(255,220,160,.18);">
               <div class="seal-mesh">
                 <svg viewBox="0 0 100 100" fill="none">
-                  <circle cx="50" cy="26" r="9" fill="rgba(245,220,170,.92)"/>
-                  <circle cx="22" cy="68" r="9" fill="rgba(245,220,170,.92)"/>
-                  <circle cx="78" cy="68" r="9" fill="rgba(245,220,170,.92)"/>
+                  <ellipse cx="50" cy="70" rx="28" ry="15" fill="rgba(245,220,170,0.92)"/>
+                  <ellipse cx="22" cy="42" rx="7"   ry="11"   fill="rgba(245,220,170,0.92)"/>
+                  <ellipse cx="40" cy="26" rx="6.5" ry="11.5" fill="rgba(245,220,170,0.92)"/>
+                  <ellipse cx="60" cy="26" rx="6.5" ry="11.5" fill="rgba(245,220,170,0.92)"/>
+                  <ellipse cx="78" cy="42" rx="7"   ry="11"   fill="rgba(245,220,170,0.92)"/>
                 </svg>
               </div>
             </div>
@@ -186,77 +187,61 @@
     <div class="value-left">
       <div>
         <div class="eyebrow"><span class="dot"></span> 03 · Value proposition<span class="rule"></span>What we built</div>
-        <h1 class="display" style="font-size:92px;max-width:1300px;">
-          URL in. Signed evidence bundle out. <span style="color:var(--amber);">90 seconds.</span>
+        <h1 class="display" style="font-size:80px;max-width:1300px;">
+          Paste a product URL and PawConscious returns a signed evidence bundle in 90 seconds
         </h1>
       </div>
 
-      <div style="flex:1;display:flex;flex-direction:column;justify-content:center;padding:0 20px;">
-        <svg viewBox="0 0 800 320" fill="none" preserveAspectRatio="xMidYMid meet" style="width:100%;max-height:340px;">
-          <!-- Input chip (left) -->
-          <rect x="20" y="135" width="120" height="50" fill="none" stroke="#1A1D1E" stroke-width="1.5" rx="2"/>
-          <text x="80" y="165" font-family="JetBrains Mono" font-size="12" font-weight="600" fill="#1A1D1E" text-anchor="middle" letter-spacing="2">URL</text>
-          <text x="80" y="208" font-family="JetBrains Mono" font-size="9" fill="#53565A" text-anchor="middle" letter-spacing="2">T = 0s</text>
-
-          <!-- Arrow in -->
-          <line x1="148" y1="160" x2="200" y2="160" stroke="#A6701A" stroke-width="2"/>
-          <path d="M195 154 L205 160 L195 166" fill="none" stroke="#A6701A" stroke-width="2"/>
-
-          <!-- Mesh connectors -->
-          <g stroke="rgba(26,29,30,0.5)" stroke-width="1.2">
-            <line x1="290" y1="80" x2="400" y2="160"/>
-            <line x1="290" y1="160" x2="400" y2="160"/>
-            <line x1="290" y1="240" x2="400" y2="160"/>
-            <line x1="400" y1="160" x2="510" y2="100"/>
-            <line x1="400" y1="160" x2="510" y2="220"/>
-          </g>
-
-          <!-- 5 agent nodes -->
-          <circle cx="290" cy="80" r="22" fill="#1A1D1E"/>
-          <text x="290" y="86" font-family="JetBrains Mono" font-size="15" font-weight="600" fill="#F2EDE0" text-anchor="middle">1</text>
-          <text x="328" y="86" font-family="Geist" font-size="17" font-weight="500" fill="#1A1D1E">Claim extractor</text>
-
-          <circle cx="290" cy="160" r="22" fill="#A6701A"/>
-          <text x="290" y="166" font-family="JetBrains Mono" font-size="15" font-weight="600" fill="#F2EDE0" text-anchor="middle">2</text>
-          <text x="328" y="166" font-family="Geist" font-size="17" font-weight="500" fill="#1A1D1E">Evidence grader · PubMed</text>
-
-          <circle cx="290" cy="240" r="22" fill="#A6701A"/>
-          <text x="290" y="246" font-family="JetBrains Mono" font-size="15" font-weight="600" fill="#F2EDE0" text-anchor="middle">3</text>
-          <text x="328" y="246" font-family="Geist" font-size="17" font-weight="500" fill="#1A1D1E">Vet panel · 5 vet rubric</text>
-
-          <circle cx="510" cy="100" r="22" fill="#1A1D1E"/>
-          <text x="510" y="106" font-family="JetBrains Mono" font-size="15" font-weight="600" fill="#F2EDE0" text-anchor="middle">4</text>
-          <text x="548" y="106" font-family="Geist" font-size="17" font-weight="500" fill="#1A1D1E">Compliance · FTC §255</text>
-
-          <circle cx="510" cy="220" r="22" fill="#A6701A"/>
-          <text x="510" y="226" font-family="JetBrains Mono" font-size="15" font-weight="600" fill="#F2EDE0" text-anchor="middle">5</text>
-          <text x="548" y="226" font-family="Geist" font-size="17" font-weight="500" fill="#1A1D1E">Auditor · catches hallucinations</text>
-
-          <!-- Arrow out -->
-          <line x1="660" y1="160" x2="712" y2="160" stroke="#A6701A" stroke-width="2"/>
-          <path d="M707 154 L717 160 L707 166" fill="none" stroke="#A6701A" stroke-width="2"/>
-
-          <!-- Output chip (right) -->
-          <rect x="720" y="120" width="70" height="80" fill="#A6701A" stroke="#A6701A" stroke-width="1.5" rx="2"/>
-          <text x="755" y="156" font-family="JetBrains Mono" font-size="10" font-weight="600" fill="#F2EDE0" text-anchor="middle" letter-spacing="1.5">SIGNED</text>
-          <text x="755" y="172" font-family="JetBrains Mono" font-size="10" font-weight="600" fill="#F2EDE0" text-anchor="middle" letter-spacing="1.5">BUNDLE</text>
-          <text x="755" y="220" font-family="JetBrains Mono" font-size="9" fill="#53565A" text-anchor="middle" letter-spacing="2">T = 90s</text>
-        </svg>
+      <!-- Terminal mock: literal pawconscious verify command + signed JSON output -->
+      <div style="flex:1;display:flex;flex-direction:column;justify-content:center;padding:14px 18px;background:var(--paper-edge);border:1px solid rgba(26,29,30,0.2);font-family:var(--mono);font-size:16px;line-height:1.55;color:var(--slate);">
+        <div style="color:var(--moss);opacity:0.8;margin-bottom:8px;">$ curl https://chewy.com/.../joint-supplement \</div>
+        <div style="color:var(--moss);opacity:0.8;margin-bottom:14px;">&nbsp;&nbsp;&nbsp;&nbsp;| pawconscious verify</div>
+        <div>{</div>
+        <div>&nbsp;&nbsp;"claims": [</div>
+        <div>&nbsp;&nbsp;&nbsp;&nbsp;{ "id": "1", "text": "supports joint mobility",</div>
+        <div>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"citations": ["PMID:31234567", "PMID:32345678"],</div>
+        <div>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"vet_score": 4.2, "ftc_255": "PASS",</div>
+        <div>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"verdict": <span style="color:var(--amber);font-weight:600;">"SIGNED"</span> }</div>
+        <div>&nbsp;&nbsp;],</div>
+        <div>&nbsp;&nbsp;"signature": "ed25519:0x4a2f...",</div>
+        <div>&nbsp;&nbsp;"bundle": "PCEC-v0.1",</div>
+        <div>&nbsp;&nbsp;"issued": "2026-05-18T14:32:00Z"</div>
+        <div>}</div>
       </div>
     </div>
 
     <div class="value-right">
-      <div class="mechanic" style="border-top:1px solid var(--slate);padding-top:18px;">
-        <div class="label">Google Cloud native</div>
-        <div class="body" style="font-size:19px;">ADK 2.0 · Gemini 2.5 Pro · A2A v0.3.</div>
+      <div style="color:var(--moss);font-family:var(--mono);font-size:13px;text-transform:uppercase;letter-spacing:0.2em;margin-bottom:10px;">The five agents</div>
+      <div style="display:flex;flex-direction:column;gap:14px;padding-bottom:18px;border-bottom:1px solid rgba(26,29,30,0.22);">
+        <div style="display:grid;grid-template-columns:24px 1fr;gap:10px;align-items:baseline;">
+          <span style="font-family:var(--mono);font-size:13px;color:var(--slate);font-weight:600;">01</span>
+          <div><strong style="font-family:var(--sans);font-weight:500;font-size:17px;">Claim extractor</strong> <span style="color:var(--slate);opacity:0.7;font-size:15px;">pulls every health claim from the PDP</span></div>
+        </div>
+        <div style="display:grid;grid-template-columns:24px 1fr;gap:10px;align-items:baseline;">
+          <span style="font-family:var(--mono);font-size:13px;color:var(--slate);font-weight:600;">02</span>
+          <div><strong style="font-family:var(--sans);font-weight:500;font-size:17px;">Evidence grader</strong> <span style="color:var(--slate);opacity:0.7;font-size:15px;">live PubMed via BioMCP</span></div>
+        </div>
+        <div style="display:grid;grid-template-columns:24px 1fr;gap:10px;align-items:baseline;">
+          <span style="font-family:var(--mono);font-size:13px;color:var(--slate);font-weight:600;">03</span>
+          <div><strong style="font-family:var(--sans);font-weight:500;font-size:17px;">Vet panel</strong> <span style="color:var(--slate);opacity:0.7;font-size:15px;">five academic vets, stipend funded</span></div>
+        </div>
+        <div style="display:grid;grid-template-columns:24px 1fr;gap:10px;align-items:baseline;">
+          <span style="font-family:var(--mono);font-size:13px;color:var(--slate);font-weight:600;">04</span>
+          <div><strong style="font-family:var(--sans);font-weight:500;font-size:17px;">Compliance mapper</strong> <span style="color:var(--slate);opacity:0.7;font-size:15px;">FTC §255, AAFCO, NASC</span></div>
+        </div>
+        <div style="display:grid;grid-template-columns:24px 1fr;gap:10px;align-items:baseline;">
+          <span style="font-family:var(--mono);font-size:13px;color:var(--slate);font-weight:600;">05</span>
+          <div><strong style="font-family:var(--sans);font-weight:500;font-size:17px;">Auditor</strong> <span style="color:var(--slate);opacity:0.7;font-size:15px;">catches hallucinated citations</span></div>
+        </div>
+      </div>
+
+      <div class="mechanic" style="padding-top:18px;">
+        <div class="label" style="color:var(--slate);">Google Cloud native</div>
+        <div class="body" style="font-size:18px;">ADK 2.0 · Gemini 2.5 Pro · A2A v0.3</div>
       </div>
       <div class="mechanic">
-        <div class="label">Real citations</div>
-        <div class="body" style="font-size:19px;">Live PubMed. Five-vet rubric. FTC §255.</div>
-      </div>
-      <div class="mechanic">
-        <div class="label">Verifiable from brand DID</div>
-        <div class="body" style="font-size:19px;">Every bundle Ed25519 signed.</div>
+        <div class="label" style="color:var(--slate);">Verifiable from brand DID</div>
+        <div class="body" style="font-size:18px;">Every bundle Ed25519 signed</div>
       </div>
     </div>
 
@@ -276,7 +261,7 @@
     <div class="team-head">
       <div class="eyebrow"><span class="dot"></span> 04 · Team<span class="rule"></span>Why we win</div>
       <h1 class="display" style="font-size:60px;max-width:1720px;">
-        Two MIT Sloan cofounders who have shipped in this segment.
+        Two MIT Sloan cofounders who have already shipped in this segment
       </h1>
     </div>
 
@@ -317,12 +302,9 @@
       Two MIT Sloan operators. One built the protocol. One scaled the brand.
     </p>
 
-    <div class="acad-strip">
-      <div class="acad-lbl">Academic credibility panel</div>
-      <div class="acad-inst">Tufts Cummings<small>School of Veterinary Medicine</small></div>
-      <div class="acad-inst">Cornell University<small>College of Veterinary Medicine</small></div>
-      <div class="acad-inst">University of Pennsylvania<small>PennVet</small></div>
-      <div class="acad-inst">MIT Sloan<small>School of Management</small></div>
+    <div style="border-top:1px solid rgba(26,29,30,0.25);padding-top:18px;display:flex;justify-content:space-between;align-items:baseline;font-family:var(--mono);font-size:13px;letter-spacing:0.22em;text-transform:uppercase;color:var(--slate);opacity:0.6;">
+      <span style="color:var(--moss);">Academic credibility panel</span>
+      <span>MIT Sloan · Tufts Cummings · Cornell CVM · University of Pennsylvania</span>
     </div>
 
     <div class="team-footer">
@@ -342,7 +324,7 @@
     <div>
       <div class="eyebrow"><span class="dot"></span> 05 · Business model<span class="rule"></span>How we make money</div>
       <h1 class="display" style="font-size:88px;max-width:1620px;">
-        Brands pay. Retailers pay. Insurers pay. Agents call free.
+        Brands pay, retailers pay, insurers pay, and every AI agent calls the protocol free
       </h1>
     </div>
 
@@ -416,16 +398,16 @@
       <div>
         <div class="eyebrow"><span class="dot"></span> 06 · Go to market<span class="rule"></span>How we get customers</div>
         <h1 class="display" style="font-size:82px;max-width:1620px;">
-          Founder sells to founder. Fifty pet brands in twelve months.
+          Founder sells to founder, fifty pet brands signed in twelve months
         </h1>
       </div>
 
       <div class="timeline" style="margin-top:32px;max-width:1500px;">
-        <div class="t-marker amber">
+        <div class="t-marker">
           <div class="when">Q3 2026 · live now</div>
           <div class="what">First 10 paying pilots. Founder sold.</div>
         </div>
-        <div class="t-marker amber">
+        <div class="t-marker">
           <div class="when">Q4 2026</div>
           <div class="what">50 paying brands. NASC bulletin opens. Seed closed.</div>
         </div>
@@ -471,50 +453,50 @@
     <div>
       <div class="eyebrow"><span class="dot"></span> 07 · Market size<span class="rule"></span>Beachhead and expansion</div>
       <h1 class="display" style="font-size:88px;max-width:1620px;">
-        $19.3B core. One protocol. Mechanical expansion.
+        A $19.3B core market expanded mechanically by one protocol
       </h1>
     </div>
 
     <!-- TAM layer chart: 4 stacked horizontal bars sized by TAM -->
     <div style="display:flex;flex-direction:column;gap:18px;flex:1;justify-content:center;padding:0 20px;">
 
-      <!-- SMB beachhead -->
+      <!-- SMB beachhead — full slate fill + moss outline = "where we start" -->
       <div style="display:grid;grid-template-columns:280px 1fr 180px;align-items:center;gap:24px;">
         <div>
           <div style="font-family:var(--mono);font-size:11px;letter-spacing:.22em;text-transform:uppercase;color:var(--moss);">Beachhead</div>
           <div style="font-family:var(--serif);font-size:26px;color:var(--slate);line-height:1.1;margin-top:6px;">Pet brands · per claim</div>
         </div>
-        <div style="background:var(--amber);height:64px;width:18%;display:flex;align-items:center;padding:0 18px;color:var(--vellum);font-family:var(--mono);font-size:13px;letter-spacing:.18em;text-transform:uppercase;outline:4px solid var(--moss);outline-offset:-4px;">Where we start</div>
+        <div style="background:var(--paper-edge);height:64px;width:18%;display:flex;align-items:center;padding:0 18px;color:var(--slate);font-family:var(--mono);font-size:13px;letter-spacing:.18em;text-transform:uppercase;outline:3px solid var(--moss);outline-offset:-3px;">Where we start</div>
         <div style="font-family:var(--mono);font-size:36px;font-weight:600;color:var(--slate);font-feature-settings:'tnum';letter-spacing:-0.02em;">$1.5B</div>
       </div>
 
-      <!-- Pro -->
+      <!-- Pro — full slate fill, no opacity gradient -->
       <div style="display:grid;grid-template-columns:280px 1fr 180px;align-items:center;gap:24px;">
         <div>
           <div style="font-family:var(--mono);font-size:11px;letter-spacing:.22em;text-transform:uppercase;color:var(--moss);">Expansion · Year 2</div>
           <div style="font-family:var(--serif);font-size:26px;color:var(--slate);line-height:1.1;margin-top:6px;">Pet brands · continuous monitoring</div>
         </div>
-        <div style="background:rgba(166,112,26,0.7);height:64px;width:62%;display:flex;align-items:center;padding:0 18px;color:var(--vellum);font-family:var(--mono);font-size:13px;letter-spacing:.18em;text-transform:uppercase;">Mid market Pro tier</div>
+        <div style="background:var(--slate);height:64px;width:62%;display:flex;align-items:center;padding:0 18px;color:var(--vellum);font-family:var(--mono);font-size:13px;letter-spacing:.18em;text-transform:uppercase;">Mid market Pro tier</div>
         <div style="font-family:var(--mono);font-size:36px;font-weight:600;color:var(--slate);font-feature-settings:'tnum';letter-spacing:-0.02em;">$9.6B</div>
       </div>
 
-      <!-- Retailer -->
+      <!-- Retailer — full slate fill -->
       <div style="display:grid;grid-template-columns:280px 1fr 180px;align-items:center;gap:24px;">
         <div>
           <div style="font-family:var(--mono);font-size:11px;letter-spacing:.22em;text-transform:uppercase;color:var(--moss);">Expansion · Year 3</div>
           <div style="font-family:var(--serif);font-size:26px;color:var(--slate);line-height:1.1;margin-top:6px;">Retailer catalog platform</div>
         </div>
-        <div style="background:rgba(166,112,26,0.45);height:64px;width:32%;display:flex;align-items:center;padding:0 18px;color:var(--slate);font-family:var(--mono);font-size:13px;letter-spacing:.18em;text-transform:uppercase;">Chewy · Petco · Amazon</div>
+        <div style="background:var(--slate);height:64px;width:32%;display:flex;align-items:center;padding:0 18px;color:var(--vellum);font-family:var(--mono);font-size:13px;letter-spacing:.18em;text-transform:uppercase;">Chewy · Petco · Amazon</div>
         <div style="font-family:var(--mono);font-size:36px;font-weight:600;color:var(--slate);font-feature-settings:'tnum';letter-spacing:-0.02em;">$4.8B</div>
       </div>
 
-      <!-- Insurer -->
+      <!-- Insurer — full slate fill -->
       <div style="display:grid;grid-template-columns:280px 1fr 180px;align-items:center;gap:24px;">
         <div>
           <div style="font-family:var(--mono);font-size:11px;letter-spacing:.22em;text-transform:uppercase;color:var(--moss);">Expansion · Year 3+</div>
           <div style="font-family:var(--serif);font-size:26px;color:var(--slate);line-height:1.1;margin-top:6px;">Insurer claims feed</div>
         </div>
-        <div style="background:rgba(166,112,26,0.30);height:64px;width:20%;display:flex;align-items:center;padding:0 18px;color:var(--slate);font-family:var(--mono);font-size:13px;letter-spacing:.18em;text-transform:uppercase;">Trupanion · Nationwide</div>
+        <div style="background:var(--slate);height:64px;width:20%;display:flex;align-items:center;padding:0 18px;color:var(--vellum);font-family:var(--mono);font-size:13px;letter-spacing:.18em;text-transform:uppercase;">Trupanion · Nationwide</div>
         <div style="font-family:var(--mono);font-size:36px;font-weight:600;color:var(--slate);font-feature-settings:'tnum';letter-spacing:-0.02em;">$3.0B</div>
       </div>
 
@@ -537,7 +519,7 @@
       </div>
       <div style="display:flex;align-items:baseline;gap:14px;">
         <span style="font-family:var(--mono);font-size:13px;letter-spacing:.2em;text-transform:uppercase;color:var(--moss);">Total core</span>
-        <span style="font-family:var(--mono);font-size:44px;font-weight:600;color:var(--amber);font-feature-settings:'tnum';letter-spacing:-0.02em;">$19.3B</span>
+        <span style="font-family:var(--mono);font-size:44px;font-weight:600;color:var(--slate);font-feature-settings:'tnum';letter-spacing:-0.02em;">$19.3B</span>
       </div>
     </div>
 
@@ -556,9 +538,12 @@
 
     <div>
       <div class="eyebrow"><span class="dot"></span> 08 · Competition<span class="rule"></span>Why us, not them</div>
-      <h1 class="display" style="font-size:82px;max-width:1620px;">
-        Every existing trust mark is captured by the brand or priced out of the market.
+      <h1 class="display" style="font-size:72px;max-width:1620px;">
+        Every existing trust mark is captured by the brand it scores or stays human only
       </h1>
+      <p class="display-italic" style="font-size:30px;color:var(--moss);margin-top:14px;max-width:1500px;">
+        FrontrowMD proved the model in human supplements where the badge stays a PNG, we sign the bundle so any AI agent can call it
+      </p>
     </div>
 
     <div class="matrix" style="margin: 24px 96px 56px 96px;">
@@ -570,32 +555,38 @@
       <div class="quad-line-h"></div>
       <div class="quad-line-v"></div>
 
-      <!-- PawConscious Mesh in upper right -->
+      <!-- PawConscious upper right -->
       <div class="plot amber-plot" style="left:82%;top:22%;">
         <div class="dot amber"></div>
-        <div class="lab">PawConscious Mesh<small>Structural · A2A callable</small></div>
+        <div class="lab">PawConscious<small>Structural · A2A callable</small></div>
+      </div>
+
+      <!-- FrontrowMD lower middle — the human supplements analogue -->
+      <div class="plot" style="left:46%;top:74%;">
+        <div class="dot"></div>
+        <div class="lab" style="font-weight:500;">FrontrowMD<small>500+ DTC human brands, badge stays a PNG</small></div>
       </div>
 
       <!-- Truepic lower right -->
-      <div class="plot" style="left:78%;top:74%;">
+      <div class="plot" style="left:80%;top:78%;">
         <div class="dot"></div>
-        <div class="lab">Truepic<small>Verifies images, not claims</small></div>
+        <div class="lab">Truepic<small>C2PA verifies images, not claims</small></div>
       </div>
 
-      <!-- NSF / USP / ConsumerLab lower center -->
-      <div class="plot" style="left:62%;top:80%;">
+      <!-- NSF / USP / ConsumerLab lower right-of-center -->
+      <div class="plot" style="left:64%;top:84%;">
         <div class="dot"></div>
-        <div class="lab">NSF · USP · ConsumerLab<small>Real, slow, human only</small></div>
+        <div class="lab">NSF · USP · ConsumerLab<small>Real lab, slow, human only</small></div>
       </div>
 
-      <!-- Brand in-house quality teams center -->
-      <div class="plot" style="left:45%;top:48%;">
+      <!-- Brand in-house quality teams upper center -->
+      <div class="plot" style="left:30%;top:40%;">
         <div class="dot linen"></div>
-        <div class="lab" style="font-size:16px;">Brand quality<small>Conflicted</small></div>
+        <div class="lab" style="font-size:16px;">Brand quality<small>Conflicted by employer</small></div>
       </div>
 
       <!-- Trustpilot lower left -->
-      <div class="plot" style="left:16%;top:72%;">
+      <div class="plot" style="left:14%;top:74%;">
         <div class="dot signal"></div>
         <div class="lab" style="color:var(--signal);">Trustpilot<small>Pay to place</small></div>
       </div>
@@ -613,21 +604,21 @@
     <div class="edges">
       <div class="edge">
         <div class="n">1</div>
-        <div class="txt">Brands pay. Retailers pay. The vet panel is academic. The rubric cannot be purchased. Independence is structural.</div>
+        <div class="txt">FrontrowMD pays its clinicians in patient cash back so the panel stays soft, while our vet panel is stipend funded by PawConscious so the rubric is structurally independent</div>
       </div>
       <div class="edge">
         <div class="n">2</div>
-        <div class="txt">Callable by any A2A v0.3 agent. Rufus, Operator, Perplexity, Gemini Shopping integrate a protocol they already implement.</div>
+        <div class="txt">FrontrowMD ships a static PNG badge and a consumer chatbot, while every PawConscious bundle is Ed25519 signed JSON LD that any A2A v0.3 agent can call</div>
       </div>
       <div class="edge">
         <div class="n">3</div>
-        <div class="txt">PCEC spec is open MIT, on path to Linux Foundation. Adobe did this with C2PA. We do it with claims.</div>
+        <div class="txt">FrontrowMD is a proprietary marketplace, while the PCEC spec is open MIT on the same path to Linux Foundation that Adobe used to ship C2PA</div>
       </div>
     </div>
 
     <div class="slide-num">08 / 09</div>
     <div class="source">
-      Public pricing pages · Crunchbase · Industry interviews 2026
+      FrontrowMD public site 2026 · Truepic C2PA docs · NSF · USP · Trustpilot pricing pages
     </div>
   </div>
 </section>
@@ -641,7 +632,7 @@
     <div>
       <div class="eyebrow"><span class="dot"></span> 09 · Financing plan<span class="rule"></span>The ask</div>
       <h1 class="display" style="font-size:88px;max-width:1620px;">
-        Raising <span style="color:var(--amber);">$1.5M</span> to put the mesh in 50 paying brands in 12 months.
+        Raising <span style="color:var(--amber);">$1.5M</span> to put the mesh in 50 paying brands within 12 months
       </h1>
     </div>
 
@@ -664,7 +655,7 @@
     </div>
 
     <div>
-      <div class="caption" style="color:var(--amber);margin-bottom:8px;">Twelve month milestones</div>
+      <div class="caption" style="color:var(--moss);margin-bottom:8px;">Twelve month milestones</div>
       <div class="ms-wrap">
         <div class="ms-bar"></div>
         <div class="ms-arrow"></div>
@@ -694,7 +685,7 @@
     </div>
 
     <p class="closing">
-      The claim is the door. Behind it is the agentic trust infrastructure for consumer goods.
+      The claim is the door, and behind it is the agentic trust infrastructure for consumer goods
     </p>
 
     <div style="text-align:center;font-family:var(--mono);font-size:13px;text-transform:uppercase;letter-spacing:0.22em;color:var(--moss);opacity:0.6;margin-top:14px;">
@@ -705,12 +696,11 @@
       <div class="seal" style="width:140px;height:140px;opacity:.4;">
         <div class="seal-mesh">
           <svg viewBox="0 0 100 100" fill="none">
-            <line x1="22" y1="68" x2="78" y2="68" stroke="rgba(245,220,170,0.5)" stroke-width="1.5"/>
-            <line x1="22" y1="68" x2="50" y2="26" stroke="rgba(245,220,170,0.5)" stroke-width="1.5"/>
-            <line x1="78" y1="68" x2="50" y2="26" stroke="rgba(245,220,170,0.5)" stroke-width="1.5"/>
-            <circle cx="50" cy="26" r="6" fill="rgba(245,220,170,0.92)"/>
-            <circle cx="22" cy="68" r="6" fill="rgba(245,220,170,0.92)"/>
-            <circle cx="78" cy="68" r="6" fill="rgba(245,220,170,0.92)"/>
+            <ellipse cx="50" cy="70" rx="28" ry="15" fill="rgba(245,220,170,0.92)"/>
+            <ellipse cx="22" cy="42" rx="7"   ry="11"   fill="rgba(245,220,170,0.92)"/>
+            <ellipse cx="40" cy="26" rx="6.5" ry="11.5" fill="rgba(245,220,170,0.92)"/>
+            <ellipse cx="60" cy="26" rx="6.5" ry="11.5" fill="rgba(245,220,170,0.92)"/>
+            <ellipse cx="78" cy="42" rx="7"   ry="11"   fill="rgba(245,220,170,0.92)"/>
           </svg>
         </div>
       </div>

@@ -1,16 +1,18 @@
 /* ============================================================
-   PawConscious Mesh — Investor Pitch Deck
+   PawConscious — Investor Pitch Deck
    Design tokens + slide system. 1920×1080, 12-col grid.
+   v3.1: amber disciplined to signed/verified moments only.
    ============================================================ */
 
 :root {
-  /* Pantone-grade palette */
-  --vellum: #F2EDE0;
-  --slate:  #1A1D1E;
-  --moss:   #13322B;
-  --amber:  #A6701A;
-  --linen:  #C8C2B6;
-  --signal: #B17F60;
+  /* Pantone-grade palette — v3.1 disciplined */
+  --vellum:     #F2EDE0;
+  --paper-edge: #EAE3D2;   /* NEW: card backgrounds, dividers, depth */
+  --slate:      #1A1D1E;
+  --moss:       #13322B;
+  --amber:      #9C5E1A;   /* shifted from #A6701A — deeper burnt umber, distinct from Anthropic clay */
+  --linen:      #C8C2B6;
+  --signal:     #B17F60;
 
   /* Type stacks. Newsreader = Tiempos substitute,
      Geist = Söhne substitute, JetBrains Mono = Söhne Mono. */
@@ -357,7 +359,7 @@ deck-stage > section {
 /* ---------- 1. Hook ---------- */
 .hook {
   display: grid;
-  grid-template-columns: 8fr 4fr;
+  grid-template-columns: 6fr 6fr;
   gap: 64px;
   height: 100%;
 }
@@ -464,7 +466,7 @@ deck-stage > section {
   font-family: var(--mono);
   font-size: 160px;
   font-weight: 600;
-  color: var(--amber);
+  color: var(--slate);
   letter-spacing: -0.05em;
   line-height: 0.9;
   font-feature-settings: "tnum";
@@ -831,7 +833,7 @@ deck-stage > section {
   font-family: var(--mono);
   font-size: 56px;
   font-weight: 600;
-  color: var(--amber);
+  color: var(--slate);
   letter-spacing: -0.03em;
   line-height: 1;
   font-feature-settings: "tnum";
@@ -1324,6 +1326,8 @@ deck-stage > section {
   line-height: 1;
   font-feature-settings: "tnum";
 }
+
+/* Storyboard amber underline retired — S3 rewrite uses terminal mock, no amber rule */
 .use .desc {
   font-family: var(--sans);
   font-size: 17px;
