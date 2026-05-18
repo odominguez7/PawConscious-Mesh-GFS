@@ -85,28 +85,37 @@
 - Tools: Firecrawl MCP (PDP scrape), Gemini 3 Pro (claim extraction)
 - Output: structured `Claim[]` per PDP — claim text, claim kind (efficacy/safety/ingredient/expert), position on page
 
-### Agent: evidence-grader
+### Agent: evidence-grader (PRODUCTION-QUALITY)
 - Input: `Claim[]`
-- Tools:
-  - **BioMCP** (primary) — PubMed, Europe PMC, Semantic Scholar, ClinicalTrials.gov, MyVariant in one MCP
-  - **AI2 Asta MCP** (grading layer) — citation count, influential-citation count, citation graph
-  - **Gemini grounding** (situational) — open-web context
-- Output: per-claim `Evidence` — papers found, relevance scores, citation influence
+- Tools (dual path per codex G7 P0.2):
+  - **BioMCP** (primary, off-GCP) — PubMed, Europe PMC, Semantic Scholar, ClinicalTrials.gov in one MCP
+  - **PubMed-in-BigQuery + Vertex AI Search** (Google-first parallel path) — public PubMed dataset loaded into BigQuery, indexed by Vertex AI Search, queried via Gemini-grounded retrieval. Hits "first-party Google" rubric dimension judges look for.
+  - **AI2 Asta MCP** (grading layer) — citation count, influential-citation count
+  - **Gemini grounding with Google Search** (situational opener) — open-web context for breadth, never as sole source
+- Output: per-claim `Evidence` — papers found (real PMIDs), relevance scores, citation-influence ranking. Language is "automated draft triage," not "regulator-grade grading."
 
-### Agent: vet-panel
+### Agent: vet-panel (THIN per codex G7 P1.4)
 - Input: `Claim[]` + `Evidence`
-- Tools: Vertex AI Search over vet handbook corpus (Plumb's OSS subset + AAFCO public + NASC public), Gemini 3 Pro for rubric application
+- Tools: Gemini 3 Pro with a prompt-encoded 5-vet rubric simulation
 - Output: per-claim 1-5 rubric score, escalation flag for human-vet review
+- **No Vertex AI Search**, **no licensed handbook ingest**, **no Plumb's** — pure prompt-based for hackathon to avoid licensing risk (codex G7 P0.7)
 
-### Agent: compliance
+### Agent: compliance (THIN)
 - Input: `Claim[]`
-- Tools: Vertex AI Search over FTC §255 + NASC + AAFCO + state vet board corpus, Gemini 3 Pro
+- Tools: Vertex AI Search over **public-redistributable corpus only** — FTC 16 CFR §255 federal text (public domain), AAFCO public-side docs, NASC public-side seal program docs, FDA-CVM GFI public list
 - Output: per-claim regulator mapping, violation flags
+- **No member-only NASC content. No state vet board paid corpora.**
 
-### Agent: auditor (GUARDIAN Falsifier port)
+### Agent: auditor (Falsifier port, THIN per codex G7 P1.6)
 - Input: full merged bundle (claims + evidence + vet scores + compliance map)
-- Tools: ADK Eval (4 SOP gates), Gemini 2.5 Flash adversarial pass
-- Output: `AuditVerdict` (PASS/FAIL/CONDITIONAL) + findings list (cherry-pick detection, citation-existence check, claim-direction match, sample-size adequacy)
+- Tools: Gemini 2.5 Flash consistency check (NOT full ADK Eval — datasets don't exist in 18 days)
+- Output: `AuditVerdict` (PASS/FAIL/CONDITIONAL) — checks: citation existence (does the PMID actually exist), claim-direction match (does the paper support the direction claimed). No cherry-pick detection, no sample-size adequacy in v0.1.
+
+### Agent: ShopperAgent (DEMO-PURPOSE, separate service)
+- Input: user shopping intent (e.g., "best joint supplement for senior labs")
+- Tools: fetch `https://mesh.pawconscious.com/.well-known/agent-card.json`, call `verify_claim()` via A2A v0.3
+- Output: ranked product list with trust scores attached
+- **Source publicly committed to repo** so judges can verify the external A2A call is real, not staged. This is the live moment in the demo (codex G7 P0.4).
 
 ## Data layer
 

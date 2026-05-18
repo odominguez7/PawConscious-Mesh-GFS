@@ -1,6 +1,6 @@
 # PawConscious Mesh — Master Plan (validated)
 
-**Date:** 2026-05-17 · **Deadline:** 2026-06-05 (19 days) · **Status:** PROPOSED → pending codex G7 + Omar sign-off
+**Date:** 2026-05-18 · **Deadline:** 2026-06-05 (**18 days**) · **Status:** AMENDED post-codex-G7 → pending Omar sign-off
 **Author:** Claude Opus 4.7 · **Source research:** 4 parallel agents + Omar's own `reviews/v9-CEO-pivot.md` (Option E draft)
 
 This document supersedes the v1 plan at `/Users/odominguez7/Desktop/PawConscious-GFS/PLAN_GFS_PIVOT.md` (older sibling — Omar caught it for unsourced numbers and shallow moonshot framing). v2 here is built on validated research with inline citations.
@@ -21,10 +21,14 @@ This document supersedes the v1 plan at `/Users/odominguez7/Desktop/PawConscious
 
 ## VALIDATED VERDICT
 
-**Build `PawConscious Mesh` as the GFS submission. The brand name is PawConscious; the architecture is the agentic trust mesh ported from GUARDIAN + extended via the moonshot playbook (PCEC spec, signed VCs, PIM embed, A2A agent card, invisible billing).**
+**Build `PawConscious Mesh` as the GFS submission. PawConscious is the brand wrapper; the architecture is the agentic mesh ported from GUARDIAN + a deliberately-scoped subset of the moonshot playbook for hackathon-deliverable scope.**
 
-The 3-line pitch:
-> *Pet brands make health claims they can't substantiate. Plaintiffs' bar found this in 2024 and is collecting. PawConscious Mesh is the agentic infrastructure that turns any product URL into a regulator-grade signed substantiation bundle in 90 seconds, embeds via a Shopify/Klaviyo/Recharge integration the brand never sees as software, and exposes a public A2A agent card so every AI shopping agent calls our trust oracle for free.*
+The 3-line pitch (post-codex-G7, no overpromises):
+> *Pet brands make health claims they can't substantiate. Plaintiffs' bar found this in 2024 and is collecting (Cosequin $11.5M). PawConscious Mesh is multi-agent infrastructure that turns any product URL into an automated draft evidence bundle — cited papers, vet rubric, FTC §255 mapping, adversarial audit — with an A2A v0.3 agent card so any LLM agent can call our mesh.*
+
+**What the hackathon ships (deliverable June 5):** working 5-agent mesh on Google Cloud (ADK + Gemini + Agent Engine + Cloud Run + MCP + A2A) producing draft evidence bundles + signed certificate (software signing, single trust root) + public A2A agent card with one demo ShopperAgent exercising it + Mesh Console (mostly screen-recorded + one live A2A call).
+
+**What is roadmap, not demo:** PCEC v0.1 as a draft proposal doc (not a standard, single operator, no governance), Stripe metered billing (flat per-cert pricing in demo), Linux Foundation donation path, founding-member program, Shopify/Akeneo/Klaviyo/Recharge integrations, NASC technical bulletin, HSM signing, transparency log beyond append-only list, real third-party integrations with Perplexity/Rufus/ChatGPT/Gemini Shopping (none promised).
 
 ---
 
@@ -34,17 +38,19 @@ The 3-line pitch:
 **KILL the wild-reserve framing. KEEP the agentic architecture by porting it onto PawConscious.** Your own `reviews/v9-CEO-pivot.md` Option E was already heading here. Cam research locked the surface to SDZWA Camzone (zoos, not reserves) and the producer rejected proxies/Veo simulations. The architecture is sound, the input data is structurally constrained. Pet product URLs are infinite, public, and structurally unconstrained.
 
 ### 2. Strongest hackathon-winning concept
-**PawConscious Mesh — A2A trust mesh for expert-claim commerce.** Five ADK agents:
+**PawConscious Mesh — A2A multi-agent mesh for expert-claim commerce.** Five ADK agents with declared depth (per codex G7 P1.4):
 
-| Agent | Tools | Defensible signal it produces |
+| Agent | Tools | Hackathon depth |
 |---|---|---|
-| `claim-extractor` | Firecrawl MCP + Gemini 3 Pro | Structured claims list per SKU |
-| `evidence-grader` | **BioMCP + AI2 Asta MCP** + Gemini grounding | Per-claim score: peer-reviewed papers found, citation count, influential-citation count |
-| `vet-panel` | Vertex AI Search (vet handbook corpus) + Gemini 3 Pro | 5-vet rubric simulation; flags claims for human-vet escalation |
-| `compliance` | Vertex AI Search (FTC §255 + NASC + AAFCO corpus) | Per-claim mapping to regulator/standard language |
-| `auditor` (GUARDIAN Falsifier port) | ADK Eval + Gemini 2.5 Flash | Adversarial pass catches hallucinated citations + cherry-picks |
+| `claim-extractor` | Firecrawl MCP + Gemini 3 Pro | **Production-quality** — must work end-to-end on real PDPs |
+| `evidence-grader` | **BioMCP** (primary) + **Vertex AI Search over PubMed-in-BigQuery** (Google-first parallel path per codex G7 P0.2) + Gemini grounding | **Production-quality** — must return real PMIDs with citation counts |
+| `vet-panel` | Gemini 3 Pro with prompt-based 5-vet rubric simulation | **Thin** — prompt-only, no Vertex AI Search, no licensed handbook ingest |
+| `compliance` | Vertex AI Search over **public-redistributable corpus only** (FTC 16 CFR §255 federal text, AAFCO public docs, NASC public-side seal program docs) | **Thin** — corpus restricted to public domain to avoid licensing risk (codex G7 P0.7) |
+| `auditor` (Falsifier port) | Gemini 2.5 Flash consistency check (NOT full ADK Eval per codex G7 P1.6) | **Thin** — citation-existence check + claim-direction check |
 
-Orchestrator: Vertex AI Agent Engine `ParallelAgent` for fan-out, `SequentialAgent` for merge + sign. Each agent deployed to Cloud Run with a public A2A v0.3 agent card.
+Orchestrator: Vertex AI Agent Engine `ParallelAgent` for fan-out, `SequentialAgent` for merge + sign. 2 production-quality + 3 thin agents = honest scope for 18 days solo.
+
+Each agent deployed to Cloud Run. Single public A2A v0.3 agent card on the mesh (not per-agent — simpler).
 
 ### 3. Alignment with GFS hackathon rules
 GFS AI Agents Challenge mandates Gemini + ADK + A2A + Cloud Run/GKE + MCP. We hit 8 of 8:
@@ -118,32 +124,39 @@ Data moat at month 12: the **claim-to-evidence graph** — every claim linked to
 - **Aulet TAM math:** 200 brands × 3 SKUs × 4 claims × $0.25 = $600 base; with badge-impression billing at typical DTC traffic (~50k PDP views/SKU/yr × $0.0005/impression × 3 SKUs = $75/SKU/yr × 600 = $45k beachhead revenue at conservative assumptions). Real upside lives in the AI-agent traffic ramp through `verify_claim`
 - **Adjacent expansion (post-beachhead):** human supplements ($60B US), beauty efficacy claims ($14B US), pet food functional claims ($77B US pet food sub-set)
 
-### 9. Demo flow (3-min, validated)
+### 9. Demo flow (3-min, codex-G7-amended)
+
+Most of this is **pre-recorded** to eliminate live-demo flakiness (codex G7 P0.5). One real-time A2A call mid-demo is the verifiable live moment.
+
 ```
 00:00-00:15  Cold open. Real Honest Paws hip-and-joint PDP loads. Claims highlighted.
-             "Eight billion dollar pet supplement category. Cosequin paid eleven and a
-             half million dollars last year. Plaintiffs' bar found pet."
-00:15-00:30  URL paste → Mesh Console (Ops Center port). Five A2A agent cards appear,
-             ParallelAgent fan-out lights up.
-00:30-01:00  Live mesh traffic streams. BioMCP returns 6 PubMed citations. AI2 Asta
-             grades them: 247 citations, 18 influential. Vet-panel rubric: 4/5 for
-             "supports joint mobility," 1/5 for "boosts immunity."
-01:00-01:30  Compliance agent maps to FTC §255.3 + NASC requirements. Two violations
-             flagged. Auditor catches the evidence-grader citing a paper that doesn't
-             support the claim direction → forces re-grade.
-01:30-02:00  Signed VC issued. Audit-grade PDF renders. Embed JS appears.
-             Brand owner pastes snippet on Honest Paws PDP → badge mounts, click-popover
-             shows real PMIDs + signed vet DIDs.
-02:00-02:30  Cut to the moonshot: open Perplexity Shopping in a new tab. Ask
-             "best joint supplement for senior labs." Perplexity calls our public
-             A2A agent card at /.well-known/agent-card.json → verify_claim() →
-             returns trust score. Honest Paws ranks higher.
-02:30-03:00  Closing card. PCEC spec link. "Trust mesh. Pet today. Any expert-claim
-             vertical tomorrow." Gemini + ADK + A2A + Vertex Agent Engine logos.
-             Veo cinematic plate of brand owner reading regulator letter, badge
-             on screen.
+             "Two point eight billion dollar US pet supplement market. Cosequin paid
+             eleven and a half million dollars in 2024. Plaintiffs' bar found pet."
+00:15-00:30  URL paste → Mesh Console. Five A2A agent cards appear. ParallelAgent
+             fan-out animation (pre-recorded for reliability).
+00:30-01:00  Pre-recorded: BioMCP returns 6 real PMIDs. PubMed-in-BigQuery via Vertex
+             AI Search confirms 4 papers. AI2 Asta grades: 247 citations, 18 influential.
+             Vet-panel rubric: 4/5 for "supports joint mobility," 1/5 for "boosts immunity."
+01:00-01:30  Pre-recorded: Compliance agent maps to FTC §255 + NASC public-side requirements.
+             Two violations flagged. Auditor catches the evidence-grader citing a paper
+             that doesn't support the claim direction → forces re-grade.
+01:30-02:00  Pre-recorded: signed certificate issued (Ed25519 software signing, single trust
+             root). Draft evidence PDF renders. Embed JS appears. Brand owner pastes snippet
+             on Honest Paws PDP → badge mounts, click-popover shows real PMIDs.
+02:00-02:30  ★ LIVE MOMENT ★ Open `pawconscious-mesh-shopper-agent` (our own Cloud Run
+             ShopperAgent, source on GitHub). It fetches /.well-known/agent-card.json
+             from our mesh and calls verify_claim() for the Honest Paws SKU.
+             Real network call. Real response. Live log view shows the A2A round-trip.
+             "This is the trust mesh callable by any A2A-compliant agent. Today we
+             control the calling agent. Tomorrow Rufus, Perplexity, Gemini Shopping —
+             but the protocol is open today."
+02:30-03:00  Closing card. PCEC v0.1 draft proposal link (GitHub). "Built on Google
+             Cloud: ADK 2.0 + Gemini 3 Pro + Vertex Agent Engine + Vertex AI Search +
+             A2A v0.3 + BioMCP + Cloud Run." Veo cinematic plate. Lyria 2 bed.
+             ElevenLabs VO (founder voice).
 ```
-O22 pipeline produces this. Lyria 2 bed. ElevenLabs VO (founder voice).
+
+NOT in the demo (per codex G7): Perplexity / Rufus / ChatGPT / Gemini Shopping integrated (none are). Stripe metered billing (flat per-cert pricing only). Founding members signed. Linux Foundation donation. Real third-party A2A consumers.
 
 ### 10. Build first (hackathon priorities)
 **Highest leverage builds in order:**
@@ -196,16 +209,24 @@ Code salvage rate: ~60% port from existing.
 - O22 GCP project (demo render dependency)
 - GUARDIAN source code (preserved on `odominguez7/guardian` GitHub public; recent commits include un-pushed work that should be committed to a `final-archive` branch before project deletion)
 
-### 13. Final handshake recommendation
-**Codex G7 on this plan BEFORE D1 work begins** (per `feedback_codex_handshake_per_move`). Specifically challenge:
+### 13. Final handshake — codex G7 RESULT + amendments
 
-1. Is the PCEC open-spec play credible to ship within hackathon window? Or is it post-hackathon-only?
-2. Is the BioMCP + AI2 Asta combo defensible as evidence-grader, or do we still need first-party Vertex AI Search to please judges?
-3. Is the "invisible billing on Stripe" framing too aspirational for a 3-min demo? Should we demo per-cert pricing instead and just mention the metering plan?
-4. Does the demo flow (especially the Perplexity Shopping call to our A2A card) hold up under scrutiny — or is it Veo-style fabrication?
-5. Should the Mesh Console show real A2A traffic in the demo, or is screen-recorded acceptable?
+**Codex G7 verdict: BLOCK** (saved verbatim at `reviews/codex-G7-verdict.txt`). 9 P0 findings + 7 P1 findings. All absorbed into this amended PLAN.md:
 
-After codex CLEAR: D1 begins.
+| Codex finding | Where absorbed |
+|---|---|
+| P0.1 PCEC v0.1 cut to minimal scope | §13 amendments, Phase 3, `docs/PCEC-v0.md` rewrite |
+| P0.2 Evidence-grader Google-first parallel path | §2 amended; Phase 2 adds PubMed-in-BigQuery + Vertex AI Search |
+| P0.3 Stripe metered billing out of demo | §9 demo flow amended; §6 mentions roadmap only |
+| P0.4 Perplexity = fabrication, build ShopperAgent | §9 demo flow amended; Phase 4 adds ShopperAgent |
+| P0.5 Mesh Console mostly screen-recorded | §9 demo flow amended; Phase 4 + 6 reflect |
+| P0.6 18 days not 19 | Header date; all phase dates compressed |
+| P0.7 Public-redistributable corpus only | Phase 5 amended; Plumb's removed |
+| P0.8 Aspirational claims labeled | §7 + §9 + Phase 3 amended |
+| P0.9 GCP infra must be created | Phase 1 explicitly creates project + links billing |
+| P1.1-P1.7 | §2 (5 agents at declared depth), §9 (language), Phase 2 (rate limit), Phase 4 (auditor = consistency check), `docs/A2A-AGENT-CARD.md` |
+
+**Codex G7.1 re-handshake required after amendments commit.** Then D1 begins.
 
 ---
 
@@ -219,53 +240,70 @@ After codex CLEAR: D1 begins.
 - [ ] **Codex G7 handshake on PLAN v2** ← next gate
 - [ ] Omar sign-off on the pivot path
 
-### Phase 1 — Salvage + scaffold (D1-D2, May 18-19)
-- [ ] Commit un-pushed GUARDIAN work to `final-archive` branch, push
-- [ ] Port code from GUARDIAN: Falsifier (`falsifier/`), A2A scaffold (`a2a/`), Ops Center UI (`ops/`), ParallelAgent code, ADK Eval scripts
+### Phase 1 — Infrastructure + salvage (D1-D2, May 18-19)
+
+**Infrastructure first (codex G7 P0.9: stop pretending it exists).**
+
+- [ ] Create new GCP project `pawconscious-mesh-2026`
+- [ ] Link billing to account `014E26-090236-16FFE3` (the same account GUARDIAN was unlinked from)
+- [ ] Create `pawconscious-mesh` gcloud config (per `feedback_gcloud_per_project_configs`)
+- [ ] Enable required APIs: Vertex AI, Agent Engine, Cloud Run, Cloud Build, Firestore, BigQuery, Vertex AI Search (Discovery Engine), Cloud Storage, Secret Manager
+- [ ] Confirm GFS GenAI App Builder credits ($1,000) attach to this project — request via [GFS hackathon credit form](https://services.google.com/fb/forms/cloudtrial/) if not auto-issued
+- [ ] Commit un-pushed GUARDIAN work to `final-archive` branch on `odominguez7/guardian` GitHub, push
+- [ ] Port code from GUARDIAN: Falsifier (`falsifier/`), A2A scaffold (`a2a/`), Ops Center UI (`ops/`), ParallelAgent code
 - [ ] Port code from PawConscious: artifact renderers (`lib/artifacts/`), badge embed JS (`embed/`), KV cert store schema
-- [ ] Create new GCP project `pawconscious-mesh-2026` with billing linked to `014E26-090236-16FFE3`
-- [ ] Enable required APIs: Vertex AI, Agent Engine, Cloud Run, Cloud Build, Firestore, BigQuery, Cloud SQL, Cloud Storage, Secret Manager
-- [ ] Scaffold ADK project structure with 5 stub agents (`agents/claim_extractor.py`, `evidence_grader.py`, `vet_panel.py`, `compliance.py`, `auditor.py`)
-- [ ] Codex G8 handshake on salvage
+- [ ] Scaffold ADK project structure with 5 agents declared at production-vs-thin depth (see §2)
+- [ ] Codex G8 handshake on salvage + infrastructure
 
 ### Phase 2 — Mesh primitives (D3-D5, May 20-22)
 - [ ] BioMCP installation + first real PubMed query end-to-end in `evidence_grader`
+- [ ] **PubMed-in-BigQuery + Vertex AI Search** Google-first parallel path (codex G7 P0.2) — load public PubMed dataset, build Vertex AI Search data store, query end-to-end
 - [ ] AI2 Asta MCP integration + citation-influence grading
 - [ ] Firecrawl MCP integration in `claim_extractor`
-- [ ] ParallelAgent orchestrator wires all 5 agents; SequentialAgent merges
+- [ ] ParallelAgent orchestrator wires all 5 agents at declared depths; SequentialAgent merges
 - [ ] Each agent deployed to Cloud Run with own service URL
-- [ ] Public A2A v0.3 agent cards published at `/.well-known/agent-card.json`
+- [ ] Single public A2A v0.3 agent card at `mesh.pawconscious.com/.well-known/agent-card.json` (per codex G7 P1.3: "A2A v0.3 compatible, no current third-party integrations")
+- [ ] **Demo API key + rate limiting** on A2A endpoint (codex G7 P1.7) — judges get key; public open access deferred post-hackathon
 - [ ] `verify_claim(sku, claim_text)` skill returns real result against one real Honest Paws SKU
 - [ ] Codex G9 handshake on primitives
 
-### Phase 3 — Trust layer + signed VCs (D6-D8, May 23-25)
-- [ ] PCEC v0.1 spec written and committed to `docs/PCEC-v0.md`
-- [ ] Signed Verifiable Credential issuance (Ed25519 software signing for hackathon; HSM is Phase 2)
-- [ ] Transparency log on Firestore + public read endpoint
-- [ ] Audit-grade PDF renderer (port from GUARDIAN Board Slide)
-- [ ] Vet DID skeleton (5 Boston vets get DIDs; consent stays as drafted-not-sent)
+### Phase 3 — Trust layer (D6-D8, May 23-25)
+- [ ] **PCEC v0.1 cut to draft-only scope** (codex G7 P0.1 + P1.1):
+  - JSON-LD schema for `EndorsementClaim` only (Evidence/Attestation/Audit deferred to v0.2 doc)
+  - One resolver endpoint that returns a single signed bundle
+  - One trust root (PawConscious) — `did:web:pawconscious.com`
+  - One verify script (Node + Python both)
+  - Doc starts with: "Draft proposal v0.1. Not a standard. Single operator. No external members. No neutral governance yet."
+  - C2PA assertion, full transparency log, founding members, Linux Foundation = labeled "future work"
+- [ ] Cert issuance (Ed25519 software signing, no HSM)
+- [ ] Simple append-only list on Firestore (NOT a Merkle log) for issued certs
+- [ ] Draft evidence PDF renderer (port from GUARDIAN Board Slide); language is **"automated draft bundle"** not "regulator-grade" (codex G7 P1.5)
+- [ ] Vet DID skeleton (5 Boston vets get `did:web` identifiers; **manual attestation only** per codex G7 P1.2; consent stays drafted-not-sent)
 - [ ] Codex G10 handshake on trust layer
 
-### Phase 4 — Mesh Console + Auditor (D9-D11, May 26-28)
+### Phase 4 — Mesh Console + Auditor + ShopperAgent (D9-D11, May 26-28)
 - [ ] Mesh Console UI port from GUARDIAN Ops Center (Hero + Live Mesh + Audit Trail tabs)
-- [ ] Live A2A traffic visualization
-- [ ] Auditor (Falsifier port) wired into the merge step; vet-rubric awareness added
+- [ ] **A2A traffic visualization optimized for screen-recording** (codex G7 P0.5) — must look great in a captured video, not just live
+- [ ] Auditor (Falsifier port) = **simple consistency check** (citation-existence, claim-direction match) per codex G7 P1.6 — NOT full ADK Eval
 - [ ] Cert issuance UI; embed snippet generator
-- [ ] Codex G11 handshake on console
+- [ ] **Build `ShopperAgent` Cloud Run service** (codex G7 P0.4 + new) — small standalone agent that fetches our public A2A card, calls `verify_claim`, returns ranked product list. This is what the live demo moment exercises. Source in our public repo so judges can verify the external A2A call is real.
+- [ ] Codex G11 handshake on console + ShopperAgent
 
-### Phase 5 — Vertex AI Search + corpora (D12-D13, May 29-30)
-- [ ] Vet handbook corpus ingested to Vertex AI Search (Plumb's Veterinary Drug Handbook OSS subset + AAFCO public docs + NASC public docs)
-- [ ] Regulator corpus ingested (FTC 16 CFR §255 + FDA-CVM GFI public list)
-- [ ] `vet_panel` and `compliance` agents grounded on respective stores
+### Phase 5 — Vertex AI Search corpora (D12-D13, May 29-30)
+
+**Public-redistributable sources only** (codex G7 P0.7).
+
+- [ ] Compliance corpus: FTC 16 CFR §255 federal text (public domain), AAFCO public-side docs, NASC public-side seal program docs, FDA-CVM GFI public list. **No paid handbooks, no member-only content.**
+- [ ] Vet panel: prompt-only rubric in Gemini 3 Pro (no licensed handbook ingest). 5-vet rubric simulation derived from published-paper analysis of common vet-formulary patterns. **No Plumb's, no DACVN corpus.**
 - [ ] Memory Bank wired for per-brand audit history
-- [ ] Burn validated GenAI App Builder credits (per Omar's note in `v9-CEO-pivot.md` §5b)
+- [ ] Burn GenAI App Builder credits via Vertex AI Search queries (already in critical demo path now)
 
 ### Phase 6 — Demo render + polish (D14-D15, May 31-Jun 1)
 - [ ] O22 pipeline brief written for 3-min PawConscious Mesh cinematic
 - [ ] Veo 3.1 plate + Lyria 2 bed + ElevenLabs VO recorded
 - [ ] Real Honest Paws PDP screen-capture for cold open
-- [ ] Perplexity Shopping integration (or screen-recorded simulation if live integration fails)
-- [ ] Mesh Console live demo recording
+- [ ] **ShopperAgent live A2A call** rehearsed end-to-end with failover (if network flakes during recording, run the same call against a recorded response saved in `/demo/captures/`)
+- [ ] Mesh Console screen-recording (full flow pre-recorded; one live moment captured separately)
 - [ ] Codex G12 handshake on demo
 
 ### Phase 7 — Submission packaging (D16-D17, Jun 2-3)
@@ -276,12 +314,14 @@ After codex CLEAR: D1 begins.
 - [ ] Submission text description: ≤2000 chars summarizing feature, tech, data sources, findings
 - [ ] Codex G13 handshake on submission package
 
-### Phase 8 — Buffer + outside voice (D18-D19, Jun 4-5)
+### Phase 8 — Buffer + outside voice (D18, Jun 4)
 - [ ] Codex review --challenge on the full submission
 - [ ] Outside voice (Claude subagent or Gemini) on the Devpost listing
 - [ ] Stranger test (2 non-technical people watch the 3-min video, can they explain it back?)
 - [ ] Final polish: any typos, broken links, missing logos
 - [ ] Submit by **June 5, 12:00 PM PT** (Devpost-strict; 2-hour buffer)
+
+**Note (codex G7 P0.6):** Calendar = 18 days (May 18 → Jun 5 exclusive), not 19. Each phase compressed by 1 day vs the original v2 draft. Buffer phase trimmed by 1 day.
 
 ### Phase 9 — Post-submission (after Jun 5)
 - [ ] PawConscious live site migration to new ADK backend (rolling, 2 weeks)

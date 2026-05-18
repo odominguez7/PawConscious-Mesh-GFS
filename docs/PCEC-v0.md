@@ -1,12 +1,23 @@
 # PCEC v0.1 — Provenance for Commerce Endorsement Claims
 
-**Status:** Draft v0.1 · **Date:** 2026-05-18 · **License:** CC-BY-4.0 · **Maintainer:** PawConscious
+**Status:** **DRAFT PROPOSAL v0.1 — NOT A STANDARD.** Single operator (PawConscious). No external members. No neutral governance yet. Open for comment.
+**Date:** 2026-05-18 · **License:** CC-BY-4.0 · **Maintainer:** PawConscious
+
+## Honest scope of v0.1 (codex G7 P0.1)
+
+This document describes a JSON-LD schema for endorsement claims plus a minimal reference flow:
+1. **One JSON-LD schema** (`EndorsementClaim` only — `EvidenceBundle`, `ExpertAttestation`, `AuditVerdict` are stubs that will evolve in v0.2)
+2. **One resolver endpoint** that returns a single signed bundle
+3. **One trust root** (`did:web:pawconscious.com`) — there are no neutral trust roots yet
+4. **One verify script** in Node and Python (in the reference impl repo)
+
+Everything else in this doc — C2PA assertion integration, full transparency log, founding-member program, Linux Foundation donation path, multi-root trust model, HSM signing, ZK proofs — is **future work**, not v0.1 deliverable, not promised. Implementers should read accordingly.
 
 ## Why this exists
 
 Every expert claim made on a commerce surface — "vet-formulated," "clinically proven," "dermatologist-tested," "athlete-endorsed," "physician-developed" — currently has no machine-verifiable provenance. The badge is a `<span>` with a checkmark. The audit trail is a folder in someone's Dropbox. When the FTC inquiry arrives, or the class action drops, the brand cannot produce a signed evidence chain in under a week.
 
-C2PA solved this for images. PCEC solves it for endorsement claims.
+C2PA solved this for images. PCEC aims to do the same for endorsement claims — but v0.1 is one operator publishing a JSON-LD shape, not a coalition with a ratified standard. We're starting the conversation, not ending it.
 
 ## Design principles
 
@@ -102,29 +113,31 @@ C2PA solved this for images. PCEC solves it for endorsement claims.
 
 ## Embedding in the wild
 
-### HTML PDP
+### HTML PDP (v0.1 deliverable)
 ```html
 <meta name="pcec-claim" content="urn:pcec:claim:01HZ123XYZ..."/>
 <script src="https://pawconscious.com/embed/PAW-2026-NATIVE.js" async></script>
 ```
 
-### Image-bound (via C2PA assertion)
-PCEC defines a C2PA assertion `pcec.endorsement-claim` containing the claim URN. C2PA-aware tools (Adobe Express, Microsoft Office, browsers) display the claim provenance inline with the image.
+### Resolver API (v0.1 deliverable, single operator)
+`GET https://mesh.pawconscious.com/pcec/v0/claim/{urn}` → returns the signed claim bundle. Single endpoint, single operator, no neutral resolver yet.
 
-### Product feed (Shopify, Akeneo, Salsify, Meta Catalog, TikTok Shop)
-Add `pcec_claim_id` as a custom metafield. Downstream feeds (Klaviyo, Recharge, ad-tech) read the metafield and resolve the bundle via the resolver API.
+### A2A agent skill (v0.1 deliverable)
+Any A2A v0.3-compatible agent can call `verify_claim(sku, claim_text)` on the PawConscious Mesh A2A endpoint. The mesh resolves to a PCEC claim bundle.
 
-### Resolver API
-`GET https://resolve.pcec.dev/v0/claim/{urn}` → returns full claim + evidence + attestations + audit JSON-LD.
+### Future work (NOT v0.1)
+- **C2PA assertion** `pcec.endorsement-claim` for image-bound provenance — design only, no implementation
+- **Product-feed integrations** for Shopify, Akeneo, Salsify, Meta Catalog, TikTok Shop — none built, none committed
+- **Neutral resolver** at `resolve.pcec.dev` — domain not yet acquired, no neutral operator agreed
+- **Klaviyo / Recharge / ad-tech metafield resolution** — design sketch only
 
-### A2A agent skill
-Any LLM agent can call `verify_claim(sku, claim_text)` on a PCEC-supporting mesh to get a real-time trust score before answering a user.
+## Trust model (v0.1 honest state)
 
-## Trust model
+v0.1 has ONE trust root: `did:web:pawconscious.com`, operated by PawConscious. There are no neutral parties yet. There are no browser / agent / regulator trust stores honoring PCEC keys yet. There is no compromise-rotation procedure beyond "we revoke and re-issue."
 
-Trust roots are operated by neutral parties. v0.1 ships with one trust root (`did:web:pcec.dev`) maintained by PawConscious. v1.0 (post-Linux Foundation donation) ships with N trust roots maintained by founding members.
+The multi-root, founding-member, Linux-Foundation-donation, regulator-trust-store-inclusion model is the **forward path**, not v0.1.
 
-Browser / agent / regulator trust stores ship the public keys of trust roots. Compromised roots are revocable via the transparency log + emergency rotation.
+Implementers should treat v0.1 as a single-operator reference. Anyone running a PCEC-compatible flow today is trusting PawConscious, not a coalition.
 
 ## Conformance levels
 

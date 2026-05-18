@@ -16,19 +16,21 @@ Paste a product PDP URL. Five specialized ADK agents fan out in parallel via Ver
 | `compliance` | Vertex AI Search (FTC §255 + NASC + AAFCO corpus) | Map every claim to regulator language |
 | `auditor` (Falsifier) | ADK Eval + Gemini 2.5 Flash | Adversarial pass to catch hallucinated citations, cherry-picks |
 
-Output: signed substantiation bundle (verifiable credential + C2PA-style manifest) + embeddable badge + audit-grade PDF + draft expert outreach.
+Output: signed certificate bundle (Ed25519 software signing, single trust root) + embeddable badge + automated draft evidence PDF + drafted expert outreach (never auto-sent).
 
-Public A2A agent card at `/.well-known/agent-card.json` exposes three skills callable by any LLM agent:
-- `verify_claim(sku, claim_text)`
-- `fetch_substantiation_bundle(claim_id)`
-- `attest_expert(expert_did)`
+A2A v0.3 agent card at `/.well-known/agent-card.json` exposes three skills:
+- `verify_claim(sku, claim_text)` — returns trust score + bundle URN
+- `fetch_substantiation_bundle(claim_id)` — returns full JSON-LD
+- `attest_expert(expert_did)` — returns credential metadata (manual attestation in v0.1)
+
+A2A endpoint is API-key-gated during the hackathon period for safety. Our `ShopperAgent` (source in this repo under `services/shopper-agent/`) is the demonstration consumer. Public open access ships post-hackathon once abuse controls are validated.
 
 ## Why now
 
-- **$2.8B US pet supplement market 2025**, 5-7% CAGR, within a **$158B US pet industry**
-- **Less than 5% of brands** carry any third-party verification (NASC covers manufacturing only; clinical substantiation is white space)
-- **Cosequin $11.5M class-action settlement (2024)** + VetriScience GlycoFlex pending + Morgan & Morgan multi-brand pet-food docket → plaintiffs' bar is the live catalyst, not regulators
-- **Google A2A protocol shipped 1.0 GA April 2026** and was donated to Linux Foundation. AI-shopping agents (Rufus, Perplexity Shopping, Gemini Shopping) need a callable trust oracle
+- **$2.7-2.9B US pet supplement market 2024-2025**, 5-7% CAGR, within a **$158B US pet industry** ([Packaged Facts](https://www.petfoodindustry.com/nutrition/pet-food-additives-supplements/news/15684592/us-pet-supplement-market-surpasses-27b-driven-by-health-and-wellness-trends), [APPA](https://www.petage.com/appa-report-pet-industry-consumer-spending/))
+- **Less than 5% of brands** carry any third-party verification. NASC covers manufacturing/GMP, not clinical efficacy — that gap is the wedge ([NASC](https://www.nasc.cc/nasc-seal/))
+- **[Cosequin $11.5M class-action settlement (2024)](https://topclassactions.com/lawsuit-settlements/open-lawsuit-settlements/11-5m-cosequin-dog-supplements-class-action-settlement/)** + VetriScience GlycoFlex pending + Morgan & Morgan multi-brand pet-food docket → plaintiffs' bar is the live catalyst, not regulators
+- **[Google A2A protocol shipped 1.0 GA April 2026](https://developers.googleblog.com/en/a2a-a-new-era-of-agent-interoperability/)** and was donated to Linux Foundation. AI-shopping agents will need callable trust oracles; the protocol is shipping ahead of consumer adoption
 
 ## Architecture
 
