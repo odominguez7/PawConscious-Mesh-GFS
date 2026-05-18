@@ -1,9 +1,11 @@
-# PawConscious Mesh — Master Plan (validated)
+# ACP — Engineering Roadmap (PawConscious Mesh reference deployment)
 
-**Date:** 2026-05-18 · **Deadline:** 2026-06-05 (**18 days**) · **Status:** AMENDED post-codex-G7 → pending Omar sign-off
-**Author:** Claude Opus 4.7 · **Source research:** 4 parallel agents + Omar's own `reviews/v9-CEO-pivot.md` (Option E draft)
+**Date:** 2026-05-18 · **Deadline:** 2026-06-05 (**18 days**) · **Status:** AMENDED post-codex-G7, pending codex G7.2 on ACP framing
+**Author:** Claude Opus 4.7 · **Source research:** 4 parallel agents + Omar's own `reviews/v9-CEO-pivot.md` (Option E draft) + codex G7 verdict (BLOCK → absorbed)
 
-This document supersedes the v1 plan at `/Users/odominguez7/Desktop/PawConscious-GFS/PLAN_GFS_PIVOT.md` (older sibling — Omar caught it for unsourced numbers and shallow moonshot framing). v2 here is built on validated research with inline citations.
+This is the **engineering roadmap.** For business strategy, retention model, economic buyers, competitive landscape, GTM, and 5-year arc, see `BUSINESS_PLAN.md`.
+
+**Northstar:** Every claim made on a commerce surface becomes machine-verifiable, AI-agent-callable, and regulator-grade by default. ACP is the protocol. PawConscious Mesh is the pet-supplement reference deployment shipped at GFS hackathon.
 
 ---
 

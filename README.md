@@ -1,8 +1,14 @@
-# PawConscious Mesh
+# PawConscious Mesh — ACP reference deployment
 
-**The trust mesh for expert-claim commerce.** Multi-agent A2A network that turns a product URL into a regulator-grade substantiation bundle: signed verifiable credentials, citation-grounded evidence, vet-rubric verdict, falsifier-attested audit chain.
+**ACP (Agentic Compliance Protocol):** verifiable claim infrastructure for consumer goods. Sign, audit, and serve product claims as machine-readable bundles callable by any AI agent, readable by any regulator, embeddable on any commerce surface.
 
-Built for the **Google for Startups AI Agents Challenge 2026** (deadline 2026-06-05). First vertical: US DTC pet supplements. Generalizes to any expert-claim e-commerce.
+**PawConscious Mesh** is the pet-supplement reference deployment — the wedge vertical where we prove the protocol works before expanding to human supplements, beauty, functional food, and the broader AI-mediated commerce trust layer.
+
+Built for the **Google for Startups AI Agents Challenge 2026** (deadline 2026-06-05).
+
+**Northstar:** Every claim made on a commerce surface — about ingredients, efficacy, expertise, provenance, safety, or performance — becomes machine-verifiable, AI-agent-callable, and regulator-grade by default. Pet is the proving ground.
+
+See `BUSINESS_PLAN.md` for the full thesis, retention model, competitive landscape, GTM, and 5-year arc. See `PLAN.md` for the 18-day hackathon execution roadmap.
 
 ## What it is
 
