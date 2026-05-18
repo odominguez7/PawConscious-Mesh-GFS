@@ -41,7 +41,7 @@ class Evidence(BaseModel):
 class EvidenceBundle(BaseModel):
     claim: Claim
     papers: list[Evidence] = Field(default_factory=list)
-    grader_agent: str = "did:web:pawconscious.com:agents:evidence-grader"
+    grader_agent: str = "did:web:mesh-api-40952019806.us-central1.run.app:agents:evidence-grader"
     grader_run_id: Optional[str] = None
 
 
@@ -78,7 +78,7 @@ class AuditVerdict(BaseModel):
     verdict: str = Field(..., description="PASS / FAIL / CONDITIONAL")
     challenges_run: list[str] = Field(default_factory=list)
     findings: list[str] = Field(default_factory=list)
-    auditor_agent: str = "did:web:pawconscious.com:agents:auditor"
+    auditor_agent: str = "did:web:mesh-api-40952019806.us-central1.run.app:agents:auditor"
 
 
 class EndorsementClaimBundle(BaseModel):
@@ -91,6 +91,6 @@ class EndorsementClaimBundle(BaseModel):
     compliance: list[ComplianceMapping]
     audit: list[AuditVerdict]
     issued_at: datetime = Field(default_factory=datetime.utcnow)
-    issuer: str = "did:web:pawconscious.com"
+    issuer: str = "did:web:mesh-api-40952019806.us-central1.run.app"
     bundle_urn: Optional[str] = None
     signature: Optional[str] = None

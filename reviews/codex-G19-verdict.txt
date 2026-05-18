@@ -1,0 +1,34 @@
+Codex G19 — Phase 11 PCEC Firestore transparency log
+Date: 2026-05-18
+Revision under review: mesh-api-00012-ctn
+
+VERDICT: CLEAR WITH AMENDMENTS
+
+1. Chain anchor formula sha256(bundle_hash + ':' + prev_chain_anchor) is sufficient for v0.1 tamper
+   evidence. Linear hash chain is fine. Add Merkle once inclusion proofs across many entries are
+   needed.
+
+2. P1 — Non-transactional append is risky even at hackathon traffic. Wrap read-head + write-head +
+   write-claim in a single Firestore transaction on acp-claims-meta/_chain_head. Without it,
+   concurrent verify_claim runs can fork the chain or lose updates.
+
+3. P1 — 202 response should include head_anchor_at_submit so the client can verify chain continuity
+   without a second round trip. Final anchor still returned on GET.
+
+4. Write boundary is correct. Single writer (mesh-api SA) + read-only public resolver. Keep IAM and
+   app-level allowlist strict.
+
+5. Phase 9 v2 judge slots (top 3):
+   - Hero ceremony moment: animated mesh graph resolving into verified badge.
+   - Certificate view: wax seal + signer/issuer.
+   - Chain anchor visible in certificate details (copyable, short + full view).
+
+6. P1 — Single thing forgotten: enforce idempotency key on verify_claim to prevent duplicate
+   appends when clients retry.
+
+Absorption plan before Phase 9 v2 (G19.1 to verify):
+- transparency_log.append wrapped in Firestore transaction on _chain_head
+- /a2a/v1/tasks/send 202 returns head_anchor_at_submit
+- verify_claim accepts Idempotency-Key header, returns same task_id for duplicates
+
+CLEAR for Phase 9 v2 once G19.1 confirms amendments landed.

@@ -39,8 +39,14 @@ from agents.orchestrator import run_mesh, summarize
 from shared.pcec_schema import EndorsementClaimBundle
 from shared.task_store import task_store, TaskState
 from shared.transparency_log import (
-    append_bundle_async, fetch_bundle_async, urn_for_hash,
+    append_bundle_async, fetch_bundle_async, get_head_anchor_async, urn_for_hash,
 )
+
+# G19 #6 amendment: idempotency cache for /a2a/v1/tasks/send.
+# Maps Idempotency-Key -> task_id so client retries return the same task.
+# In-process for v0.1 (Cloud Run min=max=1); Phase 5.6 promotes to Firestore.
+_idempotency_cache: dict[str, str] = {}
+_idempotency_lock = asyncio.Lock()
 
 
 DEMO_API_KEY = os.environ.get("ACP_DEMO_API_KEY", "demo-key-2026-06")
@@ -239,11 +245,18 @@ class A2ATaskRequest(BaseModel):
 
 
 class A2ASubmittedResponse(BaseModel):
-    """202 Accepted response per A2A v0.3 async task lifecycle."""
+    """202 Accepted response per A2A v0.3 async task lifecycle.
+
+    G19 #4 amendment: include head_anchor_at_submit so the client can later
+    verify chain continuity without a second round trip.
+    """
     task_id: str
     status: str = "submitted"
     poll_url: str
     estimated_seconds: int
+    head_anchor_at_submit: Optional[str] = None
+    idempotency_key: Optional[str] = None
+    idempotent_replay: bool = False
 
 
 class A2ATaskStatusResponse(BaseModel):
@@ -348,8 +361,16 @@ async def _run_verify_claim_background(task_id: str, product_url: str, max_claim
 async def a2a_send(
     request: A2ATaskRequest,
     x_api_key: Optional[str] = Header(None, alias="X-API-Key"),
+    idempotency_key: Optional[str] = Header(None, alias="Idempotency-Key"),
 ) -> A2ASubmittedResponse:
-    """A2A v0.3 async task entry. Returns 202 with task_id; client polls /tasks/get/{id}."""
+    """A2A v0.3 async task entry. Returns 202 with task_id; client polls /tasks/get/{id}.
+
+    G19 amendments:
+    - Idempotency-Key header: client retries with the same key return the same task_id
+      (prevents duplicate appends to the transparency log on transient network errors).
+    - head_anchor_at_submit: current chain head returned so the client can verify the
+      bundle issued by this request links to the chain it expected.
+    """
     if x_api_key != DEMO_API_KEY:
         raise HTTPException(status_code=401, detail="X-API-Key required. Request via GitHub issue.")
 
@@ -361,15 +382,44 @@ async def a2a_send(
         raise HTTPException(status_code=400, detail="Missing product_url / sku / url in input")
     max_claims = int(request.input.get("max_claims", DEFAULT_MAX_CLAIMS))
 
+    # G19 #6: idempotency replay — same Idempotency-Key returns the same task.
+    if idempotency_key:
+        async with _idempotency_lock:
+            existing_task_id = _idempotency_cache.get(idempotency_key)
+        if existing_task_id is not None:
+            existing_state = await task_store.get(existing_task_id)
+            if existing_state is not None:
+                head_anchor = await get_head_anchor_async()
+                return A2ASubmittedResponse(
+                    task_id=existing_state.task_id,
+                    status=existing_state.status,
+                    poll_url=f"{PUBLIC_BASE_URL}/a2a/v1/tasks/get/{existing_state.task_id}",
+                    estimated_seconds=max(0, max_claims * 60),
+                    head_anchor_at_submit=head_anchor,
+                    idempotency_key=idempotency_key,
+                    idempotent_replay=True,
+                )
+
     state = await task_store.create(input_data={"product_url": product_url, "max_claims": max_claims})
+
+    if idempotency_key:
+        async with _idempotency_lock:
+            _idempotency_cache[idempotency_key] = state.task_id
+
     # Fire-and-forget background processing per A2A v0.3 async spec
     asyncio.create_task(_run_verify_claim_background(state.task_id, product_url, max_claims))
+
+    # G19 #4: return chain head at submit time
+    head_anchor = await get_head_anchor_async()
 
     return A2ASubmittedResponse(
         task_id=state.task_id,
         status="submitted",
         poll_url=f"{PUBLIC_BASE_URL}/a2a/v1/tasks/get/{state.task_id}",
         estimated_seconds=max_claims * 60,  # ~60s per claim observed
+        head_anchor_at_submit=head_anchor,
+        idempotency_key=idempotency_key,
+        idempotent_replay=False,
     )
 
 
@@ -452,8 +502,7 @@ async def resolve_claim(urn: str) -> JSONResponse:
 @app.get("/pcec/v0/chain/head")
 async def chain_head() -> dict[str, Any]:
     """Latest chain anchor for the transparency log (Phase 11 tamper evidence)."""
-    from shared.transparency_log import get_log
-    head = await asyncio.to_thread(get_log()._read_head_hash)
+    head = await get_head_anchor_async()
     return {
         "current_chain_anchor": head,
         "note": (

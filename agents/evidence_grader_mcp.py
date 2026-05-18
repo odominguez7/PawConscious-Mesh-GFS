@@ -111,7 +111,7 @@ async def grade_claim_via_mcp(claim: Claim, debug: bool = False) -> EvidenceBund
     return EvidenceBundle(
         claim=claim,
         papers=papers,
-        grader_agent="did:web:pawconscious.com:agents:evidence-grader-mcp",
+        grader_agent="did:web:mesh-api-40952019806.us-central1.run.app:agents:evidence-grader-mcp",
         grader_run_id=None,
     )
 

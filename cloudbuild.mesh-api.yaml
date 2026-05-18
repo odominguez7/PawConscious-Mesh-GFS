@@ -1,0 +1,13 @@
+steps:
+  - name: 'gcr.io/cloud-builders/docker'
+    args:
+      - 'build'
+      - '-t'
+      - 'us-central1-docker.pkg.dev/pawconscious-mesh-2026/acp-images/mesh-api:v0.1.0-g19b'
+      - '-f'
+      - 'services/mesh_api/Dockerfile'
+      - '.'
+images:
+  - 'us-central1-docker.pkg.dev/pawconscious-mesh-2026/acp-images/mesh-api:v0.1.0-g19b'
+options:
+  logging: CLOUD_LOGGING_ONLY

@@ -17,15 +17,15 @@
 | 9 | Mesh Console UI v1 functional. (Codex G17 flagged as admin panel taste. v2 replacement scheduled.) | absorbed | 2026-05-18 |
 | 9.5 | Firecrawl fallback wired. Independence principle committed. Coverage map published. | G15 CLEAR | 2026-05-18 |
 
-## Locked queue (codex G17 priority order)
+## Locked queue (codex G17 priority order, status as of 2026-05-18 PM)
 
-| Phase | Description | Window | Codex gate |
+| Phase | Description | Status | Codex |
 |---|---|---|---|
-| 7 | Vertex AI Agent Engine deployment. Orchestrator as managed Reasoning Engine resource. Console hero calls Agent Engine endpoint. Existing Cloud Run A2A endpoint stays as public surface. | May 18 to 22 | G18 |
-| 11 | PCEC Firestore resolver. Provisions transparency log collection. Writes bundles on completion. Replaces the 501 stub at GET pcec v0 claim. Independence claim becomes verifiable. | May 21 to 24 | G19 |
-| 9 v2 | UI shell replacement. Vellum cream editorial aesthetic. Tiempos Headline plus Söhne Mono Buch typography. Animated mesh graph. Certificate view. Wax seal. Independence banner. No backend or data flow changes. | May 18 to 20 (parallel) | G20 |
-| 10 | AI2 Asta MCP citation grading. Real citation_count and influential_citation_count on every PMID. | May 23 to 26 | G21 |
-| 12 | Corpus expansion to 20 to 50 public regulator docs. FDA-CVM Guidance for Industry. AAFCO PF7 and PF9. Additional FTC FAQ documents. | May 24 to 26 (parallel) | G22 |
+| 7 | Vertex AI Agent Engine deployment. Resource `projects/40952019806/locations/us-central1/reasoningEngines/1255381144908595200`. ACPMeshEngine wraps orchestrator with query plus list_skills ops. Agent card now declares managedRuntime. /health/agent-engine endpoint live. | ✅ DONE 2026-05-18 PM | G18 CLEAR with amendments |
+| 11 | PCEC Firestore transparency log. Native mode collection acp-claims keyed by URN. urn_for_hash maps sha256 to urn:pcec:claim:<base32 prefix>. chain_anchor = sha256(bundle_hash + prev_chain_anchor). Head pointer at acp-claims-meta/_chain_head. GET /pcec/v0/claim/{urn} returns bundle. GET /pcec/v0/chain/head returns anchor. | ✅ DONE 2026-05-18 PM | G19 in flight |
+| 9 v2 | UI shell replacement. Vellum cream editorial aesthetic. Tiempos Headline plus Söhne Mono Buch typography. Animated mesh graph. Certificate view. Wax seal. Independence banner. Chain anchor visible. | ⏳ NEXT after G19 | G20 |
+| 10 | AI2 Asta MCP citation grading. Real citation_count and influential_citation_count on every PMID. | ⏳ after Phase 9 v2 | G21 |
+| 12 | Corpus expansion to 20 to 50 public regulator docs. FDA-CVM Guidance for Industry. AAFCO PF7 and PF9. Additional FTC FAQ documents. | ⏳ after Phase 10 | G22 |
 | 13 | O22 cinematic plates. Veo 3.1 Fast wax seal and clinical lab plates. Lyria 2 ambient bed. ElevenLabs founder voice. (Deferred per Omar 2026-05-18 to be done after product polish lands.) | May 27 to 31 | G23 |
 | 14 | Demo video production. 3 min cut with O22 plates plus screen capture of console v2 plus Lyria bed plus founder voice. | May 28 to June 1 | G24 |
 | 15 | Outreach send. Vet school batch one (Tufts Cornell UPenn UC Davis) plus pet brand drafts. | May 28 onward | none |
