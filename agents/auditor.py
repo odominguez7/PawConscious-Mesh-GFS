@@ -1,14 +1,15 @@
-"""Auditor Agent (THIN per PLAN.md §2 — codex G7.3 P1.6, port from GUARDIAN Falsifier).
+"""Auditor Agent — DIRECTION-ONLY FALSIFIER (v0) per PLAN.md §2 + codex G7.3 P1.6 + G10 #5 + G11 #7.
 
-Simple consistency check ONLY (NOT full ADK Eval which requires datasets not
-available in 18 days). Two challenges:
+Labeled v0 EVERYWHERE in outputs so judges understand this is the simple consistency
+check, not full ADK Eval (which requires datasets not available in 18 days). Two
+challenges:
 
-1. **citation_existence:** for every PMID claimed by evidence-grader, verify the
-   PMID looks valid (6-9 digit numeric).
-2. **claim_direction_match:** read the evidence-grader's rationale per paper and
-   verify it actually corresponds to the claim's direction.
+1. **citation_existence:** every PMID must be valid format (6-9 digit numeric).
+2. **claim_direction_match:** evidence-grader's rationale must actually correspond
+   to the claim's direction.
 
-Cherry-pick detection + sample-size adequacy = post-hackathon (codex G7.3).
+Cherry-pick detection + sample-size adequacy + statistical-significance check =
+post-hackathon (codex G7.3).
 
 Model: gemini-2.5-flash (cheaper + faster for adversarial pass).
 """
@@ -118,10 +119,16 @@ async def audit_bundle(bundle: EvidenceBundle) -> AuditVerdict:
     if verdict not in {"PASS", "FAIL", "CONDITIONAL"}:
         verdict = "CONDITIONAL"
 
+    # Per codex G10 #5 + G11 #7 — explicit v0 label in challenges_run and verdict
+    # so demo + judges see the scope of the auditor v0 (direction-only, not cherry-pick)
+    challenges = list(payload.get("challenges_run", ["citation_existence", "claim_direction_match"]))
+    if "direction_only_falsifier_v0" not in challenges:
+        challenges.insert(0, "direction_only_falsifier_v0")
+
     return AuditVerdict(
         claim=claim,
         verdict=verdict,
-        challenges_run=list(payload.get("challenges_run", ["citation_existence", "claim_direction_match"])),
+        challenges_run=challenges,
         findings=findings,
     )
 

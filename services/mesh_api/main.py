@@ -16,16 +16,20 @@ to Phase 5 deploy).
 """
 from __future__ import annotations
 
+import base64
 import hashlib
 import json
 import os
 import sys
 from datetime import datetime, timezone
+from functools import lru_cache
 from pathlib import Path
 from typing import Any, Optional
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent.parent))
 
+from cryptography.hazmat.primitives.asymmetric.ed25519 import Ed25519PrivateKey
+from cryptography.hazmat.primitives import serialization
 from fastapi import FastAPI, HTTPException, Header, Request
 from fastapi.responses import JSONResponse, PlainTextResponse
 from pydantic import BaseModel, Field
@@ -36,6 +40,16 @@ from shared.pcec_schema import EndorsementClaimBundle
 
 DEMO_API_KEY = os.environ.get("ACP_DEMO_API_KEY", "demo-key-2026-06")
 SERVICE_VERSION = "0.1.0"
+
+# Real Ed25519 public key — generated 2026-05-18, private in GCP Secret Manager
+# acp-bundle-signer-ed25519 (project pawconscious-mesh-2026)
+# Per codex G11 P0.3 — no placeholder
+SIGNER_PUBLIC_KEY_MULTIBASE = "z6MkfYpcbqZEdKKKg6qdNb3kpa1z5kTE27XaujSdp56CoBkZ"
+SIGNER_PUBLIC_KEY_HEX = "10486ac1a48c4f6731e36115b0e4e3fe5b92a587c88c7ede9677bf4feaab48c6"
+SIGNER_DID = "did:web:pawconscious.com#owner"
+SIGNING_SECRET_RESOURCE = (
+    "projects/pawconscious-mesh-2026/secrets/acp-bundle-signer-ed25519/versions/latest"
+)
 
 
 app = FastAPI(
@@ -120,8 +134,7 @@ DID_DOC = {
             "id": "did:web:pawconscious.com#owner",
             "type": "Ed25519VerificationKey2020",
             "controller": "did:web:pawconscious.com",
-            # placeholder — real Ed25519 public key generated + populated in Phase 5 KMS setup
-            "publicKeyMultibase": "z6MkPLACEHOLDER_KEY_GENERATED_IN_PHASE_5",
+            "publicKeyMultibase": SIGNER_PUBLIC_KEY_MULTIBASE,
         },
     ],
     "authentication": ["did:web:pawconscious.com#owner"],
@@ -174,13 +187,50 @@ class A2ATaskResponse(BaseModel):
     status: str
     output: dict[str, Any]
     bundle_hash: str
-    bundle_signature_placeholder: str = "ed25519:phase5_signed"
+    bundle_signature_placeholder: str = ""  # populated with real ed25519 sig at runtime
 
 
 def compute_bundle_hash(bundle: EndorsementClaimBundle) -> str:
     """Per codex G10 #7 — per-bundle hash for integrity verification."""
     canonical = bundle.model_dump_json(exclude={"signature"}, indent=None)
     return "sha256:" + hashlib.sha256(canonical.encode("utf-8")).hexdigest()
+
+
+@lru_cache(maxsize=1)
+def _load_signer() -> Optional[Ed25519PrivateKey]:
+    """Load Ed25519 private key from Secret Manager (or local file fallback for dev).
+
+    Caches in-process. Returns None if unavailable (signature will be marked as 'unsigned'
+    so we never silently fake a sig).
+    """
+    # Try local dev file first (never committed; in .gitignore via keys/*)
+    local_key = os.environ.get("ACP_SIGNING_KEY_PEM_PATH")
+    if local_key and os.path.exists(local_key):
+        with open(local_key, "rb") as f:
+            pem = f.read()
+        return serialization.load_pem_private_key(pem, password=None)  # type: ignore
+
+    # Secret Manager fetch (only works when deployed with proper SA + ADC)
+    try:
+        from google.cloud import secretmanager
+        client = secretmanager.SecretManagerServiceClient()
+        response = client.access_secret_version(request={"name": SIGNING_SECRET_RESOURCE})
+        pem = response.payload.data
+        return serialization.load_pem_private_key(pem, password=None)  # type: ignore
+    except Exception as e:
+        print(f"[mesh_api] WARN: signer load failed: {e}. Bundles will be marked unsigned.")
+        return None
+
+
+def sign_bundle(bundle: EndorsementClaimBundle) -> str:
+    """Real Ed25519 signature over the canonical bundle JSON (codex G11 P0.4)."""
+    signer = _load_signer()
+    if signer is None:
+        return f"unsigned (no signer available); bundle_hash={compute_bundle_hash(bundle)}"
+    canonical = bundle.model_dump_json(exclude={"signature"}, indent=None).encode("utf-8")
+    sig = signer.sign(canonical)
+    sig_b64 = base64.b64encode(sig).decode("ascii")
+    return f"ed25519:{SIGNER_DID}:{sig_b64}"
 
 
 @app.post("/a2a/v1/tasks/send", response_model=A2ATaskResponse)
@@ -199,12 +249,13 @@ async def a2a_send(
         max_claims = int(request.input.get("max_claims", 3))  # default tight for demo latency
         bundle = await run_mesh(product_url, max_claims=max_claims)
         bundle_hash = compute_bundle_hash(bundle)
-        bundle.signature = bundle_hash + ":placeholder_phase5_sig"
+        bundle.signature = sign_bundle(bundle)  # real Ed25519 sig per codex G11 P0.4
         return A2ATaskResponse(
             task_id=request.task_id or f"task-{datetime.now(timezone.utc).isoformat()}",
             status="completed",
             output=json.loads(bundle.model_dump_json()),
             bundle_hash=bundle_hash,
+            bundle_signature_placeholder=bundle.signature,
         )
 
     raise HTTPException(status_code=404, detail=f"Unknown skill: {request.skill}")
