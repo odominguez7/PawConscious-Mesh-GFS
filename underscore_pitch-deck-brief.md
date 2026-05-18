@@ -8,7 +8,7 @@
 
 > **Tier:** Fortune 500 annual report quality. Not startup deck. Think the investor relations output of Palantir, Anduril, Stripe, Patagonia in its B Corp era, and the typographic restraint of Monocle crossed with the data seriousness of the Financial Times. Trust infrastructure, not pet startup.
 
-> **Cofounders:** Omar Dominguez (CEO, MIT Sloan MBA 2026, three trust protocols shipped in twelve months) and Jennifer Fremont Smith (President, MIT Sloan MBA, two prior venture backed exits, current MIT Sloan Lecturer).
+> **Cofounders:** Omar Dominguez (CEO, MIT Sloan MBA 2026, three trust protocols shipped in twelve months) and Jennifer Fremont Smith (COO, MIT Sloan MBA Sloan Fellow, two prior venture backed exits, current MIT Sloan Lecturer).
 
 ---
 
@@ -235,6 +235,18 @@ Concrete year one and year two milestones. These are what slide 6 and slide 9 po
 
 Every GP remembers one thing 24 hours later. For PawConscious Mesh, that thing is the cofounder pair. The rest is proof.
 
+### 5.0 Founder bios — slide tight, canonical for Claude Design
+
+This is the canonical Team slide copy. Use verbatim. Do not paraphrase. Do not invent additional credentials. Total under 50 words.
+
+> **Omar Dominguez · Cofounder and CEO**
+> MIT Sloan MBA 2026. 12+ years in operations.
+>
+> **Jennifer Fremont Smith · Cofounder and COO**
+> MIT Sloan Lecturer. Built WECO (5.5M meals, Bessemer) and Smarterer (Google Ventures, Pluralsight).
+>
+> **Together:** Two MIT Sloan operators. One built the protocol. One scaled the brand.
+
 ### 5.1 The one sentence
 
 > PawConscious Mesh is the trust layer for every consumer product an AI agent is about to recommend, starting with pet supplements because that is where the lawsuits land first and the AI shopping agents arrive first. Built by a first time technical founder who has shipped three trust protocols in twelve months, paired with a twice exited repeat founder whose last company sold 5.5M meals across 14 states.
@@ -328,23 +340,19 @@ Ten assets. Each specified for copy, layout, typography, imagery, and Underscore
 - Title in GT America Mono 16 pt uppercase, Forge, below name
 - Credentials (GT America Standard 22 pt, Tungsten):
   - `MIT Sloan MBA 2026`
-  - `Engineer by training`
-  - `Three trust protocols shipped in twelve months: Foreman (manufacturing), GUARDIAN (wildlife), PawConscious v1 (pet)`
-  - `First place, Natoma + Subconscious hackathon, May 2026`
+  - `12+ years in operations`
 - Pull quote (Tiempos Headline italic 26 pt, Obsidian):
-  > "The label on a bottle is the door. Behind it is the substantiation graph for every consumer product an agent is about to recommend."
+  > "The label is the door. Behind it is the trust layer for every product an agent recommends."
 
-**Top right — Jennifer Fremont Smith, Cofounder and President**
+**Top right — Jennifer Fremont Smith, Cofounder and COO**
 - Portrait 540 px wide, duotone Obsidian and Bone, same eye line as Omar, tight crop from shoulders up
 - Name in GT America Expanded Bold, 44 pt
 - Title in GT America Mono 16 pt uppercase, Forge, below name
 - Credentials (GT America Standard 22 pt, Tungsten):
-  - `MIT Sloan MBA, Sloan Fellow`
-  - `Cofounder and CEO, Smarterer. Backed by Google Ventures and True Ventures. Acquired by Pluralsight.`
-  - `Founder and CEO, WECO Hospitality. Backed by Bessemer Venture Partners. 5.5M meals across 14 states. Acquired by Feast and Fettle, November 2025.`
-  - `Lecturer, MIT Sloan School of Management`
+  - `MIT Sloan Lecturer`
+  - `Built WECO (5.5M meals, Bessemer) and Smarterer (Google Ventures, Pluralsight)`
 - Pull quote (Tiempos Headline italic 26 pt, Obsidian):
-  > "I have sold 5.5 million boxes of food to consumers. The brands that survive the next ten years are the ones a machine can verify."
+  > "I sold 5.5 million meals. The brands that survive are the ones a machine can verify."
 
 **Bottom — Vet Advisory Panel** (header in GT America Mono 14 pt uppercase, Tungsten, with the descriptor `PORTABLE DID SIGNED ATTESTATIONS`)
 - 5 cells, each cell: small duotone portrait or institution mark, name in GT America Standard 18 pt, institution in GT America Mono 12 pt uppercase, DID glyph in Forge below
