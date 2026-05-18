@@ -1,14 +1,16 @@
-# PawConscious Mesh — ACP reference deployment
+# PawConscious Mesh — ACP for Pet
 
-**ACP (Agentic Compliance Protocol):** verifiable claim infrastructure for consumer goods. Sign, audit, and serve product claims as machine-readable bundles callable by any AI agent, readable by any regulator, embeddable on any commerce surface.
+**Start here:** [`START_HERE.md`](START_HERE.md) — the complete picture in one doc, written for the founder at 1am. Everything else is depth on a specific dimension.
 
-**PawConscious Mesh** is the pet-supplement reference deployment — the wedge vertical where we prove the protocol works before expanding to human supplements, beauty, functional food, and the broader AI-mediated commerce trust layer.
+---
 
-Built for the **Google for Startups AI Agents Challenge 2026** (deadline 2026-06-05).
+**One-line summary:** A SaaS tool that turns a pet product URL into a signed, continuously-updated evidence bundle — citations, vet scores, FTC mapping, audit verdict — that the brand shows plaintiffs, retailers, regulators, consumers, and AI shopping agents. Built on Google ADK + Gemini 3 Pro + Vertex AI Agent Engine + A2A v0.3 + BioMCP + Cloud Run.
 
-**Northstar:** Every claim made on a commerce surface — about ingredients, efficacy, expertise, provenance, safety, or performance — becomes machine-verifiable, AI-agent-callable, and regulator-grade by default. Pet is the proving ground.
+**Brand:** PawConscious Mesh. **Architecture/protocol:** ACP — Agentic Compliance Protocol. **Wedge:** US DTC pet supplements. **Scales to:** every consumer vertical AI shopping will mediate.
 
-See `BUSINESS_PLAN.md` for the full thesis, retention model, competitive landscape, GTM, and 5-year arc. See `PLAN.md` for the 18-day hackathon execution roadmap.
+**For the GFS AI Agents Challenge 2026** — deadline June 5.
+
+License: MIT. Hosted at `mesh.pawconscious.com` (post-build).
 
 ## What it is
 
