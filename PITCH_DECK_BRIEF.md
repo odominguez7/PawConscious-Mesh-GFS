@@ -87,7 +87,7 @@ If Tiempos and Söhne are unavailable, substitute Newsreader plus Atlas Grotesk 
 
 ### 2.4 Visual motifs
 
-- **The seal.** A circular wax seal pressed into vellum, photographed in raking light from a single angle. Used once on the cover and once on slide nine. Forge Amber on Vellum. Reference. Renaissance manuscript closure marks crossed with notary seals.
+- **The seal.** A circular wax seal pressed into vellum, photographed in raking light from a single angle. Used once on the cover and once on slide nine. Forge Amber on Vellum. Reference. Renaissance manuscript closure marks crossed with notary seals. The seal is not ornament. It is the visual representation of the Ed25519 signature that anchors every PCEC bundle to the brand DID at did colon web colon mesh api 40952019806 us central1 run app. When a partner asks what the seal stands for, the answer is, that is the signature your general counsel hands the plaintiff lawyer in deposition.
 - **The certificate watermark.** On Vellum slides only, a one percent opacity watermark of a finely engraved medical certificate border. Never over type.
 - **Engineering callouts.** Numbered circles one through five for the five agents, with thin Linen Gray leader lines pointing to nodes on a mesh diagram.
 - **Mesh diagram.** A geometric node graph in Slate on Vellum, with three nodes highlighted in Amber. Reference. The protein interaction diagrams in a Nature paper.
@@ -173,6 +173,18 @@ Class action damages average between three million and forty million dollars whe
 ### 4.4 The AI shopping shift is the second tailwind
 
 Amazon Rufus shipped in 2024 to one hundred million monthly active users. OpenAI Operator entered beta in early 2026. Perplexity Shopping launched mid 2026. Gemini Shopping is on the Google Cloud roadmap. By 2028 between fifteen and thirty percent of considered consumer purchases will route through an agentic intermediary according to Gartner's 2026 emerging consensus. An agent that recommends a pet supplement needs a callable trust oracle before it can confidently answer.
+
+### 4.5a Pet specific risk surface
+
+Trust infrastructure has to address the specific liability terrain of pet supplement claims. A partner expects evidence the founder has thought past the generic compliance frame.
+
+The species specific evidence problem. A clinical study in rats that supports an inflammation claim does not legally substantiate the same claim in dogs. AAFCO PF7 requires species specific scientific evidence for canine and feline efficacy claims. Many pet brands quietly cite human or rodent studies as substantiation. The Cosequin plaintiff theory walked directly into this gap.
+
+The state regulatory surface. California Proposition 65 reaches pet products. New York Attorney General James opened broad pet supplement deceptive practice probes through 2024 and 2025. Texas, Florida, and Washington have independent pet feed regulators that can enforce AAFCO model rules with state level penalty schedules. A brand selling into all fifty states faces a fifty regulator surface that no single substantiation file currently addresses. PawConscious Mesh produces one signed bundle that maps to every state's accepted evidence format.
+
+The clinical accountability question. When a brand claim contributes to an adverse event, the deposition asks four questions. What evidence supported the claim. Who reviewed it. When. And what changed in the evidence between then and now. The bundle answers all four with cryptographic certainty.
+
+The fraud and abuse mitigation layer. Counterfeit pet supplements account for between two and seven percent of the category by volume according to internal industry estimates. A bad actor brand can ride the trust of a verified competitor through near identical packaging and a misappropriated certificate. PawConscious Mesh anchors every cert to a verifiable DID and a public transparency log entry. A retailer or AI shopping agent that queries our protocol receives a definitive yes or no on whether the cert was actually issued.
 
 ### 4.5 The non obvious insights that make partners sit up
 
@@ -375,25 +387,29 @@ Pull quote in Tiempos Headline Light Italic 26 pt in Slate Ink.
 
 > I have watched too many brand founders sit across from a plaintiff lawyer with nothing on the table. PawConscious Mesh is the file that should have been there.
 
-**Right. Academic credibility panel.**
+**Right. Academic credibility ask.**
 
-A vertical column structured as four reading rows. Each row contains a single institution logo at 48 px tall in Linen Gray 40 percent, an institution name in Söhne Mono Buch 14 pt uppercase, and one line of contribution.
+A vertical column structured under a single line label in Söhne Mono Buch 14 pt uppercase tracking plus 80 in Verified Amber.
 
-> MIT Sloan. Strategic mentorship and Series A network access.
+> `ACADEMIC ADVISOR ASKS, TIER ONE`
+
+Then four reading rows. Each row contains a single institution logo at 48 px tall in Linen Gray 40 percent, an institution name in Söhne Mono Buch 14 pt uppercase, and one line of contribution. Every row is annotated with the engagement stage in a small Linen Gray tag at the right.
+
+> MIT Sloan. Series A network access and strategic mentorship. `ENGAGED`
 >
-> Tufts Cummings School of Veterinary Medicine. Clinical nutrition advisory.
+> Tufts Cummings School of Veterinary Medicine. Clinical nutrition advisory. `OUTREACH IN PROGRESS`
 >
-> Cornell University College of Veterinary Medicine. Evidence grading methodology review.
+> Cornell University College of Veterinary Medicine. Evidence grading methodology review. `OUTREACH IN PROGRESS`
 >
-> University of Pennsylvania PennVet. Substantiation rubric calibration.
+> University of Pennsylvania PennVet. Substantiation rubric calibration. `OUTREACH IN PROGRESS`
 
 Below the four rows a single closing line in Tiempos Headline Light Italic 28 pt centered.
 
-> The vet panel is academic, not retailer affiliated. That is structural, not aspirational.
+> The vet panel will be academic, not retailer affiliated. Structural by design, with first letter of intent targeted by day one hundred twenty.
 
 **Footer strip.** Full width, 96 px tall. Single line in Söhne Mono Buch 12 pt uppercase tracking plus 80.
 
-> `EVERY INSTITUTION RELATIONSHIP AT THE TIME OF DECK PUBLICATION IS NAMED ABOVE. UNSIGNED ASKS ARE OMITTED.`
+> `ALL ACADEMIC RELATIONSHIPS ABOVE LABELED WITH CURRENT ENGAGEMENT STAGE. NO INSTITUTION IS IMPLIED AS COMMITTED UNTIL A SIGNED ADVISORY AGREEMENT IS IN PLACE.`
 
 **Attribute proof.** Excellence magnet. Customer problem obsessed. Self aware.
 
@@ -500,6 +516,30 @@ Adjacent verticals. Human supplements, beauty, functional food, wellness devices
 **Source badges.** `PACKAGED FACTS · APPA · GRAND VIEW RESEARCH · INTERNAL ARPU MODEL`
 
 **Attribute proof.** Builder leader. Non obvious insight.
+
+### Slide 7.5. Risk and Compliance Frame
+
+This slide does not appear in the standard Underscore nine slide agenda. It appears in the deck appendix as a leave behind, and is folded into the slide eight competition narrative as a single closing block. A partner who reads the appendix expects to see the risk slide. A partner who only reads the nine slide deck sees the same frame as the closing block of slide eight.
+
+**Underscore job.** Demonstrate the founder has thought past the generic compliance frame. Show the trust claim is enforceable, not aspirational.
+
+**Headline.** Tiempos Headline Regular 78 pt.
+
+> When the trust claim is tested, the bundle answers four questions in deposition.
+
+**Four enforcement vectors.** Söhne Buch 22 pt with a Linen Gray label and a Slate Ink body paragraph.
+
+> Legal enforceability. The bundle is Ed25519 signed and anchored to a public DID at did colon web colon mesh api 40952019806 us central1 run app. A signature can be verified independently by any plaintiff lawyer, regulator, or judge using a public key and a verification script we ship MIT licensed. The bundle is admissible evidence.
+>
+> Clinical accountability. Every cert names the academic vet program responsible for the rubric calibration. The brand can produce the rubric, the methodology, the change log, and the academic advisor's signature. The deposition does not ask who approved this. It asks who signed it.
+>
+> Fraud prevention. Every cert is anchored to a public transparency log entry. A retailer or AI shopping agent that queries our protocol receives a definitive yes or no on whether the cert was actually issued by us for that SKU. Counterfeits cannot reuse a verified competitor's badge.
+>
+> Failure mode. When a claim turns out to be wrong, the cert is revoked through a versioned public revocation log. The brand is alerted, the badge changes state, and downstream queries return the corrected verdict. Trust is not the absence of error, it is the speed and visibility of correction.
+
+**Source badge.** `ED25519 SIGNATURE STANDARD · W3C DID CORE V1 · INTERNAL VERIFICATION SCRIPT`
+
+**Attribute proof.** Self aware. Builder leader.
 
 ### Slide 8. Competition
 
@@ -679,11 +719,13 @@ Two bars side by side. Left bar reads `Plaintiff settlement, Cosequin 2024, elev
 
 Interaction. Hover the Cosequin bar to read the lawsuit summary. Hover the PawConscious bar to read what the brand gets for thirty thousand dollars over five years.
 
-### 8.4 The live mesh demo
+### 8.4 The mesh demo. Recorded primary, live optional.
 
-A button labeled `RUN A REAL VERIFICATION`. The partner clicks. The artifact connects to the live Cloud Run deployment, submits an A2A task against a real Native Pet hip joint URL, polls the status endpoint, and renders the agent fan out in real time. The five agents light up in sequence. The signed bundle hash and Ed25519 signature appear at the end. Total elapsed time displayed.
+A button labeled `WATCH A REAL VERIFICATION RUN`. The partner clicks. The artifact plays a pre baked recording of a real Native Pet hip joint URL flowing through the five agent fan out at four times real speed. The five agents light up in sequence. Real PMIDs scroll past. The real Ed25519 signature appears at the end. Total elapsed time displayed. The recording is captured from the actual Cloud Run deployment so every frame is real.
 
-This is the moment the partner stops being polite and starts taking notes.
+A small secondary button labeled `RUN IT LIVE IF YOU WANT` is visible but quiet. If the partner asks for a live run, the artifact connects to the actual Cloud Run revision and runs against the same Native Pet URL. The partner watches the protocol work at real time. Total round trip is sixty to ninety seconds depending on cold start.
+
+Codex G16 P5 amendment. Recorded flow is the primary path in any first partner meeting because the trust protocol must demonstrate reliability before it demonstrates speed. Live mesh is the optional follow up for the partner who has already leaned forward.
 
 ### 8.5 The plaintiff docket map
 
