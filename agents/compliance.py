@@ -20,7 +20,8 @@ from pathlib import Path
 from typing import Optional
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
-from shared.pcec_schema import Claim, ClaimKind, ComplianceMapping  # noqa: E402
+from shared.pcec_schema import Claim, ClaimKind, ComplianceMapping, GroundingSource  # noqa: E402
+import hashlib
 
 from google import genai
 from google.genai import types
@@ -82,12 +83,15 @@ def _search_data_store_path() -> str:
     )
 
 
-async def retrieve_grounding_passages(claim: Claim, max_results: int = 3) -> list[str]:
-    """Direct Vertex AI Search retrieval — returns top-K passages with citations.
+async def retrieve_grounding_sources(claim: Claim, max_results: int = 3) -> list[GroundingSource]:
+    """Direct Vertex AI Search retrieval — returns top-K passages with provenance.
 
     Manual-retrieval pattern because Gemini's vertex_ai_search Tool is incompatible
     with response_mime_type='application/json' (controlled generation). We call
     Search directly, inject passages into the prompt, then Gemini with JSON mode.
+
+    Per codex G14 #7 — returns GroundingSource[] with source_id + snippet + sha256
+    hash so the final bundle has tamper-evident traceability.
     """
     try:
         from google.cloud import discoveryengine
@@ -96,40 +100,70 @@ async def retrieve_grounding_passages(claim: Claim, max_results: int = 3) -> lis
         client_options = ClientOptions(api_endpoint="discoveryengine.googleapis.com")
         client = discoveryengine.SearchServiceClient(client_options=client_options)
 
-        # Build query from claim text + kind for better retrieval
         query = f"{claim.text} {claim.kind.value} endorsement substantiation"
+
+        # Standard tier supports snippet_spec only; extractive features require Enterprise
+        content_search_spec = discoveryengine.SearchRequest.ContentSearchSpec(
+            snippet_spec=discoveryengine.SearchRequest.ContentSearchSpec.SnippetSpec(
+                return_snippet=True,
+            ),
+        )
 
         request = discoveryengine.SearchRequest(
             serving_config=_search_data_store_path(),
             query=query,
             page_size=max_results,
+            content_search_spec=content_search_spec,
         )
         response = client.search(request=request)
-        passages: list[str] = []
+        sources: list[GroundingSource] = []
         for result in response.results:
             doc = result.document
-            # Extract derivedStructData snippets (the retrieved passage text)
             derived = doc.derived_struct_data or {}
-            snippets = derived.get("snippets", [])
-            for s in snippets[:1]:  # top snippet per doc
-                snippet_text = s.get("snippet", "")
-                if snippet_text:
-                    doc_id = doc.id or doc.name.split("/")[-1]
-                    passages.append(f"[Source: {doc_id}]\n{snippet_text}")
-        return passages
+            doc_id = doc.id or doc.name.split("/")[-1]
+            # Try multiple ways to get the passage text
+            snippet_text: Optional[str] = None
+            for s in derived.get("snippets", []):
+                if s.get("snippet"):
+                    snippet_text = s["snippet"]
+                    break
+            if not snippet_text:
+                for ans in derived.get("extractive_answers", []):
+                    if ans.get("content"):
+                        snippet_text = ans["content"]
+                        break
+            if not snippet_text:
+                for seg in derived.get("extractive_segments", []):
+                    if seg.get("content"):
+                        snippet_text = seg["content"]
+                        break
+            if snippet_text:
+                # Derive readable source name from doc title or filename
+                title = derived.get("title") or doc_id
+                snippet_hash = hashlib.sha256(snippet_text.encode("utf-8")).hexdigest()[:16]
+                sources.append(GroundingSource(
+                    source_id=title,
+                    snippet=snippet_text[:500],  # cap snippet length
+                    snippet_hash=f"sha256:{snippet_hash}",
+                ))
+        return sources
     except Exception as e:
         print(f"[compliance] retrieval failed: {e}")
         return []
 
 
 async def map_claim(claim: Claim) -> ComplianceMapping:
-    """Map one claim to FTC/AAFCO/NASC standards with manual Vertex AI Search grounding."""
-    # Step 1: retrieve grounding passages from the regulator corpus
-    passages = await retrieve_grounding_passages(claim)
-    grounding_block = (
-        "GROUNDED REGULATORY PASSAGES (from Vertex AI Search over public corpus):\n---\n"
-        + "\n\n".join(passages) + "\n---\n"
-    ) if passages else "(grounding unavailable — using prompt-only knowledge)\n"
+    """Map one claim to FTC/AAFCO/NASC standards with manual Vertex AI Search grounding + provenance."""
+    # Step 1: retrieve grounding sources with provenance (per codex G14 #7)
+    sources = await retrieve_grounding_sources(claim)
+    if sources:
+        grounding_block = (
+            "GROUNDED REGULATORY PASSAGES (from Vertex AI Search over public corpus):\n---\n"
+            + "\n\n".join(f"[Source: {s.source_id}] (hash {s.snippet_hash})\n{s.snippet}" for s in sources)
+            + "\n---\n"
+        )
+    else:
+        grounding_block = "(grounding unavailable — using prompt-only knowledge)\n"
 
     # Step 2: Gemini call with JSON mode + grounded passages in prompt
     client = _client()
@@ -155,6 +189,7 @@ async def map_claim(claim: Claim) -> ComplianceMapping:
         nasc_public_standard=payload.get("nasc_public_standard") if payload.get("nasc_public_standard") != "none" else None,
         violation_flag=bool(payload.get("violation_flag", False)),
         rationale=str(payload.get("rationale", "")),
+        grounding_sources=sources,
     )
 
 

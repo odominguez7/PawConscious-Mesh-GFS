@@ -52,6 +52,13 @@ class VetRubricScore(BaseModel):
     escalate_to_human_vet: bool = False
 
 
+class GroundingSource(BaseModel):
+    """Per codex G14 #7 — grounding provenance for traceability."""
+    source_id: str = Field(..., description="Document ID from Vertex AI Search")
+    snippet: str = Field(..., description="Retrieved passage text")
+    snippet_hash: str = Field(..., description="sha256 of snippet for tamper-evidence")
+
+
 class ComplianceMapping(BaseModel):
     claim: Claim
     ftc_section: Optional[str] = Field(None, description="e.g., '16 CFR §255.3'")
@@ -59,6 +66,10 @@ class ComplianceMapping(BaseModel):
     nasc_public_standard: Optional[str] = None
     violation_flag: bool = False
     rationale: str
+    grounding_sources: list[GroundingSource] = Field(
+        default_factory=list,
+        description="Provenance per codex G14 — Vertex AI Search retrieval results that grounded this mapping",
+    )
 
 
 class AuditVerdict(BaseModel):

@@ -116,4 +116,63 @@ Captured at `demo/captures/live-mesh-call-2026-05-18-native-pet.json`.
 
 All Phase 1-5 milestones met. Mesh API + ShopperAgent live on Cloud Run with real signed bundles. 8 codex sweeps cleared. ~27 commits pushed.
 
+---
+
+## Day 2 afternoon session — 2026-05-18 (12:00-15:00 PT-equivalent)
+
+Per Omar instruction "go as far as you can, every phase codex handshake":
+
+| Time | Phase | Event | Codex |
+|---|---|---|---|
+| ~12:30 | 5.5 | Path C async A2A pivot decided (over Path A Vercel proxy approach) | G12.5 → CLEAR-WITH-AMENDMENTS |
+| ~12:40 | 5.5 | shared/task_store.py + POST returns 202 + GET status endpoint + cancel | – |
+| ~13:00 | 5.5 | Async deployed mesh-api revision 00004 → smoke test poll worked | – |
+| ~13:15 | 5.5 | URL scrub per Omar — pawconscious.com removed everywhere; DID = did:web:mesh-api-... | – |
+| ~13:30 | 5.5 | Revision 00005 LIVE with clean URLs | G13 → CLEAR-WITH-AMENDMENTS |
+| ~14:00 | 8 | Vertex AI Search corpus uploaded (FTC §255 + AAFCO PF7 + NASC public, 7 docs) | – |
+| ~14:15 | 8 | Data store `acp-regulator-corpus` created + ingestion async | – |
+| ~14:30 | 8 | compliance.py refactored to manual-retrieval (Gemini Tool incompat with JSON) | – |
+| ~14:45 | 8 | Grounded compliance LIVE on revision 00006 — puffery analysis tighter | G14 → in flight |
+| ~next | 7 | Vertex AI Agent Engine deployment of orchestrator | G15 |
+| ~next | 9 | Mesh Console UI on Cloud Run | G16 |
+| ~next | 10 | AI2 Asta MCP citation grading | G17 |
+| ~next | 11 | PCEC Firestore resolver | G18 |
+
+## Track 3 hackathon rubric status (verified against rules Omar shared)
+
+### Architectural mandates (HARD)
+| Mandate | Status |
+|---|---|
+| B2B Focus | ✅ pet brand → enterprise retailer + insurer ladder |
+| Cloud-Native Runtime | ✅ Cloud Run (mesh-api revision 00006 + shopper-agent) |
+| Google Cloud Powered Intelligence | ✅ Gemini 2.5 Pro + 2.5 Flash on Vertex AI |
+| A2A Interoperability | ✅ Public A2A v0.3 agent card + async lifecycle + external ShopperAgent consumer |
+
+### Key Considerations (SOFT, rubric points)
+| Item | Status |
+|---|---|
+| ADK orchestration | ✅ 5 specialized agents |
+| Deployment on Agent Engine | ⏳ Phase 7 (next) |
+| B2B use case articulation | ✅ BUSINESS_PLAN.md + Devpost draft |
+| Grounding via Vertex AI Search | ✅ JUST LIVE — 7-doc regulator corpus + manual-retrieval pattern |
+| Multi-agent > single agent | ✅ 5 agents + parallel fan-out + sequential merge |
+
+### Mandatory technologies
+| Tech | Status |
+|---|---|
+| Gemini API | ✅ Gemini 2.5 Pro (reasoning) + 2.5 Flash (audit) |
+| ADK orchestration | ✅ google-adk 1.33 |
+| Cloud Run / GKE | ✅ Cloud Run |
+
+Track 3 hard mandates 100% satisfied. Key Considerations 4/5 satisfied (Agent Engine next).
+
+## Live URLs (afternoon)
+
+- Mesh API: https://mesh-api-40952019806.us-central1.run.app — revision 00006-srb
+- ShopperAgent: https://shopper-agent-40952019806.us-central1.run.app
+- DID: did:web:mesh-api-40952019806.us-central1.run.app
+- Public Ed25519 key: z6MkfYpcbqZEdKKKg6qdNb3kpa1z5kTE27XaujSdp56CoBkZ
+- A2A async: POST /a2a/v1/tasks/send → 202 + task_id → GET /a2a/v1/tasks/get/{id}
+- Vertex AI Search: projects/40952019806/locations/global/.../acp-regulator-corpus
+
 **See MORNING.md for the morning brief + checklist.**
