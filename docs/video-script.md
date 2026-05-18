@@ -23,7 +23,7 @@
 
 ### 00:12 — 00:30 · THE PRODUCT (paste URL → fan-out)
 
-**VISUAL:** Screen capture — `mesh.pawconscious.com` portal. Cursor pastes the live Honest Paws hip-and-joint PDP URL into the input box. Click "Validate." Mesh Console UI lights up — five A2A agent cards animate in parallel.
+**VISUAL:** Screen capture — `mesh-api-40952019806.us-central1.run.app` portal. Cursor pastes the live Honest Paws hip-and-joint PDP URL into the input box. Click "Validate." Mesh Console UI lights up — five A2A agent cards animate in parallel.
 
 **VO:** "PawConscious Mesh — built on Google's Agent Development Kit. A brand pastes a product URL. Five specialized agents fan out via the A2A protocol on Google Cloud."
 
@@ -69,7 +69,7 @@
 **VISUAL:** Cut to a SECOND browser tab opening — `shopper.pawconscious-mesh.run.app` (the public ShopperAgent service, source visible on GitHub). User types: "best joint supplement for senior labs."
 
 **SCREEN CAPTURE:** ShopperAgent logs stream in real-time:
-1. `GET https://mesh.pawconscious.com/.well-known/agent-card.json` → 200 OK
+1. `GET https://mesh-api-40952019806.us-central1.run.app/.well-known/agent-card.json` → 200 OK
 2. `POST /a2a/v1/tasks/send` `{skill: "verify_claim", sku: "honest-paws-hip-joint", claim: "supports joint mobility"}`
 3. Streaming response over SSE: trust score 0.78, bundle URN `urn:pcec:claim:01HZ...`, 6 papers cited
 
@@ -90,7 +90,7 @@ Cut to the ShopperAgent UI showing the ranked answer with trust scores attached 
 **VISUAL:** Static card with three URLs:
 
 ```
-mesh.pawconscious.com         — live mesh
+mesh-api-40952019806.us-central1.run.app         — live mesh
 github.com/odominguez7/PawConscious-Mesh-GFS  — MIT open source
 pcec.dev (coming soon)         — protocol spec
 ```

@@ -72,7 +72,7 @@ Verdicts saved at `reviews/codex-G*-verdict.txt`.
 - Vet rubric scores 2/5 with proper escalation
 - FTC §255.1 + AAFCO PF7 violations flagged
 - Direction-only-falsifier-v0 audit verdicts PASS
-- Real Ed25519 signature: `ed25519:did:web:pawconscious.com#owner:HsZyFse0uAB41He2w8DpEplz...`
+- Real Ed25519 signature: `ed25519:did:web:mesh-api-40952019806.us-central1.run.app#owner:HsZyFse0uAB41He2w8DpEplz...`
 - Bundle hash: `sha256:f9c4d070762e0cb6366e110528941b217c8cde895c4b9af20537a72a9032445d`
 
 Captured at `demo/captures/live-mesh-call-2026-05-18-native-pet.json`.
@@ -80,7 +80,7 @@ Captured at `demo/captures/live-mesh-call-2026-05-18-native-pet.json`.
 ## Outstanding (TODOs for Omar morning)
 
 1. **Hackathon ID 3197 verification** — confirm GFS AI Agents Challenge details from your Devpost admin
-2. **Custom domain mapping** — `mesh.pawconscious.com` → mesh-api Cloud Run (Cloudflare DNS + Cloud Run domain mapping + TLS, 15-60 min wall time)
+2. **Custom domain mapping** — `mesh-api-40952019806.us-central1.run.app` → mesh-api Cloud Run (Cloudflare DNS + Cloud Run domain mapping + TLS, 15-60 min wall time)
 3. **Outreach batch 1** — review + send 4 vet school emails (Tufts/Cornell/UPenn/UC Davis)
 4. **AI2 Asta MCP enable** — citation_count + influential_citation_count enrichment
 5. **PCEC resolver Firestore wiring** — replace the 501 with real bundle lookup

@@ -325,7 +325,7 @@ GFS AI Agents Challenge (or Rapid Agent — to be verified against hackathon ID 
 | MCP integration | BioMCP (primary) + AI2 Asta MCP (grading) + Firecrawl MCP (PDP scrape) | `evidence-grader`, `claim-extractor` |
 | Newly created during contest period (May 5 - June 11 for Rapid Agent; verify GFS dates) | PawConscious Mesh repo created 2026-05-17 (post-May-5 ✓); PawConscious live site is separate codebase, disclosed in Devpost | Git history |
 | Public OSI-licensed repo, license at top | MIT, badge in README | `LICENSE` |
-| Hosted URL | `mesh.pawconscious.com` (or `pawconscious-mesh.run.app` fallback) | Cloud Run domain |
+| Hosted URL | `mesh-api-40952019806.us-central1.run.app` (or `pawconscious-mesh.run.app` fallback) | Cloud Run domain |
 | 3-min video, English, YouTube/Vimeo public | O22 pipeline production | Phase 6 |
 | All team members on Devpost | Solo founder | Submission form |
 | Original work | Architecture-inspired by GUARDIAN but new build | Git history + commit messages |
@@ -333,7 +333,7 @@ GFS AI Agents Challenge (or Rapid Agent — to be verified against hackathon ID 
 | No competing AI tools | Gemini-family only for hackathon submission code | Repo |
 | Devpost text description | Feature / tech / data sources / findings | Phase 7 |
 
-Disclosure needed in Devpost: PawConscious live site (pawconscious.com/portal) uses Subconscious + Natoma — that's a separate codebase, not in the hackathon repo. `mesh.pawconscious.com` is the new hackathon-period build.
+Disclosure needed in Devpost: PawConscious live site (pawconscious.com/portal) uses Subconscious + Natoma — that's a separate codebase, not in the hackathon repo. `mesh-api-40952019806.us-central1.run.app` is the new hackathon-period build.
 
 ---
 

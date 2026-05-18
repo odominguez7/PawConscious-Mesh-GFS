@@ -16,6 +16,7 @@ to Phase 5 deploy).
 """
 from __future__ import annotations
 
+import asyncio
 import base64
 import hashlib
 import json
@@ -36,6 +37,7 @@ from pydantic import BaseModel, Field
 
 from agents.orchestrator import run_mesh, summarize
 from shared.pcec_schema import EndorsementClaimBundle
+from shared.task_store import task_store, TaskState
 
 
 DEMO_API_KEY = os.environ.get("ACP_DEMO_API_KEY", "demo-key-2026-06")
@@ -44,13 +46,22 @@ PUBLIC_BASE_URL = os.environ.get(
     "ACP_PUBLIC_BASE_URL",
     "https://mesh-api-40952019806.us-central1.run.app",
 )
+# Canonical DID: did:web:<cloud-run-host>
+# Self-hosted on Cloud Run, no external domain dependency
+# (PawConscious.com is a separate live consumer site; this hackathon build runs
+# independently. Fusion is a post-hackathon decision per Omar 2026-05-18.)
+_PUBLIC_HOST = PUBLIC_BASE_URL.replace("https://", "").replace("http://", "").rstrip("/")
+PUBLIC_DID = os.environ.get("ACP_PUBLIC_DID", f"did:web:{_PUBLIC_HOST}")
+# Path C async: POST returns 202 immediately, client polls /a2a/v1/tasks/get/{id}
+# Default 3 claims; no proxy timeout since the mesh is self-hosted on Cloud Run.
+DEFAULT_MAX_CLAIMS = int(os.environ.get("ACP_DEFAULT_MAX_CLAIMS", "3"))
 
 # Real Ed25519 public key — generated 2026-05-18, private in GCP Secret Manager
 # acp-bundle-signer-ed25519 (project pawconscious-mesh-2026)
 # Per codex G11 P0.3 — no placeholder
 SIGNER_PUBLIC_KEY_MULTIBASE = "z6MkfYpcbqZEdKKKg6qdNb3kpa1z5kTE27XaujSdp56CoBkZ"
 SIGNER_PUBLIC_KEY_HEX = "10486ac1a48c4f6731e36115b0e4e3fe5b92a587c88c7ede9677bf4feaab48c6"
-SIGNER_DID = "did:web:pawconscious.com#owner"
+SIGNER_DID = f"{PUBLIC_DID}#owner"
 SIGNING_SECRET_RESOURCE = (
     "projects/pawconscious-mesh-2026/secrets/acp-bundle-signer-ed25519/versions/latest"
 )
@@ -103,7 +114,9 @@ A2A_AGENT_CARD = {
             "description": (
                 "Given a product URL, run the full mesh pipeline (5 specialized ADK agents on "
                 "Google Cloud) and return a signed PCEC v0.1 evidence bundle with vet-rubric "
-                "scoring, FTC §255 mapping, and adversarial audit verdict."
+                "scoring, FTC §255 mapping, and adversarial audit verdict. ASYNC task: POST "
+                "returns 202 with task_id; poll GET /a2a/v1/tasks/get/{task_id} for completion. "
+                "~60s per claim."
             ),
             "tags": ["trust", "endorsement", "substantiation", "pet-supplements", "PCEC"],
             "examples": [
@@ -132,25 +145,25 @@ DID_DOC = {
         "https://www.w3.org/ns/did/v1",
         "https://w3id.org/security/suites/ed25519-2020/v1",
     ],
-    "id": "did:web:pawconscious.com",
+    "id": PUBLIC_DID,
     "verificationMethod": [
         {
-            "id": "did:web:pawconscious.com#owner",
+            "id": f"{PUBLIC_DID}#owner",
             "type": "Ed25519VerificationKey2020",
-            "controller": "did:web:pawconscious.com",
+            "controller": PUBLIC_DID,
             "publicKeyMultibase": SIGNER_PUBLIC_KEY_MULTIBASE,
         },
     ],
-    "authentication": ["did:web:pawconscious.com#owner"],
-    "assertionMethod": ["did:web:pawconscious.com#owner"],
+    "authentication": [f"{PUBLIC_DID}#owner"],
+    "assertionMethod": [f"{PUBLIC_DID}#owner"],
     "service": [
         {
-            "id": "did:web:pawconscious.com#pcec-resolver",
+            "id": f"{PUBLIC_DID}#pcec-resolver",
             "type": "PCECResolver",
             "serviceEndpoint": f"{PUBLIC_BASE_URL}/pcec/v0",
         },
         {
-            "id": "did:web:pawconscious.com#a2a-mesh",
+            "id": f"{PUBLIC_DID}#a2a-mesh",
             "type": "A2AMeshEndpoint",
             "serviceEndpoint": f"{PUBLIC_BASE_URL}/a2a/v1",
         },
@@ -180,18 +193,31 @@ async def did_doc() -> dict[str, Any]:
 # ---------------------------------------------------------------------------
 
 class A2ATaskRequest(BaseModel):
-    """A2A v0.3 task envelope. Simplified for v0.1; full spec compliance in Phase 5."""
+    """A2A v0.3 task envelope per Linux Foundation spec (April 2026 GA)."""
     skill: str = Field(..., description="Skill ID per agent card")
     input: dict[str, Any] = Field(..., description="Skill input arguments")
     task_id: Optional[str] = None
 
 
-class A2ATaskResponse(BaseModel):
+class A2ASubmittedResponse(BaseModel):
+    """202 Accepted response per A2A v0.3 async task lifecycle."""
     task_id: str
-    status: str
-    output: dict[str, Any]
-    bundle_hash: str
-    bundle_signature_placeholder: str = ""  # populated with real ed25519 sig at runtime
+    status: str = "submitted"
+    poll_url: str
+    estimated_seconds: int
+
+
+class A2ATaskStatusResponse(BaseModel):
+    """GET /a2a/v1/tasks/get/{task_id} response."""
+    task_id: str
+    status: str  # submitted | working | completed | failed
+    progress_message: str = ""
+    output: Optional[dict[str, Any]] = None
+    error: Optional[str] = None
+    bundle_hash: Optional[str] = None
+    bundle_signature: Optional[str] = None
+    created_at: float
+    completed_at: Optional[float] = None
 
 
 def compute_bundle_hash(bundle: EndorsementClaimBundle) -> str:
@@ -237,32 +263,94 @@ def sign_bundle(bundle: EndorsementClaimBundle) -> str:
     return f"ed25519:{SIGNER_DID}:{sig_b64}"
 
 
-@app.post("/a2a/v1/tasks/send", response_model=A2ATaskResponse)
+async def _run_verify_claim_background(task_id: str, product_url: str, max_claims: int) -> None:
+    """Background worker per A2A v0.3 async lifecycle: submitted → working → completed/failed."""
+    try:
+        await task_store.update(task_id, status="working", progress_message="claim extraction")
+        bundle = await run_mesh(product_url, max_claims=max_claims)
+        bundle_hash = compute_bundle_hash(bundle)
+        bundle.signature = sign_bundle(bundle)
+        await task_store.update(
+            task_id,
+            status="completed",
+            progress_message="bundle signed",
+            output=json.loads(bundle.model_dump_json()),
+            bundle_hash=bundle_hash,
+            bundle_signature=bundle.signature,
+        )
+    except Exception as e:
+        await task_store.update(
+            task_id,
+            status="failed",
+            error=f"{type(e).__name__}: {e}",
+        )
+
+
+@app.post("/a2a/v1/tasks/send", response_model=A2ASubmittedResponse, status_code=202)
 async def a2a_send(
     request: A2ATaskRequest,
     x_api_key: Optional[str] = Header(None, alias="X-API-Key"),
-) -> A2ATaskResponse:
-    """A2A v0.3 task entry. Demo-key gated per codex G7.3 P1.7."""
+) -> A2ASubmittedResponse:
+    """A2A v0.3 async task entry. Returns 202 with task_id; client polls /tasks/get/{id}."""
     if x_api_key != DEMO_API_KEY:
         raise HTTPException(status_code=401, detail="X-API-Key required. Request via GitHub issue.")
 
-    if request.skill == "verify_claim":
-        product_url = request.input.get("product_url") or request.input.get("sku") or request.input.get("url")
-        if not product_url:
-            raise HTTPException(status_code=400, detail="Missing product_url / sku / url in input")
-        max_claims = int(request.input.get("max_claims", 3))  # default tight for demo latency
-        bundle = await run_mesh(product_url, max_claims=max_claims)
-        bundle_hash = compute_bundle_hash(bundle)
-        bundle.signature = sign_bundle(bundle)  # real Ed25519 sig per codex G11 P0.4
-        return A2ATaskResponse(
-            task_id=request.task_id or f"task-{datetime.now(timezone.utc).isoformat()}",
-            status="completed",
-            output=json.loads(bundle.model_dump_json()),
-            bundle_hash=bundle_hash,
-            bundle_signature_placeholder=bundle.signature,
-        )
+    if request.skill != "verify_claim":
+        raise HTTPException(status_code=404, detail=f"Unknown skill: {request.skill}")
 
-    raise HTTPException(status_code=404, detail=f"Unknown skill: {request.skill}")
+    product_url = request.input.get("product_url") or request.input.get("sku") or request.input.get("url")
+    if not product_url:
+        raise HTTPException(status_code=400, detail="Missing product_url / sku / url in input")
+    max_claims = int(request.input.get("max_claims", DEFAULT_MAX_CLAIMS))
+
+    state = await task_store.create(input_data={"product_url": product_url, "max_claims": max_claims})
+    # Fire-and-forget background processing per A2A v0.3 async spec
+    asyncio.create_task(_run_verify_claim_background(state.task_id, product_url, max_claims))
+
+    return A2ASubmittedResponse(
+        task_id=state.task_id,
+        status="submitted",
+        poll_url=f"{PUBLIC_BASE_URL}/a2a/v1/tasks/get/{state.task_id}",
+        estimated_seconds=max_claims * 60,  # ~60s per claim observed
+    )
+
+
+@app.get("/a2a/v1/tasks/get/{task_id}", response_model=A2ATaskStatusResponse)
+async def a2a_get(task_id: str) -> A2ATaskStatusResponse:
+    """A2A v0.3 task status polling endpoint."""
+    state = await task_store.get(task_id)
+    if state is None:
+        raise HTTPException(status_code=404, detail=f"Task not found: {task_id}")
+    return A2ATaskStatusResponse(
+        task_id=state.task_id,
+        status=state.status,
+        progress_message=state.progress_message,
+        output=state.output,
+        error=state.error,
+        bundle_hash=state.bundle_hash,
+        bundle_signature=state.bundle_signature,
+        created_at=state.created_at,
+        completed_at=state.completed_at,
+    )
+
+
+@app.post("/a2a/v1/tasks/cancel/{task_id}")
+async def a2a_cancel(task_id: str) -> JSONResponse:
+    """Cancel a submitted/working task per A2A v0.3 lifecycle.
+
+    v0.1 doesn't actually halt the underlying asyncio task (best-effort marker only);
+    Phase 5.6 wires real cancellation via asyncio.CancelledError + task tracking.
+    """
+    state = await task_store.get(task_id)
+    if state is None:
+        raise HTTPException(status_code=404, detail=f"Task not found: {task_id}")
+    if state.status in {"completed", "failed", "canceled"}:
+        return JSONResponse(
+            status_code=409,
+            content={"task_id": task_id, "status": state.status, "detail": "Task already terminated"},
+        )
+    await task_store.update(task_id, status="canceled", progress_message="canceled by request (best-effort)")
+    return JSONResponse(status_code=200, content={"task_id": task_id, "status": "canceled"})
 
 
 # ---------------------------------------------------------------------------

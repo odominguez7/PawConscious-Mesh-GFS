@@ -104,7 +104,7 @@ Returns a signed PCEC v0.1 bundle with real PMIDs, vet scores, FTC mapping, audi
 
 ### High-value 30-min items
 1. **Hackathon ID 3197 verification** — check your Devpost admin URL, confirm GFS AI Agents Challenge details (deadline, prize, exact tracks). Drop the verified info in CLAUDE.md / PLAN.md.
-2. **Custom domain mapping** — `mesh.pawconscious.com` → mesh-api Cloud Run service (Cloudflare CNAME + Cloud Run domain mapping, then update agent-card URL). 15-60 min wall time including TLS propagation. Per codex G11 #7 the DID host must match the agent-card URL exactly.
+2. **Custom domain mapping** — `mesh-api-40952019806.us-central1.run.app` → mesh-api Cloud Run service (Cloudflare CNAME + Cloud Run domain mapping, then update agent-card URL). 15-60 min wall time including TLS propagation. Per codex G11 #7 the DID host must match the agent-card URL exactly.
 3. **Review + send outreach batch 1** — `docs/outreach/04-tufts-larsen.md`, `05-cornell-wakshlag.md`, `06-upenn-michel.md`, `07-ucdavis-nutrition.md`. Vet schools are highest-value first reply target. Skip brand pilots until demo URL has custom domain.
 
 ### Async TODOs (no rush)

@@ -10,7 +10,7 @@
 
 **For the GFS AI Agents Challenge 2026** — deadline June 5.
 
-License: MIT. Hosted at `mesh.pawconscious.com` (post-build).
+License: MIT. Hosted at `mesh-api-40952019806.us-central1.run.app` (post-build).
 
 ## What it is
 

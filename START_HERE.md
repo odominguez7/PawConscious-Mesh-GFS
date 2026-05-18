@@ -25,7 +25,7 @@
 
 **This is exactly what she sees:**
 
-1. Goes to `mesh.pawconscious.com`, pastes her hip-and-joint product URL
+1. Goes to `mesh-api-40952019806.us-central1.run.app`, pastes her hip-and-joint product URL
 2. ~90 seconds: 5 agents fan out in parallel (she watches the Mesh Console light up)
    - `claim-extractor` pulls the 7 health claims from her PDP copy
    - `evidence-grader` queries PubMed via BioMCP, returns 12 papers, AI2 Asta scores them (247 total citations, 18 influential)
@@ -105,7 +105,7 @@ Path B is "founder-controlled, partner-optional." That's why it wins.
 
 | | Current PawConscious (live today) | PawConscious Mesh (hackathon build) |
 |---|---|---|
-| URL | `pawconscious.com/portal` | `mesh.pawconscious.com` (new sub-domain) |
+| URL | `pawconscious.com/portal` | `mesh-api-40952019806.us-central1.run.app` (new sub-domain) |
 | Codebase | `~/Desktop/PawConscious/` (Next.js + LangGraph + Subconscious TIM-Qwen3.6-27B + Natoma MCP) | `~/Desktop/PawConscious-GFS/` (Next.js + Google ADK + Gemini 3 Pro + BioMCP) — **NEW REPO** |
 | Hosted on | Vercel | Google Cloud Run (hackathon requirement) |
 | LLM | Subconscious TIM-Qwen3.6-27B | Gemini 3 Pro (hackathon requires Google-only) |
@@ -139,7 +139,7 @@ For the GFS submission: 100% of repo content is newly written during contest per
 > Shipping to Google for Startups AI Agents hackathon June 5, but you can pilot now. Demo this week?
 >
 > Omar
-> mesh.pawconscious.com (live by 5/20)
+> mesh-api-40952019806.us-central1.run.app (live by 5/20)
 
 That's a real ask, real product, real price, real pilot. No "wait for NASC." No "buy a SOC2 first." No "let me explain the protocol." Just a SaaS pitch backed by real architecture.
 

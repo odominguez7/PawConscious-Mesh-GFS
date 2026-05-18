@@ -113,7 +113,7 @@
 
 ### Agent: ShopperAgent (DEMO-PURPOSE, separate service)
 - Input: user shopping intent (e.g., "best joint supplement for senior labs")
-- Tools: fetch `https://mesh.pawconscious.com/.well-known/agent-card.json`, call `verify_claim()` via A2A v0.3
+- Tools: fetch `https://mesh-api-40952019806.us-central1.run.app/.well-known/agent-card.json`, call `verify_claim()` via A2A v0.3
 - Output: ranked product list with trust scores attached
 - **Source publicly committed to repo** so judges can verify the external A2A call is real, not staged. This is the live moment in the demo (codex G7 P0.4).
 
@@ -128,12 +128,12 @@
 
 ## Public surfaces
 
-- `https://mesh.pawconscious.com/portal` — brand-owner UI (Next.js, ports from existing PawConscious)
-- `https://mesh.pawconscious.com/console` — Mesh Console (live A2A traffic viz, ports from GUARDIAN Ops Center)
-- `https://mesh.pawconscious.com/.well-known/agent-card.json` — public A2A card
-- `https://mesh.pawconscious.com/a2a/v1/tasks/send` — A2A endpoint
+- `https://mesh-api-40952019806.us-central1.run.app/portal` — brand-owner UI (Next.js, ports from existing PawConscious)
+- `https://mesh-api-40952019806.us-central1.run.app/console` — Mesh Console (live A2A traffic viz, ports from GUARDIAN Ops Center)
+- `https://mesh-api-40952019806.us-central1.run.app/.well-known/agent-card.json` — public A2A card
+- `https://mesh-api-40952019806.us-central1.run.app/a2a/v1/tasks/send` — A2A endpoint
 - `https://resolve.pcec.dev/v0/claim/{urn}` — PCEC resolver (separate domain, neutral)
-- `https://mesh.pawconscious.com/embed/{certId}.js` — badge embed (ports from existing PawConscious)
+- `https://mesh-api-40952019806.us-central1.run.app/embed/{certId}.js` — badge embed (ports from existing PawConscious)
 
 ## Security
 
@@ -155,5 +155,5 @@
 - Cloud Run per agent (5 services + orchestrator + portal + console + resolver = 9 services)
 - Cloud Build pipeline triggered on `main` push
 - GitHub Actions secondary CI for ADK Eval gates
-- Domain: `pawconscious.com/mesh` (Cloudflare DNS → Cloud Run via Load Balancer or direct)
-- Hosted submission URL: `pawconscious.com/mesh` (canonical) or `pawconscious-mesh.run.app` (fallback)
+- Domain: `mesh-api-40952019806.us-central1.run.app` (Cloudflare DNS → Cloud Run via Load Balancer or direct)
+- Hosted submission URL: `mesh-api-40952019806.us-central1.run.app` (canonical) or `pawconscious-mesh.run.app` (fallback)

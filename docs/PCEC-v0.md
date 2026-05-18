@@ -8,7 +8,7 @@
 This document describes a JSON-LD schema for endorsement claims plus a minimal reference flow:
 1. **One JSON-LD schema** (`EndorsementClaim` only — `EvidenceBundle`, `ExpertAttestation`, `AuditVerdict` are stubs that will evolve in v0.2)
 2. **One resolver endpoint** that returns a single signed bundle
-3. **One trust root** (`did:web:pawconscious.com`) — there are no neutral trust roots yet
+3. **One trust root** (`did:web:mesh-api-40952019806.us-central1.run.app`) — there are no neutral trust roots yet
 4. **One verify script** in Node and Python (in the reference impl repo)
 
 Everything else in this doc — C2PA assertion integration, full transparency log, founding-member program, Linux Foundation donation path, multi-root trust model, HSM signing, ZK proofs — is **future work**, not v0.1 deliverable, not promised. Implementers should read accordingly.
@@ -40,7 +40,7 @@ C2PA solved this for images. PCEC aims to do the same for endorsement claims —
   "claim_kind": "efficacy",
   "issued_at": "2026-05-18T15:00:00Z",
   "expires_at": "2027-05-18T15:00:00Z",
-  "issuer": "did:web:pawconscious.com",
+  "issuer": "did:web:mesh-api-40952019806.us-central1.run.app",
   "evidence": [{ "type": "EvidenceBundle", "id": "urn:pcec:evidence:..." }],
   "attestations": [{ "type": "ExpertAttestation", "id": "urn:pcec:att:..." }],
   "audit": { "type": "AuditVerdict", "id": "urn:pcec:audit:..." },
@@ -66,7 +66,7 @@ C2PA solved this for images. PCEC aims to do the same for endorsement claims —
     }
   ],
   "agent_runs": [
-    { "agent_did": "did:web:pawconscious.com:agents:evidence-grader", "run_id": "...", "signature": "..." }
+    { "agent_did": "did:web:mesh-api-40952019806.us-central1.run.app:agents:evidence-grader", "run_id": "...", "signature": "..." }
   ]
 }
 ```
@@ -98,7 +98,7 @@ C2PA solved this for images. PCEC aims to do the same for endorsement claims —
   "type": "AuditVerdict",
   "id": "urn:pcec:audit:...",
   "claim": "urn:pcec:claim:...",
-  "auditor": "did:web:pawconscious.com:agents:auditor",
+  "auditor": "did:web:mesh-api-40952019806.us-central1.run.app:agents:auditor",
   "verdict": "PASS",
   "challenges_run": [
     "citation_existence",
@@ -120,7 +120,7 @@ C2PA solved this for images. PCEC aims to do the same for endorsement claims —
 ```
 
 ### Resolver API (v0.1 deliverable, single operator)
-`GET https://mesh.pawconscious.com/pcec/v0/claim/{urn}` → returns the signed claim bundle. Single endpoint, single operator, no neutral resolver yet.
+`GET https://mesh-api-40952019806.us-central1.run.app/pcec/v0/claim/{urn}` → returns the signed claim bundle. Single endpoint, single operator, no neutral resolver yet.
 
 ### A2A agent skill (v0.1 deliverable)
 Any A2A v0.3-compatible agent can call `verify_claim(sku, claim_text)` on the PawConscious Mesh A2A endpoint. The mesh resolves to a PCEC claim bundle.
@@ -133,7 +133,7 @@ Any A2A v0.3-compatible agent can call `verify_claim(sku, claim_text)` on the Pa
 
 ## Trust model (v0.1 honest state)
 
-v0.1 has ONE trust root: `did:web:pawconscious.com`, operated by PawConscious. There are no neutral parties yet. There are no browser / agent / regulator trust stores honoring PCEC keys yet. There is no compromise-rotation procedure beyond "we revoke and re-issue."
+v0.1 has ONE trust root: `did:web:mesh-api-40952019806.us-central1.run.app`, operated by PawConscious. There are no neutral parties yet. There are no browser / agent / regulator trust stores honoring PCEC keys yet. There is no compromise-rotation procedure beyond "we revoke and re-issue."
 
 The multi-root, founding-member, Linux-Foundation-donation, regulator-trust-store-inclusion model is the **forward path**, not v0.1.
 

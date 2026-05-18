@@ -18,7 +18,7 @@ The forward vision is the Stripe/Twilio asymmetry — brands pay for cert issuan
 {
   "name": "PawConscious Mesh",
   "description": "A2A trust mesh for expert-claim commerce. Verify endorsement claims on commerce SKUs against signed PCEC bundles.",
-  "url": "https://mesh.pawconscious.com/a2a/v1",
+  "url": "https://mesh-api-40952019806.us-central1.run.app/a2a/v1",
   "version": "0.1.0",
   "provider": {
     "organization": "PawConscious",
@@ -78,9 +78,9 @@ The forward vision is the Stripe/Twilio asymmetry — brands pay for cert issuan
 ## How agents call us (hackathon)
 
 Any A2A v0.3-compatible agent can:
-1. Discover via `GET https://mesh.pawconscious.com/.well-known/agent-card.json`
+1. Discover via `GET https://mesh-api-40952019806.us-central1.run.app/.well-known/agent-card.json`
 2. Request a demo API key via GitHub issue on the repo
-3. Invoke `POST https://mesh.pawconscious.com/a2a/v1/tasks/send` with a `verify_claim` task and the demo key in the auth header
+3. Invoke `POST https://mesh-api-40952019806.us-central1.run.app/a2a/v1/tasks/send` with a `verify_claim` task and the demo key in the auth header
 4. Stream responses via SSE per A2A v0.3
 
 The hackathon ships with one verified consumer: our own `ShopperAgent` Cloud Run service (source in the public repo). Judges can verify the external call is real by reading the ShopperAgent source + watching the live demo moment.

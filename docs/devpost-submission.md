@@ -67,7 +67,7 @@ The mesh exposes a public A2A v0.3 agent card at `/.well-known/agent-card.json` 
 
 **Signing:** Ed25519 software signing for hackathon v0.1; HSM-backed signing on the post-hackathon roadmap.
 
-**PCEC v0.1 spec:** drafted as a public proposal on GitHub (CC-BY-4.0), single trust root (`did:web:pawconscious.com`) for this version, with explicit "not a standard, draft proposal" framing per our independent reviewer's guidance.
+**PCEC v0.1 spec:** drafted as a public proposal on GitHub (CC-BY-4.0), single trust root (`did:web:mesh-api-40952019806.us-central1.run.app`) for this version, with explicit "not a standard, draft proposal" framing per our independent reviewer's guidance.
 
 ## Challenges we ran into
 
@@ -139,9 +139,9 @@ The mesh exposes a public A2A v0.3 agent card at `/.well-known/agent-card.json` 
 
 ## Try it out (links to populate)
 
-- **Live mesh:** `mesh.pawconscious.com` (populate after Phase 5 Cloud Run deployment)
+- **Live mesh:** `mesh-api-40952019806.us-central1.run.app` (populate after Phase 5 Cloud Run deployment)
 - **ShopperAgent:** `shopper.pawconscious-mesh.run.app` (populate after Phase 4)
-- **Public A2A card:** `mesh.pawconscious.com/.well-known/agent-card.json` (populate after Phase 4)
+- **Public A2A card:** `mesh-api-40952019806.us-central1.run.app/.well-known/agent-card.json` (populate after Phase 4)
 - **GitHub MIT:** `github.com/odominguez7/PawConscious-Mesh-GFS` (PUBLIC flip before submission; currently PRIVATE during build)
 - **3-min demo video:** YouTube unlisted link (populate after Phase 6 render)
 - **PCEC v0.1 draft spec:** `pawconscious.com/pcec/v0` or repo `docs/PCEC-v0.md`

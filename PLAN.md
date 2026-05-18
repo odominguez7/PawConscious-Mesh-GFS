@@ -264,7 +264,7 @@ Code salvage rate: ~60% port from existing.
 - [ ] Firecrawl MCP integration in `claim_extractor`
 - [ ] ParallelAgent orchestrator wires all 5 agents at declared depths; SequentialAgent merges
 - [ ] Each agent deployed to Cloud Run with own service URL
-- [ ] Single public A2A v0.3 agent card at `mesh.pawconscious.com/.well-known/agent-card.json` (per codex G7 P1.3: "A2A v0.3 compatible, no current third-party integrations")
+- [ ] Single public A2A v0.3 agent card at `mesh-api-40952019806.us-central1.run.app/.well-known/agent-card.json` (per codex G7 P1.3: "A2A v0.3 compatible, no current third-party integrations")
 - [ ] **Demo API key + rate limiting** on A2A endpoint (codex G7 P1.7) — judges get key; public open access deferred post-hackathon
 - [ ] `verify_claim(sku, claim_text)` skill returns real result against one real Honest Paws SKU
 - [ ] Codex G9 handshake on primitives
@@ -273,7 +273,7 @@ Code salvage rate: ~60% port from existing.
 - [ ] **PCEC v0.1 cut to draft-only scope** (codex G7 P0.1 + P1.1):
   - JSON-LD schema for `EndorsementClaim` only (Evidence/Attestation/Audit deferred to v0.2 doc)
   - One resolver endpoint that returns a single signed bundle
-  - One trust root (PawConscious) — `did:web:pawconscious.com`
+  - One trust root (PawConscious) — `did:web:mesh-api-40952019806.us-central1.run.app`
   - One verify script (Node + Python both)
   - Doc starts with: "Draft proposal v0.1. Not a standard. Single operator. No external members. No neutral governance yet."
   - C2PA assertion, full transparency log, founding members, Linux Foundation = labeled "future work"
@@ -311,7 +311,7 @@ Code salvage rate: ~60% port from existing.
 ### Phase 7 — Submission packaging (D16-D17, Jun 2-3)
 - [ ] Devpost listing draft: project title, tagline, description, technologies, data sources, findings
 - [ ] Public GitHub repo: README, LICENSE (MIT), PLAN.md, PCEC-v0.md, ARCHITECTURE.md, RUNBOOKS, sample certs
-- [ ] Hosted URL test: pawconscious.com/mesh (or pawconscious-mesh.run.app fallback)
+- [ ] Hosted URL test: mesh-api-40952019806.us-central1.run.app (or pawconscious-mesh.run.app fallback)
 - [ ] YouTube unlisted upload (max 3 min, English, no third-party logos beyond Google/MCP/A2A)
 - [ ] Submission text description: ≤2000 chars summarizing feature, tech, data sources, findings
 - [ ] Codex G13 handshake on submission package
