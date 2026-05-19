@@ -881,15 +881,24 @@
   </header>
 
   <!-- ============================================================ -->
-  <!-- S1 deck-aligned hero (CEO plan Stage 2A)                     -->
+  <!-- S1 deck-aligned hero (CEO plan Stage 2A, codex S2A P1-3 fix) -->
+  <!-- Merged: deck headline + verify CTA in one section            -->
   <!-- ============================================================ -->
   <section class="s1-hero">
     <div>
       <div class="eyebrow"><span class="dot"></span> 01 · The trust layer</div>
-      <h1>The trust layer every AI agent will call before recommending a consumer product</h1>
-      <div class="buyer-callout">
-        <div class="label">The shopper's choice</div>
-        <div class="body">Six bottles on the shelf, one wears the seal. The AI agent recommends it, and the brand can back every health claim with signed proof.</div>
+      <h1>A trust layer AI agents can call before recommending a consumer product.</h1>
+      <p class="s1-lede" style="font-family:var(--display);font-style:italic;font-weight:300;font-size:22px;line-height:1.4;color:var(--moss);max-width:560px;margin:0 0 28px;">Paste a pet supplement product page. In one to three minutes you receive a signed evidence bundle anchored to a public transparency log.</p>
+      <div class="ceremony-cta">
+        <input type="text" id="urlInput" placeholder="https://www.nativepet.com/products/hip-joint"
+               value="https://www.nativepet.com/products/hip-joint" autocomplete="off">
+        <select id="maxClaims">
+          <option value="1">1 claim</option>
+          <option value="2" selected>2 claims</option>
+          <option value="3">3 claims</option>
+          <option value="5">5 claims</option>
+        </select>
+        <button id="runBtn" onclick="runMesh()">Verify</button>
       </div>
     </div>
     <div class="hero-image-wrap">
@@ -902,30 +911,31 @@
   </section>
 
   <!-- ============================================================ -->
-  <!-- S2 deck-aligned market forces (CEO plan Stage 2A)            -->
+  <!-- S2 deck-aligned market forces (CEO plan Stage 2A,            -->
+  <!-- codex S2A P1-2 absorbed: every stat carries an inline source) -->
   <!-- ============================================================ -->
   <section class="s2-forces">
     <div class="section-eyebrow">02 · Why this, why now</div>
     <h2>AI agents arrived, the pet category boomed, and the lawsuits began.</h2>
     <div class="proofs">
       <div class="proof">
-        <div class="caption">AI agent shoppers · 2025</div>
-        <div class="num">250M</div>
-        <div class="label">Amazon Rufus is live today; more AI agents arrive each quarter. PawConscious tells them which products have independent evidence.</div>
+        <div class="caption">AI agent shoppers · est. 2025</div>
+        <div class="num">~250M</div>
+        <div class="label">Amazon Rufus is live across the US Amazon catalog; Operator and Perplexity Shopping shipped 2025. PawConscious is built to be a callable trust source these agents can query.<br><span style="font-family:var(--mono);font-size:9.5px;letter-spacing:0.16em;text-transform:uppercase;color:var(--moss);opacity:0.7;">Source: Amazon Q3 2025 earnings · Pew/Capgemini AI shopping survey 2025</span></div>
       </div>
       <div class="proof">
         <div class="caption">US pet households · 2025</div>
         <div class="num">94M</div>
-        <div class="label">94M US households own a pet; 76% say pets are family; supplements are the new preventive medicine.</div>
+        <div class="label">94M US households own a pet; supplements are the fastest-growing category within pet wellness.<br><span style="font-family:var(--mono);font-size:9.5px;letter-spacing:0.16em;text-transform:uppercase;color:var(--moss);opacity:0.7;">Source: APPA Pet Industry National Survey 2025 · Packaged Facts</span></div>
       </div>
       <div class="proof">
         <div class="caption">Cosequin · settled 2024</div>
         <div class="num">$11.5M</div>
-        <div class="label">The leading dog joint supplement settled for claims it could not prove. PawConscious gives brands a signed evidence bundle to publish before launch.</div>
+        <div class="label">The leading dog joint supplement settled for joint-mobility claims it could not substantiate. PawConscious lets brands publish a signed evidence bundle before launch.<br><span style="font-family:var(--mono);font-size:9.5px;letter-spacing:0.16em;text-transform:uppercase;color:var(--moss);opacity:0.7;">Source: <a href="https://topclassactions.com/lawsuit-settlements/open-lawsuit-settlements/11-5m-cosequin-dog-supplements-class-action-settlement/" target="_blank" rel="noopener" style="color:var(--moss);">topclassactions.com</a> · Nutramax settlement filings 2024</span></div>
       </div>
     </div>
     <div class="bottle-band">
-      <div class="lede">Only 1 in 20 brands has<br>independent evidence today</div>
+      <div class="lede">Few brands carry independent<br>clinical-efficacy evidence today<br><span style="font-family:var(--mono);font-size:9.5px;letter-spacing:0.16em;text-transform:uppercase;color:var(--moss);opacity:0.7;font-weight:400;">Source: NASC seal covers GMP, not clinical efficacy · NSF/ConsumerLab cover &lt;5% of DTC SKUs</span></div>
       <svg viewBox="0 0 880 200" preserveAspectRatio="xMidYMid meet" aria-label="One sealed amber bottle followed by 19 unsigned outline bottles">
         <g transform="translate(2, 0)">
           <rect x="2" y="46" width="36" height="148" rx="4" fill="#9C5E1A"/>
@@ -955,38 +965,14 @@
         </g>
       </svg>
       <div class="totals">
-        <span class="verified">$140M verified</span>
-        <span class="unverified">$2.66B not yet</span>
+        <span class="verified">Live verification</span>
+        <span class="unverified">$2.8B US category · 2025</span>
       </div>
     </div>
   </section>
 
-  <section class="hero">
-    <div>
-      <h1>Verify a brand. <em>Watch the mesh.</em></h1>
-      <p class="lede">Paste any pet supplement product page. Five agents on Google Cloud verify every health claim against PubMed, the FTC endorsement rule, AAFCO, and a five-vet rubric. You receive a signed evidence bundle in one to three minutes. Cold starts may take longer.</p>
-      <div class="ceremony-cta">
-        <input type="text" id="urlInput" placeholder="https://www.nativepet.com/products/hip-joint"
-               value="https://www.nativepet.com/products/hip-joint" autocomplete="off">
-        <select id="maxClaims">
-          <option value="1">1 claim</option>
-          <option value="2" selected>2 claims</option>
-          <option value="3">3 claims</option>
-          <option value="5">5 claims</option>
-        </select>
-        <button id="runBtn" onclick="runMesh()">Verify</button>
-      </div>
-    </div>
-    <aside class="hero-aside">
-      <div class="aside-eyebrow">Pet supplements 2024</div>
-      <div class="aside-num">$2.8B</div>
-      <div class="aside-label">US category. Two thousand four hundred brands. Zero with audit-grade evidence chains.</div>
-      <div class="aside-mini">
-        Cosequin <span>$11.5M</span> class action settlement, 2024<br>
-        VetriScience GlycoFlex <span>class action pending</span>, 2025
-      </div>
-    </aside>
-  </section>
+  <!-- Legacy .hero section removed (codex S2A P1-3 absorption): CTA + headline moved to s1-hero;
+       $2.8B / Cosequin aside is now in s2-forces below. -->
 
   <section class="stage">
     <div class="stage-eyebrow">Verification ceremony</div>
@@ -1034,7 +1020,7 @@
     <div class="moat-list">
       <div>
         <div class="section-eyebrow">08 · Why PawConscious — the moat</div>
-        <h2>PawConscious wrote the spec the agentic shelf will call.</h2>
+        <h2>PawConscious authored an open spec for the agentic shelf.</h2>
       </div>
       <div class="moat">
         <div class="n">01</div>
@@ -1060,8 +1046,8 @@
       <div class="moat">
         <div class="n">04</div>
         <div>
-          <div class="title">We've done this before</div>
-          <div class="desc">Founders from MIT Sloan with prior venture-backed exits in adjacent consumer categories.</div>
+          <div class="title">Cofounder operator depth</div>
+          <div class="desc">CEO Omar Dominguez (MIT Sloan MBA 2026) built the protocol architecture. COO Jennifer Fremont Smith (MIT Sloan Lecturer) brings two prior venture-backed exits: WECO (Bessemer Venture Partners, acquired by Feast &amp; Fettle Nov 2025) and Smarterer (Google Ventures, acquired by Pluralsight).</div>
         </div>
       </div>
     </div>
