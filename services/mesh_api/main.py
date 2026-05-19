@@ -83,6 +83,12 @@ app = FastAPI(
                 "Public A2A v0.3 mesh endpoint. Submit pet product URLs for evidence verification.",
 )
 
+# Mount /assets/* for deck-aligned imagery used by console-v2.html (Stage 2A).
+from fastapi.staticfiles import StaticFiles
+_assets_dir = Path(__file__).parent / "static" / "assets"
+if _assets_dir.exists():
+    app.mount("/assets", StaticFiles(directory=str(_assets_dir)), name="assets")
+
 
 # ---------------------------------------------------------------------------
 # Public well-known endpoints

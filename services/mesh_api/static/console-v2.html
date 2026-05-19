@@ -559,6 +559,306 @@
       .stage, .verdicts, .colophon { padding-left: 24px; padding-right: 24px; }
       .independence { padding: 40px 24px; }
     }
+
+    /* ============================================================ */
+    /* Stage 2A — deck-aligned shell (CEO plan 2026-05-19)          */
+    /* ============================================================ */
+
+    /* S1 hero — display headline + search-results image + buyer-language callout */
+    .s1-hero {
+      max-width: 1320px;
+      margin: 0 auto;
+      padding: 64px 48px 48px;
+      display: grid;
+      grid-template-columns: 0.95fr 1.1fr;
+      gap: 64px;
+      align-items: center;
+    }
+    .s1-hero .eyebrow {
+      font-family: var(--mono);
+      font-size: 11px;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: var(--moss);
+      margin-bottom: 18px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .s1-hero .eyebrow .dot {
+      width: 6px; height: 6px; background: var(--amber); border-radius: 50%;
+    }
+    .s1-hero h1 {
+      font-family: var(--display);
+      font-weight: 400;
+      font-size: 56px;
+      line-height: 1.04;
+      letter-spacing: -0.02em;
+      color: var(--slate);
+      max-width: 580px;
+      margin: 0 0 28px;
+    }
+    .s1-hero .buyer-callout {
+      padding: 24px 24px 24px 26px;
+      background: var(--paper-edge);
+      border-left: 4px solid var(--moss);
+      max-width: 560px;
+    }
+    .s1-hero .buyer-callout .label {
+      font-family: var(--mono);
+      font-size: 10px;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: var(--moss);
+    }
+    .s1-hero .buyer-callout .body {
+      font-family: var(--display);
+      font-size: 22px;
+      line-height: 1.32;
+      color: var(--slate);
+      margin-top: 10px;
+    }
+    .s1-hero .hero-image-wrap {
+      position: relative;
+    }
+    .s1-hero .hero-image-wrap img {
+      width: 100%;
+      height: auto;
+      display: block;
+      border: 1px solid rgba(26,29,30,0.18);
+      box-shadow: 0 24px 48px rgba(26,29,30,0.10);
+    }
+    .s1-hero .hero-image-wrap .caption-left,
+    .s1-hero .hero-image-wrap .caption-right {
+      margin-top: 14px;
+      font-family: var(--mono);
+      font-size: 10px;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: var(--slate);
+      opacity: 0.6;
+      display: flex;
+      justify-content: space-between;
+    }
+    .s1-hero .hero-image-wrap .caption-right .signed { color: var(--moss); font-weight: 600; opacity: 1; }
+
+    /* S2 forces — 3 stat tiles + 20-bottle pictogram */
+    .s2-forces {
+      max-width: 1320px;
+      margin: 0 auto;
+      padding: 48px 48px 64px;
+      border-top: 1px solid var(--linen);
+    }
+    .s2-forces .section-eyebrow {
+      font-family: var(--mono);
+      font-size: 11px;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: var(--moss);
+      margin-bottom: 12px;
+    }
+    .s2-forces h2 {
+      font-family: var(--display);
+      font-weight: 400;
+      font-size: 40px;
+      line-height: 1.1;
+      letter-spacing: -0.015em;
+      color: var(--slate);
+      margin: 0 0 36px;
+      max-width: 1100px;
+    }
+    .s2-forces .proofs {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 36px;
+      margin-bottom: 56px;
+    }
+    .s2-forces .proof .caption {
+      font-family: var(--mono);
+      font-size: 10px;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: var(--moss);
+      margin-bottom: 10px;
+    }
+    .s2-forces .proof .num {
+      font-family: var(--mono);
+      font-size: 64px;
+      font-weight: 500;
+      color: var(--slate);
+      line-height: 1;
+      margin-bottom: 12px;
+      font-feature-settings: 'tnum';
+      letter-spacing: -0.02em;
+    }
+    .s2-forces .proof .label {
+      font-family: var(--body);
+      font-size: 14px;
+      line-height: 1.5;
+      color: var(--slate);
+      opacity: 0.8;
+    }
+    .s2-forces .bottle-band {
+      border-top: 1px solid var(--linen);
+      padding-top: 28px;
+      display: grid;
+      grid-template-columns: auto 1fr auto;
+      gap: 24px;
+      align-items: center;
+    }
+    .s2-forces .bottle-band .lede {
+      font-family: var(--mono);
+      font-size: 12px;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: var(--moss);
+      font-weight: 600;
+    }
+    .s2-forces .bottle-band svg { width: 100%; height: auto; display: block; }
+    .s2-forces .bottle-band .totals {
+      font-family: var(--mono);
+      font-size: 12px;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      text-align: right;
+    }
+    .s2-forces .bottle-band .totals .verified { color: var(--amber); font-weight: 600; display: block; }
+    .s2-forces .bottle-band .totals .unverified { color: var(--signal); font-weight: 600; display: block; margin-top: 4px; }
+
+    /* S8 moats — 4 numbered rows + hero image */
+    .s8-moats {
+      max-width: 1320px;
+      margin: 0 auto;
+      padding: 64px 48px 48px;
+      border-top: 1px solid var(--linen);
+      display: grid;
+      grid-template-columns: 0.85fr 1fr;
+      gap: 64px;
+      align-items: start;
+    }
+    .s8-moats .moat-image img {
+      width: 100%;
+      height: auto;
+      max-height: 560px;
+      object-fit: contain;
+      display: block;
+      box-shadow: 0 24px 48px rgba(26,29,30,0.14);
+    }
+    .s8-moats .moat-image .caption {
+      margin-top: 14px;
+      text-align: center;
+      font-family: var(--mono);
+      font-size: 10px;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: var(--moss);
+      opacity: 0.75;
+    }
+    .s8-moats .moat-list {
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+    }
+    .s8-moats .moat-list .section-eyebrow {
+      font-family: var(--mono);
+      font-size: 11px;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: var(--moss);
+      margin-bottom: 8px;
+    }
+    .s8-moats .moat-list h2 {
+      font-family: var(--display);
+      font-weight: 400;
+      font-size: 32px;
+      line-height: 1.1;
+      letter-spacing: -0.015em;
+      color: var(--slate);
+      margin: 0 0 12px;
+    }
+    .s8-moats .moat {
+      display: grid;
+      grid-template-columns: 44px 1fr;
+      gap: 14px;
+      align-items: baseline;
+      border-top: 1px solid rgba(26,29,30,0.18);
+      padding-top: 14px;
+    }
+    .s8-moats .moat .n {
+      font-family: var(--mono);
+      font-size: 13px;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: var(--amber);
+      font-weight: 600;
+    }
+    .s8-moats .moat .title {
+      font-family: var(--display);
+      font-size: 22px;
+      line-height: 1.2;
+      color: var(--slate);
+      margin-bottom: 4px;
+    }
+    .s8-moats .moat .desc {
+      font-family: var(--body);
+      font-size: 14px;
+      line-height: 1.45;
+      color: var(--slate);
+      opacity: 0.85;
+    }
+    .s8-moats .moat .desc .roadmap {
+      color: var(--moss);
+      font-style: italic;
+      opacity: 0.8;
+    }
+
+    /* Track 3 mandate badges in footer */
+    .track3-badges {
+      max-width: 1320px;
+      margin: 0 auto;
+      padding: 32px 48px 24px;
+      border-top: 1px solid var(--linen);
+      display: flex;
+      flex-wrap: wrap;
+      gap: 14px;
+      align-items: center;
+    }
+    .track3-badges .label {
+      font-family: var(--mono);
+      font-size: 10px;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: var(--moss);
+      margin-right: 8px;
+    }
+    .track3-badges .badge {
+      font-family: var(--mono);
+      font-size: 11px;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: var(--slate);
+      padding: 8px 14px;
+      border: 1px solid var(--linen);
+      background: var(--paper-edge);
+      text-decoration: none;
+    }
+    .track3-badges .badge:hover { border-color: var(--amber); color: var(--amber); }
+    .track3-badges .badge.check::before {
+      content: "✓";
+      color: var(--moss);
+      margin-right: 8px;
+      font-weight: 600;
+    }
+
+    @media (max-width: 1024px) {
+      .s1-hero, .s8-moats { grid-template-columns: 1fr; gap: 32px; padding: 40px 24px; }
+      .s2-forces { padding: 32px 24px; }
+      .s2-forces .proofs { grid-template-columns: 1fr; }
+      .s2-forces .bottle-band { grid-template-columns: 1fr; }
+      .s1-hero h1 { font-size: 40px; max-width: 100%; }
+      .s2-forces h2 { font-size: 28px; }
+      .s8-moats .moat-list h2 { font-size: 24px; }
+    }
   </style>
 </head>
 <body>
@@ -580,9 +880,90 @@
     </nav>
   </header>
 
+  <!-- ============================================================ -->
+  <!-- S1 deck-aligned hero (CEO plan Stage 2A)                     -->
+  <!-- ============================================================ -->
+  <section class="s1-hero">
+    <div>
+      <div class="eyebrow"><span class="dot"></span> 01 · The trust layer</div>
+      <h1>The trust layer every AI agent will call before recommending a consumer product</h1>
+      <div class="buyer-callout">
+        <div class="label">The shopper's choice</div>
+        <div class="body">Six bottles on the shelf, one wears the seal. The AI agent recommends it, and the brand can back every health claim with signed proof.</div>
+      </div>
+    </div>
+    <div class="hero-image-wrap">
+      <img src="/assets/search-results.png" alt="Six near-identical dog supplement products in a search results grid; only one carries the PawConscious verified seal at the highest rating">
+      <div class="caption-left">
+        <span>Illustrative search results · 5 unsigned · 1 PawConscious verified</span>
+        <span class="signed">Signed proof below ↓</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================ -->
+  <!-- S2 deck-aligned market forces (CEO plan Stage 2A)            -->
+  <!-- ============================================================ -->
+  <section class="s2-forces">
+    <div class="section-eyebrow">02 · Why this, why now</div>
+    <h2>AI agents arrived, the pet category boomed, and the lawsuits began.</h2>
+    <div class="proofs">
+      <div class="proof">
+        <div class="caption">AI agent shoppers · 2025</div>
+        <div class="num">250M</div>
+        <div class="label">Amazon Rufus is live today; more AI agents arrive each quarter. PawConscious tells them which products have independent evidence.</div>
+      </div>
+      <div class="proof">
+        <div class="caption">US pet households · 2025</div>
+        <div class="num">94M</div>
+        <div class="label">94M US households own a pet; 76% say pets are family; supplements are the new preventive medicine.</div>
+      </div>
+      <div class="proof">
+        <div class="caption">Cosequin · settled 2024</div>
+        <div class="num">$11.5M</div>
+        <div class="label">The leading dog joint supplement settled for claims it could not prove. PawConscious gives brands a signed evidence bundle to publish before launch.</div>
+      </div>
+    </div>
+    <div class="bottle-band">
+      <div class="lede">Only 1 in 20 brands has<br>independent evidence today</div>
+      <svg viewBox="0 0 880 200" preserveAspectRatio="xMidYMid meet" aria-label="One sealed amber bottle followed by 19 unsigned outline bottles">
+        <g transform="translate(2, 0)">
+          <rect x="2" y="46" width="36" height="148" rx="4" fill="#9C5E1A"/>
+          <rect x="9" y="22" width="22" height="26" rx="3" fill="#9C5E1A"/>
+          <circle cx="20" cy="35" r="8" fill="#F2EDE0" opacity="0.92"/>
+        </g>
+        <g fill="none" stroke="#1A1D1E" stroke-width="2">
+          <g transform="translate(46, 0)"><rect x="2" y="46" width="36" height="148" rx="4"/><rect x="9" y="22" width="22" height="26" rx="3"/></g>
+          <g transform="translate(90, 0)"><rect x="2" y="46" width="36" height="148" rx="4"/><rect x="9" y="22" width="22" height="26" rx="3"/></g>
+          <g transform="translate(134, 0)"><rect x="2" y="46" width="36" height="148" rx="4"/><rect x="9" y="22" width="22" height="26" rx="3"/></g>
+          <g transform="translate(178, 0)"><rect x="2" y="46" width="36" height="148" rx="4"/><rect x="9" y="22" width="22" height="26" rx="3"/></g>
+          <g transform="translate(222, 0)"><rect x="2" y="46" width="36" height="148" rx="4"/><rect x="9" y="22" width="22" height="26" rx="3"/></g>
+          <g transform="translate(266, 0)"><rect x="2" y="46" width="36" height="148" rx="4"/><rect x="9" y="22" width="22" height="26" rx="3"/></g>
+          <g transform="translate(310, 0)"><rect x="2" y="46" width="36" height="148" rx="4"/><rect x="9" y="22" width="22" height="26" rx="3"/></g>
+          <g transform="translate(354, 0)"><rect x="2" y="46" width="36" height="148" rx="4"/><rect x="9" y="22" width="22" height="26" rx="3"/></g>
+          <g transform="translate(398, 0)"><rect x="2" y="46" width="36" height="148" rx="4"/><rect x="9" y="22" width="22" height="26" rx="3"/></g>
+          <g transform="translate(442, 0)"><rect x="2" y="46" width="36" height="148" rx="4"/><rect x="9" y="22" width="22" height="26" rx="3"/></g>
+          <g transform="translate(486, 0)"><rect x="2" y="46" width="36" height="148" rx="4"/><rect x="9" y="22" width="22" height="26" rx="3"/></g>
+          <g transform="translate(530, 0)"><rect x="2" y="46" width="36" height="148" rx="4"/><rect x="9" y="22" width="22" height="26" rx="3"/></g>
+          <g transform="translate(574, 0)"><rect x="2" y="46" width="36" height="148" rx="4"/><rect x="9" y="22" width="22" height="26" rx="3"/></g>
+          <g transform="translate(618, 0)"><rect x="2" y="46" width="36" height="148" rx="4"/><rect x="9" y="22" width="22" height="26" rx="3"/></g>
+          <g transform="translate(662, 0)"><rect x="2" y="46" width="36" height="148" rx="4"/><rect x="9" y="22" width="22" height="26" rx="3"/></g>
+          <g transform="translate(706, 0)"><rect x="2" y="46" width="36" height="148" rx="4"/><rect x="9" y="22" width="22" height="26" rx="3"/></g>
+          <g transform="translate(750, 0)"><rect x="2" y="46" width="36" height="148" rx="4"/><rect x="9" y="22" width="22" height="26" rx="3"/></g>
+          <g transform="translate(794, 0)"><rect x="2" y="46" width="36" height="148" rx="4"/><rect x="9" y="22" width="22" height="26" rx="3"/></g>
+          <g transform="translate(838, 0)"><rect x="2" y="46" width="36" height="148" rx="4"/><rect x="9" y="22" width="22" height="26" rx="3"/></g>
+        </g>
+      </svg>
+      <div class="totals">
+        <span class="verified">$140M verified</span>
+        <span class="unverified">$2.66B not yet</span>
+      </div>
+    </div>
+  </section>
+
   <section class="hero">
     <div>
-      <h1>The signature your<br>general counsel hands<br>the plaintiff lawyer <em>in deposition</em>.</h1>
+      <h1>Verify a brand. <em>Watch the mesh.</em></h1>
       <p class="lede">Paste any pet supplement product page. Five agents on Google Cloud verify every health claim against PubMed, the FTC endorsement rule, AAFCO, and a five-vet rubric. You receive a signed evidence bundle in one to three minutes. Cold starts may take longer.</p>
       <div class="ceremony-cta">
         <input type="text" id="urlInput" placeholder="https://www.nativepet.com/products/hip-joint"
@@ -642,6 +1023,50 @@
     <div class="verdict-list" id="verdictList"></div>
   </section>
 
+  <!-- ============================================================ -->
+  <!-- S8 deck-aligned moats (CEO plan Stage 2A)                    -->
+  <!-- ============================================================ -->
+  <section class="s8-moats">
+    <div class="moat-image">
+      <img src="/assets/hero-bottle.png" alt="A supplement bottle with an amber PawConscious wax-seal paw on the cap on a retail shelf; a laptop in the background shows the same product's e-commerce page with the PawConscious verified badge and audit URL">
+      <div class="caption">The same proof, on the shelf and in the agent</div>
+    </div>
+    <div class="moat-list">
+      <div>
+        <div class="section-eyebrow">08 · Why PawConscious — the moat</div>
+        <h2>PawConscious wrote the spec the agentic shelf will call.</h2>
+      </div>
+      <div class="moat">
+        <div class="n">01</div>
+        <div>
+          <div class="title">We wrote the spec</div>
+          <div class="desc">PCEC v0.1, the open Pet Claim Evidence Certificate, is MIT-licensed. <span class="roadmap">Roadmap: donation to the Linux Foundation, the same path Adobe used for C2PA.</span></div>
+        </div>
+      </div>
+      <div class="moat">
+        <div class="n">02</div>
+        <div>
+          <div class="title">We run the rubric</div>
+          <div class="desc">A five-vet rubric grades every claim against PubMed and the FTC §255.3 substantiation rule. <span class="roadmap">Roadmap: stipend-funded panel from accredited veterinary nutrition programs.</span></div>
+        </div>
+      </div>
+      <div class="moat">
+        <div class="n">03</div>
+        <div>
+          <div class="title">We ship the bundle</div>
+          <div class="desc">A cryptographically signed evidence bundle (Ed25519) any AI agent can call and verify in one HTTP request, anchored to a public Firestore transparency log.</div>
+        </div>
+      </div>
+      <div class="moat">
+        <div class="n">04</div>
+        <div>
+          <div class="title">We've done this before</div>
+          <div class="desc">Founders from MIT Sloan with prior venture-backed exits in adjacent consumer categories.</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
   <section class="independence">
     <div class="independence-inner">
       <div>
@@ -658,6 +1083,16 @@
       <p class="sub" style="margin-top: 18px; opacity: 0.75;">Roadmap (v0.2+, not present): independent operator, stipend-funded academic vet panel, uniform rate card, Linux Foundation donation. Drafted in <a href="https://github.com/odominguez7/PawConscious-Mesh-GFS/blob/main/docs/PCEC-v0.md">PCEC v0.1 spec</a>.</p>
     </div>
   </section>
+
+  <!-- Track 3 mandate badges per CEO plan Stage 2A -->
+  <div class="track3-badges">
+    <span class="label">Track 3 mandates · met</span>
+    <a class="badge check" href="https://github.com/odominguez7/PawConscious-Mesh-GFS/blob/main/BUSINESS_PLAN.md">B2B Focus</a>
+    <a class="badge check" href="/health">Cloud Run</a>
+    <a class="badge check" href="https://github.com/odominguez7/PawConscious-Mesh-GFS/blob/main/agents/orchestrator.py">Gemini 2.5 Pro · ADK</a>
+    <a class="badge check" href="/.well-known/agent-card.json">A2A v0.3</a>
+    <a class="badge check" href="/health/agent-engine">Agent Engine</a>
+  </div>
 
   <footer class="colophon">
     <div>did:web:mesh-api-40952019806.us-central1.run.app · MIT License · Built on Google Cloud</div>
