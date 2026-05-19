@@ -338,6 +338,108 @@
     .proof-cert .cert-seal svg { width: 30px; height: 30px; opacity: 0.94; }
 
     /* ============================================================ */
+    /* BUSINESS CASE — buyer / ROI / pricing / procurement           */
+    /* ============================================================ */
+    .biz {
+      background: var(--slate); color: var(--vellum);
+      padding: 96px 0;
+    }
+    .biz-inner {
+      max-width: 1320px; margin: 0 auto; padding: 0 40px;
+    }
+    .biz-head { max-width: 760px; margin: 0 0 56px; }
+    .biz-head .eyebrow { color: var(--amber-soft); margin-bottom: 16px; }
+    .biz-head h2 {
+      font-family: var(--display); font-weight: 400;
+      font-size: 44px; line-height: 1.1; letter-spacing: -0.02em;
+      color: var(--vellum); margin: 0 0 18px;
+    }
+    .biz-head p {
+      font-family: var(--body); font-size: 16px; line-height: 1.6;
+      color: var(--linen); max-width: 640px; opacity: 0.92;
+    }
+    .biz-grid {
+      display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 40px;
+      margin-bottom: 56px;
+    }
+    .biz-card {
+      border-top: 1px solid var(--amber-soft); padding-top: 22px;
+    }
+    .biz-card .label {
+      font-family: var(--mono); font-size: 10px; letter-spacing: 0.22em;
+      text-transform: uppercase; color: var(--amber-soft); margin-bottom: 14px;
+    }
+    .biz-card .title {
+      font-family: var(--display); font-size: 22px; line-height: 1.25;
+      color: var(--vellum); margin-bottom: 12px;
+    }
+    .biz-card .desc {
+      font-family: var(--body); font-size: 14px; line-height: 1.55;
+      color: var(--linen); opacity: 0.88;
+    }
+    .biz-roi {
+      display: grid; grid-template-columns: 1.4fr 1fr 1fr 1fr; gap: 32px;
+      padding-top: 32px; border-top: 1px solid var(--moss-soft);
+      align-items: end;
+    }
+    .biz-roi-lede {
+      font-family: var(--display); font-size: 20px; line-height: 1.35;
+      color: var(--vellum); max-width: 360px;
+    }
+    .biz-roi-stat .num {
+      font-family: var(--mono); font-size: 36px; color: var(--amber-soft);
+      line-height: 1; font-weight: 500; letter-spacing: -0.02em;
+      font-variant-numeric: tabular-nums; margin-bottom: 8px;
+    }
+    .biz-roi-stat .lbl {
+      font-family: var(--mono); font-size: 10px; letter-spacing: 0.18em;
+      text-transform: uppercase; color: var(--linen); opacity: 0.7;
+    }
+    .biz-pricing {
+      margin-top: 56px; padding-top: 32px; border-top: 1px solid var(--moss-soft);
+      display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 32px;
+    }
+    .biz-tier {
+      background: var(--slate-soft); padding: 26px 26px 28px;
+      border-top: 2px solid var(--linen);
+    }
+    .biz-tier.featured { border-top-color: var(--amber); }
+    .biz-tier .tier-name {
+      font-family: var(--mono); font-size: 11px; letter-spacing: 0.22em;
+      text-transform: uppercase; color: var(--linen); margin-bottom: 14px;
+    }
+    .biz-tier.featured .tier-name { color: var(--amber-soft); }
+    .biz-tier .tier-price {
+      font-family: var(--display); font-size: 38px; line-height: 1; color: var(--vellum);
+      letter-spacing: -0.02em; margin-bottom: 6px;
+      font-variant-numeric: tabular-nums;
+    }
+    .biz-tier .tier-price .unit { font-family: var(--mono); font-size: 12px; opacity: 0.7; letter-spacing: 0.1em; }
+    .biz-tier .tier-buyer {
+      font-family: var(--mono); font-size: 10px; letter-spacing: 0.18em;
+      text-transform: uppercase; color: var(--linen); opacity: 0.7; margin-bottom: 18px;
+    }
+    .biz-tier ul {
+      list-style: none; padding: 0; margin: 0;
+      font-family: var(--body); font-size: 13px; line-height: 1.7; color: var(--linen);
+    }
+    .biz-tier ul li::before {
+      content: "·"; color: var(--amber-soft); margin-right: 8px; font-weight: 600;
+    }
+    .biz-procurement {
+      margin-top: 40px; padding: 24px 28px;
+      background: var(--moss-soft); border-left: 4px solid var(--amber);
+    }
+    .biz-procurement .label {
+      font-family: var(--mono); font-size: 10px; letter-spacing: 0.22em;
+      text-transform: uppercase; color: var(--amber-soft); margin-bottom: 10px;
+    }
+    .biz-procurement .body {
+      font-family: var(--display); font-size: 19px; line-height: 1.4;
+      color: var(--vellum); max-width: 1100px;
+    }
+
+    /* ============================================================ */
     /* MOATS                                                         */
     /* ============================================================ */
     .moats {
@@ -527,6 +629,8 @@
       .hero { padding: 40px 24px; }
       .hero-left h1 { font-size: 44px; }
       .how, .moats, .verify-zone { padding: 56px 24px; }
+      .biz { padding: 56px 0; } .biz-inner { padding: 0 24px; }
+      .biz-grid, .biz-roi, .biz-pricing { grid-template-columns: 1fr; gap: 24px; }
       .proof { padding: 56px 0; } .proof-inner { padding: 0 24px; }
       .founder { padding: 56px 0; } .founder-inner { padding: 0 24px; }
       .masthead { padding: 20px 24px; flex-direction: column; align-items: flex-start; gap: 12px; }
@@ -710,6 +814,95 @@
 &nbsp;&nbsp;<span class="json-key">"signature"</span>: <span class="json-str">"ed25519:4a2f…b9e1"</span>,<br>
 &nbsp;&nbsp;<span class="json-key">"chain_anchor"</span>: <span class="json-str">"sha256:c2f991cf…"</span><br>
 }
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================ -->
+  <!-- BUSINESS CASE — buyer / ROI / pricing / procurement           -->
+  <!-- ============================================================ -->
+  <section class="biz">
+    <div class="biz-inner">
+      <div class="biz-head">
+        <div class="eyebrow">Business case</div>
+        <h2>Who pays, why now, what it costs.</h2>
+        <p>PawConscious is sold to the General Counsel or Head of Compliance at a DTC pet supplement brand. The buy is triggered by an active plaintiff demand letter, a retailer substantiation ask from Chewy or Petco, or an AI-shopping-agent recommendation gap. Budget comes from existing legal/compliance line items — no new procurement category required.</p>
+      </div>
+
+      <div class="biz-grid">
+        <div class="biz-card">
+          <div class="label">Who buys</div>
+          <div class="title">General Counsel · Head of Compliance · CMO</div>
+          <div class="desc">DTC pet supplement brand, $1M to $50M ARR. Owns claim defense, retailer onboarding files, and FTC §255 risk. Recent class-action templating (Cosequin $11.5M, VetriScience pending) is the catalyst.</div>
+        </div>
+        <div class="biz-card">
+          <div class="label">Why now</div>
+          <div class="title">Plaintiff bar + AI-shopping shift, same buyer</div>
+          <div class="desc">Plaintiff lawyers are templating Cosequin-style cases against the rest of the category. Amazon Rufus and Perplexity Shopping are routing recommendations through agents that need callable evidence. Both forces drive the same buy.</div>
+        </div>
+        <div class="biz-card">
+          <div class="label">What they get</div>
+          <div class="title">Signed PCEC v0.1 bundle per SKU per claim</div>
+          <div class="desc">Each verified claim is published as a JSON-LD evidence bundle the brand publishes alongside the product. AI agents call it. Retailers reference it. Plaintiffs read it. The brand can prove what was claimed and when.</div>
+        </div>
+      </div>
+
+      <div class="biz-roi">
+        <div class="biz-roi-lede">A single class-action loss costs more than a decade of Pro-tier coverage.</div>
+        <div class="biz-roi-stat">
+          <div class="num">$11.5M</div>
+          <div class="lbl">Cosequin settlement · 2024</div>
+        </div>
+        <div class="biz-roi-stat">
+          <div class="num">$499/mo</div>
+          <div class="lbl">PawConscious Pro tier</div>
+        </div>
+        <div class="biz-roi-stat">
+          <div class="num">~1,900×</div>
+          <div class="lbl">Single-event cost ratio</div>
+        </div>
+      </div>
+
+      <div class="biz-pricing">
+        <div class="biz-tier">
+          <div class="tier-name">Starter</div>
+          <div class="tier-price">$99<span class="unit"> / mo</span></div>
+          <div class="tier-buyer">SMB · 1-5 SKUs</div>
+          <ul>
+            <li>5 active SKUs</li>
+            <li>Self-serve verify</li>
+            <li>Signed PCEC bundle per claim</li>
+            <li>Public chain anchor + audit URL</li>
+          </ul>
+        </div>
+        <div class="biz-tier featured">
+          <div class="tier-name">Pro · recommended</div>
+          <div class="tier-price">$499<span class="unit"> / mo</span></div>
+          <div class="tier-buyer">Mid-market · 6-25 SKUs</div>
+          <ul>
+            <li>25 active SKUs</li>
+            <li>Continuous re-verification (roadmap)</li>
+            <li>Priority queue</li>
+            <li>Audit-grade PDF export (roadmap)</li>
+            <li>Plaintiff-defense file template</li>
+          </ul>
+        </div>
+        <div class="biz-tier">
+          <div class="tier-name">Enterprise</div>
+          <div class="tier-price">Custom<span class="unit"> · annual</span></div>
+          <div class="tier-buyer">Retailer · Insurer · &gt;50 SKUs</div>
+          <ul>
+            <li>Unlimited catalog</li>
+            <li>SLA + dedicated review</li>
+            <li>Co-issued cert program</li>
+            <li>Bulk catalog verification API</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="biz-procurement">
+        <div class="label">Procurement framing</div>
+        <div class="body">Maps to existing legal and compliance budget lines. No new vendor category required. Annual contract or month-to-month. Available on a 30-day free pilot for the first claim verified per brand.</div>
       </div>
     </div>
   </section>

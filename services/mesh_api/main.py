@@ -535,12 +535,10 @@ from fastapi.responses import HTMLResponse, FileResponse
 
 @app.get("/", response_class=HTMLResponse)
 async def root(v: Optional[str] = None) -> HTMLResponse:
-    """Console UI. Default = v1 (current). ?v=v2 = deck-aligned redesign (CEO plan 2026-05-19).
-
-    Feature flag rules (codex C2 P0-1 / P1-4): v2 stays opt-in until Stage 2A acceptance test
-    clears; at that point v2 becomes default. Current v1 always available at /?v=v1 as fallback.
+    """Console UI. Default = v2 (deck-aligned redesign, flipped 2026-05-19 night after Stage 2A.x
+    + v0.3.x codex handshakes cleared and E2E verified). v1 always available at /?v=v1 as fallback.
     """
-    filename = "console-v2.html" if v == "v2" else "console.html"
+    filename = "console.html" if v == "v1" else "console-v2.html"
     console_path = Path(__file__).parent / "static" / filename
     return HTMLResponse(content=console_path.read_text(encoding="utf-8"))
 
