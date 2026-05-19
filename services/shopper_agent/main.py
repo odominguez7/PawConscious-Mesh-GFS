@@ -74,7 +74,18 @@ async def fetch_agent_card(client: httpx.AsyncClient) -> dict[str, Any]:
 
 
 async def call_verify_claim(client: httpx.AsyncClient, product_url: str, max_claims: int) -> tuple[dict[str, Any], int]:
-    """A2A v0.3 task call to verify_claim. Returns (response_dict, latency_ms)."""
+    """A2A v0.3 async task call to verify_claim.
+
+    Full round-trip (codex C1 P0#2 fix):
+      1. POST /a2a/v1/tasks/send → 202 {task_id, poll_url, status: 'submitted'}
+      2. Poll /a2a/v1/tasks/get/{task_id} every 5s up to ~5min
+      3. Return the completed task response (with output, bundle_hash, signature, chain_anchor)
+
+    Returns (final_response_dict, latency_ms). The dict has the same shape as
+    A2ATaskStatusResponse — top-level bundle_hash/bundle_signature/chain_anchor plus
+    nested output={claims, vet_scores, compliance, audit, ...}.
+    """
+    import asyncio
     import time
     payload = {
         "skill": "verify_claim",
@@ -82,15 +93,37 @@ async def call_verify_claim(client: httpx.AsyncClient, product_url: str, max_cla
     }
     headers = {"X-API-Key": MESH_API_KEY, "Content-Type": "application/json"}
     t0 = time.monotonic()
-    response = await client.post(
+
+    # Step 1: submit
+    submit_resp = await client.post(
         f"{MESH_URL}/a2a/v1/tasks/send",
         json=payload,
         headers=headers,
-        timeout=270.0,  # mesh fan-out scales with claim count + PubMed latency
+        timeout=30.0,
     )
-    latency_ms = int((time.monotonic() - t0) * 1000)
-    response.raise_for_status()
-    return response.json(), latency_ms
+    submit_resp.raise_for_status()
+    submitted = submit_resp.json()
+    task_id = submitted.get("task_id")
+    if not task_id:
+        raise RuntimeError(f"mesh did not return task_id: {submitted}")
+
+    # Step 2: poll for completion (per A2A v0.3 async lifecycle)
+    poll_url = submitted.get("poll_url") or f"{MESH_URL}/a2a/v1/tasks/get/{task_id}"
+    max_attempts = 60  # 60 × 5s = 5 min hard cap
+    for _attempt in range(max_attempts):
+        await asyncio.sleep(5.0)
+        get_resp = await client.get(poll_url, timeout=30.0)
+        get_resp.raise_for_status()
+        task = get_resp.json()
+        status = task.get("status")
+        if status == "completed":
+            latency_ms = int((time.monotonic() - t0) * 1000)
+            return task, latency_ms
+        if status == "failed":
+            raise RuntimeError(f"mesh task failed: {task.get('error', 'unknown')}")
+        # else still 'working' — keep polling
+
+    raise TimeoutError(f"mesh task {task_id} did not complete within 5 minutes")
 
 
 def score_bundle(bundle: dict[str, Any]) -> tuple[float, int, int, int]:

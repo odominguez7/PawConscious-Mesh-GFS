@@ -543,6 +543,41 @@ async def root(v: Optional[str] = None) -> HTMLResponse:
     return HTMLResponse(content=console_path.read_text(encoding="utf-8"))
 
 
+@app.get("/architecture", response_class=HTMLResponse)
+async def architecture() -> HTMLResponse:
+    """Standalone architecture diagram surface (Move F per WIN_PLAN.md).
+
+    Serves the SVG inline so judges and reviewers can link to a clean,
+    self-contained architecture view that labels all 4 Track 3 mandates.
+    """
+    svg_path = Path(__file__).parent / "static" / "assets" / "architecture.svg"
+    svg = svg_path.read_text(encoding="utf-8")
+    html = f"""<!doctype html>
+<html lang="en"><head><meta charset="utf-8">
+<title>PawConscious — Architecture</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+  body {{ margin:0; padding:48px 24px; background:#F2EDE0; font-family:'JetBrains Mono',ui-monospace,monospace; }}
+  .frame {{ max-width:1400px; margin:0 auto; }}
+  .nav {{ margin-bottom:28px; font-size:11px; letter-spacing:0.18em; text-transform:uppercase; color:#13322B; }}
+  .nav a {{ color:inherit; text-decoration:underline; text-underline-offset:3px; }}
+  svg {{ width:100%; height:auto; display:block; }}
+</style>
+</head><body>
+<div class="frame">
+  <div class="nav">
+    <a href="/">← Back to PawConscious</a>
+    &nbsp;·&nbsp;
+    <a href="/assets/architecture.svg" target="_blank" rel="noopener">Open SVG ↗</a>
+    &nbsp;·&nbsp;
+    <a href="https://github.com/odominguez7/PawConscious-Mesh-GFS" target="_blank" rel="noopener">Source ↗</a>
+  </div>
+  {svg}
+</div>
+</body></html>"""
+    return HTMLResponse(content=html)
+
+
 @app.get("/api-info", response_class=PlainTextResponse)
 async def api_info() -> str:
     return (
