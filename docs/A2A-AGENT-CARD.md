@@ -26,9 +26,10 @@ The forward vision is the Stripe/Twilio asymmetry — brands pay for cert issuan
   },
   "documentationUrl": "https://github.com/odominguez7/PawConscious-Mesh-GFS",
   "capabilities": {
-    "streaming": true,
+    "streaming": false,
     "pushNotifications": false,
-    "stateTransitionHistory": false
+    "stateTransitionHistory": false,
+    "managedReasoningEngine": true
   },
   "authentication": {
     "schemes": ["api-key"],
@@ -60,20 +61,11 @@ The forward vision is the Stripe/Twilio asymmetry — brands pay for cert issuan
       "inputModes": ["text"],
       "outputModes": ["application/ld+json"]
     },
-    {
-      "id": "attest_expert",
-      "name": "Attest expert credential",
-      "description": "Given an expert DID (vet, dermatologist, athlete, physician), return verified credential metadata: license type, jurisdiction, current status, and the set of claims the expert has signed in the last 12 months. Use this to validate whether an expert endorsement on a PDP is real and current.",
-      "tags": ["DID", "credential", "expert"],
-      "examples": [
-        "Attest expert did:web:bostonvet.example:experts:dr-smith"
-      ],
-      "inputModes": ["text"],
-      "outputModes": ["application/ld+json"]
-    }
   ]
 }
 ```
+
+**Note on `attest_expert` skill:** Documented in earlier drafts of this spec as a third skill, NOT shipped in v0.1 of the live agent card. Roadmap item for v0.2+. The live `/.well-known/agent-card.json` exposes only `verify_claim` and `fetch_substantiation_bundle`.
 
 ## How agents call us (hackathon)
 
@@ -81,7 +73,7 @@ Any A2A v0.3-compatible agent can:
 1. Discover via `GET https://mesh-api-40952019806.us-central1.run.app/.well-known/agent-card.json`
 2. Request a demo API key via GitHub issue on the repo
 3. Invoke `POST https://mesh-api-40952019806.us-central1.run.app/a2a/v1/tasks/send` with a `verify_claim` task and the demo key in the auth header
-4. Stream responses via SSE per A2A v0.3
+4. Poll `GET /a2a/v1/tasks/get/{task_id}` for completion (async lifecycle; streaming is not enabled in v0.1)
 
 The hackathon ships with one verified consumer: our own `ShopperAgent` Cloud Run service (source in the public repo). Judges can verify the external call is real by reading the ShopperAgent source + watching the live demo moment.
 

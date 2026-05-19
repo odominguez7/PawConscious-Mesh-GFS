@@ -10,7 +10,7 @@
                        │ Next.js portal (pawcon-  │
                        │ scious.com/mesh)         │
                        └──────────┬───────────────┘
-                                  │ POST /api/validate
+                                  │ POST /a2a/v1/tasks/send (202 async)
                                   ▼
                        ┌──────────────────────────┐
                        │ Vertex AI Agent Engine   │

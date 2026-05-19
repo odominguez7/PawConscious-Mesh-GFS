@@ -38,13 +38,13 @@ A brand pastes a product URL into PawConscious Mesh. Five specialized AI agents 
 4. **compliance** maps each claim to FTC 16 CFR §255 endorsement substantiation requirements, AAFCO public-domain definitions, and NASC public-side seal program standards
 5. **auditor** (adversarial) catches hallucinated citations and claim-direction mismatches
 
-In ~90 seconds, the brand gets back:
+In one to three minutes, the brand gets back:
 - A signed evidence bundle in machine-readable PCEC v0.1 format (the draft open spec we're proposing)
-- An audit-grade PDF for legal counsel + plaintiff defense
-- An embeddable trust badge for the product page with click-popover showing real PMIDs
-- Continuous monitoring: every week, the auditor re-runs against new PubMed papers and regulator updates, re-issues the cert if anything changes
+- A cryptographic chain anchor — every signing event is appended to a public Firestore transparency log, so the brand can prove its evidence chain was issued at a specific time and has not been silently replaced
 
-The mesh exposes a public A2A v0.3 agent card at `/.well-known/agent-card.json` with three skills any AI agent can call: `verify_claim(sku, claim_text)`, `fetch_substantiation_bundle(claim_id)`, `attest_expert(expert_did)`. We ship a separate ShopperAgent service (open source MIT alongside the mesh) that demonstrates the external A2A call against a real Honest Paws SKU.
+The mesh exposes a public A2A v0.3 agent card at `/.well-known/agent-card.json` with two skills any AI agent can call: `verify_claim` and `fetch_substantiation_bundle`. We ship a separate ShopperAgent service (open source MIT alongside the mesh) that demonstrates the external A2A call against a real Honest Paws SKU.
+
+Future versions (v0.2+, on the roadmap, not present in this submission): audit-grade PDF export, embeddable trust badge, continuous weekly monitoring, expert attestation skill.
 
 ## How we built it
 

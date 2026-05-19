@@ -48,21 +48,20 @@
 
 **MUSIC:** Lyria builds, drums enter.
 
-### 01:10 — 01:40 · SIGNED CERT + EMBED (the artifacts)
+### 01:10 — 01:40 · SIGNED CERT + CHAIN ANCHOR (the artifacts)
 
 **VISUAL:** 
 
-- Screen splits into three: 
-  - LEFT: signed JSON-LD cert appearing (PCEC v0.1 schema visible)
-  - MIDDLE: audit-grade PDF being rendered
-  - RIGHT: embed JS snippet, then cut to the Honest Paws PDP with the "Verified by Vets" badge mounted bottom-right
+- Screen splits in two:
+  - LEFT: signed JSON-LD cert appearing on the live page (PCEC v0.1 schema visible, wax-seal cert render, chain anchor sha256 hash visible)
+  - RIGHT: click through to the public transparency log entry at `/pcec/v0/chain/head` — the cryptographic chain showing this bundle has been appended
 
-**VO:** "Output: a signed evidence bundle in machine-readable PCEC format — that's the open spec we're proposing. An audit-grade PDF the brand's GC can hand a plaintiff lawyer. And an embeddable badge — consumers click, they see the real PMIDs and the named expert attestations."
+**VO:** "Output: a signed evidence bundle in machine-readable PCEC format — the open spec we're proposing. Ed25519 over the canonical bundle JSON, anchored to a public Firestore transparency log. The brand can prove its evidence chain was issued at a specific moment and has not been silently replaced."
 
 **ON-SCREEN CALLOUTS:**
-- PCEC v0.1 (draft open spec)
+- PCEC v0.1 (draft open spec, CC-BY-4.0)
 - Ed25519 signed
-- Continuous monitoring (re-issues on new science / regulator update)
+- Public transparency log (Firestore append-only chain)
 
 ### 01:40 — 02:20 · THE LIVE A2A MOMENT (the verifiable live call, per codex G7.3 P0.5)
 

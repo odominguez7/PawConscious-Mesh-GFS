@@ -642,17 +642,17 @@
   <section class="independence">
     <div class="independence-inner">
       <div>
-        <h2>The protocol is <em>independent</em>.</h2>
-        <p class="sub">Six architectural commitments make sponsor capture structurally impossible. Not promises. Code.</p>
+        <h2>What is <em>verifiable today</em>.</h2>
+        <p class="sub">Honest scope of v0.1. The deeper independence architecture below is roadmap, not present fact — see the spec for full disclosure.</p>
       </div>
       <ol class="commitments">
-        <li><b>Third-party operation.</b> The protocol is operated by an independent steward, not a brand sponsor.</li>
-        <li><b>Uniform rate card.</b> Every brand pays the same price. No volume discounts to large sponsors.</li>
-        <li><b>Public transparency log.</b> Every signed bundle is chained. Bundle hashes are independently verifiable.</li>
-        <li><b>Academic vet panel.</b> Rubric authored by faculty at accredited veterinary nutrition programs.</li>
-        <li><b>Linux Foundation donation.</b> The PCEC schema and A2A agent card donated upon adoption.</li>
-        <li><b>No rubric purchase.</b> No brand can buy a higher score. The rubric is public; the math is auditable.</li>
+        <li><b>Open code, MIT licensed.</b> Every line of the orchestrator, the five agents, and the signing layer is on GitHub. No proprietary inference.</li>
+        <li><b>Open spec, CC-BY-4.0.</b> PCEC v0.1 is published as a draft proposal. Reviewers are welcome to fork, critique, and propose v0.2.</li>
+        <li><b>Cryptographic signatures.</b> Every bundle is Ed25519-signed against a published DID. The public key resolves at <code>/.well-known/did.json</code>. Anyone can independently verify.</li>
+        <li><b>Public transparency log.</b> Every signed bundle is appended to a Firestore chain, anchored by sha256. The chain head is public at <code>/pcec/v0/chain/head</code>.</li>
+        <li><b>Reproducible verification.</b> The five-agent flow is deterministic given the same inputs and corpus. Judges and reviewers can re-run any verification end-to-end.</li>
       </ol>
+      <p class="sub" style="margin-top: 18px; opacity: 0.75;">Roadmap (v0.2+, not present): independent operator, stipend-funded academic vet panel, uniform rate card, Linux Foundation donation. Drafted in <a href="https://github.com/odominguez7/PawConscious-Mesh-GFS/blob/main/docs/PCEC-v0.md">PCEC v0.1 spec</a>.</p>
     </div>
   </section>
 
