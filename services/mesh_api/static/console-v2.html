@@ -1273,7 +1273,6 @@
       STATUS.classList.add('completed');
       const claims = bundle.claims || [];
       const vetScores = bundle.vet_scores || [];
-      const compliance = bundle.compliance || [];
       VERDICT_LIST.innerHTML = '';
       claims.forEach((c, i) => {
         const vetScore = vetScores[i]?.score ?? null;
