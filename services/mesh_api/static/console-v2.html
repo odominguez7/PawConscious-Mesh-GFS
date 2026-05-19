@@ -1058,41 +1058,49 @@
     }
 
     function renderCompleted(data) {
-      // codex S2B-design P0: data shape is A2ATaskStatusResponse with bundle_hash/signature/chain_anchor at top level
-      // and output={claims:[...], evidence_bundles:[...], vet_scores:[...], compliance_findings:[...], audit_verdict:{}}
+      // VERIFIED RESPONSE SHAPE (E2E tested against live revision mesh-api-00021-9l7):
+      //   top-level: bundle_hash, bundle_signature, chain_anchor, status
+      //   output: { claims[], vet_scores[], compliance[], audit[], evidence, issuer, issued_at, bundle_urn }
+      //   Each compliance[i] has: claim, ftc_section, aafco_definition, violation_flag, rationale
+      //   Each audit[i] has: claim, verdict (PASS/FAIL), findings[]
       document.querySelectorAll('.agent-node').forEach(n => { n.classList.remove('active'); n.classList.add('done'); });
       document.querySelectorAll('.mesh-edge').forEach(e => { e.classList.remove('active'); e.classList.add('done'); });
       const bundle = data.output || {};
-      const auditVerdict = (bundle.audit_verdict && bundle.audit_verdict.verdict) || '';
-      STATUS.textContent = `Verification complete${auditVerdict ? ' · ' + auditVerdict : ''}`;
+      const audits = bundle.audit || [];
+      const overallVerdict = audits.length ? (audits.every(a => (a.verdict || '').toUpperCase() === 'PASS') ? 'PASS' : 'NEEDS REVIEW') : '';
+      STATUS.textContent = `Verification complete${overallVerdict ? ' · ' + overallVerdict : ''}`;
       STATUS.classList.add('completed');
       const claims = bundle.claims || [];
       const vetScores = bundle.vet_scores || [];
-      const complianceFindings = bundle.compliance_findings || [];
+      const compliance = bundle.compliance || [];
       VERDICT_LIST.innerHTML = '';
       claims.forEach((c, i) => {
         const vetScore = vetScores[i]?.score ?? null;
-        const compliance = complianceFindings[i] || {};
-        const passing = (compliance.ftc_255_verdict || '').toLowerCase().includes('pass') || (vetScore !== null && vetScore >= 3);
+        const comp = compliance[i] || {};
+        const aud = audits[i] || {};
+        const passing = ((aud.verdict || '').toUpperCase() === 'PASS') && !comp.violation_flag;
         const row = document.createElement('div');
         row.className = `verdict-row ${passing ? 'pass' : 'fail'}`;
+        const violation = comp.violation_flag ? ' · FTC flag' : '';
         row.innerHTML = `
           <div class="v-id">Claim ${String(i+1).padStart(2,'0')}</div>
-          <div class="v-claim">${escapeHtml(c.text || '—')}</div>
+          <div class="v-claim">${escapeHtml(c.text || '—')}${comp.ftc_section ? ' <span style="color:var(--moss);opacity:0.7;font-family:var(--mono);font-size:10px;">' + escapeHtml(comp.ftc_section) + violation + '</span>' : ''}</div>
           <div class="v-score">${vetScore !== null ? vetScore + '/5' : ''}</div>
         `;
         VERDICT_LIST.appendChild(row);
       });
       VERDICT_SECTION.classList.add('visible');
-      // cert fields live at top level of A2ATaskStatusResponse, not nested
+      const issuedAt = bundle.issued_at ? bundle.issued_at.slice(0, 19).replace('T', ' ') : '';
       CERT_WRAP.innerHTML = `
         <div class="proof-cert" style="border:1px solid var(--moss);background:var(--vellum);">
           <div class="cert-eyebrow" style="font-family:var(--mono);font-size:10px;letter-spacing:0.22em;text-transform:uppercase;color:var(--moss);font-weight:600;margin-bottom:14px;">PCEC v0.1 · signed bundle</div>
           <div style="font-family:var(--mono);font-size:11px;line-height:1.7;color:var(--slate);">
+            <div><span style="color:var(--moss);">bundle_urn</span> <span style="color:var(--amber);word-break:break-all;">${escapeHtml(bundle.bundle_urn || '—')}</span></div>
             <div><span style="color:var(--moss);">bundle_hash</span> <span style="color:var(--amber);word-break:break-all;">${escapeHtml(data.bundle_hash || '—')}</span></div>
             <div><span style="color:var(--moss);">chain_anchor</span> <span style="color:var(--amber);word-break:break-all;">${escapeHtml(data.chain_anchor || '—')}</span></div>
             <div><span style="color:var(--moss);">signature</span> <span style="color:var(--amber);word-break:break-all;">${escapeHtml(data.bundle_signature || '—')}</span></div>
-            <div style="margin-top:12px;"><span style="color:var(--moss);">claims</span> <span>${claims.length} extracted · ${vetScores.length} graded</span></div>
+            ${issuedAt ? `<div><span style="color:var(--moss);">issued_at</span> <span>${escapeHtml(issuedAt)}Z</span></div>` : ''}
+            <div style="margin-top:12px;"><span style="color:var(--moss);">claims</span> <span>${claims.length} extracted · ${vetScores.length} graded · ${audits.length} audited</span></div>
           </div>
         </div>
       `;
