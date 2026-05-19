@@ -1262,7 +1262,13 @@
       document.querySelectorAll('.mesh-edge').forEach(e => { e.classList.remove('active'); e.classList.add('done'); });
       const bundle = data.output || {};
       const audits = bundle.audit || [];
-      const overallVerdict = audits.length ? (audits.every(a => (a.verdict || '').toUpperCase() === 'PASS') ? 'PASS' : 'NEEDS REVIEW') : '';
+      const compliance = bundle.compliance || [];
+      // Move G: overall verdict aligned with row-level logic — PASS only if every audit PASSES
+      // AND every compliance row is free of violation_flag (no silent contradictions between
+      // header status and per-row status, which codex S2A flagged as a UX inconsistency).
+      const allAuditsPass = audits.length > 0 && audits.every(a => (a.verdict || '').toUpperCase() === 'PASS');
+      const anyViolation = compliance.some(c => c.violation_flag);
+      const overallVerdict = audits.length ? (allAuditsPass && !anyViolation ? 'PASS' : 'NEEDS REVIEW') : '';
       STATUS.textContent = `Verification complete${overallVerdict ? ' · ' + overallVerdict : ''}`;
       STATUS.classList.add('completed');
       const claims = bundle.claims || [];

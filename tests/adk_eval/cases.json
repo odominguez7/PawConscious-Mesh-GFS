@@ -1,0 +1,37 @@
+{
+  "_meta": {
+    "spec_version": "0.1",
+    "description": "ADK eval baseline for PawConscious Mesh — the verify_claim multi-agent flow. Each case is a real DTC pet supplement PDP URL. Pass criteria are structural: the mesh must return a signed PCEC bundle with the expected agent outputs populated. Run via tests/adk_eval/run.py against a live mesh-api revision.",
+    "agent_under_test": "verify_claim",
+    "agents_in_mesh": ["claim_extractor", "evidence_grader", "vet_panel", "compliance", "auditor"],
+    "scoring": "case PASSES if all 4 structural assertions pass; baseline target is 27/30 (90%) — anything lower indicates a regression in one of the 5 specialized agents",
+    "last_updated": "2026-05-19"
+  },
+  "cases": [
+    { "id": "EC-001", "url": "https://www.nativepet.com/products/hip-joint", "min_claims": 1, "min_audits": 1, "expects_signature": true, "expects_chain_anchor": true, "notes": "Hip+Joint Inflammatory Care — known to trigger FTC §255.1 violation_flag" },
+    { "id": "EC-002", "url": "https://www.nativepet.com/products/calming", "min_claims": 1, "min_audits": 1, "expects_signature": true, "expects_chain_anchor": true, "notes": "Calming chew — ashwagandha + L-tryptophan claims" },
+    { "id": "EC-003", "url": "https://www.nativepet.com/products/probiotic", "min_claims": 1, "min_audits": 1, "expects_signature": true, "expects_chain_anchor": true, "notes": "Probiotic — strain-specific health claims" },
+    { "id": "EC-004", "url": "https://honestpaws.com/products/dog-vitamin", "min_claims": 1, "min_audits": 1, "expects_signature": true, "expects_chain_anchor": true, "notes": "Honest Paws multivitamin" },
+    { "id": "EC-005", "url": "https://honestpaws.com/products/dog-restore", "min_claims": 1, "min_audits": 1, "expects_signature": true, "expects_chain_anchor": true, "notes": "Honest Paws joint formula" },
+    { "id": "EC-006", "url": "https://honestpaws.com/products/cbd-oil-dogs", "min_claims": 1, "min_audits": 1, "expects_signature": true, "expects_chain_anchor": true, "notes": "CBD oil — heavily regulated, vet rubric should score conservatively" },
+    { "id": "EC-007", "url": "https://www.pethonesty.com/products/hemp-mobility", "min_claims": 1, "min_audits": 1, "expects_signature": true, "expects_chain_anchor": true, "notes": "Pet Honesty hemp mobility chews" },
+    { "id": "EC-008", "url": "https://www.pethonesty.com/products/digestive-probiotics", "min_claims": 1, "min_audits": 1, "expects_signature": true, "expects_chain_anchor": true, "notes": "Pet Honesty digestive probiotics" },
+    { "id": "EC-009", "url": "https://www.pethonesty.com/products/calming", "min_claims": 1, "min_audits": 1, "expects_signature": true, "expects_chain_anchor": true, "notes": "Pet Honesty calming chew" },
+    { "id": "EC-010", "url": "https://frontofthepack.com/products/the-one", "min_claims": 1, "min_audits": 1, "expects_signature": true, "expects_chain_anchor": true, "notes": "Front of the Pack — multivitamin marketed as 'one' supplement" },
+    { "id": "EC-011", "url": "https://frontofthepack.com/products/digestive-balance", "min_claims": 1, "min_audits": 1, "expects_signature": true, "expects_chain_anchor": true, "notes": "Front of the Pack digestive balance" },
+    { "id": "EC-012", "url": "https://www.feralinstinct.com/products/raw-meal", "min_claims": 1, "min_audits": 1, "expects_signature": true, "expects_chain_anchor": true, "notes": "Raw food brand — substantiation claims" },
+    { "id": "EC-013", "url": "https://www.openfarmpet.com/products/grass-fed-beef-dry-dog-food", "min_claims": 1, "min_audits": 1, "expects_signature": true, "expects_chain_anchor": true, "notes": "Open Farm — 'humanely raised' claim, ethics-adjacent" },
+    { "id": "EC-014", "url": "https://www.smallbatchpets.com/products/raw-frozen", "min_claims": 1, "min_audits": 1, "expects_signature": true, "expects_chain_anchor": true, "notes": "Small Batch — premium raw" },
+    { "id": "EC-015", "url": "https://fera.pet/products/multivitamin", "min_claims": 1, "min_audits": 1, "expects_signature": true, "expects_chain_anchor": true, "notes": "Fera Pet — vet-formulated multivitamin" },
+    { "id": "EC-016", "url": "https://fera.pet/products/probiotic-immune", "min_claims": 1, "min_audits": 1, "expects_signature": true, "expects_chain_anchor": true, "notes": "Fera Pet probiotic — immune system claim" },
+    { "id": "EC-017", "url": "https://wholistic.com/products/joint-mobility", "min_claims": 1, "min_audits": 1, "expects_signature": true, "expects_chain_anchor": true, "notes": "Wholistic Pet Organics — joint formula" },
+    { "id": "EC-018", "url": "https://finn.com/products/multivitamin", "min_claims": 1, "min_audits": 1, "expects_signature": true, "expects_chain_anchor": true, "notes": "Finn — wellness supplement" },
+    { "id": "EC-019", "url": "https://finn.com/products/calming-aid", "min_claims": 1, "min_audits": 1, "expects_signature": true, "expects_chain_anchor": true, "notes": "Finn — calming aid" },
+    { "id": "EC-020", "url": "https://www.theonlinevet.com/products/cosequin", "min_claims": 1, "min_audits": 1, "expects_signature": true, "expects_chain_anchor": true, "notes": "Cosequin reference — the $11.5M precedent product" }
+  ],
+  "_smoke_cases": [
+    { "id": "SMOKE-empty", "url": "", "expect_status": "rejected", "notes": "empty URL must return clear error not silent fail" },
+    { "id": "SMOKE-bad-domain", "url": "https://not-a-real-pet-brand-xyz.example/no-such-product", "expect_status": "rejected_or_failed", "notes": "domain that 404s or DNS-fails — must surface as task failed not hang" },
+    { "id": "SMOKE-non-pet", "url": "https://www.amazon.com/dp/B08N5WRWNW", "expect_status": "succeeds_with_zero_claims", "notes": "non-pet URL — agent should not invent claims" }
+  ]
+}
