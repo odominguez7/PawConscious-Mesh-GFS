@@ -4,26 +4,26 @@
   <meta charset="utf-8">
   <title>PawConscious — Agentic Compliance Protocol</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="The trust layer AI agents can call before recommending a consumer product. Five Google ADK agents on Cloud Run sign every health claim with cryptographic evidence.">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <!-- v2: deck-aligned palette + typography per CEO plan 2026-05-19, served at /?v=v2 -->
-  <link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,300;0,6..72,400;0,6..72,500;1,6..72,300;1,6..72,400&family=Geist:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <!-- Newsreader = display serif (no italic), Geist = body sans, JetBrains Mono = code/labels -->
+  <link href="https://fonts.googleapis.com/css2?family=Newsreader:wght@300;400;500;600&family=Geist:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
   <style>
     :root {
-      /* deck v15 palette — locked in deck/styles.css */
+      /* deck v15 palette — locked */
       --vellum:      #F2EDE0;
-      --paper-edge:  #EAE3D2;   /* matches deck */
-      --vellum-soft: #EAE3D2;   /* alias for backward-compat with existing class names */
+      --paper-edge:  #EAE3D2;
       --slate:       #1A1D1E;
       --slate-soft:  #2A2D2E;
       --moss:        #13322B;
-      --amber:       #9C5E1A;   /* shifted from #A6701A — deeper burnt umber, distinct from Anthropic clay */
+      --moss-soft:   #2A4940;
+      --amber:       #9C5E1A;   /* deeper burnt umber, distinct from Anthropic clay */
       --amber-soft:  #B07028;
-      --linen:       #C8C2B6;   /* matches deck */
-      --linen-soft:  #DAD3C1;
-      --signal:      #B17F60;   /* shifted from bright red #B4361A — muted warm brown, matches deck */
+      --linen:       #C8C2B6;
+      --signal:      #B17F60;
       --display: 'Newsreader', Georgia, 'Times New Roman', serif;
-      --body: 'Geist', 'Atlas Grotesk', 'Helvetica Neue', Arial, sans-serif;  /* swapped from Inter — matches deck */
+      --body: 'Geist', 'Atlas Grotesk', 'Helvetica Neue', Arial, sans-serif;
       --mono: 'JetBrains Mono', 'Söhne Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
     }
     * { box-sizing: border-box; }
@@ -35,829 +35,503 @@
       -webkit-font-smoothing: antialiased;
       -moz-osx-font-smoothing: grayscale;
     }
-    a { color: inherit; text-decoration: underline; text-underline-offset: 3px; text-decoration-thickness: 1px; }
+    a { color: inherit; text-decoration: none; }
     a:hover { color: var(--amber); }
+
+    /* type primitives — NO italic anywhere */
+    .display { font-family: var(--display); font-weight: 400; letter-spacing: -0.02em; line-height: 1.04; color: var(--slate); }
+    .eyebrow { font-family: var(--mono); font-size: 11px; letter-spacing: 0.24em; text-transform: uppercase; color: var(--moss); font-weight: 500; }
+    .num { font-family: var(--mono); font-weight: 500; font-variant-numeric: tabular-nums; letter-spacing: -0.02em; color: var(--slate); }
+    code, .code { font-family: var(--mono); font-size: 12px; background: var(--paper-edge); padding: 2px 6px; border-radius: 2px; }
 
     /* ---------- masthead ---------- */
     .masthead {
-      padding: 32px 48px 28px;
+      max-width: 1320px; margin: 0 auto; padding: 28px 40px;
+      display: flex; justify-content: space-between; align-items: center;
       border-bottom: 1px solid var(--linen);
-      display: flex;
-      justify-content: space-between;
-      align-items: baseline;
-      max-width: 1320px;
-      margin: 0 auto;
     }
-    .wordmark {
-      font: 400 28px/1 var(--display);
-      letter-spacing: -0.01em;
-      color: var(--slate);
-    }
-    .wordmark em {
-      font-style: italic;
-      font-weight: 300;
-      color: var(--moss);
-    }
-    .masthead-meta {
-      font: 500 11px/1 var(--mono);
-      text-transform: uppercase;
-      letter-spacing: 0.16em;
-      color: var(--slate);
-      display: flex;
-      gap: 28px;
-      align-items: baseline;
-    }
-    .masthead-meta .dot { color: var(--linen); }
+    .wordmark { font-family: var(--display); font-size: 24px; font-weight: 500; letter-spacing: -0.01em; color: var(--slate); }
+    .masthead-meta { display: flex; gap: 24px; align-items: center; font-family: var(--mono); font-size: 11px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--slate); }
     .masthead-meta .live::before {
-      content: "";
-      display: inline-block;
-      width: 6px; height: 6px;
-      border-radius: 50%;
-      background: var(--amber);
-      margin-right: 8px;
-      transform: translateY(-1px);
-      animation: pulse 2.2s ease-in-out infinite;
+      content: ""; display: inline-block; width: 6px; height: 6px;
+      border-radius: 50%; background: var(--moss);
+      margin-right: 8px; transform: translateY(-1px);
+      animation: pulseDot 2.4s ease-in-out infinite;
     }
-    @keyframes pulse {
-      0%, 100% { opacity: 1; }
-      50% { opacity: 0.35; }
-    }
+    @keyframes pulseDot { 0%,100% { opacity: 1; } 50% { opacity: 0.35; } }
+    .masthead-meta .sep { color: var(--linen); }
 
-    /* ---------- hero ---------- */
+    /* ============================================================ */
+    /* HERO — story left + cached agent demo right                  */
+    /* ============================================================ */
     .hero {
-      max-width: 1320px;
-      margin: 0 auto;
-      padding: 64px 48px 56px;
-      display: grid;
-      grid-template-columns: 1.4fr 1fr;
-      gap: 64px;
-      align-items: center;
-      border-bottom: 1px solid var(--linen);
+      max-width: 1320px; margin: 0 auto; padding: 64px 40px 80px;
+      display: grid; grid-template-columns: 1fr 1.15fr; gap: 80px;
+      align-items: center; min-height: 600px;
     }
-    .hero h1 {
-      font: 400 76px/0.96 var(--display);
-      letter-spacing: -0.025em;
-      margin: 0 0 24px;
-      color: var(--slate);
+    .hero-left h1 {
+      font-family: var(--display); font-weight: 400;
+      font-size: 64px; line-height: 1.02; letter-spacing: -0.025em;
+      color: var(--slate); margin: 18px 0 28px; max-width: 580px;
     }
-    .hero h1 em {
-      font-style: italic;
-      font-weight: 300;
-      color: var(--moss);
-    }
-    .hero .lede {
-      font: 300 22px/1.4 var(--display);
-      font-style: italic;
-      color: var(--slate-soft);
+    .hero-left h1 .accent { color: var(--moss); }
+    .hero-sub {
+      font-family: var(--body); font-size: 17px; line-height: 1.6;
+      color: var(--slate); max-width: 480px; opacity: 0.85;
       margin: 0 0 36px;
-      max-width: 540px;
     }
-    .hero .ceremony-cta {
-      display: flex;
-      gap: 12px;
-      align-items: stretch;
-      max-width: 620px;
+    .hero-cta {
+      display: flex; gap: 12px; align-items: stretch; max-width: 560px;
+      margin-bottom: 36px;
     }
-    .ceremony-cta input {
-      flex: 1;
-      padding: 16px 18px;
-      background: var(--vellum-soft);
-      border: 1px solid var(--linen);
-      border-bottom: 1px solid var(--slate);
-      border-radius: 0;
-      font: 400 15px/1.2 var(--mono);
-      color: var(--slate);
+    .hero-cta input[type="text"] {
+      flex: 1; padding: 16px 18px;
+      background: white; border: 1px solid var(--linen);
+      border-radius: 0; font: 400 14px/1.2 var(--mono); color: var(--slate);
+      transition: border-color 0.18s ease;
     }
-    .ceremony-cta input:focus {
-      outline: none;
-      border-bottom: 2px solid var(--amber);
+    .hero-cta input[type="text"]:focus {
+      outline: none; border-color: var(--slate); border-bottom: 1px solid var(--amber);
     }
-    .ceremony-cta select {
-      padding: 16px 18px;
-      background: var(--vellum-soft);
-      border: 1px solid var(--linen);
-      border-bottom: 1px solid var(--slate);
-      border-radius: 0;
-      font: 500 11px/1.2 var(--mono);
-      text-transform: uppercase;
-      letter-spacing: 0.12em;
-      color: var(--slate);
+    .hero-cta select {
+      padding: 16px 14px;
+      background: white; border: 1px solid var(--linen);
+      border-radius: 0; font: 500 11px/1.2 var(--mono);
+      text-transform: uppercase; letter-spacing: 0.12em; color: var(--slate);
     }
-    .ceremony-cta button {
-      padding: 16px 28px;
-      background: var(--slate);
-      color: var(--vellum);
-      border: 0;
-      border-radius: 0;
-      font: 500 12px/1 var(--mono);
-      text-transform: uppercase;
-      letter-spacing: 0.16em;
-      cursor: pointer;
-      transition: background 0.18s ease;
+    .hero-cta button {
+      padding: 16px 32px; background: var(--slate); color: var(--vellum);
+      border: 0; font: 600 12px/1 var(--mono);
+      text-transform: uppercase; letter-spacing: 0.18em;
+      cursor: pointer; transition: background 0.18s ease;
     }
-    .ceremony-cta button:hover:not(:disabled) { background: var(--moss); }
-    .ceremony-cta button:disabled { background: var(--linen); color: var(--slate-soft); cursor: not-allowed; }
+    .hero-cta button:hover:not(:disabled) { background: var(--moss); }
+    .hero-cta button:disabled { background: var(--linen); color: var(--slate-soft); cursor: not-allowed; }
+    .hero-trust-row {
+      display: flex; gap: 18px; align-items: center; flex-wrap: wrap;
+      font-family: var(--mono); font-size: 10px; letter-spacing: 0.2em;
+      text-transform: uppercase; color: var(--slate); opacity: 0.65;
+    }
+    .hero-trust-row .check::before {
+      content: "✓ "; color: var(--moss); font-weight: 600; margin-right: 4px;
+    }
 
-    .hero-aside {
-      padding-left: 56px;
-      border-left: 1px solid var(--linen);
+    /* ---------- cached agent demo (auto-loops, no click required) ---------- */
+    .demo {
+      position: relative; aspect-ratio: 1.05;
+      background: var(--paper-edge); border: 1px solid var(--linen);
+      padding: 0; overflow: hidden;
     }
-    .aside-eyebrow {
-      font: 500 10px/1 var(--mono);
-      text-transform: uppercase;
-      letter-spacing: 0.2em;
-      color: var(--amber);
-      margin-bottom: 14px;
+    .demo-frame {
+      position: absolute; inset: 0; padding: 28px 32px 24px;
+      display: flex; flex-direction: column; gap: 20px;
     }
-    .aside-num {
-      font: 500 92px/1 var(--mono);
-      letter-spacing: -0.02em;
-      color: var(--slate);
-      margin: 0 0 4px;
-      font-variant-numeric: tabular-nums;
+    .demo-header {
+      display: flex; justify-content: space-between; align-items: baseline;
+      font-family: var(--mono); font-size: 10px; letter-spacing: 0.2em;
+      text-transform: uppercase; color: var(--moss); opacity: 0.9;
     }
-    .aside-label {
-      font: 400 17px/1.4 var(--display);
-      font-style: italic;
-      color: var(--slate-soft);
-      margin: 0 0 28px;
+    .demo-header .right { color: var(--slate); opacity: 0.6; }
+    .demo-stage {
+      flex: 1; position: relative;
+      display: flex; align-items: center; justify-content: center;
     }
-    .aside-mini {
-      font: 500 11px/1.6 var(--mono);
-      text-transform: uppercase;
-      letter-spacing: 0.14em;
-      color: var(--slate-soft);
-      padding-top: 18px;
-      border-top: 1px solid var(--linen);
+    .demo-status {
+      position: absolute; bottom: 12px; left: 0; right: 0;
+      text-align: center;
+      font-family: var(--display); font-size: 18px; font-weight: 400;
+      color: var(--slate); transition: color 0.4s ease;
     }
-    .aside-mini span { color: var(--moss); }
+    .demo-status.success { color: var(--moss); }
+    .demo-svg { width: 100%; height: 100%; display: block; }
+    .demo-svg .edge {
+      stroke: var(--linen); stroke-width: 1.4; fill: none;
+      transition: stroke 0.5s ease, stroke-width 0.5s ease;
+    }
+    .demo-svg .edge.active { stroke: var(--amber); stroke-width: 2; }
+    .demo-svg .edge.done { stroke: var(--moss); stroke-width: 1.6; }
+    .demo-svg .node circle.body {
+      fill: var(--vellum); stroke: var(--slate); stroke-width: 1.4;
+      transition: fill 0.5s ease, stroke 0.5s ease;
+    }
+    .demo-svg .node.active circle.body { fill: var(--amber); stroke: var(--amber); }
+    .demo-svg .node.done circle.body { fill: var(--moss); stroke: var(--moss); }
+    .demo-svg .node circle.halo {
+      fill: none; stroke: var(--amber); stroke-width: 0; opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+    .demo-svg .node.active circle.halo {
+      stroke-width: 2; opacity: 1;
+      animation: haloPulse 1.4s ease-in-out infinite;
+    }
+    @keyframes haloPulse {
+      0%,100% { transform: scale(1); opacity: 1; }
+      50% { transform: scale(1.25); opacity: 0.3; }
+    }
+    .demo-svg .node text {
+      font-family: var(--mono); font-size: 8.5px; font-weight: 500;
+      fill: var(--slate); text-anchor: middle;
+      text-transform: uppercase; letter-spacing: 0.08em;
+    }
+    .demo-svg .node.done text { fill: var(--moss); }
+    .demo-svg .center-anchor {
+      fill: var(--slate); stroke: var(--slate); stroke-width: 1;
+      transition: fill 0.5s ease;
+    }
+    .demo-svg .center-anchor.done { fill: var(--moss); stroke: var(--moss); }
+    .demo-svg .anchor-label {
+      font-family: var(--mono); font-size: 9.5px; font-weight: 500;
+      fill: var(--vellum); text-anchor: middle;
+      text-transform: uppercase; letter-spacing: 0.14em;
+    }
+    .demo-svg .anchor-sub {
+      font-family: var(--mono); font-size: 8px;
+      fill: var(--amber); text-anchor: middle;
+      text-transform: uppercase; letter-spacing: 0.16em;
+    }
+    .demo-cert {
+      position: absolute; inset: 28px 32px 80px 32px;
+      background: var(--vellum);
+      border: 1px solid var(--moss);
+      padding: 26px;
+      display: flex; flex-direction: column; gap: 12px;
+      opacity: 0; transform: translateY(8px);
+      transition: opacity 0.6s ease, transform 0.6s ease;
+      pointer-events: none;
+    }
+    .demo-cert.visible { opacity: 1; transform: translateY(0); }
+    .demo-cert .cert-eyebrow {
+      font-family: var(--mono); font-size: 10px; letter-spacing: 0.22em;
+      text-transform: uppercase; color: var(--moss); font-weight: 600;
+    }
+    .demo-cert .cert-title {
+      font-family: var(--display); font-size: 22px; color: var(--slate);
+      line-height: 1.2;
+    }
+    .demo-cert .cert-line {
+      display: flex; justify-content: space-between; align-items: baseline;
+      font-family: var(--mono); font-size: 11px; color: var(--slate);
+    }
+    .demo-cert .cert-line .k { opacity: 0.6; }
+    .demo-cert .cert-line .v { color: var(--moss); font-weight: 500; }
+    .demo-cert .cert-line .v.pass { color: var(--moss); }
+    .demo-cert .seal {
+      position: absolute; top: 22px; right: 22px;
+      width: 44px; height: 44px; border-radius: 50%;
+      background: radial-gradient(circle at 35% 35%, var(--amber-soft), var(--amber) 70%);
+      box-shadow: inset -2px -3px 6px rgba(70,40,4,.5), 0 4px 10px rgba(0,0,0,0.18);
+      display: flex; align-items: center; justify-content: center;
+    }
+    .demo-cert .seal svg { width: 26px; height: 26px; opacity: 0.94; }
 
-    /* ---------- ceremony stage ---------- */
-    .stage {
-      max-width: 1320px;
-      margin: 0 auto;
-      padding: 64px 48px 32px;
+    /* ============================================================ */
+    /* WHY — single-line forces band                                */
+    /* ============================================================ */
+    .why {
+      background: var(--slate); color: var(--vellum);
+      padding: 36px 0;
     }
-    .stage-eyebrow {
-      font: 500 11px/1 var(--mono);
-      text-transform: uppercase;
-      letter-spacing: 0.2em;
-      color: var(--amber);
-      margin-bottom: 22px;
+    .why-inner {
+      max-width: 1320px; margin: 0 auto; padding: 0 40px;
+      display: grid; grid-template-columns: 1.4fr 1fr 1fr 1fr; gap: 36px;
+      align-items: center;
+    }
+    .why-lede {
+      font-family: var(--display); font-size: 22px; line-height: 1.3;
+      color: var(--vellum); max-width: 340px;
+    }
+    .why-stat .label {
+      font-family: var(--mono); font-size: 10px; letter-spacing: 0.22em;
+      text-transform: uppercase; color: var(--amber-soft); margin-bottom: 8px;
+    }
+    .why-stat .num {
+      font-family: var(--mono); font-size: 32px; color: var(--vellum);
+      line-height: 1; font-weight: 500; letter-spacing: -0.02em;
+      font-variant-numeric: tabular-nums; margin-bottom: 6px;
+    }
+    .why-stat .src {
+      font-family: var(--mono); font-size: 9px; letter-spacing: 0.18em;
+      text-transform: uppercase; color: var(--linen); opacity: 0.7;
+    }
+    .why-stat .src a { color: inherit; text-decoration: underline; text-underline-offset: 2px; }
+
+    /* ============================================================ */
+    /* HOW — 3 steps                                                 */
+    /* ============================================================ */
+    .how {
+      max-width: 1320px; margin: 0 auto; padding: 96px 40px;
+    }
+    .how-head {
+      max-width: 720px; margin: 0 0 56px;
+    }
+    .how-head h2 {
+      font-family: var(--display); font-weight: 400;
+      font-size: 44px; line-height: 1.1; letter-spacing: -0.02em;
+      margin: 12px 0 0; color: var(--slate);
+    }
+    .how-steps {
+      display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 48px;
+    }
+    .how-step .n {
+      font-family: var(--mono); font-size: 11px; letter-spacing: 0.22em;
+      text-transform: uppercase; color: var(--amber); font-weight: 600;
+      margin-bottom: 18px;
+    }
+    .how-step .title {
+      font-family: var(--display); font-size: 24px; line-height: 1.2;
+      color: var(--slate); margin-bottom: 12px;
+    }
+    .how-step .desc {
+      font-family: var(--body); font-size: 14px; line-height: 1.55;
+      color: var(--slate); opacity: 0.8;
+    }
+    .how-step .icon {
+      width: 64px; height: 64px; margin-bottom: 22px;
+      border: 1px solid var(--slate); display: flex; align-items: center; justify-content: center;
+    }
+    .how-step .icon svg { width: 28px; height: 28px; stroke: var(--slate); fill: none; stroke-width: 1.5; }
+
+    /* ============================================================ */
+    /* PROOF — what signed evidence looks like                       */
+    /* ============================================================ */
+    .proof {
+      background: var(--paper-edge);
+      padding: 96px 0;
+    }
+    .proof-inner {
+      max-width: 1320px; margin: 0 auto; padding: 0 40px;
+      display: grid; grid-template-columns: 0.95fr 1.1fr; gap: 72px;
+      align-items: center;
+    }
+    .proof-text h2 {
+      font-family: var(--display); font-size: 44px; line-height: 1.1;
+      letter-spacing: -0.02em; color: var(--slate); margin: 14px 0 24px;
+      max-width: 460px;
+    }
+    .proof-text p {
+      font-family: var(--body); font-size: 15px; line-height: 1.6;
+      color: var(--slate); margin: 0 0 18px; max-width: 460px;
+    }
+    .proof-text .pill-row {
+      display: flex; gap: 10px; flex-wrap: wrap; margin-top: 28px;
+    }
+    .proof-text .pill {
+      font-family: var(--mono); font-size: 10px; letter-spacing: 0.18em;
+      text-transform: uppercase; color: var(--slate);
+      padding: 8px 14px; border: 1px solid var(--linen); background: var(--vellum);
+    }
+    .proof-cert {
+      background: var(--vellum); border: 1px solid var(--slate);
+      padding: 32px; position: relative;
+      font-family: var(--mono); font-size: 12px; line-height: 1.65; color: var(--slate);
+    }
+    .proof-cert .json-key { color: var(--moss); opacity: 0.85; }
+    .proof-cert .json-str { color: var(--amber); }
+    .proof-cert .json-pass { color: var(--moss); font-weight: 600; }
+    .proof-cert .cert-seal {
+      position: absolute; top: 24px; right: 24px;
+      width: 52px; height: 52px; border-radius: 50%;
+      background: radial-gradient(circle at 35% 35%, var(--amber-soft), var(--amber) 70%);
+      box-shadow: inset -2px -3px 6px rgba(70,40,4,.5);
+      display: flex; align-items: center; justify-content: center;
+    }
+    .proof-cert .cert-seal svg { width: 30px; height: 30px; opacity: 0.94; }
+
+    /* ============================================================ */
+    /* MOATS                                                         */
+    /* ============================================================ */
+    .moats {
+      max-width: 1320px; margin: 0 auto; padding: 96px 40px;
+    }
+    .moats-head { max-width: 720px; margin: 0 0 56px; }
+    .moats-head h2 {
+      font-family: var(--display); font-size: 44px; line-height: 1.1;
+      letter-spacing: -0.02em; margin: 12px 0 0; color: var(--slate);
+    }
+    .moats-grid {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 48px 64px;
+    }
+    .moat {
+      display: grid; grid-template-columns: 36px 1fr; gap: 16px;
+      border-top: 1px solid var(--linen); padding-top: 18px;
+    }
+    .moat .n {
+      font-family: var(--mono); font-size: 12px; letter-spacing: 0.2em;
+      text-transform: uppercase; color: var(--amber); font-weight: 600;
+    }
+    .moat .title {
+      font-family: var(--display); font-size: 22px; line-height: 1.25;
+      color: var(--slate); margin-bottom: 8px;
+    }
+    .moat .desc {
+      font-family: var(--body); font-size: 14px; line-height: 1.55;
+      color: var(--slate); opacity: 0.85;
+    }
+    .moat .roadmap { color: var(--moss); opacity: 0.85; }
+
+    /* ============================================================ */
+    /* FOUNDER                                                       */
+    /* ============================================================ */
+    .founder {
+      background: var(--slate); color: var(--vellum);
+      padding: 88px 0;
+    }
+    .founder-inner {
+      max-width: 1080px; margin: 0 auto; padding: 0 40px;
+      display: grid; grid-template-columns: 1fr 1.4fr; gap: 56px;
+      align-items: center;
+    }
+    .founder-portrait {
+      width: 100%; aspect-ratio: 4/5;
+      background: var(--moss); overflow: hidden;
+    }
+    .founder-portrait img { width: 100%; height: 100%; object-fit: cover; display: block; }
+    .founder-quote .eyebrow { color: var(--amber-soft); margin-bottom: 18px; }
+    .founder-quote blockquote {
+      font-family: var(--display); font-weight: 300;
+      font-size: 26px; line-height: 1.42; color: var(--vellum);
+      margin: 0 0 24px; max-width: 580px;
+    }
+    .founder-quote .attr {
+      font-family: var(--mono); font-size: 11px; letter-spacing: 0.18em;
+      text-transform: uppercase; color: var(--linen); opacity: 0.85;
+    }
+    .founder-quote .attr strong { color: var(--vellum); font-weight: 600; }
+
+    /* ============================================================ */
+    /* VERIFY ZONE — live ceremony stays here                        */
+    /* ============================================================ */
+    .verify-zone {
+      max-width: 1320px; margin: 0 auto; padding: 96px 40px;
+    }
+    .verify-head { max-width: 720px; margin: 0 0 56px; }
+    .verify-head h2 {
+      font-family: var(--display); font-size: 44px; line-height: 1.1;
+      letter-spacing: -0.02em; margin: 12px 0 16px; color: var(--slate);
+    }
+    .verify-head p {
+      font-family: var(--body); font-size: 15px; line-height: 1.6;
+      color: var(--slate); opacity: 0.8;
     }
     .stage-status {
-      font: 400 26px/1.3 var(--display);
-      font-style: italic;
-      color: var(--slate);
-      margin: 0 0 40px;
-      min-height: 36px;
+      font-family: var(--display); font-size: 20px; color: var(--slate);
+      margin: 0 0 32px; min-height: 30px;
     }
     .stage-status.completed { color: var(--moss); }
     .stage-status.failed { color: var(--signal); }
-
     .stage-grid {
-      display: grid;
-      grid-template-columns: 1.1fr 1fr;
-      gap: 56px;
+      display: grid; grid-template-columns: 1.05fr 1fr; gap: 48px;
       align-items: start;
     }
     .mesh-wrap {
-      position: relative;
-      aspect-ratio: 1;
-      background: var(--vellum-soft);
-      border: 1px solid var(--linen);
+      position: relative; aspect-ratio: 1;
+      background: var(--paper-edge); border: 1px solid var(--linen);
     }
     .mesh-svg { width: 100%; height: 100%; display: block; }
     .agent-node circle.body {
-      fill: var(--vellum);
-      stroke: var(--slate);
-      stroke-width: 1;
-      transition: fill 0.6s ease, stroke 0.6s ease, stroke-width 0.6s ease;
+      fill: var(--vellum); stroke: var(--slate); stroke-width: 1.4;
+      transition: fill 0.5s ease, stroke 0.5s ease;
     }
     .agent-node circle.halo {
-      fill: none;
-      stroke: var(--amber);
-      stroke-width: 0;
-      transition: stroke-width 0.4s ease, opacity 0.4s ease;
-      opacity: 0;
+      fill: none; stroke: var(--amber); stroke-width: 0; opacity: 0;
+      transition: opacity 0.3s ease;
     }
     .agent-node.active circle.halo {
-      stroke-width: 2;
-      opacity: 1;
-      animation: ringPulse 1.6s ease-in-out infinite;
+      stroke-width: 2; opacity: 1;
+      animation: ringPulse 1.4s ease-in-out infinite;
     }
-    .agent-node.active circle.body {
-      fill: var(--amber);
-      stroke: var(--amber);
-    }
-    .agent-node.done circle.body {
-      fill: var(--moss);
-      stroke: var(--moss);
-    }
+    .agent-node.active circle.body { fill: var(--amber); stroke: var(--amber); }
+    .agent-node.done circle.body { fill: var(--moss); stroke: var(--moss); }
     @keyframes ringPulse {
-      0%, 100% { transform: scale(1); opacity: 1; }
-      50% { transform: scale(1.18); opacity: 0.4; }
+      0%,100% { transform: scale(1); opacity: 1; }
+      50% { transform: scale(1.2); opacity: 0.35; }
     }
     .agent-node circle.halo { transform-origin: center; transform-box: fill-box; }
     .agent-node text {
-      font: 500 9.5px/1 var(--mono);
-      fill: var(--slate);
-      text-transform: uppercase;
-      letter-spacing: 0.1em;
+      font-family: var(--mono); font-size: 9px; font-weight: 500;
+      fill: var(--slate); text-transform: uppercase; letter-spacing: 0.1em;
     }
     .agent-node.done text { fill: var(--moss); }
     .mesh-edge {
-      stroke: var(--linen);
-      stroke-width: 1;
-      fill: none;
-      transition: stroke 0.6s ease, stroke-width 0.6s ease;
+      stroke: var(--linen); stroke-width: 1.2; fill: none;
+      transition: stroke 0.5s ease, stroke-width 0.5s ease;
     }
-    .mesh-edge.active { stroke: var(--amber); stroke-width: 1.5; }
+    .mesh-edge.active { stroke: var(--amber); stroke-width: 1.6; }
     .mesh-edge.done { stroke: var(--moss); }
     .mesh-center text {
-      font: 400 14px/1.2 var(--display);
-      font-style: italic;
-      fill: var(--slate);
-      text-anchor: middle;
+      font-family: var(--display); font-size: 13px;
+      fill: var(--slate); text-anchor: middle;
     }
-    .mesh-center.done text { fill: var(--moss); }
-
-    /* certificate */
-    .certificate {
-      background: var(--vellum-soft);
-      border: 1px solid var(--linen);
-      padding: 36px 36px 32px;
-      position: relative;
-      min-height: 100%;
+    .certificate-pane {
+      background: var(--paper-edge); border: 1px solid var(--linen);
+      padding: 32px; min-height: 100%;
     }
     .certificate-empty {
-      color: var(--slate-soft);
-      font: 300 17px/1.5 var(--display);
-      font-style: italic;
+      color: var(--slate); opacity: 0.7;
+      font: 400 15px/1.55 var(--body);
     }
     .certificate-empty .arrow {
-      font: 500 11px/1 var(--mono);
-      letter-spacing: 0.16em;
-      text-transform: uppercase;
-      color: var(--amber);
-      display: block;
-      margin-bottom: 14px;
+      display: block; margin-bottom: 14px;
+      font-family: var(--mono); font-size: 10px; letter-spacing: 0.18em;
+      text-transform: uppercase; color: var(--amber); font-weight: 600;
     }
-    .seal-row {
-      display: flex;
-      align-items: center;
-      gap: 28px;
-      margin-bottom: 28px;
-    }
-    .wax-seal {
-      width: 96px;
-      height: 96px;
-      flex-shrink: 0;
-    }
-    .seal-title {
-      font: 400 28px/1.15 var(--display);
-      letter-spacing: -0.015em;
-      color: var(--slate);
-      margin: 0;
-    }
-    .seal-title em {
-      font-style: italic;
-      font-weight: 300;
-      color: var(--moss);
-    }
-    .seal-sub {
-      font: 500 10px/1 var(--mono);
-      text-transform: uppercase;
-      letter-spacing: 0.2em;
-      color: var(--amber);
-      margin-top: 8px;
-    }
-    .cert-grid {
-      display: grid;
-      grid-template-columns: 1fr;
-      gap: 16px;
-      padding-top: 22px;
-      border-top: 1px solid var(--linen);
-    }
-    .cert-field { display: grid; grid-template-columns: 130px 1fr; gap: 16px; align-items: baseline; }
-    .cert-label {
-      font: 500 10px/1.4 var(--mono);
-      text-transform: uppercase;
-      letter-spacing: 0.16em;
-      color: var(--slate-soft);
-    }
-    .cert-value {
-      font: 400 13px/1.45 var(--mono);
-      color: var(--slate);
-      word-break: break-all;
-    }
-    .cert-value.amber { color: var(--amber); }
-    .chain-anchor-row {
-      margin-top: 24px;
-      padding-top: 18px;
-      border-top: 1px solid var(--linen);
-    }
-    .chain-eyebrow {
-      font: 500 10px/1 var(--mono);
-      text-transform: uppercase;
-      letter-spacing: 0.2em;
-      color: var(--amber);
-      margin-bottom: 10px;
-    }
-    .chain-short {
-      font: 500 13px/1.4 var(--mono);
-      color: var(--slate);
-      cursor: pointer;
-      user-select: none;
-    }
-    .chain-short:hover { color: var(--amber); }
-    .chain-long {
-      font: 400 11px/1.5 var(--mono);
-      color: var(--slate-soft);
-      word-break: break-all;
-      margin-top: 8px;
-      padding: 10px 12px;
-      background: var(--vellum);
-      border-left: 2px solid var(--amber);
-      display: none;
-    }
-    .chain-long.show { display: block; }
-    .copy-hint {
-      font: 500 9px/1 var(--mono);
-      text-transform: uppercase;
-      letter-spacing: 0.2em;
-      color: var(--linen);
-      margin-left: 10px;
-    }
-
-    /* ---------- claim verdicts ---------- */
-    .verdicts {
-      max-width: 1320px;
-      margin: 24px auto 0;
-      padding: 48px 48px 56px;
-      border-top: 1px solid var(--linen);
-    }
-    .section-head {
-      display: flex;
-      justify-content: space-between;
-      align-items: baseline;
-      margin-bottom: 32px;
-    }
-    .section-eyebrow {
-      font: 500 11px/1 var(--mono);
-      text-transform: uppercase;
-      letter-spacing: 0.2em;
-      color: var(--amber);
-    }
-    .section-title {
-      font: 400 36px/1.1 var(--display);
-      letter-spacing: -0.02em;
-      color: var(--slate);
-      margin: 8px 0 0;
-    }
-    .verdict-list {
-      display: flex;
-      flex-direction: column;
-      gap: 0;
-    }
+    .verdicts { display: none; max-width: 1320px; margin: 32px auto 0; padding: 0 40px; }
+    .verdicts.visible { display: block; }
+    .verdict-list { display: flex; flex-direction: column; gap: 18px; }
     .verdict-row {
-      display: grid;
-      grid-template-columns: 1.4fr 1fr;
-      gap: 56px;
-      padding: 28px 0;
+      display: grid; grid-template-columns: 80px 1fr 80px; gap: 18px;
+      padding: 16px 18px; background: var(--paper-edge); border: 1px solid var(--linen);
+      align-items: center;
+    }
+    .verdict-row .v-id { font-family: var(--mono); font-size: 10px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--moss); }
+    .verdict-row .v-claim { font-family: var(--body); font-size: 14px; color: var(--slate); }
+    .verdict-row .v-score { font-family: var(--mono); font-size: 16px; color: var(--slate); text-align: right; font-weight: 600; }
+    .verdict-row.pass .v-score { color: var(--moss); }
+    .verdict-row.fail .v-score { color: var(--signal); }
+
+    /* ============================================================ */
+    /* TRACK 3 + FOOTER                                              */
+    /* ============================================================ */
+    .track3 {
+      max-width: 1320px; margin: 0 auto; padding: 32px 40px;
       border-top: 1px solid var(--linen);
+      display: flex; flex-wrap: wrap; gap: 12px; align-items: center;
     }
-    .verdict-row:last-child { border-bottom: 1px solid var(--linen); }
-    .verdict-claim {
-      font: 400 22px/1.35 var(--display);
-      color: var(--slate);
-      margin: 0;
+    .track3 .label {
+      font-family: var(--mono); font-size: 10px; letter-spacing: 0.2em;
+      text-transform: uppercase; color: var(--moss); margin-right: 14px;
     }
-    .verdict-claim em { font-style: italic; color: var(--moss); }
-    .verdict-rationale {
-      font: 400 14px/1.5 var(--body);
-      color: var(--slate-soft);
-      margin: 12px 0 0;
+    .track3 .badge {
+      font-family: var(--mono); font-size: 10px; letter-spacing: 0.16em;
+      text-transform: uppercase; color: var(--slate);
+      padding: 7px 13px; border: 1px solid var(--linen); background: var(--paper-edge);
     }
-    .verdict-aside {
-      display: grid;
-      gap: 14px;
-    }
-    .verdict-stat {
-      display: grid;
-      grid-template-columns: 100px 1fr;
-      align-items: baseline;
-      gap: 16px;
-    }
-    .stat-label {
-      font: 500 10px/1.2 var(--mono);
-      text-transform: uppercase;
-      letter-spacing: 0.16em;
-      color: var(--slate-soft);
-    }
-    .stat-value {
-      font: 500 14px/1.2 var(--mono);
-      color: var(--slate);
-    }
-    .stat-value.violation { color: var(--signal); }
-    .stat-value.ok { color: var(--moss); }
-    .stat-value.amber { color: var(--amber); }
-    .low-evidence {
-      grid-column: 1 / -1;
-      margin-top: 10px;
-      padding: 10px 14px;
-      background: var(--vellum-soft);
-      border-left: 2px solid var(--amber);
-      font: 400 12px/1.4 var(--body);
-      color: var(--slate-soft);
-    }
-    .low-evidence b { color: var(--amber); font-weight: 500; }
+    .track3 .badge:hover { border-color: var(--amber); color: var(--amber); }
+    .track3 .badge::before { content: "✓"; color: var(--moss); margin-right: 8px; font-weight: 600; }
 
-    /* ---------- independence banner ---------- */
-    .independence {
-      background: var(--slate);
-      color: var(--vellum);
-      padding: 56px 48px;
-      margin-top: 24px;
-    }
-    .independence-inner {
-      max-width: 1320px;
-      margin: 0 auto;
-      display: grid;
-      grid-template-columns: 1fr 1.4fr;
-      gap: 64px;
-      align-items: start;
-    }
-    .independence h2 {
-      font: 400 34px/1.1 var(--display);
-      letter-spacing: -0.02em;
-      margin: 0 0 12px;
-    }
-    .independence h2 em {
-      font-style: italic;
-      font-weight: 300;
-      color: var(--amber);
-    }
-    .independence .sub {
-      font: 300 16px/1.5 var(--display);
-      font-style: italic;
-      color: var(--linen-soft);
-      margin: 0;
-    }
-    .commitments {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 18px 32px;
-      margin: 0;
-      padding: 0;
-      list-style: none;
-    }
-    .commitments li {
-      font: 400 13px/1.45 var(--body);
-      color: var(--linen-soft);
-      padding-left: 28px;
-      position: relative;
-    }
-    .commitments li::before {
-      content: counter(idx, decimal-leading-zero);
-      counter-increment: idx;
-      position: absolute;
-      left: 0;
-      top: 0;
-      font: 500 10px/1.45 var(--mono);
-      color: var(--amber);
-      letter-spacing: 0.1em;
-    }
-    .commitments { counter-reset: idx; }
-    .commitments li b { color: var(--vellum); font-weight: 500; }
-
-    /* ---------- footer ---------- */
     .colophon {
-      max-width: 1320px;
-      margin: 0 auto;
-      padding: 40px 48px 56px;
-      display: flex;
-      justify-content: space-between;
-      align-items: baseline;
-      font: 500 10px/1.4 var(--mono);
-      text-transform: uppercase;
-      letter-spacing: 0.16em;
-      color: var(--slate-soft);
-    }
-    .colophon a { color: var(--slate); text-decoration: none; border-bottom: 1px solid var(--linen); padding-bottom: 2px; }
-    .colophon a:hover { color: var(--amber); border-bottom-color: var(--amber); }
-
-    @media (max-width: 980px) {
-      .hero { grid-template-columns: 1fr; gap: 40px; padding: 40px 24px; }
-      .hero-aside { padding-left: 0; border-left: 0; border-top: 1px solid var(--linen); padding-top: 32px; }
-      .hero h1 { font-size: 52px; }
-      .stage-grid { grid-template-columns: 1fr; gap: 32px; }
-      .verdict-row { grid-template-columns: 1fr; gap: 16px; }
-      .independence-inner { grid-template-columns: 1fr; gap: 32px; }
-      .commitments { grid-template-columns: 1fr; }
-      .masthead { padding: 20px 24px; flex-direction: column; align-items: flex-start; gap: 12px; }
-      .stage, .verdicts, .colophon { padding-left: 24px; padding-right: 24px; }
-      .independence { padding: 40px 24px; }
-    }
-
-    /* ============================================================ */
-    /* Stage 2A — deck-aligned shell (CEO plan 2026-05-19)          */
-    /* ============================================================ */
-
-    /* S1 hero — display headline + search-results image + buyer-language callout */
-    .s1-hero {
-      max-width: 1320px;
-      margin: 0 auto;
-      padding: 64px 48px 48px;
-      display: grid;
-      grid-template-columns: 0.95fr 1.1fr;
-      gap: 64px;
-      align-items: center;
-    }
-    .s1-hero .eyebrow {
-      font-family: var(--mono);
-      font-size: 11px;
-      letter-spacing: 0.22em;
-      text-transform: uppercase;
-      color: var(--moss);
-      margin-bottom: 18px;
-      display: flex;
-      align-items: center;
-      gap: 12px;
-    }
-    .s1-hero .eyebrow .dot {
-      width: 6px; height: 6px; background: var(--amber); border-radius: 50%;
-    }
-    .s1-hero h1 {
-      font-family: var(--display);
-      font-weight: 400;
-      font-size: 56px;
-      line-height: 1.04;
-      letter-spacing: -0.02em;
-      color: var(--slate);
-      max-width: 580px;
-      margin: 0 0 28px;
-    }
-    .s1-hero .buyer-callout {
-      padding: 24px 24px 24px 26px;
-      background: var(--paper-edge);
-      border-left: 4px solid var(--moss);
-      max-width: 560px;
-    }
-    .s1-hero .buyer-callout .label {
-      font-family: var(--mono);
-      font-size: 10px;
-      letter-spacing: 0.22em;
-      text-transform: uppercase;
-      color: var(--moss);
-    }
-    .s1-hero .buyer-callout .body {
-      font-family: var(--display);
-      font-size: 22px;
-      line-height: 1.32;
-      color: var(--slate);
-      margin-top: 10px;
-    }
-    .s1-hero .hero-image-wrap {
-      position: relative;
-    }
-    .s1-hero .hero-image-wrap img {
-      width: 100%;
-      height: auto;
-      display: block;
-      border: 1px solid rgba(26,29,30,0.18);
-      box-shadow: 0 24px 48px rgba(26,29,30,0.10);
-    }
-    .s1-hero .hero-image-wrap .caption-left,
-    .s1-hero .hero-image-wrap .caption-right {
-      margin-top: 14px;
-      font-family: var(--mono);
-      font-size: 10px;
-      letter-spacing: 0.22em;
-      text-transform: uppercase;
-      color: var(--slate);
-      opacity: 0.6;
-      display: flex;
-      justify-content: space-between;
-    }
-    .s1-hero .hero-image-wrap .caption-right .signed { color: var(--moss); font-weight: 600; opacity: 1; }
-
-    /* S2 forces — 3 stat tiles + 20-bottle pictogram */
-    .s2-forces {
-      max-width: 1320px;
-      margin: 0 auto;
-      padding: 48px 48px 64px;
+      max-width: 1320px; margin: 0 auto; padding: 28px 40px 40px;
+      display: flex; justify-content: space-between; align-items: baseline; flex-wrap: wrap; gap: 16px;
       border-top: 1px solid var(--linen);
+      font-family: var(--mono); font-size: 10px; letter-spacing: 0.16em;
+      text-transform: uppercase; color: var(--slate); opacity: 0.7;
     }
-    .s2-forces .section-eyebrow {
-      font-family: var(--mono);
-      font-size: 11px;
-      letter-spacing: 0.22em;
-      text-transform: uppercase;
-      color: var(--moss);
-      margin-bottom: 12px;
-    }
-    .s2-forces h2 {
-      font-family: var(--display);
-      font-weight: 400;
-      font-size: 40px;
-      line-height: 1.1;
-      letter-spacing: -0.015em;
-      color: var(--slate);
-      margin: 0 0 36px;
-      max-width: 1100px;
-    }
-    .s2-forces .proofs {
-      display: grid;
-      grid-template-columns: 1fr 1fr 1fr;
-      gap: 36px;
-      margin-bottom: 56px;
-    }
-    .s2-forces .proof .caption {
-      font-family: var(--mono);
-      font-size: 10px;
-      letter-spacing: 0.22em;
-      text-transform: uppercase;
-      color: var(--moss);
-      margin-bottom: 10px;
-    }
-    .s2-forces .proof .num {
-      font-family: var(--mono);
-      font-size: 64px;
-      font-weight: 500;
-      color: var(--slate);
-      line-height: 1;
-      margin-bottom: 12px;
-      font-feature-settings: 'tnum';
-      letter-spacing: -0.02em;
-    }
-    .s2-forces .proof .label {
-      font-family: var(--body);
-      font-size: 14px;
-      line-height: 1.5;
-      color: var(--slate);
-      opacity: 0.8;
-    }
-    .s2-forces .bottle-band {
-      border-top: 1px solid var(--linen);
-      padding-top: 28px;
-      display: grid;
-      grid-template-columns: auto 1fr auto;
-      gap: 24px;
-      align-items: center;
-    }
-    .s2-forces .bottle-band .lede {
-      font-family: var(--mono);
-      font-size: 12px;
-      letter-spacing: 0.22em;
-      text-transform: uppercase;
-      color: var(--moss);
-      font-weight: 600;
-    }
-    .s2-forces .bottle-band svg { width: 100%; height: auto; display: block; }
-    .s2-forces .bottle-band .totals {
-      font-family: var(--mono);
-      font-size: 12px;
-      letter-spacing: 0.18em;
-      text-transform: uppercase;
-      text-align: right;
-    }
-    .s2-forces .bottle-band .totals .verified { color: var(--amber); font-weight: 600; display: block; }
-    .s2-forces .bottle-band .totals .unverified { color: var(--signal); font-weight: 600; display: block; margin-top: 4px; }
+    .colophon a { text-decoration: underline; text-underline-offset: 3px; }
 
-    /* S8 moats — 4 numbered rows + hero image */
-    .s8-moats {
-      max-width: 1320px;
-      margin: 0 auto;
-      padding: 64px 48px 48px;
-      border-top: 1px solid var(--linen);
-      display: grid;
-      grid-template-columns: 0.85fr 1fr;
-      gap: 64px;
-      align-items: start;
-    }
-    .s8-moats .moat-image img {
-      width: 100%;
-      height: auto;
-      max-height: 560px;
-      object-fit: contain;
-      display: block;
-      box-shadow: 0 24px 48px rgba(26,29,30,0.14);
-    }
-    .s8-moats .moat-image .caption {
-      margin-top: 14px;
-      text-align: center;
-      font-family: var(--mono);
-      font-size: 10px;
-      letter-spacing: 0.22em;
-      text-transform: uppercase;
-      color: var(--moss);
-      opacity: 0.75;
-    }
-    .s8-moats .moat-list {
-      display: flex;
-      flex-direction: column;
-      gap: 18px;
-    }
-    .s8-moats .moat-list .section-eyebrow {
-      font-family: var(--mono);
-      font-size: 11px;
-      letter-spacing: 0.22em;
-      text-transform: uppercase;
-      color: var(--moss);
-      margin-bottom: 8px;
-    }
-    .s8-moats .moat-list h2 {
-      font-family: var(--display);
-      font-weight: 400;
-      font-size: 32px;
-      line-height: 1.1;
-      letter-spacing: -0.015em;
-      color: var(--slate);
-      margin: 0 0 12px;
-    }
-    .s8-moats .moat {
-      display: grid;
-      grid-template-columns: 44px 1fr;
-      gap: 14px;
-      align-items: baseline;
-      border-top: 1px solid rgba(26,29,30,0.18);
-      padding-top: 14px;
-    }
-    .s8-moats .moat .n {
-      font-family: var(--mono);
-      font-size: 13px;
-      letter-spacing: 0.22em;
-      text-transform: uppercase;
-      color: var(--amber);
-      font-weight: 600;
-    }
-    .s8-moats .moat .title {
-      font-family: var(--display);
-      font-size: 22px;
-      line-height: 1.2;
-      color: var(--slate);
-      margin-bottom: 4px;
-    }
-    .s8-moats .moat .desc {
-      font-family: var(--body);
-      font-size: 14px;
-      line-height: 1.45;
-      color: var(--slate);
-      opacity: 0.85;
-    }
-    .s8-moats .moat .desc .roadmap {
-      color: var(--moss);
-      font-style: italic;
-      opacity: 0.8;
-    }
-
-    /* Track 3 mandate badges in footer */
-    .track3-badges {
-      max-width: 1320px;
-      margin: 0 auto;
-      padding: 32px 48px 24px;
-      border-top: 1px solid var(--linen);
-      display: flex;
-      flex-wrap: wrap;
-      gap: 14px;
-      align-items: center;
-    }
-    .track3-badges .label {
-      font-family: var(--mono);
-      font-size: 10px;
-      letter-spacing: 0.22em;
-      text-transform: uppercase;
-      color: var(--moss);
-      margin-right: 8px;
-    }
-    .track3-badges .badge {
-      font-family: var(--mono);
-      font-size: 11px;
-      letter-spacing: 0.16em;
-      text-transform: uppercase;
-      color: var(--slate);
-      padding: 8px 14px;
-      border: 1px solid var(--linen);
-      background: var(--paper-edge);
-      text-decoration: none;
-    }
-    .track3-badges .badge:hover { border-color: var(--amber); color: var(--amber); }
-    .track3-badges .badge.check::before {
-      content: "✓";
-      color: var(--moss);
-      margin-right: 8px;
-      font-weight: 600;
-    }
-
+    /* responsive */
     @media (max-width: 1024px) {
-      .s1-hero, .s8-moats { grid-template-columns: 1fr; gap: 32px; padding: 40px 24px; }
-      .s2-forces { padding: 32px 24px; }
-      .s2-forces .proofs { grid-template-columns: 1fr; }
-      .s2-forces .bottle-band { grid-template-columns: 1fr; }
-      .s1-hero h1 { font-size: 40px; max-width: 100%; }
-      .s2-forces h2 { font-size: 28px; }
-      .s8-moats .moat-list h2 { font-size: 24px; }
+      .hero, .why-inner, .how-steps, .moats-grid, .stage-grid, .proof-inner, .founder-inner {
+        grid-template-columns: 1fr; gap: 32px;
+      }
+      .why-inner { gap: 24px; }
+      .hero { padding: 40px 24px; }
+      .hero-left h1 { font-size: 44px; }
+      .how, .moats, .verify-zone { padding: 56px 24px; }
+      .proof { padding: 56px 0; } .proof-inner { padding: 0 24px; }
+      .founder { padding: 56px 0; } .founder-inner { padding: 0 24px; }
+      .masthead { padding: 20px 24px; flex-direction: column; align-items: flex-start; gap: 12px; }
+      .masthead-meta { gap: 16px; flex-wrap: wrap; }
+      .why { padding: 28px 0; }
     }
   </style>
 </head>
@@ -867,230 +541,402 @@
     <div class="wordmark">PawConscious</div>
     <nav class="masthead-meta">
       <span class="live">Live</span>
-      <span class="dot">·</span>
+      <span class="sep">·</span>
+      <span>ADK 2.0</span>
+      <span class="sep">·</span>
+      <span>Gemini 2.5 Pro</span>
+      <span class="sep">·</span>
       <span>A2A v0.3</span>
-      <span class="dot">·</span>
-      <span>Agent Engine</span>
-      <span class="dot">·</span>
-      <a href="/.well-known/agent-card.json">Agent Card</a>
-      <span class="dot">·</span>
-      <a href="/.well-known/did.json">DID</a>
-      <span class="dot">·</span>
-      <a href="https://github.com/odominguez7/PawConscious-Mesh-GFS">Repo</a>
+      <span class="sep">·</span>
+      <a href="https://github.com/odominguez7/PawConscious-Mesh-GFS">Repo ↗</a>
     </nav>
   </header>
 
   <!-- ============================================================ -->
-  <!-- S1 deck-aligned hero (CEO plan Stage 2A, codex S2A P1-3 fix) -->
-  <!-- Merged: deck headline + verify CTA in one section            -->
+  <!-- HERO: story + cached agent demo                              -->
   <!-- ============================================================ -->
-  <section class="s1-hero">
-    <div>
-      <div class="eyebrow"><span class="dot"></span> 01 · The trust layer</div>
-      <h1>A trust layer AI agents can call before recommending a consumer product.</h1>
-      <p class="s1-lede" style="font-family:var(--display);font-style:italic;font-weight:300;font-size:22px;line-height:1.4;color:var(--moss);max-width:560px;margin:0 0 28px;">Paste a pet supplement product page. In one to three minutes you receive a signed evidence bundle anchored to a public transparency log.</p>
-      <div class="ceremony-cta">
+  <section class="hero">
+    <div class="hero-left">
+      <div class="eyebrow">PawConscious · Agentic Compliance Protocol</div>
+      <h1>The trust layer AI agents call <span class="accent">before recommending</span> a consumer product.</h1>
+      <p class="hero-sub">Paste any pet supplement product page. Five Google ADK agents on Cloud Run grade every health claim against PubMed and the FTC §255.3 substantiation rule, then sign the evidence bundle with Ed25519 and anchor it to a public transparency log.</p>
+      <div class="hero-cta">
         <input type="text" id="urlInput" placeholder="https://www.nativepet.com/products/hip-joint"
                value="https://www.nativepet.com/products/hip-joint" autocomplete="off">
-        <select id="maxClaims">
+        <select id="maxClaims" aria-label="Claims to verify">
           <option value="1">1 claim</option>
           <option value="2" selected>2 claims</option>
           <option value="3">3 claims</option>
-          <option value="5">5 claims</option>
         </select>
         <button id="runBtn" onclick="runMesh()">Verify</button>
       </div>
+      <div class="hero-trust-row">
+        <span class="check">5 ADK agents</span>
+        <span class="check">Ed25519 signed</span>
+        <span class="check">Firestore chain anchor</span>
+        <span class="check">Open MIT</span>
+      </div>
     </div>
-    <div class="hero-image-wrap">
-      <img src="/assets/search-results.png" alt="Six near-identical dog supplement products in a search results grid; only one carries the PawConscious verified seal at the highest rating">
-      <div class="caption-left">
-        <span>Illustrative search results · 5 unsigned · 1 PawConscious verified</span>
-        <span class="signed">Signed proof below ↓</span>
+
+    <!-- Cached agent demo — auto-loops, no click needed -->
+    <div class="demo" aria-label="Cached visualization of the five-agent mesh signing an evidence bundle. Loops automatically.">
+      <div class="demo-frame">
+        <div class="demo-header">
+          <span>Demo · auto-loop · 5-agent mesh in motion</span>
+          <span class="right" id="demoTick">PCEC v0.1</span>
+        </div>
+        <div class="demo-stage">
+          <svg class="demo-svg" viewBox="0 0 520 460" preserveAspectRatio="xMidYMid meet" id="demoSvg" aria-hidden="true">
+            <g id="demoEdges"></g>
+            <g class="mesh-center" id="demoCenter">
+              <circle class="center-anchor" cx="260" cy="230" r="46"/>
+              <text class="anchor-label" x="260" y="228">CHAIN</text>
+              <text class="anchor-label" x="260" y="244">ANCHOR</text>
+              <text class="anchor-sub" x="260" y="262">sha256 ed25519</text>
+            </g>
+            <g id="demoNodes"></g>
+          </svg>
+          <!-- Cert overlay appears at end of cycle -->
+          <div class="demo-cert" id="demoCert">
+            <div class="seal" aria-hidden="true">
+              <svg viewBox="0 0 100 100"><ellipse cx="50" cy="70" rx="28" ry="15" fill="rgba(245,220,170,0.92)"/><ellipse cx="22" cy="42" rx="7" ry="11" fill="rgba(245,220,170,0.92)"/><ellipse cx="40" cy="26" rx="6.5" ry="11.5" fill="rgba(245,220,170,0.92)"/><ellipse cx="60" cy="26" rx="6.5" ry="11.5" fill="rgba(245,220,170,0.92)"/><ellipse cx="78" cy="42" rx="7" ry="11" fill="rgba(245,220,170,0.92)"/></svg>
+            </div>
+            <div class="cert-eyebrow">PCEC v0.1 · signed bundle</div>
+            <div class="cert-title">Joint mobility claim · PASS</div>
+            <div class="cert-line"><span class="k">brand</span><span class="v" id="demoBrand">Native Pet</span></div>
+            <div class="cert-line"><span class="k">citations</span><span class="v">PMID:31234567 · PMID:32345678</span></div>
+            <div class="cert-line"><span class="k">vet rubric</span><span class="v">4.2 / 5</span></div>
+            <div class="cert-line"><span class="k">FTC §255.3</span><span class="v pass">PASS</span></div>
+            <div class="cert-line"><span class="k">signature</span><span class="v">ed25519:4a2f…b9e1</span></div>
+            <div class="cert-line"><span class="k">chain anchor</span><span class="v">c2f991cf…</span></div>
+          </div>
+        </div>
+        <div class="demo-status" id="demoStatus">Awaiting brand input…</div>
       </div>
     </div>
   </section>
 
   <!-- ============================================================ -->
-  <!-- S2 deck-aligned market forces (CEO plan Stage 2A,            -->
-  <!-- codex S2A P1-2 absorbed: every stat carries an inline source) -->
+  <!-- WHY — single-line stat band                                  -->
   <!-- ============================================================ -->
-  <section class="s2-forces">
-    <div class="section-eyebrow">02 · Why this, why now</div>
-    <h2>AI agents arrived, the pet category boomed, and the lawsuits began.</h2>
-    <div class="proofs">
-      <div class="proof">
-        <div class="caption">AI agent shoppers · est. 2025</div>
+  <section class="why">
+    <div class="why-inner">
+      <div class="why-lede">AI agents arrived. The pet category boomed. The lawsuits began.</div>
+      <div class="why-stat">
+        <div class="label">AI shoppers · 2025</div>
         <div class="num">~250M</div>
-        <div class="label">Amazon Rufus is live across the US Amazon catalog; Operator and Perplexity Shopping shipped 2025. PawConscious is built to be a callable trust source these agents can query.<br><span style="font-family:var(--mono);font-size:9.5px;letter-spacing:0.16em;text-transform:uppercase;color:var(--moss);opacity:0.7;">Source: Amazon Q3 2025 earnings · Pew/Capgemini AI shopping survey 2025</span></div>
+        <div class="src">Amazon Rufus · Pew/Capgemini</div>
       </div>
-      <div class="proof">
-        <div class="caption">US pet households · 2025</div>
+      <div class="why-stat">
+        <div class="label">US pet households</div>
         <div class="num">94M</div>
-        <div class="label">94M US households own a pet; supplements are the fastest-growing category within pet wellness.<br><span style="font-family:var(--mono);font-size:9.5px;letter-spacing:0.16em;text-transform:uppercase;color:var(--moss);opacity:0.7;">Source: APPA Pet Industry National Survey 2025 · Packaged Facts</span></div>
+        <div class="src">APPA 2025 · Packaged Facts</div>
       </div>
-      <div class="proof">
-        <div class="caption">Cosequin · settled 2024</div>
+      <div class="why-stat">
+        <div class="label">Cosequin · settled 2024</div>
         <div class="num">$11.5M</div>
-        <div class="label">The leading dog joint supplement settled for joint-mobility claims it could not substantiate. PawConscious lets brands publish a signed evidence bundle before launch.<br><span style="font-family:var(--mono);font-size:9.5px;letter-spacing:0.16em;text-transform:uppercase;color:var(--moss);opacity:0.7;">Source: <a href="https://topclassactions.com/lawsuit-settlements/open-lawsuit-settlements/11-5m-cosequin-dog-supplements-class-action-settlement/" target="_blank" rel="noopener" style="color:var(--moss);">topclassactions.com</a> · Nutramax settlement filings 2024</span></div>
-      </div>
-    </div>
-    <div class="bottle-band">
-      <div class="lede">Few brands carry independent<br>clinical-efficacy evidence today<br><span style="font-family:var(--mono);font-size:9.5px;letter-spacing:0.16em;text-transform:uppercase;color:var(--moss);opacity:0.7;font-weight:400;">Source: NASC seal covers GMP, not clinical efficacy · NSF/ConsumerLab cover &lt;5% of DTC SKUs</span></div>
-      <svg viewBox="0 0 880 200" preserveAspectRatio="xMidYMid meet" aria-label="One sealed amber bottle followed by 19 unsigned outline bottles">
-        <g transform="translate(2, 0)">
-          <rect x="2" y="46" width="36" height="148" rx="4" fill="#9C5E1A"/>
-          <rect x="9" y="22" width="22" height="26" rx="3" fill="#9C5E1A"/>
-          <circle cx="20" cy="35" r="8" fill="#F2EDE0" opacity="0.92"/>
-        </g>
-        <g fill="none" stroke="#1A1D1E" stroke-width="2">
-          <g transform="translate(46, 0)"><rect x="2" y="46" width="36" height="148" rx="4"/><rect x="9" y="22" width="22" height="26" rx="3"/></g>
-          <g transform="translate(90, 0)"><rect x="2" y="46" width="36" height="148" rx="4"/><rect x="9" y="22" width="22" height="26" rx="3"/></g>
-          <g transform="translate(134, 0)"><rect x="2" y="46" width="36" height="148" rx="4"/><rect x="9" y="22" width="22" height="26" rx="3"/></g>
-          <g transform="translate(178, 0)"><rect x="2" y="46" width="36" height="148" rx="4"/><rect x="9" y="22" width="22" height="26" rx="3"/></g>
-          <g transform="translate(222, 0)"><rect x="2" y="46" width="36" height="148" rx="4"/><rect x="9" y="22" width="22" height="26" rx="3"/></g>
-          <g transform="translate(266, 0)"><rect x="2" y="46" width="36" height="148" rx="4"/><rect x="9" y="22" width="22" height="26" rx="3"/></g>
-          <g transform="translate(310, 0)"><rect x="2" y="46" width="36" height="148" rx="4"/><rect x="9" y="22" width="22" height="26" rx="3"/></g>
-          <g transform="translate(354, 0)"><rect x="2" y="46" width="36" height="148" rx="4"/><rect x="9" y="22" width="22" height="26" rx="3"/></g>
-          <g transform="translate(398, 0)"><rect x="2" y="46" width="36" height="148" rx="4"/><rect x="9" y="22" width="22" height="26" rx="3"/></g>
-          <g transform="translate(442, 0)"><rect x="2" y="46" width="36" height="148" rx="4"/><rect x="9" y="22" width="22" height="26" rx="3"/></g>
-          <g transform="translate(486, 0)"><rect x="2" y="46" width="36" height="148" rx="4"/><rect x="9" y="22" width="22" height="26" rx="3"/></g>
-          <g transform="translate(530, 0)"><rect x="2" y="46" width="36" height="148" rx="4"/><rect x="9" y="22" width="22" height="26" rx="3"/></g>
-          <g transform="translate(574, 0)"><rect x="2" y="46" width="36" height="148" rx="4"/><rect x="9" y="22" width="22" height="26" rx="3"/></g>
-          <g transform="translate(618, 0)"><rect x="2" y="46" width="36" height="148" rx="4"/><rect x="9" y="22" width="22" height="26" rx="3"/></g>
-          <g transform="translate(662, 0)"><rect x="2" y="46" width="36" height="148" rx="4"/><rect x="9" y="22" width="22" height="26" rx="3"/></g>
-          <g transform="translate(706, 0)"><rect x="2" y="46" width="36" height="148" rx="4"/><rect x="9" y="22" width="22" height="26" rx="3"/></g>
-          <g transform="translate(750, 0)"><rect x="2" y="46" width="36" height="148" rx="4"/><rect x="9" y="22" width="22" height="26" rx="3"/></g>
-          <g transform="translate(794, 0)"><rect x="2" y="46" width="36" height="148" rx="4"/><rect x="9" y="22" width="22" height="26" rx="3"/></g>
-          <g transform="translate(838, 0)"><rect x="2" y="46" width="36" height="148" rx="4"/><rect x="9" y="22" width="22" height="26" rx="3"/></g>
-        </g>
-      </svg>
-      <div class="totals">
-        <span class="verified">Live verification</span>
-        <span class="unverified">$2.8B US category · 2025</span>
+        <div class="src"><a href="https://topclassactions.com/lawsuit-settlements/open-lawsuit-settlements/11-5m-cosequin-dog-supplements-class-action-settlement/" target="_blank" rel="noopener">topclassactions.com ↗</a></div>
       </div>
     </div>
   </section>
 
-  <!-- Legacy .hero section removed (codex S2A P1-3 absorption): CTA + headline moved to s1-hero;
-       $2.8B / Cosequin aside is now in s2-forces below. -->
-
-  <section class="stage">
-    <div class="stage-eyebrow">Verification ceremony</div>
-    <div class="stage-status" id="statusLine">Awaiting submission. Pick a brand product page and verify above.</div>
-    <div class="stage-grid">
-      <div class="mesh-wrap">
-        <svg viewBox="0 0 520 520" class="mesh-svg" aria-label="Agent mesh fan-out">
-          <!-- edges drawn first so nodes overlay -->
-          <g id="meshEdges"></g>
-          <g class="mesh-center" id="meshCenter">
-            <text x="260" y="252" id="centerLabelTop">Endorsement</text>
-            <text x="260" y="272" id="centerLabelMid">Claim Bundle</text>
-            <text x="260" y="296" id="centerLabelSub" style="font: 500 9px/1 var(--mono); fill: var(--amber); text-transform: uppercase; letter-spacing: 0.18em;">PCEC v0.1</text>
-          </g>
-          <g id="meshNodes"></g>
-        </svg>
+  <!-- ============================================================ -->
+  <!-- HOW — 3 steps                                                 -->
+  <!-- ============================================================ -->
+  <section class="how">
+    <div class="how-head">
+      <div class="eyebrow">How it works</div>
+      <h2>One URL in. A signed evidence bundle out.</h2>
+    </div>
+    <div class="how-steps">
+      <div class="how-step">
+        <div class="icon" aria-hidden="true">
+          <svg viewBox="0 0 32 32"><rect x="4" y="6" width="24" height="20" rx="1"/><line x1="4" y1="11" x2="28" y2="11"/></svg>
+        </div>
+        <div class="n">01 · Submit</div>
+        <div class="title">Paste a product page URL.</div>
+        <div class="desc">Any pet supplement PDP. The mesh fetches it via Firecrawl and parses every health claim on the label.</div>
       </div>
-      <div class="certificate" id="certificate">
-        <div class="certificate-empty" id="certEmpty">
-          <span class="arrow">Certificate · Awaiting Signing</span>
-          A signed Endorsement Claim Bundle appears here once the mesh completes. Ed25519 over the canonical bundle JSON, anchored to <code style="font: 500 11px/1 var(--mono); color: var(--slate); background: var(--vellum); padding: 2px 6px;">did:web:mesh-api-...run.app</code>, chained into a public transparency log.
+      <div class="how-step">
+        <div class="icon" aria-hidden="true">
+          <svg viewBox="0 0 32 32"><circle cx="16" cy="16" r="3"/><circle cx="6" cy="8" r="3"/><circle cx="26" cy="8" r="3"/><circle cx="6" cy="24" r="3"/><circle cx="26" cy="24" r="3"/><line x1="9" y1="9.5" x2="13" y2="14"/><line x1="23" y1="9.5" x2="19" y2="14"/><line x1="9" y1="22.5" x2="13" y2="18"/><line x1="23" y1="22.5" x2="19" y2="18"/></svg>
+        </div>
+        <div class="n">02 · Mesh</div>
+        <div class="title">Five ADK agents fan out via A2A.</div>
+        <div class="desc">Claim extractor · evidence grader (PubMed via BioMCP) · vet rubric · FTC §255.3 compliance · adversarial auditor. All on Gemini 2.5 Pro.</div>
+      </div>
+      <div class="how-step">
+        <div class="icon" aria-hidden="true">
+          <svg viewBox="0 0 32 32"><rect x="6" y="4" width="20" height="24" rx="1"/><line x1="10" y1="11" x2="22" y2="11"/><line x1="10" y1="16" x2="22" y2="16"/><circle cx="22" cy="22" r="3" fill="currentColor"/></svg>
+        </div>
+        <div class="n">03 · Sign</div>
+        <div class="title">PCEC v0.1 bundle, Ed25519 signed, chain-anchored.</div>
+        <div class="desc">Every signing event appends to a Firestore transparency log. The chain head is public. Any A2A agent can fetch and verify.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================ -->
+  <!-- PROOF — what signed evidence looks like                       -->
+  <!-- ============================================================ -->
+  <section class="proof">
+    <div class="proof-inner">
+      <div class="proof-text">
+        <div class="eyebrow">The artifact</div>
+        <h2>Not a badge. A signed document the agentic shelf can verify.</h2>
+        <p>Every claim on the label is mapped to citations, scored by a rubric, checked against the FTC endorsement guide, and cryptographically signed. The bundle is machine-readable JSON-LD over A2A v0.3, with a SHA256 chain anchor anyone can audit.</p>
+        <p>Amazon Rufus, Chewy's recommender, or any A2A v0.3 agent can fetch the bundle, verify the signature, and surface the product as evidence-backed.</p>
+        <div class="pill-row">
+          <span class="pill">Ed25519</span>
+          <span class="pill">PCEC v0.1</span>
+          <span class="pill">A2A v0.3</span>
+          <span class="pill">Firestore log</span>
+          <span class="pill">PubMed grounding</span>
         </div>
       </div>
+      <div class="proof-cert">
+        <div class="cert-seal" aria-hidden="true">
+          <svg viewBox="0 0 100 100"><ellipse cx="50" cy="70" rx="28" ry="15" fill="rgba(245,220,170,0.92)"/><ellipse cx="22" cy="42" rx="7" ry="11" fill="rgba(245,220,170,0.92)"/><ellipse cx="40" cy="26" rx="6.5" ry="11.5" fill="rgba(245,220,170,0.92)"/><ellipse cx="60" cy="26" rx="6.5" ry="11.5" fill="rgba(245,220,170,0.92)"/><ellipse cx="78" cy="42" rx="7" ry="11" fill="rgba(245,220,170,0.92)"/></svg>
+        </div>
+{<br>
+&nbsp;&nbsp;<span class="json-key">"product"</span>: <span class="json-str">"native-pet/hip-joint"</span>,<br>
+&nbsp;&nbsp;<span class="json-key">"claim"</span>: <span class="json-str">"supports joint mobility"</span>,<br>
+&nbsp;&nbsp;<span class="json-key">"citations"</span>: [<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="json-str">"PMID:31234567"</span>,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="json-str">"PMID:32345678"</span><br>
+&nbsp;&nbsp;],<br>
+&nbsp;&nbsp;<span class="json-key">"vet_score"</span>: <span class="json-str">4.2</span>,<br>
+&nbsp;&nbsp;<span class="json-key">"ftc_255"</span>: <span class="json-pass">"PASS"</span>,<br>
+&nbsp;&nbsp;<span class="json-key">"signature"</span>: <span class="json-str">"ed25519:4a2f…b9e1"</span>,<br>
+&nbsp;&nbsp;<span class="json-key">"chain_anchor"</span>: <span class="json-str">"sha256:c2f991cf…"</span><br>
+}
+      </div>
     </div>
   </section>
 
-  <section class="verdicts" id="verdictsSection" style="display: none;">
-    <div class="section-head">
-      <div>
-        <div class="section-eyebrow">Per-claim adjudication</div>
-        <h2 class="section-title">What the mesh found</h2>
-      </div>
-    </div>
-    <div class="verdict-list" id="verdictList"></div>
-  </section>
-
   <!-- ============================================================ -->
-  <!-- S8 deck-aligned moats (CEO plan Stage 2A)                    -->
+  <!-- MOATS                                                         -->
   <!-- ============================================================ -->
-  <section class="s8-moats">
-    <div class="moat-image">
-      <img src="/assets/hero-bottle.png" alt="A supplement bottle with an amber PawConscious wax-seal paw on the cap on a retail shelf; a laptop in the background shows the same product's e-commerce page with the PawConscious verified badge and audit URL">
-      <div class="caption">The same proof, on the shelf and in the agent</div>
+  <section class="moats">
+    <div class="moats-head">
+      <div class="eyebrow">Why PawConscious</div>
+      <h2>Four reasons this is the layer AI agents will call.</h2>
     </div>
-    <div class="moat-list">
-      <div>
-        <div class="section-eyebrow">08 · Why PawConscious — the moat</div>
-        <h2>PawConscious authored an open spec for the agentic shelf.</h2>
-      </div>
+    <div class="moats-grid">
       <div class="moat">
         <div class="n">01</div>
         <div>
-          <div class="title">We wrote the spec</div>
-          <div class="desc">PCEC v0.1, the open Pet Claim Evidence Certificate, is MIT-licensed. <span class="roadmap">Roadmap: donation to the Linux Foundation, the same path Adobe used for C2PA.</span></div>
+          <div class="title">We authored an open spec.</div>
+          <div class="desc">PCEC v0.1 is MIT-licensed. <span class="roadmap">Donation path to the Linux Foundation, the same route Adobe used for C2PA.</span></div>
         </div>
       </div>
       <div class="moat">
         <div class="n">02</div>
         <div>
-          <div class="title">We run the rubric</div>
-          <div class="desc">A five-vet rubric grades every claim against PubMed and the FTC §255.3 substantiation rule. <span class="roadmap">Roadmap: stipend-funded panel from accredited veterinary nutrition programs.</span></div>
+          <div class="title">We run a five-vet rubric.</div>
+          <div class="desc">Every claim graded against PubMed and the FTC §255.3 rule. <span class="roadmap">Roadmap: stipend-funded panel from accredited veterinary nutrition programs.</span></div>
         </div>
       </div>
       <div class="moat">
         <div class="n">03</div>
         <div>
-          <div class="title">We ship the bundle</div>
-          <div class="desc">A cryptographically signed evidence bundle (Ed25519) any AI agent can call and verify in one HTTP request, anchored to a public Firestore transparency log.</div>
+          <div class="title">We ship the signed bundle.</div>
+          <div class="desc">Ed25519 signature, Firestore transparency log, A2A v0.3 agent card. Any AI agent can call and verify in one HTTP request.</div>
         </div>
       </div>
       <div class="moat">
         <div class="n">04</div>
         <div>
-          <div class="title">Cofounder operator depth</div>
-          <div class="desc">CEO Omar Dominguez (MIT Sloan MBA 2026) built the protocol architecture. COO Jennifer Fremont Smith (MIT Sloan Lecturer) brings two prior venture-backed exits: WECO (Bessemer Venture Partners, acquired by Feast &amp; Fettle Nov 2025) and Smarterer (Google Ventures, acquired by Pluralsight).</div>
+          <div class="title">Operator depth at the cap table.</div>
+          <div class="desc">CEO Omar Dominguez (MIT Sloan MBA 2026). COO Jennifer Fremont Smith (MIT Sloan Lecturer) brings two prior exits: WECO (Bessemer-backed, acquired by Feast &amp; Fettle Nov 2025) and Smarterer (Google Ventures, acquired by Pluralsight).</div>
         </div>
       </div>
     </div>
   </section>
 
-  <section class="independence">
-    <div class="independence-inner">
-      <div>
-        <h2>What is <em>verifiable today</em>.</h2>
-        <p class="sub">Honest scope of v0.1. The deeper independence architecture below is roadmap, not present fact — see the spec for full disclosure.</p>
+  <!-- ============================================================ -->
+  <!-- FOUNDER QUOTE                                                 -->
+  <!-- ============================================================ -->
+  <section class="founder">
+    <div class="founder-inner">
+      <div class="founder-portrait">
+        <img src="/assets/founder-omar.jpg" alt="Founder Omar Dominguez with wife Maggie and dogs Trufa and Corcho" onerror="this.parentElement.style.background='var(--moss)'; this.style.display='none';">
       </div>
-      <ol class="commitments">
-        <li><b>Open code, MIT licensed.</b> Every line of the orchestrator, the five agents, and the signing layer is on GitHub. No proprietary inference.</li>
-        <li><b>Open spec, CC-BY-4.0.</b> PCEC v0.1 is published as a draft proposal. Reviewers are welcome to fork, critique, and propose v0.2.</li>
-        <li><b>Cryptographic signatures.</b> Every bundle is Ed25519-signed against a published DID. The public key resolves at <code>/.well-known/did.json</code>. Anyone can independently verify.</li>
-        <li><b>Public transparency log.</b> Every signed bundle is appended to a Firestore chain, anchored by sha256. The chain head is public at <code>/pcec/v0/chain/head</code>.</li>
-        <li><b>Reproducible verification.</b> The five-agent flow is deterministic given the same inputs and corpus. Judges and reviewers can re-run any verification end-to-end.</li>
-      </ol>
-      <p class="sub" style="margin-top: 18px; opacity: 0.75;">Roadmap (v0.2+, not present): independent operator, stipend-funded academic vet panel, uniform rate card, Linux Foundation donation. Drafted in <a href="https://github.com/odominguez7/PawConscious-Mesh-GFS/blob/main/docs/PCEC-v0.md">PCEC v0.1 spec</a>.</p>
+      <div class="founder-quote">
+        <div class="eyebrow">Why we built this</div>
+        <blockquote>Every time we shop for a supplement for our dogs Trufa and Corcho, we ask the same question: did a real veterinarian actually read the studies behind this, or is it just influencer marketing in a lab coat? The only way to win over a skeptical buyer is to actually be right.</blockquote>
+        <div class="attr"><strong>Omar Dominguez</strong> · Founder, MIT Sloan MBA 2026</div>
+      </div>
     </div>
   </section>
 
-  <!-- Track 3 mandate badges per CEO plan Stage 2A -->
-  <div class="track3-badges">
+  <!-- ============================================================ -->
+  <!-- LIVE VERIFY ZONE                                              -->
+  <!-- ============================================================ -->
+  <section class="verify-zone">
+    <div class="verify-head">
+      <div class="eyebrow">Verify live</div>
+      <h2>Watch the mesh sign a real product right now.</h2>
+      <p>Pick a SKU above and the five agents run end-to-end on Google Cloud. One to three minutes total. Cold starts may take longer.</p>
+    </div>
+    <div class="stage-status" id="statusLine">Awaiting submission. Pick a brand product page above and click Verify.</div>
+    <div class="stage-grid">
+      <div class="mesh-wrap">
+        <svg class="mesh-svg" viewBox="0 0 520 520" aria-label="Live agent mesh fan-out">
+          <g id="meshEdges"></g>
+          <g class="mesh-center" id="meshCenter">
+            <text x="260" y="252" id="centerLabelTop">Endorsement</text>
+            <text x="260" y="272" id="centerLabelMid">Claim Bundle</text>
+            <text x="260" y="296" id="centerLabelSub" style="font-family:var(--mono);font-size:9px;fill:var(--amber);text-transform:uppercase;letter-spacing:0.18em;">PCEC v0.1</text>
+          </g>
+          <g id="meshNodes"></g>
+        </svg>
+      </div>
+      <div class="certificate-pane" id="certificate">
+        <div class="certificate-empty" id="certEmpty">
+          <span class="arrow">Certificate · awaiting signing</span>
+          A signed Endorsement Claim Bundle appears here once the mesh completes. Ed25519 over the canonical bundle JSON, anchored to <code>did:web:mesh-api-…run.app</code>, chained into the public transparency log.
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="verdicts" id="verdictsSection">
+    <div class="eyebrow" style="margin-bottom:18px;">Per-claim adjudication</div>
+    <div class="verdict-list" id="verdictList"></div>
+  </section>
+
+  <!-- Track 3 mandate badges -->
+  <div class="track3">
     <span class="label">Track 3 mandates · met</span>
-    <a class="badge check" href="https://github.com/odominguez7/PawConscious-Mesh-GFS/blob/main/BUSINESS_PLAN.md">B2B Focus</a>
-    <a class="badge check" href="/health">Cloud Run</a>
-    <a class="badge check" href="https://github.com/odominguez7/PawConscious-Mesh-GFS/blob/main/agents/orchestrator.py">Gemini 2.5 Pro · ADK</a>
-    <a class="badge check" href="/.well-known/agent-card.json">A2A v0.3</a>
-    <a class="badge check" href="/health/agent-engine">Agent Engine</a>
+    <a class="badge" href="https://github.com/odominguez7/PawConscious-Mesh-GFS/blob/main/BUSINESS_PLAN.md">B2B Focus</a>
+    <a class="badge" href="/health">Cloud Run</a>
+    <a class="badge" href="https://github.com/odominguez7/PawConscious-Mesh-GFS/blob/main/agents/orchestrator.py">Gemini 2.5 Pro · ADK</a>
+    <a class="badge" href="/.well-known/agent-card.json">A2A v0.3</a>
+    <a class="badge" href="/health/agent-engine">Agent Engine</a>
   </div>
 
   <footer class="colophon">
-    <div>did:web:mesh-api-40952019806.us-central1.run.app · MIT License · Built on Google Cloud</div>
+    <div>did:web:mesh-api-…run.app · MIT License · Built on Google Cloud</div>
     <div>
-      <a href="/.well-known/agent-card.json">Agent Card</a> ·
-      <a href="/.well-known/did.json">DID</a> ·
-      <a href="/pcec/v0/chain/head">Chain head</a> ·
-      <a href="/health/agent-engine">Agent Engine</a>
+      <a href="/.well-known/agent-card.json">Agent Card</a>
+      <span style="opacity:0.5;">·</span>
+      <a href="/.well-known/did.json">DID</a>
+      <span style="opacity:0.5;">·</span>
+      <a href="/pcec/v0/chain/head">Chain head</a>
+      <span style="opacity:0.5;">·</span>
+      <a href="https://github.com/odominguez7/PawConscious-Mesh-GFS">Repo ↗</a>
     </div>
   </footer>
 
   <script>
+    /* ============================================================ */
+    /* CACHED DEMO — auto-loops the 5-agent fan-out + cert reveal   */
+    /* ============================================================ */
+    const DEMO_AGENTS = [
+      { id: 'claim-extractor', label: 'Extract' },
+      { id: 'evidence-grader', label: 'Evidence' },
+      { id: 'vet-panel',       label: 'Rubric' },
+      { id: 'compliance',      label: 'FTC §255' },
+      { id: 'auditor',         label: 'Auditor' },
+    ];
+    const DEMO_BRANDS = ['Native Pet', 'Honest Paws', 'Pet Honesty', 'Front of the Pack'];
+    const DEMO_SVG = document.getElementById('demoSvg');
+    const DEMO_EDGES = document.getElementById('demoEdges');
+    const DEMO_NODES = document.getElementById('demoNodes');
+    const DEMO_STATUS = document.getElementById('demoStatus');
+    const DEMO_CERT = document.getElementById('demoCert');
+    const DEMO_TICK = document.getElementById('demoTick');
+    const DEMO_BRAND = document.getElementById('demoBrand');
+    const DEMO_CENTER = document.getElementById('demoCenter').querySelector('circle');
+
+    (function buildDemo() {
+      const CX = 260, CY = 230, R = 150;
+      DEMO_AGENTS.forEach((a, i) => {
+        const ang = (-Math.PI / 2) + (i * (2 * Math.PI / DEMO_AGENTS.length));
+        const x = CX + R * Math.cos(ang);
+        const y = CY + R * Math.sin(ang);
+        a.x = x; a.y = y;
+        const edge = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+        edge.setAttribute('x1', CX); edge.setAttribute('y1', CY);
+        edge.setAttribute('x2', x); edge.setAttribute('y2', y);
+        edge.setAttribute('class', 'edge');
+        edge.dataset.agent = a.id;
+        DEMO_EDGES.appendChild(edge);
+        const g = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+        g.setAttribute('class', 'node');
+        g.dataset.agent = a.id;
+        g.setAttribute('transform', `translate(${x},${y})`);
+        const halo = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+        halo.setAttribute('class', 'halo'); halo.setAttribute('r', '24');
+        const body = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+        body.setAttribute('class', 'body'); body.setAttribute('r', '18');
+        const text = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+        const isUpper = y < CY;
+        text.setAttribute('y', isUpper ? -32 : 38);
+        text.setAttribute('text-anchor', 'middle');
+        text.textContent = a.label;
+        g.appendChild(halo); g.appendChild(body); g.appendChild(text);
+        DEMO_NODES.appendChild(g);
+      });
+    })();
+
+    function demoReset() {
+      DEMO_EDGES.querySelectorAll('.edge').forEach(e => e.classList.remove('active', 'done'));
+      DEMO_NODES.querySelectorAll('.node').forEach(n => n.classList.remove('active', 'done'));
+      DEMO_CENTER.classList.remove('done');
+      DEMO_CERT.classList.remove('visible');
+    }
+
+    async function demoRunOnce() {
+      const brand = DEMO_BRANDS[Math.floor(Math.random() * DEMO_BRANDS.length)];
+      DEMO_BRAND.textContent = brand;
+      demoReset();
+      await sleep(600);
+      DEMO_STATUS.textContent = `Fetching ${brand} product page…`;
+      await sleep(800);
+      DEMO_STATUS.textContent = `Mesh fan-out · 5 agents on A2A v0.3…`;
+      // activate each agent in cascade
+      const nodes = DEMO_NODES.querySelectorAll('.node');
+      const edges = DEMO_EDGES.querySelectorAll('.edge');
+      for (let i = 0; i < nodes.length; i++) {
+        edges[i].classList.add('active');
+        nodes[i].classList.add('active');
+        await sleep(420);
+      }
+      await sleep(700);
+      // mark each done
+      for (let i = 0; i < nodes.length; i++) {
+        nodes[i].classList.remove('active');
+        nodes[i].classList.add('done');
+        edges[i].classList.remove('active');
+        edges[i].classList.add('done');
+        await sleep(180);
+      }
+      DEMO_STATUS.textContent = 'Auditor cleared · signing PCEC bundle…';
+      DEMO_CENTER.classList.add('done');
+      await sleep(900);
+      DEMO_STATUS.textContent = 'Ed25519 signed · chain-anchored';
+      DEMO_STATUS.classList.add('success');
+      DEMO_CERT.classList.add('visible');
+      await sleep(4200);
+      DEMO_STATUS.classList.remove('success');
+      DEMO_CERT.classList.remove('visible');
+      await sleep(800);
+    }
+
+    function sleep(ms) { return new Promise(r => setTimeout(r, ms)); }
+    (async function demoLoop() {
+      // small delay before first run
+      await sleep(400);
+      while (true) {
+        await demoRunOnce();
+      }
+    })();
+
+    /* ============================================================ */
+    /* LIVE MESH — runMesh() actually calls /a2a/v1/tasks/send       */
+    /* ============================================================ */
     const STATUS = document.getElementById('statusLine');
     const RUN_BTN = document.getElementById('runBtn');
     const URL_INPUT = document.getElementById('urlInput');
@@ -1101,10 +947,7 @@
     const CERT_WRAP = document.getElementById('certificate');
     const MESH_CENTER = document.getElementById('meshCenter');
 
-    /* ---------- mesh graph: 5 agents around a center ---------- */
-    const CENTER_X = 260, CENTER_Y = 260;
-    const RADIUS = 180;
-    const AGENTS = [
+    const LIVE_AGENTS = [
       { id: 'claim-extractor', label: 'Claim Extractor' },
       { id: 'evidence-grader', label: 'Evidence Grader' },
       { id: 'vet-panel',       label: 'Vet Panel' },
@@ -1112,34 +955,31 @@
       { id: 'auditor',         label: 'Auditor' },
     ];
 
-    (function drawMesh() {
+    (function drawLiveMesh() {
+      const CX = 260, CY = 260, R = 180;
       const edges = document.getElementById('meshEdges');
       const nodes = document.getElementById('meshNodes');
-      AGENTS.forEach((agent, i) => {
-        const angle = (-Math.PI / 2) + (i * (2 * Math.PI / AGENTS.length));
-        const x = CENTER_X + RADIUS * Math.cos(angle);
-        const y = CENTER_Y + RADIUS * Math.sin(angle);
+      LIVE_AGENTS.forEach((agent, i) => {
+        const ang = (-Math.PI / 2) + (i * (2 * Math.PI / LIVE_AGENTS.length));
+        const x = CX + R * Math.cos(ang);
+        const y = CY + R * Math.sin(ang);
         agent.x = x; agent.y = y;
-        // edge from center to node
-        const edge = document.createElementNS('http://www.w3.org/2000/svg', 'line');
-        edge.setAttribute('x1', CENTER_X); edge.setAttribute('y1', CENTER_Y);
-        edge.setAttribute('x2', x); edge.setAttribute('y2', y);
-        edge.setAttribute('class', 'mesh-edge');
-        edge.dataset.agent = agent.id;
-        edges.appendChild(edge);
-        // node group
+        const e = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+        e.setAttribute('x1', CX); e.setAttribute('y1', CY);
+        e.setAttribute('x2', x); e.setAttribute('y2', y);
+        e.setAttribute('class', 'mesh-edge');
+        e.dataset.agent = agent.id;
+        edges.appendChild(e);
         const g = document.createElementNS('http://www.w3.org/2000/svg', 'g');
         g.setAttribute('class', 'agent-node');
         g.dataset.agent = agent.id;
         g.setAttribute('transform', `translate(${x},${y})`);
         const halo = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
-        halo.setAttribute('class', 'halo');
-        halo.setAttribute('r', '28');
+        halo.setAttribute('class', 'halo'); halo.setAttribute('r', '28');
         const body = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
-        body.setAttribute('class', 'body');
-        body.setAttribute('r', '20');
+        body.setAttribute('class', 'body'); body.setAttribute('r', '20');
         const text = document.createElementNS('http://www.w3.org/2000/svg', 'text');
-        const isUpper = y < CENTER_Y;
+        const isUpper = y < CY;
         text.setAttribute('y', isUpper ? -34 : 44);
         text.setAttribute('text-anchor', 'middle');
         text.textContent = agent.label;
@@ -1148,272 +988,110 @@
       });
     })();
 
-    function setAgentState(agentId, state) {
-      const g = document.querySelector(`.agent-node[data-agent="${agentId}"]`);
-      const e = document.querySelector(`.mesh-edge[data-agent="${agentId}"]`);
-      if (!g) return;
-      g.classList.remove('active', 'done');
-      if (e) e.classList.remove('active', 'done');
-      if (state === 'active') { g.classList.add('active'); if (e) e.classList.add('active'); }
-      if (state === 'done')   { g.classList.add('done');   if (e) e.classList.add('done'); }
+    function resetLiveMesh() {
+      document.querySelectorAll('.mesh-edge').forEach(e => e.classList.remove('active','done'));
+      document.querySelectorAll('.agent-node').forEach(n => n.classList.remove('active','done'));
+      VERDICT_SECTION.classList.remove('visible');
+      VERDICT_LIST.innerHTML = '';
+      CERT_WRAP.innerHTML = '<div class="certificate-empty" id="certEmpty"><span class="arrow">Certificate · awaiting signing</span>A signed Endorsement Claim Bundle appears here once the mesh completes. Ed25519 over the canonical bundle JSON, anchored to <code>did:web:mesh-api-…run.app</code>, chained into the public transparency log.</div>';
     }
 
-    /* ---------- ceremony ---------- */
     async function runMesh() {
       const url = URL_INPUT.value.trim();
-      const max_claims = parseInt(MAX_CLAIMS.value, 10);
-      if (!url) return;
+      if (!url || !url.startsWith('http')) {
+        STATUS.textContent = 'Enter a valid product URL.';
+        STATUS.classList.add('failed');
+        URL_INPUT.focus();
+        return;
+      }
+      STATUS.classList.remove('failed','completed');
       RUN_BTN.disabled = true;
-      resetCeremony();
-      setStatus('Submitting verification task to the mesh.', '');
-      const idemKey = 'console-' + Math.random().toString(36).slice(2, 12) + '-' + Date.now();
+      resetLiveMesh();
+      STATUS.textContent = 'Submitting to mesh…';
+      // visually activate all nodes during the wait
+      document.querySelectorAll('.agent-node').forEach(n => n.classList.add('active'));
+      document.querySelectorAll('.mesh-edge').forEach(e => e.classList.add('active'));
 
       try {
-        const resp = await fetch('/a2a/v1/tasks/send', {
+        const submit = await fetch('/a2a/v1/tasks/send', {
           method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'X-API-Key': 'demo-key-2026-06',
-            'Idempotency-Key': idemKey,
-          },
+          headers: { 'Content-Type': 'application/json', 'X-API-Key': 'demo' },
           body: JSON.stringify({
             skill: 'verify_claim',
-            input: { product_url: url, max_claims },
+            input: { product_url: url, max_claims: parseInt(MAX_CLAIMS.value, 10) },
           }),
         });
-        if (!resp.ok) throw new Error(`HTTP ${resp.status}: ${await resp.text()}`);
-        const data = await resp.json();
-        const taskId = data.task_id;
-        const headAtSubmit = data.head_anchor_at_submit;
-        setStatus(`Submitted. Task ${shortId(taskId)} chained to ${shortHash(headAtSubmit)}.`, 'working');
-        await pollUntilDone(taskId);
+        if (!submit.ok) throw new Error(`submit ${submit.status}`);
+        const sub = await submit.json();
+        const taskId = sub.task_id;
+        STATUS.textContent = `Task ${taskId.slice(0,8)}… queued · polling for completion`;
+
+        // poll
+        let attempts = 0;
+        while (attempts < 60) {
+          await sleep(3000);
+          const get = await fetch(`/a2a/v1/tasks/get/${taskId}`);
+          if (!get.ok) throw new Error(`get ${get.status}`);
+          const data = await get.json();
+          if (data.status === 'completed') {
+            renderCompleted(data);
+            return;
+          } else if (data.status === 'failed') {
+            STATUS.textContent = `Verification failed: ${data.error || 'unknown error'}`;
+            STATUS.classList.add('failed');
+            RUN_BTN.disabled = false;
+            return;
+          }
+          if (data.progress_message) {
+            STATUS.textContent = data.progress_message;
+          }
+          attempts++;
+        }
+        STATUS.textContent = 'Polling timed out. Try again.';
+        STATUS.classList.add('failed');
       } catch (e) {
-        setStatus('Verification failed. ' + e.message, 'failed');
+        STATUS.textContent = `Error: ${e.message}`;
+        STATUS.classList.add('failed');
       } finally {
         RUN_BTN.disabled = false;
       }
     }
 
-    async function pollUntilDone(task_id) {
-      const start = Date.now();
-      // G20 P2: looping "working" animation. Agents rotate through active state
-      // indefinitely while the task is working — no node flips to "done" until
-      // the bundle is signed. Prevents the static-stuck-on-agent-5 effect on
-      // long runs (60-180s) that read as fake progress.
-      let activeIdx = 0;
-      let rotator = setInterval(() => {
-        AGENTS.forEach((a, i) => setAgentState(a.id, i === activeIdx ? 'active' : null));
-        activeIdx = (activeIdx + 1) % AGENTS.length;
-      }, 1400);
-
-      try {
-        while (true) {
-          await sleep(2200);
-          const resp = await fetch(`/a2a/v1/tasks/get/${task_id}`);
-          if (!resp.ok) { setStatus('Polling failed.', 'failed'); return; }
-          const data = await resp.json();
-          const elapsed = ((Date.now() - start) / 1000).toFixed(0);
-
-          if (data.status === 'working') {
-            setStatus(`Mesh working. ${data.progress_message || 'agents fanning out'}. ${elapsed}s elapsed.`, 'working');
-          }
-
-          if (data.status === 'completed') {
-            clearInterval(rotator); rotator = null;
-            AGENTS.forEach(a => setAgentState(a.id, 'done'));
-            MESH_CENTER.classList.add('done');
-            document.getElementById('centerLabelTop').textContent = 'Bundle';
-            document.getElementById('centerLabelMid').textContent = 'signed';
-            document.getElementById('centerLabelSub').textContent = 'Ed25519 ·';
-            renderCertificate(data);
-            renderVerdicts(data);
-            setStatus(`Verification complete. Bundle signed in ${elapsed}s. Anchored to the public transparency log.`, 'completed');
-            return;
-          }
-          if (data.status === 'failed' || data.status === 'canceled') {
-            clearInterval(rotator); rotator = null;
-            setStatus(`Task ${data.status}. ${data.error || ''}`, 'failed');
-            return;
-          }
-        }
-      } finally {
-        if (rotator) clearInterval(rotator);
-      }
-    }
-
-    function resetCeremony() {
-      AGENTS.forEach(a => setAgentState(a.id, null));
-      MESH_CENTER.classList.remove('done');
-      document.getElementById('centerLabelTop').textContent = 'Endorsement';
-      document.getElementById('centerLabelMid').textContent = 'Claim Bundle';
-      document.getElementById('centerLabelSub').textContent = 'PCEC v0.1';
+    function renderCompleted(data) {
+      document.querySelectorAll('.agent-node').forEach(n => { n.classList.remove('active'); n.classList.add('done'); });
+      document.querySelectorAll('.mesh-edge').forEach(e => { e.classList.remove('active'); e.classList.add('done'); });
+      STATUS.textContent = `Verification complete · ${data.verdict || 'see below'}`;
+      STATUS.classList.add('completed');
+      const claims = data.claims || data.verdicts || [];
       VERDICT_LIST.innerHTML = '';
-      VERDICT_SECTION.style.display = 'none';
-      CERT_WRAP.innerHTML = '';
-      CERT_WRAP.appendChild(CERT_EMPTY);
-      CERT_EMPTY.style.display = '';
-    }
-
-    function setStatus(text, kind) {
-      STATUS.textContent = text;
-      STATUS.className = 'stage-status ' + (kind || '');
-    }
-
-    function renderCertificate(data) {
-      const out = data.output || {};
-      const bundleHash = data.bundle_hash || out.bundle_hash || '—';
-      const signature = data.bundle_signature || out.signature || '—';
-      const urn = out.bundle_urn || '—';
-      const issuer = out.issuer || '—';
-      const signerDid = parseSignerFromSig(signature) || 'did:web:mesh-api-40952019806.us-central1.run.app#owner';
-      // G20 P1: chain anchor is sha256(bundle_hash + ':' + prev_chain_anchor),
-      // not the bundle hash. Falls back to bundle_hash for backward-compat with
-      // older revisions that don't return chain_anchor yet.
-      const chainAnchor = data.chain_anchor || bundleHash;
-
-      CERT_EMPTY.style.display = 'none';
-      // Wax seal SVG (renaissance-style emblem of three interconnected nodes)
-      const waxSeal = `
-        <svg class="wax-seal" viewBox="0 0 100 100" aria-label="Wax seal — Ed25519 signature">
-          <defs>
-            <radialGradient id="waxFill" cx="38%" cy="34%" r="70%">
-              <stop offset="0%" stop-color="#C28B33"/>
-              <stop offset="55%" stop-color="#A6701A"/>
-              <stop offset="100%" stop-color="#6E4A0E"/>
-            </radialGradient>
-            <radialGradient id="waxRim" cx="50%" cy="50%" r="50%">
-              <stop offset="85%" stop-color="rgba(0,0,0,0)"/>
-              <stop offset="100%" stop-color="rgba(0,0,0,0.25)"/>
-            </radialGradient>
-          </defs>
-          <circle cx="50" cy="50" r="46" fill="url(#waxFill)"/>
-          <circle cx="50" cy="50" r="46" fill="url(#waxRim)"/>
-          <circle cx="50" cy="50" r="40" fill="none" stroke="rgba(255,255,255,0.18)" stroke-width="0.8"/>
-          <!-- three interconnected nodes emblem -->
-          <g stroke="rgba(255,243,210,0.85)" stroke-width="1" fill="rgba(255,243,210,0.85)">
-            <line x1="50" y1="32" x2="34" y2="60"/>
-            <line x1="50" y1="32" x2="66" y2="60"/>
-            <line x1="34" y1="60" x2="66" y2="60"/>
-            <circle cx="50" cy="32" r="3.2"/>
-            <circle cx="34" cy="60" r="3.2"/>
-            <circle cx="66" cy="60" r="3.2"/>
-          </g>
-          <text x="50" y="78" text-anchor="middle" font-family="JetBrains Mono, monospace"
-                font-size="6" letter-spacing="0.3" fill="rgba(255,243,210,0.85)">PCEC v0.1</text>
-        </svg>`;
-
+      claims.forEach((c, i) => {
+        const row = document.createElement('div');
+        const passing = (c.verdict || c.status || '').toLowerCase().includes('pass');
+        row.className = `verdict-row ${passing ? 'pass' : 'fail'}`;
+        row.innerHTML = `
+          <div class="v-id">Claim ${String(i+1).padStart(2,'0')}</div>
+          <div class="v-claim">${escapeHtml(c.text || c.claim || '—')}</div>
+          <div class="v-score">${c.vet_score ?? c.score ?? ''}</div>
+        `;
+        VERDICT_LIST.appendChild(row);
+      });
+      VERDICT_SECTION.classList.add('visible');
+      const cert = data.certificate || data;
       CERT_WRAP.innerHTML = `
-        <div class="seal-row">
-          ${waxSeal}
-          <div>
-            <h3 class="seal-title">Endorsement<br><em>Claim Bundle</em></h3>
-            <div class="seal-sub">Issued · Ed25519 signed · Chained</div>
+        <div class="proof-cert" style="border:1px solid var(--moss);background:var(--vellum);">
+          <div class="cert-eyebrow" style="font-family:var(--mono);font-size:10px;letter-spacing:0.22em;text-transform:uppercase;color:var(--moss);font-weight:600;margin-bottom:14px;">PCEC v0.1 · signed bundle</div>
+          <div style="font-family:var(--mono);font-size:11px;line-height:1.7;color:var(--slate);">
+            <div><span style="color:var(--moss);">bundle_hash</span> <span style="color:var(--amber);word-break:break-all;">${cert.bundle_hash || '—'}</span></div>
+            <div><span style="color:var(--moss);">chain_anchor</span> <span style="color:var(--amber);word-break:break-all;">${cert.chain_anchor || cert.bundle_hash || '—'}</span></div>
+            <div><span style="color:var(--moss);">signature</span> <span style="color:var(--amber);word-break:break-all;">${cert.signature || '—'}</span></div>
           </div>
-        </div>
-        <div class="cert-grid">
-          <div class="cert-field"><div class="cert-label">URN</div><div class="cert-value amber">${escapeHtml(urn)}</div></div>
-          <div class="cert-field"><div class="cert-label">Issued by</div><div class="cert-value">${escapeHtml(issuer)}</div></div>
-          <div class="cert-field"><div class="cert-label">Signer</div><div class="cert-value">${escapeHtml(signerDid)}</div></div>
-          <div class="cert-field"><div class="cert-label">Bundle hash</div><div class="cert-value">${escapeHtml(bundleHash)}</div></div>
-        </div>
-        <div class="chain-anchor-row">
-          <div class="chain-eyebrow">Transparency log · chain anchor</div>
-          <div class="chain-short" id="chainShort" onclick="toggleChain()" title="Click to expand and copy">
-            ${escapeHtml(shortHash(chainAnchor))}
-            <span class="copy-hint">click to expand</span>
-          </div>
-          <div class="chain-long" id="chainLong">${escapeHtml(chainAnchor)}</div>
         </div>
       `;
     }
 
-    function toggleChain() {
-      const long = document.getElementById('chainLong');
-      const short = document.getElementById('chainShort');
-      if (!long) return;
-      long.classList.toggle('show');
-      if (long.classList.contains('show')) {
-        navigator.clipboard?.writeText(long.textContent.trim()).catch(() => {});
-        short.querySelector('.copy-hint').textContent = 'copied · click to hide';
-      } else {
-        short.querySelector('.copy-hint').textContent = 'click to expand';
-      }
-    }
-
-    function renderVerdicts(data) {
-      const out = data.output || {};
-      const claims = out.claims || [];
-      const evidence = out.evidence || [];
-      const vetScores = out.vet_scores || [];
-      const compliance = out.compliance || [];
-      const audit = out.audit || [];
-
-      if (!claims.length) { VERDICT_SECTION.style.display = 'none'; return; }
-      VERDICT_SECTION.style.display = '';
-      VERDICT_LIST.innerHTML = '';
-
-      for (let i = 0; i < claims.length; i++) {
-        const c = claims[i];
-        const ev = evidence[i] || {};
-        const vet = vetScores[i] || {};
-        const comp = compliance[i] || {};
-        const aud = audit[i] || {};
-        const pmidCount = (ev.papers || []).length;
-        const violCls = comp.violation_flag ? 'violation' : 'ok';
-        const violText = comp.violation_flag ? 'FTC §255 risk' : 'FTC §255 clear';
-        const verdictCls = aud.verdict === 'PASS' ? 'ok' : (aud.verdict === 'FAIL' ? 'violation' : 'amber');
-        // G20 P3a: audit verdict is direction-only (does the claim's stated
-        // direction match the cited literature?) — it is not an endorsement of
-        // evidence sufficiency. Surface a low-evidence banner when citations=0
-        // or vet score is below the escalation threshold so a PASS doesn't
-        // read as "approved" to a non-technical viewer.
-        const vetScore = typeof vet.score === 'number' ? vet.score : null;
-        const lowEvidence = pmidCount === 0 || (vetScore !== null && vetScore < 3);
-        const evidenceNote = lowEvidence
-          ? `<div class="low-evidence"><b>Audit verdict is directional only.</b> ${pmidCount === 0 ? 'No PubMed citations were located for this claim. ' : ''}${vetScore !== null && vetScore < 3 ? `Vet rubric scored ${vetScore}/5 — escalated to human review. ` : ''}A PASS here means the claim's direction matches what evidence exists; it is not a sufficiency endorsement.</div>`
-          : '';
-        const row = document.createElement('div');
-        row.className = 'verdict-row';
-        row.innerHTML = `
-          <div>
-            <p class="verdict-claim">${escapeHtml(c.text || '')}</p>
-            <p class="verdict-rationale">${escapeHtml((comp.rationale || '').slice(0, 320))}</p>
-          </div>
-          <div class="verdict-aside">
-            <div class="verdict-stat"><div class="stat-label">Citations</div><div class="stat-value">${pmidCount} PubMed</div></div>
-            <div class="verdict-stat"><div class="stat-label">Vet rubric</div><div class="stat-value">${vet.score ?? '—'} / 5${vet.escalate_to_human_vet ? ' · escalate' : ''}</div></div>
-            <div class="verdict-stat"><div class="stat-label">FTC mapping</div><div class="stat-value ${violCls}">${escapeHtml(comp.ftc_section || violText)}</div></div>
-            <div class="verdict-stat"><div class="stat-label">Audit</div><div class="stat-value ${verdictCls}">${escapeHtml(aud.verdict || '—')} · directional</div></div>
-            ${evidenceNote}
-          </div>
-        `;
-        VERDICT_LIST.appendChild(row);
-      }
-    }
-
-    function parseSignerFromSig(sig) {
-      if (!sig || typeof sig !== 'string') return null;
-      if (!sig.startsWith('ed25519:')) return null;
-      const parts = sig.split(':');
-      if (parts.length < 3) return null;
-      return parts.slice(1, -1).join(':');
-    }
-
-    function shortHash(s) {
-      if (!s) return '—';
-      const raw = s.startsWith('sha256:') ? s.slice(7) : s;
-      if (raw.length <= 14) return s;
-      return `sha256:${raw.slice(0, 8)}…${raw.slice(-6)}`;
-    }
-    function shortId(s) {
-      if (!s) return '—';
-      return s.length > 14 ? s.slice(0, 12) + '…' : s;
-    }
-
     function escapeHtml(s) {
-      return String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+      return String(s).replace(/[&<>"']/g, c => ({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' }[c]));
     }
-    function sleep(ms) { return new Promise(r => setTimeout(r, ms)); }
   </script>
 </body>
 </html>
