@@ -733,22 +733,22 @@
       <div class="moat">
         <div class="n">02</div>
         <div>
-          <div class="title">We run a five-vet rubric.</div>
-          <div class="desc">Every claim graded against PubMed and the FTC §255.3 rule. <span class="roadmap">Roadmap: stipend-funded panel from accredited veterinary nutrition programs.</span></div>
+          <div class="title">We run a structured rubric.</div>
+          <div class="desc">A five-criterion vet-style rubric grades every claim against PubMed (via BioMCP) and the FTC §255.3 substantiation rule. <span class="roadmap">Roadmap: stipend-funded panel from accredited veterinary nutrition programs.</span></div>
         </div>
       </div>
       <div class="moat">
         <div class="n">03</div>
         <div>
           <div class="title">We ship the signed bundle.</div>
-          <div class="desc">Ed25519 signature, Firestore transparency log, A2A v0.3 agent card. Any AI agent can call and verify in one HTTP request.</div>
+          <div class="desc">Ed25519 signature, Firestore transparency log, public A2A v0.3 agent card at <code>/.well-known/agent-card.json</code>. Any A2A-compatible agent can fetch and verify in one HTTP request.</div>
         </div>
       </div>
       <div class="moat">
         <div class="n">04</div>
         <div>
           <div class="title">Operator depth at the cap table.</div>
-          <div class="desc">CEO Omar Dominguez (MIT Sloan MBA 2026). COO Jennifer Fremont Smith (MIT Sloan Lecturer) brings two prior exits: WECO (Bessemer-backed, acquired by Feast &amp; Fettle Nov 2025) and Smarterer (Google Ventures, acquired by Pluralsight).</div>
+          <div class="desc">CEO Omar Dominguez (MIT Sloan MBA 2026) authored the protocol. COO Jennifer Fremont Smith (MIT Sloan Lecturer) brings two prior venture-backed exits — Smarterer (Google Ventures, acquired by Pluralsight 2014) and WECO (Bessemer, acquired by Feast &amp; Fettle 2025).</div>
         </div>
       </div>
     </div>
@@ -1015,7 +1015,7 @@
       try {
         const submit = await fetch('/a2a/v1/tasks/send', {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json', 'X-API-Key': 'demo' },
+          headers: { 'Content-Type': 'application/json', 'X-API-Key': 'demo-key-2026-06' },
           body: JSON.stringify({
             skill: 'verify_claim',
             input: { product_url: url, max_claims: parseInt(MAX_CLAIMS.value, 10) },
@@ -1058,32 +1058,41 @@
     }
 
     function renderCompleted(data) {
+      // codex S2B-design P0: data shape is A2ATaskStatusResponse with bundle_hash/signature/chain_anchor at top level
+      // and output={claims:[...], evidence_bundles:[...], vet_scores:[...], compliance_findings:[...], audit_verdict:{}}
       document.querySelectorAll('.agent-node').forEach(n => { n.classList.remove('active'); n.classList.add('done'); });
       document.querySelectorAll('.mesh-edge').forEach(e => { e.classList.remove('active'); e.classList.add('done'); });
-      STATUS.textContent = `Verification complete · ${data.verdict || 'see below'}`;
+      const bundle = data.output || {};
+      const auditVerdict = (bundle.audit_verdict && bundle.audit_verdict.verdict) || '';
+      STATUS.textContent = `Verification complete${auditVerdict ? ' · ' + auditVerdict : ''}`;
       STATUS.classList.add('completed');
-      const claims = data.claims || data.verdicts || [];
+      const claims = bundle.claims || [];
+      const vetScores = bundle.vet_scores || [];
+      const complianceFindings = bundle.compliance_findings || [];
       VERDICT_LIST.innerHTML = '';
       claims.forEach((c, i) => {
+        const vetScore = vetScores[i]?.score ?? null;
+        const compliance = complianceFindings[i] || {};
+        const passing = (compliance.ftc_255_verdict || '').toLowerCase().includes('pass') || (vetScore !== null && vetScore >= 3);
         const row = document.createElement('div');
-        const passing = (c.verdict || c.status || '').toLowerCase().includes('pass');
         row.className = `verdict-row ${passing ? 'pass' : 'fail'}`;
         row.innerHTML = `
           <div class="v-id">Claim ${String(i+1).padStart(2,'0')}</div>
-          <div class="v-claim">${escapeHtml(c.text || c.claim || '—')}</div>
-          <div class="v-score">${c.vet_score ?? c.score ?? ''}</div>
+          <div class="v-claim">${escapeHtml(c.text || '—')}</div>
+          <div class="v-score">${vetScore !== null ? vetScore + '/5' : ''}</div>
         `;
         VERDICT_LIST.appendChild(row);
       });
       VERDICT_SECTION.classList.add('visible');
-      const cert = data.certificate || data;
+      // cert fields live at top level of A2ATaskStatusResponse, not nested
       CERT_WRAP.innerHTML = `
         <div class="proof-cert" style="border:1px solid var(--moss);background:var(--vellum);">
           <div class="cert-eyebrow" style="font-family:var(--mono);font-size:10px;letter-spacing:0.22em;text-transform:uppercase;color:var(--moss);font-weight:600;margin-bottom:14px;">PCEC v0.1 · signed bundle</div>
           <div style="font-family:var(--mono);font-size:11px;line-height:1.7;color:var(--slate);">
-            <div><span style="color:var(--moss);">bundle_hash</span> <span style="color:var(--amber);word-break:break-all;">${cert.bundle_hash || '—'}</span></div>
-            <div><span style="color:var(--moss);">chain_anchor</span> <span style="color:var(--amber);word-break:break-all;">${cert.chain_anchor || cert.bundle_hash || '—'}</span></div>
-            <div><span style="color:var(--moss);">signature</span> <span style="color:var(--amber);word-break:break-all;">${cert.signature || '—'}</span></div>
+            <div><span style="color:var(--moss);">bundle_hash</span> <span style="color:var(--amber);word-break:break-all;">${escapeHtml(data.bundle_hash || '—')}</span></div>
+            <div><span style="color:var(--moss);">chain_anchor</span> <span style="color:var(--amber);word-break:break-all;">${escapeHtml(data.chain_anchor || '—')}</span></div>
+            <div><span style="color:var(--moss);">signature</span> <span style="color:var(--amber);word-break:break-all;">${escapeHtml(data.bundle_signature || '—')}</span></div>
+            <div style="margin-top:12px;"><span style="color:var(--moss);">claims</span> <span>${claims.length} extracted · ${vetScores.length} graded</span></div>
           </div>
         </div>
       `;
