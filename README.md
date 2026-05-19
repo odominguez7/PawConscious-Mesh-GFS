@@ -24,12 +24,15 @@ Paste a product PDP URL. Five specialized ADK agents fan out in parallel via Ver
 | `compliance` | Vertex AI Search (FTC §255 + NASC + AAFCO corpus) | Map every claim to regulator language |
 | `auditor` (Falsifier) | ADK Eval + Gemini 2.5 Flash | Adversarial pass to catch hallucinated citations, cherry-picks |
 
-Output: signed certificate bundle (Ed25519 software signing, single trust root) + embeddable badge + automated draft evidence PDF + drafted expert outreach (never auto-sent).
+Output (v0.1 shipped): signed certificate bundle (Ed25519, single trust root) + public Firestore transparency chain anchor + machine-readable PCEC v0.1 JSON-LD.
 
-A2A v0.3 agent card at `/.well-known/agent-card.json` exposes three skills:
-- `verify_claim(sku, claim_text)` — returns trust score + bundle URN
-- `fetch_substantiation_bundle(claim_id)` — returns full JSON-LD
-- `attest_expert(expert_did)` — returns credential metadata (manual attestation in v0.1)
+Roadmap (v0.2+, not present): embeddable badge JS, audit-grade PDF export, drafted expert outreach.
+
+A2A v0.3 agent card at `/.well-known/agent-card.json` exposes two skills (verify on the live card):
+- `verify_claim` — paste a PDP URL, get the signed bundle + chain anchor
+- `fetch_substantiation_bundle` — fetch a bundle by URN
+
+Roadmap skill (v0.2+): `attest_expert`.
 
 A2A endpoint is API-key-gated during the hackathon period for safety. Our `ShopperAgent` (source in this repo under `services/shopper-agent/`) is the demonstration consumer. Public open access ships post-hackathon once abuse controls are validated.
 
@@ -64,11 +67,13 @@ extr.  grader   panel  ance    Falsifier
          │   transparency log      │
          └────────┬────────────────┘
                   ▼
-   ┌──────────────┼──────────────┐
-   ▼              ▼              ▼
- Badge JS     Audit PDF     Expert outreach
- (PDP embed)               (drafted, not sent)
+                  ▼
+       signed PCEC v0.1 bundle
+       + chain anchor (Firestore)
+       + agent-card discoverable via A2A
 ```
+
+(Roadmap: badge JS · audit PDF · expert outreach — v0.2+, not shipped in this submission.)
 
 ## Tech stack
 
@@ -78,7 +83,7 @@ extr.  grader   panel  ance    Falsifier
 - **MCP servers:** BioMCP (biomedical), AI2 Asta (Semantic Scholar), Firecrawl (PDP scraping)
 - **Search/grounding:** Vertex AI Search (vet + regulator corpora), Gemini Grounding with Google Search
 - **Runtime:** Cloud Run (per-agent), Firestore (per-brand state), BigQuery (audit chain), Cloud SQL (cert registry)
-- **Demo render:** Veo 3.1 Fast + Lyria 2 + ElevenLabs (via O22 pipeline)
+- **Demo render:** screen-cap of live product + ElevenLabs founder VO (Veo/Lyria deferred per CEO plan 2026-05-19)
 
 ## Status
 
@@ -90,4 +95,4 @@ MIT (per GFS hackathon rules — OSI-approved license required, detectable at to
 
 ## Provenance
 
-PawConscious Mesh ports the agentic infrastructure built across GUARDIAN v3-v9 (Falsifier, A2A peer scaffold, Ops Center, Mission Bridge) onto the PawConscious commercial wedge (vet panel, FTC substantiation, embeddable badge). O22 pipeline produces the demo cinematic.
+PawConscious Mesh ports the agentic infrastructure built across GUARDIAN v3-v9 (Falsifier, A2A peer scaffold) onto the PawConscious commercial wedge (vet rubric simulation, FTC substantiation mapping).

@@ -59,11 +59,12 @@
                   └──────────────────────┼──────────────────────┘
                                          ▼
                           ┌─────────────────────────────┐
-                          │ Output artifacts             │
-                          │  - Verified-by-Vets badge JS │
-                          │  - Audit-grade PDF           │
-                          │  - PCEC JSON-LD              │
-                          │  - Drafted vet outreach      │
+                          │ Output artifacts (v0.1)      │
+                          │  - PCEC v0.1 JSON-LD bundle  │
+                          │  - Ed25519 signature         │
+                          │  - Firestore chain anchor    │
+                          │  (badge JS, audit PDF,       │
+                          │   outreach drafts: v0.2+)    │
                           └─────────────────────────────┘
 
                           + Public A2A agent card at
@@ -122,18 +123,24 @@
 - **Firestore:** transparency log (append-only), per-brand state, agent run history
 - **Cloud SQL:** cert registry (ACID, regulator-grade), expert DID metadata
 - **BigQuery:** audit chain analytics, claim-taxonomy data flywheel
-- **Cloud Storage:** raw PDP captures, evidence PDFs, generated audit-grade PDFs
+- **Cloud Storage:** raw PDP captures (audit-grade PDF export is v0.2+ roadmap, not shipped in v0.1)
 - **Vertex Memory Bank (Preview):** per-brand context that persists across sessions
 - **Secret Manager:** API keys for BioMCP, AI2 Asta, Firecrawl
 
 ## Public surfaces
 
-- `https://mesh-api-40952019806.us-central1.run.app/portal` — brand-owner UI (Next.js, ports from existing PawConscious)
-- `https://mesh-api-40952019806.us-central1.run.app/console` — Mesh Console (live A2A traffic viz, ports from GUARDIAN Ops Center)
+**Shipped today (v0.1):**
+- `https://mesh-api-40952019806.us-central1.run.app/` — Mesh Console (live A2A traffic viz). Add `?v=v2` for the deck-aligned redesign (CEO plan 2026-05-19, feature-flagged opt-in).
 - `https://mesh-api-40952019806.us-central1.run.app/.well-known/agent-card.json` — public A2A card
-- `https://mesh-api-40952019806.us-central1.run.app/a2a/v1/tasks/send` — A2A endpoint
-- `https://resolve.pcec.dev/v0/claim/{urn}` — PCEC resolver (separate domain, neutral)
-- `https://mesh-api-40952019806.us-central1.run.app/embed/{certId}.js` — badge embed (ports from existing PawConscious)
+- `https://mesh-api-40952019806.us-central1.run.app/a2a/v1/tasks/send` — A2A entry (async, 202)
+- `https://mesh-api-40952019806.us-central1.run.app/a2a/v1/tasks/get/{task_id}` — poll for results
+- `https://mesh-api-40952019806.us-central1.run.app/pcec/v0/chain/head` — public transparency log head
+- `https://shopper-agent-40952019806.us-central1.run.app/` — ShopperAgent demo consumer
+
+**Roadmap (v0.2+, not shipped):**
+- `/portal` — brand-owner Next.js UI
+- `/embed/{certId}.js` — badge embed
+- `https://resolve.pcec.dev/v0/claim/{urn}` — neutral PCEC resolver domain
 
 ## Security
 
