@@ -22,6 +22,7 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 from shared.pcec_schema import Claim, ClaimKind, Evidence, EvidenceBundle  # noqa: E402
+from agents.citation_enricher import enrich_with_citations  # noqa: E402
 from agents.evidence_grader import (  # noqa: E402
     GRADING_PROMPT, KEYWORD_EXTRACTION_PROMPT, PMID_REGEX,
     extract_search_terms, grade_evidence,
@@ -108,6 +109,7 @@ async def grade_claim_via_mcp(claim: Claim, debug: bool = False) -> EvidenceBund
     if debug:
         print(f"[mcp] search_results length: {len(search_results)}")
     papers = await grade_evidence(claim, search_results, debug=debug)
+    papers = await enrich_with_citations(papers, debug=debug)
     return EvidenceBundle(
         claim=claim,
         papers=papers,

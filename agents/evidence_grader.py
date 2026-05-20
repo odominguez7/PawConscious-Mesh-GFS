@@ -20,6 +20,7 @@ from typing import Any
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 from shared.pcec_schema import Claim, ClaimKind, Evidence, EvidenceBundle  # noqa: E402
+from agents.citation_enricher import enrich_with_citations  # noqa: E402
 
 from biomcp.articles.search import PubmedRequest, search_articles
 from google import genai
@@ -177,8 +178,8 @@ async def grade_evidence(claim: Claim, search_results: str, debug: bool = False)
             relevance_score=float(raw.get("relevance_score", 0.0)),
             supports_claim_direction=bool(raw.get("supports_claim_direction", True)),
             notes=raw.get("notes"),
-            # citation_count / influential_citation_count left at 0 — populated
-            # in Phase 2.5 via AI2 Asta MCP enrichment.
+            # Populated by agents.citation_enricher via Semantic Scholar batch
+            # endpoint after grading; 0 here is the pre-enrichment default.
             citation_count=0,
             influential_citation_count=0,
         ))
@@ -192,6 +193,7 @@ async def grade_claim(claim: Claim, debug: bool = False) -> EvidenceBundle:
         print(f"[debug] search_results length: {len(search_results)}")
         print(f"[debug] search_results first 300 chars: {search_results[:300]!r}")
     papers = await grade_evidence(claim, search_results, debug=debug)
+    papers = await enrich_with_citations(papers, debug=debug)
     return EvidenceBundle(
         claim=claim,
         papers=papers,
