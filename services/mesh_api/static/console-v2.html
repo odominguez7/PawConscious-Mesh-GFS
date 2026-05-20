@@ -213,7 +213,12 @@
     opacity: 0; max-height: 0; overflow: hidden;
     transition: opacity 0.45s ease, max-height 0.45s ease, padding 0.45s ease;
   }
-  .demo-cert.visible { opacity: 1; max-height: 300px; }
+  /* v0.8.5: cap raised + scroll fallback so Agent 6's full 3-5KB cert is readable.
+     max-height kept finite so the demo doesn't push the whole page when cert is huge. */
+  .demo-cert.visible { opacity: 1; max-height: 1400px; overflow-y: auto; }
+  .demo-cert.visible::-webkit-scrollbar { width: 8px; }
+  .demo-cert.visible::-webkit-scrollbar-track { background: var(--bg); }
+  .demo-cert.visible::-webkit-scrollbar-thumb { background: var(--electric-dim); border-radius: 4px; }
   .demo-cert .line { display: flex; justify-content: space-between; gap: 12px; word-break: break-all; }
   .demo-cert .line .k { color: var(--electric); }
   .demo-cert .line .v.pass { color: var(--moss-glow); font-weight: 700; }
@@ -395,11 +400,13 @@
     <nav class="masthead-nav">
       <span class="live">Live</span>
       <span class="sep">·</span>
-      <span>ADK 2.0</span>
+      <span>7-agent mesh</span>
       <span class="sep">·</span>
-      <span>Gemini 2.5 Pro</span>
+      <span>Gemini 2.5 Pro + Flash</span>
       <span class="sep">·</span>
       <span>A2A v0.3</span>
+      <span class="sep">·</span>
+      <span>Vertex AI Search</span>
       <span class="sep">·</span>
       <a href="https://github.com/odominguez7/PawConscious-Mesh-GFS" target="_blank" rel="noopener">Repo ↗</a>
     </nav>
@@ -412,7 +419,7 @@
     <div class="hero-left">
       <div class="eyebrow">PawConscious · Agentic Compliance Protocol</div>
       <h1>The <span class="grad">trust layer</span> AI agents call before recommending a consumer product.</h1>
-      <p class="hero-sub">Paste any pet supplement product page. Five specialized agents on Google Cloud (one ADK, four <code style="color:var(--electric);font-family:var(--mono);">google.genai</code> direct) grade every health claim against PubMed and the FTC §255.3 substantiation rule, then sign the evidence bundle with Ed25519 and anchor it to a public Firestore transparency log.</p>
+      <p class="hero-sub">Paste any pet supplement product page. Seven specialized agents on Google Cloud (one ADK, six <code style="color:var(--electric);font-family:var(--mono);">google.genai</code> direct) grade every health claim against PubMed and the FTC §255.3 substantiation rule, sign the evidence bundle with Ed25519 and anchor it to a public Firestore transparency log, compose a branded executive cert, then run an adversarial Second Opinion via Google Search grounding.</p>
       <div class="hero-cta">
         <input type="text" id="urlInput" placeholder="https://www.nativepet.com/products/hip-joint"
                value="https://www.nativepet.com/products/hip-joint" autocomplete="off">
@@ -425,7 +432,7 @@
       </div>
       <div class="hero-secondary">
         <a href="#" onclick="return replayCached(event)">↻ Replay cached validation (~12s)</a>
-        <span class="pill">5 specialized agents</span>
+        <span class="pill">7 specialized agents</span>
         <span class="pill">Ed25519 signed</span>
         <span class="pill">Open MIT</span>
       </div>
@@ -472,7 +479,7 @@
   <div class="container">
     <div class="arch-head">
       <div class="eyebrow">Architecture · Google Cloud native</div>
-      <h2>Five specialized agents · A2A · Vertex AI Search · Ed25519 · Firestore chain.</h2>
+      <h2>Seven specialized agents · A2A · Vertex AI Search · Ed25519 · Firestore chain · Adversarial Second Opinion.</h2>
       <p>Hover any agent to see its Google tool, model, temperature, and typical latency. Every component below maps to live production code in <a href="https://github.com/odominguez7/PawConscious-Mesh-GFS" style="color: var(--electric);">the open-source repo</a>.</p>
     </div>
 
@@ -848,6 +855,8 @@ const AGENTS = [
   { id: 'rubric',     label: 'Rubric'   },
   { id: 'compliance', label: 'FTC §255' },
   { id: 'auditor',    label: 'Auditor'  },
+  { id: 'composer',   label: 'Compose'  },   // Agent 6 (post-merge)
+  { id: 'opinion',    label: 'Second Op' },  // Agent 7 (adversarial)
 ];
 const CACHED_BRANDS = [
   { brand: 'Native Pet',   urn: 'urn:pcec:claim:tshh4bbtauijarh4i3pz7dza', hash: 'sha256:9c8e7e043305109044fc46df9f8f20319cade0d4159c8b7c…', anchor: 'sha256:f93e9d54e7e06dfae2f3b57ae8c76e0514d211cfeb3a…', sig: 'ed25519:did:web:mesh-api-…/sig-4a2f-b9e1', verdict: 'PASS · directional' },
@@ -874,8 +883,8 @@ let interrupt = false;
 let cycleGen = 0; // generation counter — cached cycles abort if a newer gen exists
 
 function tsNow() {
-  const d = new Date();
-  return d.toTimeString().slice(3,8); // mm:ss
+  // HH:MM:SS — human local time, not the ambiguous mm:ss format
+  return new Date().toTimeString().slice(0,8);
 }
 function streamAdd(msg, cls='') {
   const row = document.createElement('div');
@@ -937,7 +946,7 @@ async function cachedCycle() {
   await sleep(600); if (aborted()) return;
   streamAdd('task-cached · status: submitted', 'ok');
   await sleep(700); if (aborted()) return;
-  streamAdd('orchestrator: asyncio.gather · 5 specialized agents on A2A v0.3');
+  streamAdd('orchestrator: asyncio.gather · 7 specialized agents on A2A v0.3');
   const nodes = DEMO_NODES.querySelectorAll('.node');
   const edges = DEMO_EDGES.querySelectorAll('.edge');
   const STEPS = [
@@ -946,6 +955,8 @@ async function cachedCycle() {
     'vet-rubric · prompt-only 5-vet simulation · 4.2 / 5',
     'compliance · Vertex AI Search FTC §255.3 · PASS',
     'auditor (Falsifier v0) · 2 checks cleared',
+    'Agent 6 (Cert Composer) · branded cert · Gemini 2.5 Pro',
+    'Agent 7 (Second Opinion) · 4 stress tests · Gemini 2.5 Pro + Google Search grounding',
   ];
   for (let i=0; i<nodes.length; i++) {
     if (aborted()) return;
@@ -1213,7 +1224,7 @@ function escapeHtml(s) {
 const ARCH_TIPS = {
   brand: { name:'Brand owner', meta:'Pet supplement brand (CMO / GC / Compliance) submits a product URL.<br>POST <b>/a2a/v1/tasks/send</b> · X-API-Key header.' },
   shopper: { name:'ShopperAgent · external A2A consumer', meta:'Separate Cloud Run service (open source MIT).<br>Discovers the mesh via <b>/.well-known/agent-card.json</b>, calls <b>verify_claim</b>, polls <b>/tasks/get</b>, ranks products by trust score.<br>Lives at shopper-agent-…run.app — the only A2A consumer we ship today.' },
-  'agent-engine': { name:'Orchestrator', meta:'<b>asyncio.gather</b> primitive for parallel fan-out (deterministic).<br>ADK ParallelAgent/SequentialAgent wrappers <i>planned</i> for full Agent Engine deployment per PLAN.md §2.<br>Reasoning Engine resource registered: 1255381144908595200<br>Deterministic sampling (temperature 0) across all 5 agents.' },
+  'agent-engine': { name:'Orchestrator', meta:'<b>asyncio.gather</b> primitive for parallel fan-out (deterministic).<br>ADK ParallelAgent/SequentialAgent wrappers <i>planned</i> for full Agent Engine deployment per PLAN.md §2.<br>Reasoning Engine resource registered: 1255381144908595200<br>Deterministic sampling (temperature 0) across all 7 agents (Agents 1-5 = base mesh, Agent 6 = Cert Composer post-merge, Agent 7 = Second Opinion adversarial).' },
   'claim-extractor': { name:'Claim Extractor', meta:'Uses <b>ADK 2.0</b> (<code>google.adk.agents.LlmAgent</code>).<br>PDP fetch: <b>httpx + BeautifulSoup</b> primary; <b>Firecrawl API</b> fallback for anti-bot retailers.<br>Model: <b>Gemini 2.5 Pro</b> · temp 0.0<br>Returns: list[Claim{text, kind, position_on_page}]' },
   'evidence-grader': { name:'Evidence Grader', meta:'Tool: <b>BioMCP</b> → live PubMed search.<br>Model: <b>Gemini 2.5 Pro</b> · temp 0.0<br>AI2 Asta MCP (citation grading) + Vertex AI Search over PubMed-in-BigQuery: <i>roadmap (Phase 2.5 / 5)</i>, not shipped.' },
   'vet-panel': { name:'Vet Rubric', meta:'<b>Prompt-only</b> 5-vet rubric simulation. No Vertex AI Search, no licensed handbook ingest (codex G7 P0.7).<br>Model: <b>Gemini 2.5 Pro</b> · temp 0.0<br>Score 1-5 + escalate_to_human_vet flag.<br>Roadmap: real Boston/MIT vet panel attestation.' },
