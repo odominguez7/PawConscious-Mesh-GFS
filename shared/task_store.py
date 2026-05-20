@@ -25,6 +25,9 @@ class TaskState:
     bundle_hash: Optional[str] = None
     bundle_signature: Optional[str] = None
     chain_anchor: Optional[str] = None
+    # v0.8.0 — Agent 6 (Cert Composer) HTML + Agent 7 (Second Opinion) dict
+    cert_html: Optional[str] = None
+    second_opinion: Optional[dict[str, Any]] = None
     created_at: float = field(default_factory=time.time)
     completed_at: Optional[float] = None
     input: dict[str, Any] = field(default_factory=dict)
@@ -59,6 +62,8 @@ class TaskStore:
         bundle_hash: Optional[str] = None,
         bundle_signature: Optional[str] = None,
         chain_anchor: Optional[str] = None,
+        cert_html: Optional[str] = None,
+        second_opinion: Optional[dict[str, Any]] = None,
     ) -> None:
         async with self._lock:
             state = self._tasks.get(task_id)
@@ -80,6 +85,10 @@ class TaskStore:
                 state.bundle_signature = bundle_signature
             if chain_anchor is not None:
                 state.chain_anchor = chain_anchor
+            if cert_html is not None:
+                state.cert_html = cert_html
+            if second_opinion is not None:
+                state.second_opinion = second_opinion
 
     async def _purge_expired_unlocked(self) -> None:
         """Caller must hold the lock."""

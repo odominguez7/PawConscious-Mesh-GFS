@@ -275,6 +275,10 @@ class A2ATaskStatusResponse(BaseModel):
     bundle_hash: Optional[str] = None
     bundle_signature: Optional[str] = None
     chain_anchor: Optional[str] = None
+    # v0.8.0 — outputs from Agent 6 (Cert Composer) + Agent 7 (Second Opinion).
+    # Both are post-merge and don't block the signed bundle if they fail.
+    cert_html: Optional[str] = None
+    second_opinion: Optional[dict[str, Any]] = None
     created_at: float
     completed_at: Optional[float] = None
 
@@ -352,15 +356,36 @@ async def _run_verify_claim_background(task_id: str, product_url: str, max_claim
         except Exception as log_err:
             print(f"[mesh_api] WARN: transparency log append failed: {log_err}")
 
+        # Mark the bundle stage complete BEFORE the cert + second-opinion agents
+        # run, so the frontend sees the verify finish and immediately starts
+        # rendering. Cert + second-opinion attach incrementally below.
         await task_store.update(
             task_id,
             status="completed",
-            progress_message="bundle signed",
+            progress_message="bundle signed · composing cert",
             output=json.loads(bundle.model_dump_json()),
             bundle_hash=bundle_hash,
             bundle_signature=bundle.signature,
             chain_anchor=chain_anchor,
         )
+
+        # AGENT 6 — Cert Composer. Best-effort: if Gemini fails, frontend falls back
+        # to its static cert template so verify is never blocked by composition.
+        try:
+            from agents.report_writer import compose_cert
+            cert_html = await compose_cert(bundle, bundle_hash, chain_anchor)
+            await task_store.update(task_id, cert_html=cert_html, progress_message="cert composed · running second opinion")
+        except Exception as cert_err:
+            print(f"[mesh_api] WARN: cert composer failed: {cert_err}")
+
+        # AGENT 7 — Second Opinion. Adversarial double-validation via Google Search
+        # grounding. Best-effort: if it fails, base bundle stands.
+        try:
+            from agents.second_opinion import get_second_opinion
+            second_opinion = await get_second_opinion(bundle)
+            await task_store.update(task_id, second_opinion=second_opinion, progress_message="second opinion delivered")
+        except Exception as so_err:
+            print(f"[mesh_api] WARN: second opinion failed: {so_err}")
     except Exception as e:
         await task_store.update(
             task_id,
@@ -450,6 +475,8 @@ async def a2a_get(task_id: str) -> A2ATaskStatusResponse:
         bundle_hash=state.bundle_hash,
         bundle_signature=state.bundle_signature,
         chain_anchor=state.chain_anchor,
+        cert_html=state.cert_html,
+        second_opinion=state.second_opinion,
         created_at=state.created_at,
         completed_at=state.completed_at,
     )

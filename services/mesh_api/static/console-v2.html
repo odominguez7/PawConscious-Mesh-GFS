@@ -1036,6 +1036,7 @@ async function runMesh() {
     if (!submit.ok) throw new Error(`submit ${submit.status}`);
     const sub = await submit.json();
     const taskId = sub.task_id;
+    _currentTaskId = taskId;
     streamAdd(`task ${taskId.slice(0,12)}… queued · status: submitted`, 'ok');
     streamAdd(`polling /a2a/v1/tasks/get/${taskId.slice(0,12)}… every 3s · ~60-180s typical`, 'dim');
     // visually mark all nodes active during the wait
@@ -1095,7 +1096,7 @@ function renderLive(data) {
   });
   streamAdd('SequentialAgent · merge + sign · Ed25519', 'ok');
   streamAdd(`chain_anchor appended → ${(data.chain_anchor||'').slice(0,32)}…`, 'ok');
-  // cert
+  // cert (static template — Agent 6 cert_html overlay will replace this once polled)
   document.getElementById('dcUrn').textContent = bundle.bundle_urn || '—';
   document.getElementById('dcHash').textContent = data.bundle_hash || '—';
   document.getElementById('dcAnchor').textContent = data.chain_anchor || '—';
@@ -1103,6 +1104,79 @@ function renderLive(data) {
   document.getElementById('dcVerdict').textContent = passing ? 'PASS · live' : 'NEEDS REVIEW · live';
   DEMO_CERT.classList.add('visible');
   setMode('live', 'Live · done', `signed bundle issued`, 'COMPLETED');
+
+  // v0.8.0: continue polling for Agent 6 (cert_html) + Agent 7 (second_opinion)
+  // since they attach AFTER status=completed. Show them as they arrive.
+  pollForAgent6and7(data.task_id || _currentTaskId);
+}
+
+let _currentTaskId = null;
+
+async function pollForAgent6and7(taskId) {
+  if (!taskId) return;
+  let renderedCert = false, renderedSO = false;
+  for (let i = 0; i < 30 && (!renderedCert || !renderedSO); i++) {
+    await sleep(2500);
+    try {
+      const r = await fetch(`/a2a/v1/tasks/get/${taskId}`);
+      if (!r.ok) break;
+      const d = await r.json();
+      if (!renderedCert && d.cert_html) {
+        renderCertHtml(d.cert_html);
+        renderedCert = true;
+        streamAdd(`Agent 6 (Cert Composer) · branded cert composed (Gemini 2.5 Flash)`, 'ok');
+      }
+      if (!renderedSO && d.second_opinion) {
+        renderSecondOpinion(d.second_opinion);
+        renderedSO = true;
+        const overall = (d.second_opinion.overall_verdict || '').toUpperCase();
+        streamAdd(`Agent 7 (Second Opinion) · ${overall} · ${(d.second_opinion.tests||[]).filter(t=>(t.verdict||'').toUpperCase()==='SURVIVES').length}/${(d.second_opinion.tests||[]).length} tests survived`, overall==='CONFIRMS' ? 'ok' : 'err');
+      }
+    } catch (_) { break; }
+  }
+}
+
+function renderCertHtml(html) {
+  // Replace the static cert pane content with Agent 6's branded HTML
+  const cert = document.getElementById('demoCert');
+  if (!cert) return;
+  cert.innerHTML = html;
+  cert.classList.add('visible');
+}
+
+function renderSecondOpinion(so) {
+  // Append a Second Opinion badge + collapsible details below the cert
+  const cert = document.getElementById('demoCert');
+  if (!cert) return;
+  const overall = (so.overall_verdict || '').toUpperCase();
+  const summary = so.summary || '';
+  const tests = so.tests || [];
+  const survived = tests.filter(t => (t.verdict||'').toUpperCase()==='SURVIVES').length;
+  const total = tests.length;
+  const wrap = document.createElement('div');
+  wrap.style.cssText = 'margin-top:14px;padding:14px 16px;background:var(--surface-2);border:1px solid var(--electric);border-radius:6px;font:500 11px/1.6 var(--mono);color:var(--ink);';
+  const verdictColor = overall === 'CONFIRMS' ? 'var(--moss-glow)' : 'var(--warning)';
+  let testsHtml = tests.map(t => {
+    const v = (t.verdict||'').toUpperCase();
+    const c = v === 'SURVIVES' ? 'var(--moss-glow)' : 'var(--warning)';
+    return `<div style="padding:6px 0;border-top:1px solid var(--border);"><span style="color:var(--electric);font-weight:700;">${t.name||'—'}</span> · <span style="color:${c};font-weight:600;">${v}</span><div style="color:var(--muted);font:400 11px/1.4 var(--sans);margin-top:2px;">${escapeHtml(t.rationale||'')}</div></div>`;
+  }).join('');
+  wrap.innerHTML = `
+    <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:10px;">
+      <div style="color:var(--electric);font-weight:700;letter-spacing:0.18em;text-transform:uppercase;">Second Opinion · adversarial validation</div>
+      <div style="color:${verdictColor};font-weight:700;">${overall} · ${survived}/${total}</div>
+    </div>
+    <div style="font:400 12.5px/1.55 var(--sans);color:var(--ink);margin-bottom:10px;">${escapeHtml(summary)}</div>
+    <details><summary style="cursor:pointer;color:var(--electric);font-size:10.5px;letter-spacing:0.16em;text-transform:uppercase;">View stress-test details</summary>
+      <div style="margin-top:8px;">${testsHtml}</div>
+      ${so.strongest_counter ? `<div style="margin-top:10px;padding:10px;background:var(--bg);border-left:3px solid var(--signal);font:400 12px/1.5 var(--sans);color:var(--muted);"><b style="color:var(--signal);">Strongest counter-argument:</b> ${escapeHtml(so.strongest_counter)}</div>` : ''}
+    </details>
+  `;
+  cert.appendChild(wrap);
+}
+
+function escapeHtml(s) {
+  return String(s||'').replace(/[&<>"']/g, c => ({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 }
 
 /* ============================================================
