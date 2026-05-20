@@ -1107,6 +1107,20 @@ function renderLive(data) {
 
   // v0.8.0: continue polling for Agent 6 (cert_html) + Agent 7 (second_opinion)
   // since they attach AFTER status=completed. Show them as they arrive.
+  // v0.8.4: update status line + insert a visible "composing" placeholder so user
+  // knows Agents 6 + 7 are still cooking in the background.
+  STATUS.textContent = 'Bundle signed · Agent 6 composing branded cert · Agent 7 running adversarial Second Opinion…';
+  streamAdd('waiting for Agent 6 (Cert Composer)…', 'dim');
+  streamAdd('waiting for Agent 7 (Second Opinion) · ~15-20s w/ Google Search grounding', 'dim');
+  // Insert a visible composing banner inside the cert pane
+  const cert = document.getElementById('demoCert');
+  if (cert && !cert.querySelector('.composing-banner')) {
+    const banner = document.createElement('div');
+    banner.className = 'composing-banner';
+    banner.style.cssText = 'margin-top:14px;padding:10px 14px;background:var(--surface-2);border-left:3px solid var(--electric);font:500 11px/1.5 var(--mono);color:var(--electric);letter-spacing:0.14em;text-transform:uppercase;animation:pulse 1.6s ease-in-out infinite;';
+    banner.innerHTML = '🔄 Agent 6 composing branded cert · Agent 7 running adversarial Second Opinion…';
+    cert.appendChild(banner);
+  }
   pollForAgent6and7(data.task_id || _currentTaskId);
 }
 
@@ -1124,25 +1138,39 @@ async function pollForAgent6and7(taskId) {
       if (!renderedCert && d.cert_html) {
         renderCertHtml(d.cert_html);
         renderedCert = true;
-        streamAdd(`Agent 6 (Cert Composer) · branded cert composed (Gemini 2.5 Flash)`, 'ok');
+        streamAdd(`✓ Agent 6 (Cert Composer) delivered · ${d.cert_html.length} bytes of branded cert (Gemini 2.5 Pro)`, 'ok');
+        STATUS.textContent = `Cert composed · Agent 7 running adversarial Second Opinion…`;
       }
       if (!renderedSO && d.second_opinion) {
         renderSecondOpinion(d.second_opinion);
         renderedSO = true;
         const overall = (d.second_opinion.overall_verdict || '').toUpperCase();
-        streamAdd(`Agent 7 (Second Opinion) · ${overall} · ${(d.second_opinion.tests||[]).filter(t=>(t.verdict||'').toUpperCase()==='SURVIVES').length}/${(d.second_opinion.tests||[]).length} tests survived`, overall==='CONFIRMS' ? 'ok' : 'err');
+        const tests = d.second_opinion.tests || [];
+        const survived = tests.filter(t=>(t.verdict||'').toUpperCase()==='SURVIVES').length;
+        streamAdd(`✓ Agent 7 (Second Opinion) delivered · ${overall} · ${survived}/${tests.length} stress tests survived`, overall==='CONFIRMS' ? 'ok' : 'err');
+        STATUS.textContent = `All 7 agents complete · Second Opinion: ${overall}`;
       }
     } catch (_) { break; }
   }
 }
 
 function renderCertHtml(html) {
-  // Replace the static cert pane content with Agent 6's branded HTML
+  // Replace the static cert pane content with Agent 6's branded HTML.
+  // Removes the composing banner inserted during the wait.
   const cert = document.getElementById('demoCert');
   if (!cert) return;
   cert.innerHTML = html;
   cert.classList.add('visible');
 }
+
+// pulse animation for the composing banner
+(function _injectPulseKeyframe(){
+  if (document.getElementById('_pulse_kf')) return;
+  const s = document.createElement('style');
+  s.id = '_pulse_kf';
+  s.textContent = '@keyframes pulse{0%,100%{opacity:1}50%{opacity:0.55}}';
+  document.head.appendChild(s);
+})();
 
 function renderSecondOpinion(so) {
   // Append a Second Opinion badge + collapsible details below the cert
