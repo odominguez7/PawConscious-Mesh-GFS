@@ -7,6 +7,16 @@ steps:
       - '-f'
       - 'services/mesh_api/Dockerfile'
       - '.'
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
+    entrypoint: 'gcloud'
+    args:
+      - 'run'
+      - 'deploy'
+      - 'mesh-api'
+      - '--image=us-central1-docker.pkg.dev/pawconscious-mesh-2026/acp-images/mesh-api:v0.8.5-cleanup'
+      - '--region=us-central1'
+      - '--platform=managed'
+      - '--quiet'
 images:
   - 'us-central1-docker.pkg.dev/pawconscious-mesh-2026/acp-images/mesh-api:v0.8.5-cleanup'
 options:
