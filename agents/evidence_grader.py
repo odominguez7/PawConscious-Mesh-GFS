@@ -1,7 +1,8 @@
 """Evidence Grader Agent (PRODUCTION-quality per declared depth in PLAN.md §2).
 
 Takes a Claim and returns an EvidenceBundle: real PubMed papers retrieved via
-BioMCP, graded by relevance + (TODO Phase 2.5) citation influence via AI2 Asta.
+BioMCP, graded by relevance, then enriched with citation influence via
+`agents.citation_enricher` (Semantic Scholar Graph API batch).
 
 Per codex G7 P0.2: dual path is documented (BioMCP + Vertex AI Search over
 PubMed-in-BigQuery). Phase 2 implements the BioMCP path; the Vertex AI Search
