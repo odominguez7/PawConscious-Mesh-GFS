@@ -59,7 +59,7 @@ def run_case(client: httpx.Client, case: dict[str, Any], timeout_s: int = 300) -
             f"{MESH_URL}/a2a/v1/tasks/send",
             json={"skill": "verify_claim", "input": {"product_url": url, "max_claims": 1}},
             headers={"X-API-Key": MESH_API_KEY, "Content-Type": "application/json"},
-            timeout=30.0,
+            timeout=60.0,
         )
         submit.raise_for_status()
         task = submit.json()
@@ -74,7 +74,7 @@ def run_case(client: httpx.Client, case: dict[str, Any], timeout_s: int = 300) -
         last_status = "submitted"
         while time.monotonic() < deadline:
             time.sleep(5.0)
-            get = client.get(f"{MESH_URL}/a2a/v1/tasks/get/{task_id}", timeout=30.0)
+            get = client.get(f"{MESH_URL}/a2a/v1/tasks/get/{task_id}", timeout=60.0)
             get.raise_for_status()
             data = get.json()
             last_status = data.get("status", "")
