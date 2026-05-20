@@ -1,697 +1,398 @@
 <!doctype html>
 <html lang="en">
 <head>
-  <meta charset="utf-8">
-  <title>PawConscious — Agentic Compliance Protocol</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="The trust layer AI agents can call before recommending a consumer product. Five Google ADK agents on Cloud Run sign every health claim with cryptographic evidence.">
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <!-- Newsreader = display serif (no italic), Geist = body sans, JetBrains Mono = code/labels -->
-  <link href="https://fonts.googleapis.com/css2?family=Newsreader:wght@300;400;500;600&family=Geist:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
-  <style>
-    :root {
-      /* deck v15 palette — locked */
-      --vellum:      #F2EDE0;
-      --paper-edge:  #EAE3D2;
-      --slate:       #1A1D1E;
-      --slate-soft:  #2A2D2E;
-      --moss:        #13322B;
-      --moss-soft:   #2A4940;
-      --amber:       #9C5E1A;   /* deeper burnt umber, distinct from Anthropic clay */
-      --amber-soft:  #B07028;
-      --linen:       #C8C2B6;
-      --signal:      #B17F60;
-      --display: 'Newsreader', Georgia, 'Times New Roman', serif;
-      --body: 'Geist', 'Atlas Grotesk', 'Helvetica Neue', Arial, sans-serif;
-      --mono: 'JetBrains Mono', 'Söhne Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
-    }
-    * { box-sizing: border-box; }
-    html, body { margin: 0; padding: 0; }
-    body {
-      background: var(--vellum);
-      color: var(--slate);
-      font: 400 16px/1.55 var(--body);
-      -webkit-font-smoothing: antialiased;
-      -moz-osx-font-smoothing: grayscale;
-    }
-    a { color: inherit; text-decoration: none; }
-    a:hover { color: var(--amber); }
+<meta charset="utf-8">
+<title>PawConscious — Agentic Compliance Protocol</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="The trust layer AI agents can call before recommending a consumer product. Five Google ADK agents on Cloud Run sign every health claim with cryptographic evidence.">
+<meta name="theme-color" content="#0A0B0D">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    /* Deep-tech dark palette — Vercel × Linear hybrid, deliberately distinct from
+       Anthropic-warm-cream (Omar 2026-05-19 — "stop copying claude look and feel") */
+    --bg:           #0A0B0D;
+    --bg-elevated:  #111316;
+    --surface:      #16181D;
+    --surface-2:    #1C1F25;
+    --border:       rgba(255,255,255,0.08);
+    --border-strong:rgba(255,255,255,0.16);
+    --ink:          #EDEEF1;
+    --muted:        rgba(237,238,241,0.62);
+    --dim:          rgba(237,238,241,0.42);
+    --electric:     #00D4FF;          /* cyan agentic accent */
+    --electric-dim: rgba(0,212,255,0.18);
+    --moss-glow:    #00D49B;          /* PASS/verified green */
+    --warning:      #FF5C35;          /* fail/alert */
+    --signal:       #FFB446;          /* compliance flag amber */
+    --grad-1:       #00D4FF;
+    --grad-2:       #7B6CFF;
+    --grad-3:       #FF5C9F;
+    --sans:  'Geist', 'Inter', 'Söhne', -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+    --mono:  'JetBrains Mono', 'IBM Plex Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
+  }
+  *,*:before,*:after { box-sizing: border-box; }
+  html,body { margin:0; padding:0; background: var(--bg); color: var(--ink); }
+  body { font: 400 15px/1.55 var(--sans); -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; }
+  a { color: inherit; text-decoration: none; }
+  a:hover { color: var(--electric); }
+  ::selection { background: var(--electric); color: var(--bg); }
 
-    /* type primitives — NO italic anywhere */
-    .display { font-family: var(--display); font-weight: 400; letter-spacing: -0.02em; line-height: 1.04; color: var(--slate); }
-    .eyebrow { font-family: var(--mono); font-size: 11px; letter-spacing: 0.24em; text-transform: uppercase; color: var(--moss); font-weight: 500; }
-    .num { font-family: var(--mono); font-weight: 500; font-variant-numeric: tabular-nums; letter-spacing: -0.02em; color: var(--slate); }
-    code, .code { font-family: var(--mono); font-size: 12px; background: var(--paper-edge); padding: 2px 6px; border-radius: 2px; }
+  .container { max-width: 1280px; margin: 0 auto; padding: 0 32px; }
+  .eyebrow { font: 600 11px/1 var(--mono); letter-spacing: 0.22em; text-transform: uppercase; color: var(--electric); }
+  .display { font-family: var(--sans); font-weight: 600; letter-spacing: -0.025em; line-height: 1.04; }
+  .num { font: 500 32px/1 var(--mono); font-variant-numeric: tabular-nums; letter-spacing: -0.02em; color: var(--ink); }
 
-    /* ---------- masthead ---------- */
-    .masthead {
-      max-width: 1320px; margin: 0 auto; padding: 28px 40px;
-      display: flex; justify-content: space-between; align-items: center;
-      border-bottom: 1px solid var(--linen);
-    }
-    .wordmark { font-family: var(--display); font-size: 24px; font-weight: 500; letter-spacing: -0.01em; color: var(--slate); }
-    .masthead-meta { display: flex; gap: 24px; align-items: center; font-family: var(--mono); font-size: 11px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--slate); }
-    .masthead-meta .live::before {
-      content: ""; display: inline-block; width: 6px; height: 6px;
-      border-radius: 50%; background: var(--moss);
-      margin-right: 8px; transform: translateY(-1px);
-      animation: pulseDot 2.4s ease-in-out infinite;
-    }
-    @keyframes pulseDot { 0%,100% { opacity: 1; } 50% { opacity: 0.35; } }
-    .masthead-meta .sep { color: var(--linen); }
+  /* ===================== masthead ===================== */
+  .masthead {
+    position: sticky; top: 0; z-index: 50;
+    background: rgba(10,11,13,0.85); backdrop-filter: blur(20px) saturate(140%);
+    border-bottom: 1px solid var(--border);
+  }
+  .masthead-inner {
+    max-width: 1280px; margin: 0 auto; padding: 16px 32px;
+    display: flex; justify-content: space-between; align-items: center;
+  }
+  .wordmark { font: 600 18px/1 var(--sans); letter-spacing: -0.02em; color: var(--ink); }
+  .wordmark .dot { color: var(--electric); }
+  .masthead-nav { display: flex; gap: 22px; align-items: center; font: 500 12px/1 var(--mono); letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); }
+  .masthead-nav .live { display: inline-flex; align-items: center; gap: 8px; color: var(--moss-glow); }
+  .masthead-nav .live::before {
+    content: ""; width: 7px; height: 7px; border-radius: 50%; background: var(--moss-glow);
+    box-shadow: 0 0 8px var(--moss-glow); animation: livePulse 2.2s ease-in-out infinite;
+  }
+  @keyframes livePulse { 0%,100% { opacity:1 } 50% { opacity:0.4 } }
+  .masthead-nav .sep { color: var(--dim); }
 
-    /* ============================================================ */
-    /* HERO — story left + cached agent demo right                  */
-    /* ============================================================ */
-    .hero {
-      max-width: 1320px; margin: 0 auto; padding: 64px 40px 80px;
-      display: grid; grid-template-columns: 1fr 1.15fr; gap: 80px;
-      align-items: center; min-height: 600px;
-    }
-    .hero-left h1 {
-      font-family: var(--display); font-weight: 400;
-      font-size: 64px; line-height: 1.02; letter-spacing: -0.025em;
-      color: var(--slate); margin: 18px 0 28px; max-width: 580px;
-    }
-    .hero-left h1 .accent { color: var(--moss); }
-    .hero-sub {
-      font-family: var(--body); font-size: 17px; line-height: 1.6;
-      color: var(--slate); max-width: 480px; opacity: 0.85;
-      margin: 0 0 36px;
-    }
-    .hero-cta {
-      display: flex; gap: 12px; align-items: stretch; max-width: 560px;
-      margin-bottom: 36px;
-    }
-    .hero-cta input[type="text"] {
-      flex: 1; padding: 16px 18px;
-      background: white; border: 1px solid var(--linen);
-      border-radius: 0; font: 400 14px/1.2 var(--mono); color: var(--slate);
-      transition: border-color 0.18s ease;
-    }
-    .hero-cta input[type="text"]:focus {
-      outline: none; border-color: var(--slate); border-bottom: 1px solid var(--amber);
-    }
-    .hero-cta select {
-      padding: 16px 14px;
-      background: white; border: 1px solid var(--linen);
-      border-radius: 0; font: 500 11px/1.2 var(--mono);
-      text-transform: uppercase; letter-spacing: 0.12em; color: var(--slate);
-    }
-    .hero-cta button {
-      padding: 16px 32px; background: var(--slate); color: var(--vellum);
-      border: 0; font: 600 12px/1 var(--mono);
-      text-transform: uppercase; letter-spacing: 0.18em;
-      cursor: pointer; transition: background 0.18s ease;
-    }
-    .hero-cta button:hover:not(:disabled) { background: var(--moss); }
-    .hero-cta button:disabled { background: var(--linen); color: var(--slate-soft); cursor: not-allowed; }
-    .hero-trust-row {
-      display: flex; gap: 18px; align-items: center; flex-wrap: wrap;
-      font-family: var(--mono); font-size: 10px; letter-spacing: 0.2em;
-      text-transform: uppercase; color: var(--slate); opacity: 0.65;
-    }
-    .hero-trust-row .check::before {
-      content: "✓ "; color: var(--moss); font-weight: 600; margin-right: 4px;
-    }
+  /* ===================== HERO ===================== */
+  .hero {
+    position: relative; padding: 80px 0 96px; overflow: hidden;
+    border-bottom: 1px solid var(--border);
+  }
+  .hero::before {
+    content: ""; position: absolute; inset: 0; pointer-events: none;
+    background:
+      radial-gradient(60% 50% at 80% 20%, rgba(0,212,255,0.08), transparent 60%),
+      radial-gradient(50% 40% at 10% 80%, rgba(123,108,255,0.07), transparent 60%);
+  }
+  .hero-grid { position: relative; display: grid; grid-template-columns: 1fr 1.2fr; gap: 56px; align-items: center; }
+  .hero h1 {
+    font-family: var(--sans); font-weight: 600; font-size: 56px; line-height: 1.02;
+    letter-spacing: -0.03em; color: var(--ink); margin: 18px 0 22px; max-width: 540px;
+  }
+  .hero h1 .grad {
+    background: linear-gradient(135deg, var(--grad-1), var(--grad-2) 50%, var(--grad-3));
+    -webkit-background-clip: text; background-clip: text; color: transparent;
+  }
+  .hero-sub { font-size: 16px; line-height: 1.6; color: var(--muted); max-width: 480px; margin: 0 0 30px; }
+  .hero-cta { display: flex; gap: 10px; align-items: stretch; max-width: 540px; }
+  .hero-cta input[type="text"] {
+    flex: 1; padding: 14px 16px;
+    background: var(--surface); border: 1px solid var(--border-strong);
+    border-radius: 6px;
+    font: 400 13px/1.2 var(--mono); color: var(--ink);
+    transition: border-color 0.15s ease, box-shadow 0.15s ease;
+  }
+  .hero-cta input[type="text"]:focus {
+    outline: none; border-color: var(--electric);
+    box-shadow: 0 0 0 3px var(--electric-dim);
+  }
+  .hero-cta select {
+    padding: 14px 12px; background: var(--surface); border: 1px solid var(--border-strong);
+    border-radius: 6px; color: var(--ink); font: 500 11px/1.2 var(--mono);
+    text-transform: uppercase; letter-spacing: 0.1em; cursor: pointer;
+  }
+  .hero-cta button {
+    padding: 14px 24px; background: var(--electric); color: var(--bg);
+    border: 0; border-radius: 6px; cursor: pointer;
+    font: 600 12px/1 var(--mono); text-transform: uppercase; letter-spacing: 0.14em;
+    transition: filter 0.15s ease, transform 0.06s ease;
+  }
+  .hero-cta button:hover:not(:disabled) { filter: brightness(1.1); }
+  .hero-cta button:active:not(:disabled) { transform: translateY(1px); }
+  .hero-cta button:disabled { background: var(--surface-2); color: var(--dim); cursor: not-allowed; }
+  .hero-secondary {
+    margin-top: 14px; display: flex; gap: 22px; flex-wrap: wrap;
+    font: 500 11px/1 var(--mono); letter-spacing: 0.14em; text-transform: uppercase;
+  }
+  .hero-secondary a { color: var(--electric); text-decoration: none; }
+  .hero-secondary a:hover { color: var(--ink); }
+  .hero-secondary .pill {
+    display: inline-flex; align-items: center; gap: 6px;
+    color: var(--muted); padding: 4px 8px;
+    background: var(--surface); border: 1px solid var(--border); border-radius: 4px;
+  }
+  .hero-secondary .pill::before { content: "✓"; color: var(--moss-glow); font-weight: 700; }
 
-    /* ---------- cached agent demo (auto-loops, no click required) ---------- */
-    .demo {
-      position: relative; aspect-ratio: 1.05;
-      background: var(--paper-edge); border: 1px solid var(--linen);
-      padding: 0; overflow: hidden;
-    }
-    .demo-frame {
-      position: absolute; inset: 0; padding: 28px 32px 24px;
-      display: flex; flex-direction: column; gap: 20px;
-    }
-    .demo-header {
-      display: flex; justify-content: space-between; align-items: baseline;
-      font-family: var(--mono); font-size: 10px; letter-spacing: 0.2em;
-      text-transform: uppercase; color: var(--moss); opacity: 0.9;
-    }
-    .demo-header .right { color: var(--slate); opacity: 0.6; }
-    .demo-stage {
-      flex: 1; position: relative;
-      display: flex; align-items: center; justify-content: center;
-    }
-    .demo-status {
-      position: absolute; bottom: 12px; left: 0; right: 0;
-      text-align: center;
-      font-family: var(--display); font-size: 18px; font-weight: 400;
-      color: var(--slate); transition: color 0.4s ease;
-    }
-    .demo-status.success { color: var(--moss); }
-    .demo-svg { width: 100%; height: 100%; display: block; }
-    .demo-svg .edge {
-      stroke: var(--linen); stroke-width: 1.4; fill: none;
-      transition: stroke 0.5s ease, stroke-width 0.5s ease;
-    }
-    .demo-svg .edge.active { stroke: var(--amber); stroke-width: 2; }
-    .demo-svg .edge.done { stroke: var(--moss); stroke-width: 1.6; }
-    .demo-svg .node circle.body {
-      fill: var(--vellum); stroke: var(--slate); stroke-width: 1.4;
-      transition: fill 0.5s ease, stroke 0.5s ease;
-    }
-    .demo-svg .node.active circle.body { fill: var(--amber); stroke: var(--amber); }
-    .demo-svg .node.done circle.body { fill: var(--moss); stroke: var(--moss); }
-    .demo-svg .node circle.halo {
-      fill: none; stroke: var(--amber); stroke-width: 0; opacity: 0;
-      transition: opacity 0.3s ease;
-    }
-    .demo-svg .node.active circle.halo {
-      stroke-width: 2; opacity: 1;
-      animation: haloPulse 1.4s ease-in-out infinite;
-    }
-    @keyframes haloPulse {
-      0%,100% { transform: scale(1); opacity: 1; }
-      50% { transform: scale(1.25); opacity: 0.3; }
-    }
-    .demo-svg .node text {
-      font-family: var(--mono); font-size: 8.5px; font-weight: 500;
-      fill: var(--slate); text-anchor: middle;
-      text-transform: uppercase; letter-spacing: 0.08em;
-    }
-    .demo-svg .node.done text { fill: var(--moss); }
-    .demo-svg .center-anchor {
-      fill: var(--slate); stroke: var(--slate); stroke-width: 1;
-      transition: fill 0.5s ease;
-    }
-    .demo-svg .center-anchor.done { fill: var(--moss); stroke: var(--moss); }
-    .demo-svg .anchor-label {
-      font-family: var(--mono); font-size: 9.5px; font-weight: 500;
-      fill: var(--vellum); text-anchor: middle;
-      text-transform: uppercase; letter-spacing: 0.14em;
-    }
-    .demo-svg .anchor-sub {
-      font-family: var(--mono); font-size: 8px;
-      fill: var(--amber); text-anchor: middle;
-      text-transform: uppercase; letter-spacing: 0.16em;
-    }
-    .demo-cert {
-      position: absolute; inset: 28px 32px 80px 32px;
-      background: var(--vellum);
-      border: 1px solid var(--moss);
-      padding: 26px;
-      display: flex; flex-direction: column; gap: 12px;
-      opacity: 0; transform: translateY(8px);
-      transition: opacity 0.6s ease, transform 0.6s ease;
-      pointer-events: none;
-    }
-    .demo-cert.visible { opacity: 1; transform: translateY(0); }
-    .demo-cert .cert-eyebrow {
-      font-family: var(--mono); font-size: 10px; letter-spacing: 0.22em;
-      text-transform: uppercase; color: var(--moss); font-weight: 600;
-    }
-    .demo-cert .cert-title {
-      font-family: var(--display); font-size: 22px; color: var(--slate);
-      line-height: 1.2;
-    }
-    .demo-cert .cert-line {
-      display: flex; justify-content: space-between; align-items: baseline;
-      font-family: var(--mono); font-size: 11px; color: var(--slate);
-    }
-    .demo-cert .cert-line .k { opacity: 0.6; }
-    .demo-cert .cert-line .v { color: var(--moss); font-weight: 500; }
-    .demo-cert .cert-line .v.pass { color: var(--moss); }
-    .demo-cert .seal {
-      position: absolute; top: 22px; right: 22px;
-      width: 44px; height: 44px; border-radius: 50%;
-      background: radial-gradient(circle at 35% 35%, var(--amber-soft), var(--amber) 70%);
-      box-shadow: inset -2px -3px 6px rgba(70,40,4,.5), 0 4px 10px rgba(0,0,0,0.18);
-      display: flex; align-items: center; justify-content: center;
-    }
-    .demo-cert .seal svg { width: 26px; height: 26px; opacity: 0.94; }
+  /* ===================== DEMO CONTAINER (unified — cached/live/replay) ===================== */
+  .demo {
+    position: relative; background: var(--bg-elevated);
+    border: 1px solid var(--border-strong); border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 32px 80px -16px rgba(0,0,0,0.5), 0 0 0 1px var(--border) inset;
+  }
+  .demo-chrome {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 12px 16px; border-bottom: 1px solid var(--border);
+    background: var(--surface);
+    font: 500 10.5px/1 var(--mono); letter-spacing: 0.18em; text-transform: uppercase;
+  }
+  .demo-chrome .dots { display: inline-flex; gap: 6px; }
+  .demo-chrome .dot { width: 9px; height: 9px; border-radius: 50%; background: var(--surface-2); }
+  .demo-chrome .dot.r { background: #FF5C5C; }
+  .demo-chrome .dot.y { background: #FFBD2E; }
+  .demo-chrome .dot.g { background: #27C93F; }
+  .demo-chrome .mode {
+    display: inline-flex; align-items: center; gap: 8px;
+    color: var(--muted);
+  }
+  .demo-chrome .mode .badge {
+    padding: 3px 8px; background: var(--electric-dim); color: var(--electric);
+    border-radius: 3px; font-weight: 700; letter-spacing: 0.14em;
+  }
+  .demo-chrome .mode .badge.live { background: rgba(255,92,53,0.18); color: var(--warning); }
+  .demo-chrome .mode .badge.replay { background: rgba(123,108,255,0.18); color: #B9AEFF; }
+  .demo-chrome .right { color: var(--dim); }
 
-    /* ============================================================ */
-    /* ARCHITECTURE POSTER — new hero section                       */
-    /* ============================================================ */
-    .arch-hero {
-      background: var(--vellum);
-      padding: 96px 0 24px;
-      border-top: 1px solid var(--linen);
-    }
-    .arch-hero-inner {
-      max-width: 1320px; margin: 0 auto; padding: 0 40px;
-    }
-    .arch-hero .head {
-      display: grid; grid-template-columns: 1fr 1.4fr; gap: 56px;
-      align-items: end; margin-bottom: 40px;
-    }
-    .arch-hero h2 {
-      font-family: var(--display); font-weight: 400;
-      font-size: 44px; line-height: 1.1; letter-spacing: -0.02em;
-      color: var(--slate); margin: 12px 0 0;
-    }
-    .arch-hero p {
-      font-family: var(--body); font-size: 15px; line-height: 1.6;
-      color: var(--slate); opacity: 0.85; margin: 0;
-    }
-    .arch-hero .poster {
-      width: 100%; height: auto; display: block;
-      border: 1px solid var(--linen);
-      box-shadow: 0 24px 60px rgba(26,29,30,0.10);
-    }
-    .arch-hero .arch-actions {
-      margin-top: 28px;
-      display: flex; gap: 14px; align-items: center; flex-wrap: wrap;
-      font-family: var(--mono); font-size: 11px; letter-spacing: 0.18em;
-      text-transform: uppercase; color: var(--moss);
-    }
-    .arch-hero .arch-actions a {
-      color: var(--moss); text-decoration: underline; text-underline-offset: 3px;
-      padding: 6px 0;
-    }
-    .arch-hero .arch-actions a:hover { color: var(--amber); }
-    .arch-hero .arch-actions .sep { color: var(--linen); }
-    @media (max-width: 1024px) {
-      .arch-hero { padding: 56px 0; }
-      .arch-hero-inner { padding: 0 24px; }
-      .arch-hero .head { grid-template-columns: 1fr; gap: 24px; }
-      .arch-hero h2 { font-size: 32px; }
-    }
+  .demo-body { padding: 28px; min-height: 420px; display: flex; flex-direction: column; gap: 14px; }
+  .demo-stage { flex: 1; position: relative; display: flex; align-items: center; justify-content: center; }
+  .demo-svg { width: 100%; height: 100%; max-height: 320px; display: block; }
+  .demo-svg .edge { stroke: var(--border-strong); stroke-width: 1.4; fill: none; transition: stroke 0.4s ease, stroke-width 0.4s ease; }
+  .demo-svg .edge.active { stroke: var(--electric); stroke-width: 1.8; filter: drop-shadow(0 0 6px var(--electric)); }
+  .demo-svg .edge.done { stroke: var(--moss-glow); stroke-width: 1.6; }
+  .demo-svg .node circle.body {
+    fill: var(--surface); stroke: var(--border-strong); stroke-width: 1.5;
+    transition: fill 0.4s ease, stroke 0.4s ease;
+  }
+  .demo-svg .node.active circle.body { fill: var(--electric); stroke: var(--electric); filter: drop-shadow(0 0 10px var(--electric)); }
+  .demo-svg .node.done circle.body { fill: var(--moss-glow); stroke: var(--moss-glow); }
+  .demo-svg .node circle.halo {
+    fill: none; stroke: var(--electric); stroke-width: 0; opacity: 0;
+    transition: opacity 0.3s ease;
+  }
+  .demo-svg .node.active circle.halo {
+    stroke-width: 2; opacity: 0.8;
+    animation: haloPulse 1.2s ease-in-out infinite;
+  }
+  @keyframes haloPulse {
+    0%,100% { transform: scale(1); opacity: 0.8; }
+    50% { transform: scale(1.35); opacity: 0.1; }
+  }
+  .demo-svg .node text {
+    font: 600 9px/1 var(--mono); fill: var(--muted);
+    text-transform: uppercase; letter-spacing: 0.12em;
+  }
+  .demo-svg .node.active text { fill: var(--electric); }
+  .demo-svg .node.done text { fill: var(--moss-glow); }
+  .demo-svg .anchor-body { fill: var(--surface-2); stroke: var(--border-strong); stroke-width: 1.5; }
+  .demo-svg .anchor-body.done { fill: var(--moss-glow); stroke: var(--moss-glow); }
+  .demo-svg .anchor-label { font: 600 9px/1 var(--mono); fill: var(--ink); text-anchor: middle; text-transform: uppercase; letter-spacing: 0.16em; }
+  .demo-svg .anchor-sub { font: 500 7.5px/1 var(--mono); fill: var(--electric); text-anchor: middle; text-transform: uppercase; letter-spacing: 0.18em; }
 
-    /* ============================================================ */
-    /* WHY — single-line forces band                                */
-    /* ============================================================ */
-    .why {
-      background: var(--slate); color: var(--vellum);
-      padding: 36px 0;
-    }
-    .why-inner {
-      max-width: 1320px; margin: 0 auto; padding: 0 40px;
-      display: grid; grid-template-columns: 1.4fr 1fr 1fr 1fr; gap: 36px;
-      align-items: center;
-    }
-    .why-lede {
-      font-family: var(--display); font-size: 22px; line-height: 1.3;
-      color: var(--vellum); max-width: 340px;
-    }
-    .why-stat .label {
-      font-family: var(--mono); font-size: 10px; letter-spacing: 0.22em;
-      text-transform: uppercase; color: var(--amber-soft); margin-bottom: 8px;
-    }
-    .why-stat .num {
-      font-family: var(--mono); font-size: 32px; color: var(--vellum);
-      line-height: 1; font-weight: 500; letter-spacing: -0.02em;
-      font-variant-numeric: tabular-nums; margin-bottom: 6px;
-    }
-    .why-stat .src {
-      font-family: var(--mono); font-size: 9px; letter-spacing: 0.18em;
-      text-transform: uppercase; color: var(--linen); opacity: 0.7;
-    }
-    .why-stat .src a { color: inherit; text-decoration: underline; text-underline-offset: 2px; }
+  .demo-stream {
+    background: var(--bg); border: 1px solid var(--border);
+    border-radius: 4px; padding: 12px 14px;
+    font: 500 11.5px/1.65 var(--mono); color: var(--muted);
+    max-height: 132px; overflow-y: auto;
+  }
+  .demo-stream .row { display: flex; gap: 8px; align-items: baseline; }
+  .demo-stream .row .ts { color: var(--dim); flex-shrink: 0; min-width: 56px; }
+  .demo-stream .row .msg { color: var(--ink); }
+  .demo-stream .row .msg.ok { color: var(--moss-glow); }
+  .demo-stream .row .msg.err { color: var(--warning); }
+  .demo-stream .row .msg.dim { color: var(--muted); }
+  .demo-stream .caret { display: inline-block; width: 7px; height: 13px; background: var(--electric); animation: blink 1s steps(1) infinite; vertical-align: -2px; margin-left: 2px; }
+  @keyframes blink { 50% { opacity: 0; } }
 
-    /* ============================================================ */
-    /* HOW — 3 steps                                                 */
-    /* ============================================================ */
-    .how {
-      max-width: 1320px; margin: 0 auto; padding: 96px 40px;
-    }
-    .how-head {
-      max-width: 720px; margin: 0 0 56px;
-    }
-    .how-head h2 {
-      font-family: var(--display); font-weight: 400;
-      font-size: 44px; line-height: 1.1; letter-spacing: -0.02em;
-      margin: 12px 0 0; color: var(--slate);
-    }
-    .how-steps {
-      display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 48px;
-    }
-    .how-step .n {
-      font-family: var(--mono); font-size: 11px; letter-spacing: 0.22em;
-      text-transform: uppercase; color: var(--amber); font-weight: 600;
-      margin-bottom: 18px;
-    }
-    .how-step .title {
-      font-family: var(--display); font-size: 24px; line-height: 1.2;
-      color: var(--slate); margin-bottom: 12px;
-    }
-    .how-step .desc {
-      font-family: var(--body); font-size: 14px; line-height: 1.55;
-      color: var(--slate); opacity: 0.8;
-    }
-    .how-step .icon {
-      width: 64px; height: 64px; margin-bottom: 22px;
-      border: 1px solid var(--slate); display: flex; align-items: center; justify-content: center;
-    }
-    .how-step .icon svg { width: 28px; height: 28px; stroke: var(--slate); fill: none; stroke-width: 1.5; }
+  .demo-cert {
+    background: var(--surface); border: 1px solid var(--electric); border-radius: 6px;
+    padding: 16px 18px;
+    font: 500 11px/1.7 var(--mono); color: var(--ink);
+    opacity: 0; max-height: 0; overflow: hidden;
+    transition: opacity 0.45s ease, max-height 0.45s ease, padding 0.45s ease;
+  }
+  .demo-cert.visible { opacity: 1; max-height: 300px; }
+  .demo-cert .line { display: flex; justify-content: space-between; gap: 12px; word-break: break-all; }
+  .demo-cert .line .k { color: var(--electric); }
+  .demo-cert .line .v.pass { color: var(--moss-glow); font-weight: 700; }
 
-    /* ============================================================ */
-    /* PROOF — what signed evidence looks like                       */
-    /* ============================================================ */
-    .proof {
-      background: var(--paper-edge);
-      padding: 96px 0;
-    }
-    .proof-inner {
-      max-width: 1320px; margin: 0 auto; padding: 0 40px;
-      display: grid; grid-template-columns: 0.95fr 1.1fr; gap: 72px;
-      align-items: center;
-    }
-    .proof-text h2 {
-      font-family: var(--display); font-size: 44px; line-height: 1.1;
-      letter-spacing: -0.02em; color: var(--slate); margin: 14px 0 24px;
-      max-width: 460px;
-    }
-    .proof-text p {
-      font-family: var(--body); font-size: 15px; line-height: 1.6;
-      color: var(--slate); margin: 0 0 18px; max-width: 460px;
-    }
-    .proof-text .pill-row {
-      display: flex; gap: 10px; flex-wrap: wrap; margin-top: 28px;
-    }
-    .proof-text .pill {
-      font-family: var(--mono); font-size: 10px; letter-spacing: 0.18em;
-      text-transform: uppercase; color: var(--slate);
-      padding: 8px 14px; border: 1px solid var(--linen); background: var(--vellum);
-    }
-    .proof-cert {
-      background: var(--vellum); border: 1px solid var(--slate);
-      padding: 32px; position: relative;
-      font-family: var(--mono); font-size: 12px; line-height: 1.65; color: var(--slate);
-    }
-    .proof-cert .json-key { color: var(--moss); opacity: 0.85; }
-    .proof-cert .json-str { color: var(--amber); }
-    .proof-cert .json-pass { color: var(--moss); font-weight: 600; }
-    .proof-cert .cert-seal {
-      position: absolute; top: 24px; right: 24px;
-      width: 52px; height: 52px; border-radius: 50%;
-      background: radial-gradient(circle at 35% 35%, var(--amber-soft), var(--amber) 70%);
-      box-shadow: inset -2px -3px 6px rgba(70,40,4,.5);
-      display: flex; align-items: center; justify-content: center;
-    }
-    .proof-cert .cert-seal svg { width: 30px; height: 30px; opacity: 0.94; }
+  /* ===================== ARCHITECTURE (interactive technical SVG) ===================== */
+  .arch { padding: 96px 0; background: var(--bg-elevated); border-bottom: 1px solid var(--border); }
+  .arch-head { max-width: 760px; margin: 0 auto 48px; text-align: center; }
+  .arch-head h2 { font-size: 36px; font-weight: 600; letter-spacing: -0.025em; line-height: 1.1; margin: 12px 0; color: var(--ink); }
+  .arch-head p { font-size: 15px; line-height: 1.65; color: var(--muted); margin: 0; }
+  .arch-canvas {
+    position: relative; background: var(--bg);
+    border: 1px solid var(--border); border-radius: 8px;
+    padding: 32px; overflow: hidden;
+  }
+  .arch-canvas::before {
+    content: ""; position: absolute; inset: 0; pointer-events: none;
+    background-image: radial-gradient(circle, rgba(255,255,255,0.025) 1px, transparent 1px);
+    background-size: 24px 24px;
+  }
+  .arch-svg { position: relative; width: 100%; height: auto; min-height: 520px; display: block; }
+  .arch-svg .edge { stroke: var(--border-strong); stroke-width: 1.2; fill: none; transition: stroke 0.3s ease; }
+  .arch-svg .edge.hi { stroke: var(--electric); stroke-width: 2; filter: drop-shadow(0 0 4px var(--electric)); }
+  .arch-svg g.box rect { fill: var(--surface); stroke: var(--border-strong); stroke-width: 1.4; transition: stroke 0.2s ease, fill 0.2s ease; rx: 6; }
+  .arch-svg g.box.agent rect { stroke: var(--electric-dim); }
+  .arch-svg g.box:hover rect { stroke: var(--electric); fill: var(--surface-2); cursor: pointer; }
+  .arch-svg g.box .label { font: 600 10px/1 var(--mono); fill: var(--electric); text-transform: uppercase; letter-spacing: 0.16em; }
+  .arch-svg g.box .title { font: 600 13px/1.2 var(--sans); fill: var(--ink); letter-spacing: -0.005em; }
+  .arch-svg g.box .meta { font: 500 10px/1.4 var(--mono); fill: var(--muted); }
+  .arch-svg g.box .meta.warn { fill: var(--signal); }
 
-    /* ============================================================ */
-    /* BUSINESS CASE — buyer / ROI / pricing / procurement           */
-    /* ============================================================ */
-    .biz {
-      background: var(--slate); color: var(--vellum);
-      padding: 96px 0;
-    }
-    .biz-inner {
-      max-width: 1320px; margin: 0 auto; padding: 0 40px;
-    }
-    .biz-head { max-width: 760px; margin: 0 0 56px; }
-    .biz-head .eyebrow { color: var(--amber-soft); margin-bottom: 16px; }
-    .biz-head h2 {
-      font-family: var(--display); font-weight: 400;
-      font-size: 44px; line-height: 1.1; letter-spacing: -0.02em;
-      color: var(--vellum); margin: 0 0 18px;
-    }
-    .biz-head p {
-      font-family: var(--body); font-size: 16px; line-height: 1.6;
-      color: var(--linen); max-width: 640px; opacity: 0.92;
-    }
-    .biz-grid {
-      display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 40px;
-      margin-bottom: 56px;
-    }
-    .biz-card {
-      border-top: 1px solid var(--amber-soft); padding-top: 22px;
-    }
-    .biz-card .label {
-      font-family: var(--mono); font-size: 10px; letter-spacing: 0.22em;
-      text-transform: uppercase; color: var(--amber-soft); margin-bottom: 14px;
-    }
-    .biz-card .title {
-      font-family: var(--display); font-size: 22px; line-height: 1.25;
-      color: var(--vellum); margin-bottom: 12px;
-    }
-    .biz-card .desc {
-      font-family: var(--body); font-size: 14px; line-height: 1.55;
-      color: var(--linen); opacity: 0.88;
-    }
-    .biz-roi {
-      display: grid; grid-template-columns: 1.4fr 1fr 1fr 1fr; gap: 32px;
-      padding-top: 32px; border-top: 1px solid var(--moss-soft);
-      align-items: end;
-    }
-    .biz-roi-lede {
-      font-family: var(--display); font-size: 20px; line-height: 1.35;
-      color: var(--vellum); max-width: 360px;
-    }
-    .biz-roi-stat .num {
-      font-family: var(--mono); font-size: 36px; color: var(--amber-soft);
-      line-height: 1; font-weight: 500; letter-spacing: -0.02em;
-      font-variant-numeric: tabular-nums; margin-bottom: 8px;
-    }
-    .biz-roi-stat .lbl {
-      font-family: var(--mono); font-size: 10px; letter-spacing: 0.18em;
-      text-transform: uppercase; color: var(--linen); opacity: 0.7;
-    }
-    .biz-pricing {
-      margin-top: 56px; padding-top: 32px; border-top: 1px solid var(--moss-soft);
-      display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 32px;
-    }
-    .biz-tier {
-      background: var(--slate-soft); padding: 26px 26px 28px;
-      border-top: 2px solid var(--linen);
-    }
-    .biz-tier.featured { border-top-color: var(--amber); }
-    .biz-tier .tier-name {
-      font-family: var(--mono); font-size: 11px; letter-spacing: 0.22em;
-      text-transform: uppercase; color: var(--linen); margin-bottom: 14px;
-    }
-    .biz-tier.featured .tier-name { color: var(--amber-soft); }
-    .biz-tier .tier-price {
-      font-family: var(--display); font-size: 38px; line-height: 1; color: var(--vellum);
-      letter-spacing: -0.02em; margin-bottom: 6px;
-      font-variant-numeric: tabular-nums;
-    }
-    .biz-tier .tier-price .unit { font-family: var(--mono); font-size: 12px; opacity: 0.7; letter-spacing: 0.1em; }
-    .biz-tier .tier-buyer {
-      font-family: var(--mono); font-size: 10px; letter-spacing: 0.18em;
-      text-transform: uppercase; color: var(--linen); opacity: 0.7; margin-bottom: 18px;
-    }
-    .biz-tier ul {
-      list-style: none; padding: 0; margin: 0;
-      font-family: var(--body); font-size: 13px; line-height: 1.7; color: var(--linen);
-    }
-    .biz-tier ul li::before {
-      content: "·"; color: var(--amber-soft); margin-right: 8px; font-weight: 600;
-    }
-    .biz-procurement {
-      margin-top: 40px; padding: 24px 28px;
-      background: var(--moss-soft); border-left: 4px solid var(--amber);
-    }
-    .biz-procurement .label {
-      font-family: var(--mono); font-size: 10px; letter-spacing: 0.22em;
-      text-transform: uppercase; color: var(--amber-soft); margin-bottom: 10px;
-    }
-    .biz-procurement .body {
-      font-family: var(--display); font-size: 19px; line-height: 1.4;
-      color: var(--vellum); max-width: 1100px;
-    }
+  .arch-tooltip {
+    position: absolute; pointer-events: none; opacity: 0;
+    padding: 12px 14px; background: var(--surface-2); border: 1px solid var(--electric);
+    border-radius: 4px; font: 500 11px/1.5 var(--mono); color: var(--ink);
+    transition: opacity 0.15s ease; max-width: 280px; z-index: 10;
+    box-shadow: 0 12px 32px rgba(0,0,0,0.4);
+  }
+  .arch-tooltip.show { opacity: 1; }
+  .arch-tooltip .t-name { font: 700 11.5px/1.2 var(--mono); color: var(--electric); text-transform: uppercase; letter-spacing: 0.14em; margin-bottom: 8px; }
+  .arch-tooltip .t-meta { color: var(--muted); }
+  .arch-tooltip .t-meta b { color: var(--ink); font-weight: 600; }
 
-    /* ============================================================ */
-    /* MOATS                                                         */
-    /* ============================================================ */
-    .moats {
-      max-width: 1320px; margin: 0 auto; padding: 96px 40px;
-    }
-    .moats-head { max-width: 720px; margin: 0 0 56px; }
-    .moats-head h2 {
-      font-family: var(--display); font-size: 44px; line-height: 1.1;
-      letter-spacing: -0.02em; margin: 12px 0 0; color: var(--slate);
-    }
-    .moats-grid {
-      display: grid; grid-template-columns: 1fr 1fr; gap: 48px 64px;
-    }
-    .moat {
-      display: grid; grid-template-columns: 36px 1fr; gap: 16px;
-      border-top: 1px solid var(--linen); padding-top: 18px;
-    }
-    .moat .n {
-      font-family: var(--mono); font-size: 12px; letter-spacing: 0.2em;
-      text-transform: uppercase; color: var(--amber); font-weight: 600;
-    }
-    .moat .title {
-      font-family: var(--display); font-size: 22px; line-height: 1.25;
-      color: var(--slate); margin-bottom: 8px;
-    }
-    .moat .desc {
-      font-family: var(--body); font-size: 14px; line-height: 1.55;
-      color: var(--slate); opacity: 0.85;
-    }
-    .moat .roadmap { color: var(--moss); opacity: 0.85; }
+  .arch-legend {
+    margin-top: 24px; display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 18px;
+  }
+  .arch-legend .item {
+    padding: 16px 18px; background: var(--surface); border: 1px solid var(--border);
+    border-radius: 4px;
+  }
+  .arch-legend .item .h { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 8px; }
+  .arch-legend .item .h .name { font: 600 12px/1 var(--mono); letter-spacing: 0.12em; text-transform: uppercase; color: var(--ink); }
+  .arch-legend .item .h .badge { font: 500 9px/1 var(--mono); padding: 3px 7px; background: var(--electric-dim); color: var(--electric); border-radius: 3px; letter-spacing: 0.14em; text-transform: uppercase; }
+  .arch-legend .item p { margin: 0; font-size: 12.5px; line-height: 1.5; color: var(--muted); }
 
-    /* ============================================================ */
-    /* FOUNDER                                                       */
-    /* ============================================================ */
-    .founder {
-      background: var(--slate); color: var(--vellum);
-      padding: 88px 0;
-    }
-    .founder-inner {
-      max-width: 1080px; margin: 0 auto; padding: 0 40px;
-      display: grid; grid-template-columns: 1fr 1.4fr; gap: 56px;
-      align-items: center;
-    }
-    .founder-portrait {
-      width: 100%; aspect-ratio: 4/5;
-      background: var(--moss); overflow: hidden;
-    }
-    .founder-portrait img { width: 100%; height: 100%; object-fit: cover; display: block; }
-    .founder-quote .eyebrow { color: var(--amber-soft); margin-bottom: 18px; }
-    .founder-quote blockquote {
-      font-family: var(--display); font-weight: 300;
-      font-size: 26px; line-height: 1.42; color: var(--vellum);
-      margin: 0 0 24px; max-width: 580px;
-    }
-    .founder-quote .attr {
-      font-family: var(--mono); font-size: 11px; letter-spacing: 0.18em;
-      text-transform: uppercase; color: var(--linen); opacity: 0.85;
-    }
-    .founder-quote .attr strong { color: var(--vellum); font-weight: 600; }
+  /* ===================== HOW (3 numbered steps) ===================== */
+  .how { padding: 88px 0; border-bottom: 1px solid var(--border); }
+  .how-head { max-width: 720px; margin: 0 0 56px; }
+  .how-head h2 { font-size: 36px; font-weight: 600; letter-spacing: -0.025em; line-height: 1.1; margin: 12px 0 0; color: var(--ink); }
+  .how-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 36px; }
+  .how-step { padding: 24px; background: var(--bg-elevated); border: 1px solid var(--border); border-radius: 8px; }
+  .how-step .n { font: 600 11px/1 var(--mono); letter-spacing: 0.22em; text-transform: uppercase; color: var(--electric); margin-bottom: 14px; }
+  .how-step .title { font: 600 18px/1.25 var(--sans); letter-spacing: -0.015em; color: var(--ink); margin-bottom: 10px; }
+  .how-step .desc { font-size: 13.5px; line-height: 1.55; color: var(--muted); margin: 0; }
+  .how-step .code {
+    margin-top: 16px; padding: 10px 12px; background: var(--bg);
+    border: 1px solid var(--border); border-radius: 4px;
+    font: 500 11px/1.6 var(--mono); color: var(--electric); white-space: pre-wrap;
+  }
 
-    /* ============================================================ */
-    /* VERIFY ZONE — live ceremony stays here                        */
-    /* ============================================================ */
-    .verify-zone {
-      max-width: 1320px; margin: 0 auto; padding: 96px 40px;
-    }
-    .verify-head { max-width: 720px; margin: 0 0 56px; }
-    .verify-head h2 {
-      font-family: var(--display); font-size: 44px; line-height: 1.1;
-      letter-spacing: -0.02em; margin: 12px 0 16px; color: var(--slate);
-    }
-    .verify-head p {
-      font-family: var(--body); font-size: 15px; line-height: 1.6;
-      color: var(--slate); opacity: 0.8;
-    }
-    .stage-status {
-      font-family: var(--display); font-size: 20px; color: var(--slate);
-      margin: 0 0 32px; min-height: 30px;
-    }
-    .stage-status.completed { color: var(--moss); }
-    .stage-status.failed { color: var(--signal); }
-    .stage-grid {
-      display: grid; grid-template-columns: 1.05fr 1fr; gap: 48px;
-      align-items: start;
-    }
-    .mesh-wrap {
-      position: relative; aspect-ratio: 1;
-      background: var(--paper-edge); border: 1px solid var(--linen);
-    }
-    .mesh-svg { width: 100%; height: 100%; display: block; }
-    .agent-node circle.body {
-      fill: var(--vellum); stroke: var(--slate); stroke-width: 1.4;
-      transition: fill 0.5s ease, stroke 0.5s ease;
-    }
-    .agent-node circle.halo {
-      fill: none; stroke: var(--amber); stroke-width: 0; opacity: 0;
-      transition: opacity 0.3s ease;
-    }
-    .agent-node.active circle.halo {
-      stroke-width: 2; opacity: 1;
-      animation: ringPulse 1.4s ease-in-out infinite;
-    }
-    .agent-node.active circle.body { fill: var(--amber); stroke: var(--amber); }
-    .agent-node.done circle.body { fill: var(--moss); stroke: var(--moss); }
-    @keyframes ringPulse {
-      0%,100% { transform: scale(1); opacity: 1; }
-      50% { transform: scale(1.2); opacity: 0.35; }
-    }
-    .agent-node circle.halo { transform-origin: center; transform-box: fill-box; }
-    .agent-node text {
-      font-family: var(--mono); font-size: 9px; font-weight: 500;
-      fill: var(--slate); text-transform: uppercase; letter-spacing: 0.1em;
-    }
-    .agent-node.done text { fill: var(--moss); }
-    .mesh-edge {
-      stroke: var(--linen); stroke-width: 1.2; fill: none;
-      transition: stroke 0.5s ease, stroke-width 0.5s ease;
-    }
-    .mesh-edge.active { stroke: var(--amber); stroke-width: 1.6; }
-    .mesh-edge.done { stroke: var(--moss); }
-    .mesh-center text {
-      font-family: var(--display); font-size: 13px;
-      fill: var(--slate); text-anchor: middle;
-    }
-    .certificate-pane {
-      background: var(--paper-edge); border: 1px solid var(--linen);
-      padding: 32px; min-height: 100%;
-    }
-    .certificate-empty {
-      color: var(--slate); opacity: 0.7;
-      font: 400 15px/1.55 var(--body);
-    }
-    .certificate-empty .arrow {
-      display: block; margin-bottom: 14px;
-      font-family: var(--mono); font-size: 10px; letter-spacing: 0.18em;
-      text-transform: uppercase; color: var(--amber); font-weight: 600;
-    }
-    .verdicts { display: none; max-width: 1320px; margin: 32px auto 0; padding: 0 40px; }
-    .verdicts.visible { display: block; }
-    .verdict-list { display: flex; flex-direction: column; gap: 18px; }
-    .verdict-row {
-      display: grid; grid-template-columns: 80px 1fr 80px; gap: 18px;
-      padding: 16px 18px; background: var(--paper-edge); border: 1px solid var(--linen);
-      align-items: center;
-    }
-    .verdict-row .v-id { font-family: var(--mono); font-size: 10px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--moss); }
-    .verdict-row .v-claim { font-family: var(--body); font-size: 14px; color: var(--slate); }
-    .verdict-row .v-score { font-family: var(--mono); font-size: 16px; color: var(--slate); text-align: right; font-weight: 600; }
-    .verdict-row.pass .v-score { color: var(--moss); }
-    .verdict-row.fail .v-score { color: var(--signal); }
+  /* ===================== PROOF (signed cert artifact) ===================== */
+  .proof { padding: 88px 0; background: var(--bg-elevated); border-bottom: 1px solid var(--border); }
+  .proof-grid { display: grid; grid-template-columns: 0.9fr 1.1fr; gap: 56px; align-items: center; }
+  .proof-text h2 { font-size: 36px; font-weight: 600; letter-spacing: -0.025em; line-height: 1.1; margin: 12px 0 18px; color: var(--ink); }
+  .proof-text p { font-size: 14.5px; line-height: 1.6; color: var(--muted); margin: 0 0 16px; max-width: 440px; }
+  .proof-text .chips { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 22px; }
+  .proof-text .chip {
+    font: 500 10.5px/1 var(--mono); letter-spacing: 0.14em; text-transform: uppercase;
+    padding: 7px 10px; background: var(--surface); border: 1px solid var(--border-strong); color: var(--muted); border-radius: 4px;
+  }
+  .proof-cert {
+    background: var(--bg); border: 1px solid var(--border-strong); border-radius: 8px;
+    padding: 28px; position: relative;
+    font: 500 12px/1.75 var(--mono); color: var(--ink);
+  }
+  .proof-cert::before {
+    content: "PCEC v0.1 · signed bundle"; position: absolute; top: 14px; left: 28px;
+    font: 600 10px/1 var(--mono); letter-spacing: 0.18em; text-transform: uppercase; color: var(--electric);
+  }
+  .proof-cert .body { margin-top: 28px; }
+  .proof-cert .json-k { color: var(--electric); opacity: 0.9; }
+  .proof-cert .json-s { color: var(--moss-glow); }
+  .proof-cert .json-p { color: var(--moss-glow); font-weight: 700; }
 
-    /* ============================================================ */
-    /* TRACK 3 + FOOTER                                              */
-    /* ============================================================ */
-    .track3 {
-      max-width: 1320px; margin: 0 auto; padding: 32px 40px;
-      border-top: 1px solid var(--linen);
-      display: flex; flex-wrap: wrap; gap: 12px; align-items: center;
-    }
-    .track3 .label {
-      font-family: var(--mono); font-size: 10px; letter-spacing: 0.2em;
-      text-transform: uppercase; color: var(--moss); margin-right: 14px;
-    }
-    .track3 .badge {
-      font-family: var(--mono); font-size: 10px; letter-spacing: 0.16em;
-      text-transform: uppercase; color: var(--slate);
-      padding: 7px 13px; border: 1px solid var(--linen); background: var(--paper-edge);
-    }
-    .track3 .badge:hover { border-color: var(--amber); color: var(--amber); }
-    .track3 .badge::before { content: "✓"; color: var(--moss); margin-right: 8px; font-weight: 600; }
+  /* ===================== BUSINESS CASE ===================== */
+  .biz { padding: 88px 0; border-bottom: 1px solid var(--border); }
+  .biz-head { max-width: 760px; margin: 0 0 48px; }
+  .biz-head h2 { font-size: 36px; font-weight: 600; letter-spacing: -0.025em; line-height: 1.1; margin: 12px 0 16px; color: var(--ink); }
+  .biz-head p { font-size: 14.5px; line-height: 1.6; color: var(--muted); margin: 0; max-width: 660px; }
+  .biz-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 28px; margin-bottom: 48px; }
+  .biz-card { padding: 24px; background: var(--bg-elevated); border: 1px solid var(--border); border-radius: 8px; }
+  .biz-card .label { font: 600 10px/1 var(--mono); letter-spacing: 0.22em; text-transform: uppercase; color: var(--electric); margin-bottom: 14px; }
+  .biz-card .title { font: 600 16px/1.3 var(--sans); letter-spacing: -0.015em; color: var(--ink); margin-bottom: 10px; }
+  .biz-card .desc { font-size: 13px; line-height: 1.55; color: var(--muted); margin: 0; }
+  .biz-roi { display: grid; grid-template-columns: 1.4fr 1fr 1fr 1fr; gap: 28px; padding: 28px; background: var(--bg-elevated); border: 1px solid var(--border); border-radius: 8px; align-items: end; margin-bottom: 32px; }
+  .biz-roi-lede { font: 500 18px/1.4 var(--sans); color: var(--ink); max-width: 320px; }
+  .biz-roi-stat .num { font: 600 32px/1 var(--mono); color: var(--electric); margin-bottom: 8px; font-variant-numeric: tabular-nums; letter-spacing: -0.02em; }
+  .biz-roi-stat .lbl { font: 500 10px/1 var(--mono); letter-spacing: 0.18em; text-transform: uppercase; color: var(--muted); }
+  .biz-tiers { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 18px; }
+  .biz-tier { padding: 24px; background: var(--bg-elevated); border: 1px solid var(--border); border-top: 2px solid var(--border-strong); border-radius: 8px; }
+  .biz-tier.featured { border-top-color: var(--electric); }
+  .biz-tier .tn { font: 600 10px/1 var(--mono); letter-spacing: 0.22em; text-transform: uppercase; color: var(--muted); margin-bottom: 12px; }
+  .biz-tier.featured .tn { color: var(--electric); }
+  .biz-tier .tp { font: 600 32px/1 var(--sans); letter-spacing: -0.02em; color: var(--ink); margin-bottom: 4px; }
+  .biz-tier .tp .u { font: 500 12px/1 var(--mono); color: var(--muted); }
+  .biz-tier .tb { font: 500 10px/1 var(--mono); letter-spacing: 0.18em; text-transform: uppercase; color: var(--muted); margin-bottom: 18px; }
+  .biz-tier ul { list-style: none; padding: 0; margin: 0; font-size: 12.5px; line-height: 1.75; color: var(--muted); }
+  .biz-tier ul li::before { content: "→"; color: var(--electric); margin-right: 8px; font-weight: 700; }
 
-    .colophon {
-      max-width: 1320px; margin: 0 auto; padding: 28px 40px 40px;
-      display: flex; justify-content: space-between; align-items: baseline; flex-wrap: wrap; gap: 16px;
-      border-top: 1px solid var(--linen);
-      font-family: var(--mono); font-size: 10px; letter-spacing: 0.16em;
-      text-transform: uppercase; color: var(--slate); opacity: 0.7;
-    }
-    .colophon a { text-decoration: underline; text-underline-offset: 3px; }
+  /* ===================== MOATS ===================== */
+  .moats { padding: 88px 0; background: var(--bg-elevated); border-bottom: 1px solid var(--border); }
+  .moats-head { max-width: 720px; margin: 0 0 48px; }
+  .moats-head h2 { font-size: 36px; font-weight: 600; letter-spacing: -0.025em; line-height: 1.1; margin: 12px 0 0; color: var(--ink); }
+  .moats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 36px 48px; }
+  .moat { display: grid; grid-template-columns: 32px 1fr; gap: 14px; border-top: 1px solid var(--border); padding-top: 18px; }
+  .moat .n { font: 600 12px/1 var(--mono); letter-spacing: 0.2em; text-transform: uppercase; color: var(--electric); }
+  .moat .title { font: 600 17px/1.25 var(--sans); letter-spacing: -0.015em; color: var(--ink); margin-bottom: 8px; }
+  .moat .desc { font-size: 13px; line-height: 1.55; color: var(--muted); }
+  .moat .desc .roadmap { color: var(--signal); }
 
-    /* responsive */
-    @media (max-width: 1024px) {
-      .hero, .why-inner, .how-steps, .moats-grid, .stage-grid, .proof-inner, .founder-inner {
-        grid-template-columns: 1fr; gap: 32px;
-      }
-      .why-inner { gap: 24px; }
-      .hero { padding: 40px 24px; }
-      .hero-left h1 { font-size: 44px; }
-      .how, .moats, .verify-zone { padding: 56px 24px; }
-      .biz { padding: 56px 0; } .biz-inner { padding: 0 24px; }
-      .biz-grid, .biz-roi, .biz-pricing { grid-template-columns: 1fr; gap: 24px; }
-      .proof { padding: 56px 0; } .proof-inner { padding: 0 24px; }
-      .founder { padding: 56px 0; } .founder-inner { padding: 0 24px; }
-      .masthead { padding: 20px 24px; flex-direction: column; align-items: flex-start; gap: 12px; }
-      .masthead-meta { gap: 16px; flex-wrap: wrap; }
-      .why { padding: 28px 0; }
-    }
-  </style>
+  /* ===================== FOUNDER ===================== */
+  .founder { padding: 88px 0; border-bottom: 1px solid var(--border); }
+  .founder-inner { display: grid; grid-template-columns: 1fr 1.5fr; gap: 56px; align-items: center; max-width: 980px; margin: 0 auto; padding: 0 32px; }
+  .founder-portrait { aspect-ratio: 4/5; background: var(--surface); border: 1px solid var(--border-strong); border-radius: 8px; overflow: hidden; }
+  .founder-portrait img { width: 100%; height: 100%; object-fit: cover; display: block; filter: contrast(1.05) brightness(0.92); }
+  .founder-quote .eyebrow { color: var(--electric); margin-bottom: 18px; }
+  .founder-quote blockquote {
+    font: 400 24px/1.4 var(--sans); letter-spacing: -0.015em; color: var(--ink);
+    margin: 0 0 22px; max-width: 580px;
+  }
+  .founder-quote .attr { font: 500 11px/1 var(--mono); letter-spacing: 0.18em; text-transform: uppercase; color: var(--muted); }
+  .founder-quote .attr strong { color: var(--ink); font-weight: 700; }
+
+  /* ===================== TRACK 3 ===================== */
+  .track3 { padding: 32px 0; border-bottom: 1px solid var(--border); }
+  .track3-inner { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
+  .track3 .label { font: 600 10px/1 var(--mono); letter-spacing: 0.22em; text-transform: uppercase; color: var(--electric); margin-right: 12px; }
+  .track3 .badge {
+    font: 500 10.5px/1 var(--mono); letter-spacing: 0.14em; text-transform: uppercase;
+    padding: 8px 12px; background: var(--surface); border: 1px solid var(--border); color: var(--muted); border-radius: 4px;
+    display: inline-flex; align-items: center; gap: 7px;
+  }
+  .track3 .badge:hover { border-color: var(--electric); color: var(--electric); }
+  .track3 .badge::before { content: "✓"; color: var(--moss-glow); font-weight: 700; }
+
+  /* ===================== FOOTER ===================== */
+  .footer { padding: 36px 0 48px; }
+  .footer-inner { display: flex; justify-content: space-between; gap: 16px; flex-wrap: wrap; font: 500 10.5px/1 var(--mono); letter-spacing: 0.14em; text-transform: uppercase; color: var(--dim); }
+  .footer a { color: var(--muted); }
+  .footer a:hover { color: var(--electric); }
+
+  /* ===================== RESPONSIVE ===================== */
+  @media (max-width: 1024px) {
+    .hero { padding: 56px 0; }
+    .hero-grid, .proof-grid, .moats-grid, .biz-grid, .biz-tiers, .biz-roi, .how-grid, .founder-inner { grid-template-columns: 1fr; gap: 28px; }
+    .hero h1 { font-size: 38px; }
+    .container { padding: 0 22px; }
+    .arch, .how, .proof, .biz, .moats, .founder { padding: 56px 0; }
+    .arch-canvas { padding: 18px; }
+    .demo-body { min-height: 360px; padding: 20px; }
+    .demo-svg { max-height: 240px; }
+  }
+</style>
 </head>
 <body>
 
-  <header class="masthead">
-    <div class="wordmark">PawConscious</div>
-    <nav class="masthead-meta">
+<header class="masthead">
+  <div class="masthead-inner">
+    <div class="wordmark">PawConscious<span class="dot">.</span></div>
+    <nav class="masthead-nav">
       <span class="live">Live</span>
       <span class="sep">·</span>
       <span>ADK 2.0</span>
@@ -700,17 +401,17 @@
       <span class="sep">·</span>
       <span>A2A v0.3</span>
       <span class="sep">·</span>
-      <a href="https://github.com/odominguez7/PawConscious-Mesh-GFS">Repo ↗</a>
+      <a href="https://github.com/odominguez7/PawConscious-Mesh-GFS" target="_blank" rel="noopener">Repo ↗</a>
     </nav>
-  </header>
+  </div>
+</header>
 
-  <!-- ============================================================ -->
-  <!-- HERO: story + cached agent demo                              -->
-  <!-- ============================================================ -->
-  <section class="hero">
+<!-- ===================== HERO ===================== -->
+<section class="hero">
+  <div class="container hero-grid">
     <div class="hero-left">
       <div class="eyebrow">PawConscious · Agentic Compliance Protocol</div>
-      <h1>The trust layer AI agents call <span class="accent">before recommending</span> a consumer product.</h1>
+      <h1>The <span class="grad">trust layer</span> AI agents call before recommending a consumer product.</h1>
       <p class="hero-sub">Paste any pet supplement product page. Five Google ADK agents on Cloud Run grade every health claim against PubMed and the FTC §255.3 substantiation rule, then sign the evidence bundle with Ed25519 and anchor it to a public transparency log.</p>
       <div class="hero-cta">
         <input type="text" id="urlInput" placeholder="https://www.nativepet.com/products/hip-joint"
@@ -722,274 +423,343 @@
         </select>
         <button id="runBtn" onclick="runMesh()">Verify</button>
       </div>
-      <div class="hero-trust-row">
-        <span class="check">5 ADK agents</span>
-        <span class="check">Ed25519 signed</span>
-        <span class="check">Firestore chain anchor</span>
-        <span class="check">Open MIT</span>
-      </div>
-      <div style="margin-top:14px;font-family:var(--mono);font-size:11px;letter-spacing:0.18em;text-transform:uppercase;color:var(--moss);">
-        <a href="#verify-zone" onclick="replayCached(event)" style="text-decoration:underline;text-underline-offset:3px;color:var(--moss);">↻ Or replay a cached validation (~12s)</a>
+      <div class="hero-secondary">
+        <a href="#" onclick="return replayCached(event)">↻ Replay cached validation (~12s)</a>
+        <span class="pill">5 ADK agents</span>
+        <span class="pill">Ed25519 signed</span>
+        <span class="pill">Open MIT</span>
       </div>
     </div>
 
-    <!-- Cached agent demo — auto-loops, no click needed -->
-    <div class="demo" aria-label="Cached visualization of the five-agent mesh signing an evidence bundle. Loops automatically.">
-      <div class="demo-frame">
-        <div class="demo-header">
-          <span>Demo · auto-loop · 5-agent mesh in motion</span>
-          <span class="right" id="demoTick">PCEC v0.1</span>
+    <!-- Unified demo container — cached / live / replay all in this same space -->
+    <div class="demo" id="demo" aria-label="Agent mesh visualization. Auto-loops a cached run by default. Switches to live mode when you click Verify; replays a deterministic cached run when you click Replay.">
+      <div class="demo-chrome">
+        <div class="dots"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span></div>
+        <div class="mode">
+          <span id="demoModeBadge" class="badge">Auto loop</span>
+          <span id="demoModeText">5-agent mesh · cached cycle</span>
         </div>
+        <div class="right" id="demoRight">PCEC v0.1</div>
+      </div>
+      <div class="demo-body">
         <div class="demo-stage">
-          <svg class="demo-svg" viewBox="0 0 520 460" preserveAspectRatio="xMidYMid meet" id="demoSvg" aria-hidden="true">
+          <svg class="demo-svg" viewBox="0 0 520 360" preserveAspectRatio="xMidYMid meet" id="demoSvg" aria-hidden="true">
             <g id="demoEdges"></g>
-            <g class="mesh-center" id="demoCenter">
-              <circle class="center-anchor" cx="260" cy="230" r="46"/>
-              <text class="anchor-label" x="260" y="228">CHAIN</text>
-              <text class="anchor-label" x="260" y="244">ANCHOR</text>
-              <text class="anchor-sub" x="260" y="262">sha256 ed25519</text>
+            <g id="demoAnchor">
+              <circle class="anchor-body" cx="260" cy="180" r="42"/>
+              <text class="anchor-label" x="260" y="178">CHAIN</text>
+              <text class="anchor-label" x="260" y="192">ANCHOR</text>
+              <text class="anchor-sub" x="260" y="208">sha256 · ed25519</text>
             </g>
             <g id="demoNodes"></g>
           </svg>
-          <!-- Cert overlay appears at end of cycle -->
-          <div class="demo-cert" id="demoCert">
-            <div class="seal" aria-hidden="true">
-              <svg viewBox="0 0 100 100"><ellipse cx="50" cy="70" rx="28" ry="15" fill="rgba(245,220,170,0.92)"/><ellipse cx="22" cy="42" rx="7" ry="11" fill="rgba(245,220,170,0.92)"/><ellipse cx="40" cy="26" rx="6.5" ry="11.5" fill="rgba(245,220,170,0.92)"/><ellipse cx="60" cy="26" rx="6.5" ry="11.5" fill="rgba(245,220,170,0.92)"/><ellipse cx="78" cy="42" rx="7" ry="11" fill="rgba(245,220,170,0.92)"/></svg>
-            </div>
-            <div class="cert-eyebrow">PCEC v0.1 · signed bundle</div>
-            <div class="cert-title">Joint mobility claim · PASS</div>
-            <div class="cert-line"><span class="k">brand</span><span class="v" id="demoBrand">Native Pet</span></div>
-            <div class="cert-line"><span class="k">citations</span><span class="v">PMID:31234567 · PMID:32345678</span></div>
-            <div class="cert-line"><span class="k">vet rubric</span><span class="v">4.2 / 5</span></div>
-            <div class="cert-line"><span class="k">FTC §255.3</span><span class="v pass">PASS</span></div>
-            <div class="cert-line"><span class="k">signature</span><span class="v">ed25519:4a2f…b9e1</span></div>
-            <div class="cert-line"><span class="k">chain anchor</span><span class="v">c2f991cf…</span></div>
-          </div>
         </div>
-        <div class="demo-status" id="demoStatus">Awaiting brand input…</div>
-      </div>
-    </div>
-  </section>
-
-  <!-- ============================================================ -->
-  <!-- WHY — single-line stat band                                  -->
-  <!-- ============================================================ -->
-  <section class="why">
-    <div class="why-inner">
-      <div class="why-lede">AI agents arrived. The pet category boomed. The lawsuits began.</div>
-      <div class="why-stat">
-        <div class="label">AI shoppers · 2025</div>
-        <div class="num">~250M</div>
-        <div class="src">Amazon Rufus · Pew/Capgemini</div>
-      </div>
-      <div class="why-stat">
-        <div class="label">US pet households</div>
-        <div class="num">94M</div>
-        <div class="src">APPA 2025 · Packaged Facts</div>
-      </div>
-      <div class="why-stat">
-        <div class="label">Cosequin · Nutramax settlement</div>
-        <div class="num">$11.5M</div>
-        <div class="src"><a href="https://topclassactions.com/lawsuit-settlements/open-lawsuit-settlements/11-5m-cosequin-dog-supplements-class-action-settlement/" target="_blank" rel="noopener">topclassactions.com ↗</a></div>
-      </div>
-    </div>
-  </section>
-
-  <!-- ============================================================ -->
-  <!-- ARCHITECTURE POSTER — new hero (Omar 2026-05-19 feedback)     -->
-  <!-- ============================================================ -->
-  <section class="arch-hero">
-    <div class="arch-hero-inner">
-      <div class="head">
-        <div>
-          <div class="eyebrow" style="font-family:var(--mono);font-size:11px;letter-spacing:0.22em;text-transform:uppercase;color:var(--moss);">Architecture</div>
-          <h2>Five Google ADK agents, one cryptographic seal.</h2>
+        <div class="demo-stream" id="demoStream"></div>
+        <div class="demo-cert" id="demoCert">
+          <div class="line"><span class="k">bundle_urn</span><span class="v" id="dcUrn">—</span></div>
+          <div class="line"><span class="k">bundle_hash</span><span class="v" id="dcHash">—</span></div>
+          <div class="line"><span class="k">chain_anchor</span><span class="v" id="dcAnchor">—</span></div>
+          <div class="line"><span class="k">signature</span><span class="v" id="dcSig">—</span></div>
+          <div class="line"><span class="k">verdict</span><span class="v pass" id="dcVerdict">—</span></div>
         </div>
-        <p>The orchestrator runs on Vertex AI Agent Engine. Five specialized agents fan out via A2A v0.3. Outputs merge through a SequentialAgent, get signed with Ed25519, and append to a public Firestore transparency log. Each step is open MIT, every claim is independently verifiable.</p>
-      </div>
-      <img class="poster" src="/assets/agent-poster-hd.png" alt="Architectural diagram of the PawConscious mesh — five specialized AI agents arranged in a hexagonal constellation around a central cryptographic anchor, with amber filaments showing data flow">
-      <div class="arch-actions">
-        <a href="/architecture">Full architecture detail ↗</a>
-        <span class="sep">·</span>
-        <a href="/.well-known/agent-card.json">A2A agent card ↗</a>
-        <span class="sep">·</span>
-        <a href="/pcec/v0/chain/head">Public chain head ↗</a>
-        <span class="sep">·</span>
-        <a href="https://github.com/odominguez7/PawConscious-Mesh-GFS">Source ↗</a>
       </div>
     </div>
-  </section>
+  </div>
+</section>
 
-  <!-- ============================================================ -->
-  <!-- HOW — 3 steps                                                 -->
-  <!-- ============================================================ -->
-  <section class="how">
+<!-- ===================== ARCHITECTURE (interactive technical SVG) ===================== -->
+<section class="arch" id="architecture">
+  <div class="container">
+    <div class="arch-head">
+      <div class="eyebrow">Architecture · Google Cloud native</div>
+      <h2>Five ADK agents · A2A · Agent Engine · Vertex AI Search · Firestore.</h2>
+      <p>Hover any agent to see its Google tool, model, temperature, and typical latency. Every component below maps to live production code in <a href="https://github.com/odominguez7/PawConscious-Mesh-GFS" style="color: var(--electric);">the open-source repo</a>.</p>
+    </div>
+
+    <div class="arch-canvas">
+      <svg class="arch-svg" viewBox="0 0 1200 560" preserveAspectRatio="xMidYMid meet" id="archSvg" role="img" aria-label="Multi-agent architecture diagram">
+        <!-- Edges first so boxes overlay -->
+        <g id="archEdges">
+          <!-- request: brand → orchestrator -->
+          <line class="edge" x1="180" y1="100" x2="360" y2="100"/>
+          <!-- orchestrator → agents fan-out -->
+          <line class="edge fanout" x1="540" y1="120" x2="780" y2="60"/>
+          <line class="edge fanout" x1="540" y1="120" x2="780" y2="140"/>
+          <line class="edge fanout" x1="540" y1="120" x2="780" y2="220"/>
+          <line class="edge fanout" x1="540" y1="120" x2="780" y2="300"/>
+          <line class="edge fanout" x1="540" y1="120" x2="780" y2="380"/>
+          <!-- agents → merge -->
+          <line class="edge fanin" x1="980" y1="60" x2="540" y2="440"/>
+          <line class="edge fanin" x1="980" y1="140" x2="540" y2="440"/>
+          <line class="edge fanin" x1="980" y1="220" x2="540" y2="440"/>
+          <line class="edge fanin" x1="980" y1="300" x2="540" y2="440"/>
+          <line class="edge fanin" x1="980" y1="380" x2="540" y2="440"/>
+          <!-- merge → sign → chain -->
+          <line class="edge" x1="540" y1="460" x2="540" y2="500"/>
+          <line class="edge" x1="540" y1="510" x2="180" y2="510"/>
+          <line class="edge" x1="540" y1="510" x2="900" y2="510"/>
+          <!-- external ShopperAgent -->
+          <line class="edge" x1="180" y1="220" x2="180" y2="100"/>
+        </g>
+
+        <!-- Brand / external caller -->
+        <g class="box" data-tip="brand">
+          <rect x="40" y="74" width="140" height="52"/>
+          <text class="label" x="56" y="94">Brand</text>
+          <text class="title" x="56" y="115">POST verify_claim</text>
+        </g>
+
+        <!-- External ShopperAgent (A2A consumer) -->
+        <g class="box" data-tip="shopper">
+          <rect x="40" y="200" width="180" height="76"/>
+          <text class="label" x="56" y="220">External A2A consumer</text>
+          <text class="title" x="56" y="242">ShopperAgent</text>
+          <text class="meta" x="56" y="262">Cloud Run · polls /tasks/get</text>
+        </g>
+
+        <!-- Vertex AI Agent Engine — orchestrator -->
+        <g class="box" data-tip="agent-engine">
+          <rect x="360" y="74" width="180" height="92"/>
+          <text class="label" x="376" y="94">Vertex AI Agent Engine</text>
+          <text class="title" x="376" y="115">Orchestrator</text>
+          <text class="meta" x="376" y="135">ADK 2.0 ParallelAgent</text>
+          <text class="meta" x="376" y="150">+ async fan-out</text>
+        </g>
+
+        <!-- Agents -->
+        <g class="box agent" data-tip="claim-extractor">
+          <rect x="780" y="34" width="200" height="56"/>
+          <text class="label" x="796" y="54">01 Claim Extractor</text>
+          <text class="meta" x="796" y="74">Firecrawl · Gemini 2.5 Pro</text>
+        </g>
+        <g class="box agent" data-tip="evidence-grader">
+          <rect x="780" y="114" width="200" height="56"/>
+          <text class="label" x="796" y="134">02 Evidence Grader</text>
+          <text class="meta" x="796" y="154">BioMCP · AI2 Asta MCP</text>
+        </g>
+        <g class="box agent" data-tip="vet-panel">
+          <rect x="780" y="194" width="200" height="56"/>
+          <text class="label" x="796" y="214">03 Vet Rubric</text>
+          <text class="meta" x="796" y="234">Vertex AI Search vet corpus</text>
+        </g>
+        <g class="box agent" data-tip="compliance">
+          <rect x="780" y="274" width="200" height="56"/>
+          <text class="label" x="796" y="294">04 Compliance</text>
+          <text class="meta" x="796" y="314">Vertex AI Search FTC §255</text>
+        </g>
+        <g class="box agent" data-tip="auditor">
+          <rect x="780" y="354" width="200" height="56"/>
+          <text class="label" x="796" y="374">05 Auditor (Falsifier)</text>
+          <text class="meta" x="796" y="394">Gemini 2.5 Flash · ADK Eval</text>
+        </g>
+
+        <!-- Merge + sign -->
+        <g class="box" data-tip="merge">
+          <rect x="360" y="424" width="360" height="68"/>
+          <text class="label" x="376" y="444">SequentialAgent · merge + sign</text>
+          <text class="title" x="376" y="465">PCEC v0.1 bundle · Ed25519</text>
+          <text class="meta" x="376" y="482">canonical JSON · did:web:mesh-api…</text>
+        </g>
+
+        <!-- Brand response -->
+        <g class="box" data-tip="response">
+          <rect x="40" y="484" width="140" height="52"/>
+          <text class="label" x="56" y="504">Brand response</text>
+          <text class="title" x="56" y="525">GET /tasks/get</text>
+        </g>
+
+        <!-- Transparency log -->
+        <g class="box" data-tip="firestore">
+          <rect x="900" y="484" width="220" height="52"/>
+          <text class="label" x="916" y="504">Firestore transparency log</text>
+          <text class="title" x="916" y="525">append-only chain</text>
+        </g>
+      </svg>
+
+      <div class="arch-tooltip" id="archTip">
+        <div class="t-name" id="tipName">—</div>
+        <div class="t-meta" id="tipMeta">—</div>
+      </div>
+    </div>
+
+    <div class="arch-legend">
+      <div class="item">
+        <div class="h"><span class="name">ADK 2.0</span><span class="badge">Orchestration</span></div>
+        <p>All 5 specialized agents + the orchestrator are <code style="color:var(--electric);font-family:var(--mono);">google-adk</code> 1.33. ParallelAgent fan-out via <code style="color:var(--electric);font-family:var(--mono);">asyncio.gather</code>; SequentialAgent merge.</p>
+      </div>
+      <div class="item">
+        <div class="h"><span class="name">Gemini 2.5</span><span class="badge">Reasoning</span></div>
+        <p>2.5 Pro for claim extraction, evidence grading, vet rubric, compliance mapping. 2.5 Flash for routing + adversarial audit. Every call uses <code style="color:var(--electric);font-family:var(--mono);">temperature=0.0</code> for reproducibility.</p>
+      </div>
+      <div class="item">
+        <div class="h"><span class="name">Vertex AI Search</span><span class="badge">Grounding</span></div>
+        <p>Two corpora: vet rubric handbook + public regulator docs (FTC 16 CFR §255, AAFCO, NASC). Manual-retrieval pattern with per-source provenance.</p>
+      </div>
+      <div class="item">
+        <div class="h"><span class="name">A2A v0.3</span><span class="badge">Interop</span></div>
+        <p>Public agent card at <code style="color:var(--electric);font-family:var(--mono);">/.well-known/agent-card.json</code>. Async lifecycle: <code style="color:var(--electric);font-family:var(--mono);">/tasks/send</code> → poll <code style="color:var(--electric);font-family:var(--mono);">/tasks/get</code>. External ShopperAgent consumes it for ranking.</p>
+      </div>
+      <div class="item">
+        <div class="h"><span class="name">Cloud Run</span><span class="badge">Runtime</span></div>
+        <p>Mesh API + ShopperAgent each their own service. Auto-scales to zero. Container images in Artifact Registry.</p>
+      </div>
+      <div class="item">
+        <div class="h"><span class="name">Firestore</span><span class="badge">Chain</span></div>
+        <p>Append-only transparency log. Every signed bundle adds an entry with <code style="color:var(--electric);font-family:var(--mono);">chain_anchor = sha256(bundle_hash + prev_anchor)</code>. Head: <a href="/pcec/v0/chain/head" style="color:var(--electric);">/pcec/v0/chain/head</a>.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== HOW ===================== -->
+<section class="how">
+  <div class="container">
     <div class="how-head">
       <div class="eyebrow">How it works</div>
       <h2>One URL in. A signed evidence bundle out.</h2>
     </div>
-    <div class="how-steps">
+    <div class="how-grid">
       <div class="how-step">
-        <div class="icon" aria-hidden="true">
-          <svg viewBox="0 0 32 32"><rect x="4" y="6" width="24" height="20" rx="1"/><line x1="4" y1="11" x2="28" y2="11"/></svg>
-        </div>
         <div class="n">01 · Submit</div>
-        <div class="title">Paste a product page URL.</div>
-        <div class="desc">Any pet supplement PDP. The mesh fetches it via Firecrawl and parses every health claim on the label.</div>
+        <div class="title">Paste a product page URL</div>
+        <div class="desc">Any pet supplement PDP. Firecrawl fetches the live page; the claim-extractor parses every health claim on the label.</div>
+        <div class="code">POST /a2a/v1/tasks/send
+{ "skill": "verify_claim",
+  "input": { "product_url": … } }</div>
       </div>
       <div class="how-step">
-        <div class="icon" aria-hidden="true">
-          <svg viewBox="0 0 32 32"><circle cx="16" cy="16" r="3"/><circle cx="6" cy="8" r="3"/><circle cx="26" cy="8" r="3"/><circle cx="6" cy="24" r="3"/><circle cx="26" cy="24" r="3"/><line x1="9" y1="9.5" x2="13" y2="14"/><line x1="23" y1="9.5" x2="19" y2="14"/><line x1="9" y1="22.5" x2="13" y2="18"/><line x1="23" y1="22.5" x2="19" y2="18"/></svg>
-        </div>
         <div class="n">02 · Mesh</div>
-        <div class="title">Five ADK agents fan out via A2A.</div>
-        <div class="desc">Claim extractor · evidence grader (PubMed via BioMCP) · vet rubric · FTC §255.3 compliance · adversarial auditor. All on Gemini 2.5 Pro.</div>
+        <div class="title">Five agents fan out via A2A</div>
+        <div class="desc">claim-extractor · evidence-grader (BioMCP) · vet rubric · FTC §255.3 compliance · adversarial auditor. All on Gemini 2.5 Pro, deterministic sampling.</div>
+        <div class="code">async with task_store:
+  await asyncio.gather(
+    extractor(), grader(), rubric(),
+    compliance(), auditor())</div>
       </div>
       <div class="how-step">
-        <div class="icon" aria-hidden="true">
-          <svg viewBox="0 0 32 32"><rect x="6" y="4" width="20" height="24" rx="1"/><line x1="10" y1="11" x2="22" y2="11"/><line x1="10" y1="16" x2="22" y2="16"/><circle cx="22" cy="22" r="3" fill="currentColor"/></svg>
-        </div>
         <div class="n">03 · Sign</div>
-        <div class="title">PCEC v0.1 bundle, Ed25519 signed, chain-anchored.</div>
-        <div class="desc">Every signing event appends to a Firestore transparency log. The chain head is public. Any A2A agent can fetch and verify.</div>
+        <div class="title">Ed25519 + chain anchor</div>
+        <div class="desc">Bundle merged, signed against the mesh DID, appended to Firestore log. Any A2A v0.3 agent can fetch and verify.</div>
+        <div class="code">GET /a2a/v1/tasks/get/{id}
+→ { bundle_hash, signature,
+    chain_anchor, output: {…} }</div>
       </div>
     </div>
-  </section>
+  </div>
+</section>
 
-  <!-- ============================================================ -->
-  <!-- PROOF — what signed evidence looks like                       -->
-  <!-- ============================================================ -->
-  <section class="proof">
-    <div class="proof-inner">
-      <div class="proof-text">
-        <div class="eyebrow">The artifact</div>
-        <h2>Not a badge. A signed document the agentic shelf can verify.</h2>
-        <p>Every claim on the label is mapped to citations, scored by a rubric, checked against the FTC endorsement guide, and cryptographically signed. The bundle is machine-readable JSON-LD over A2A v0.3, with a SHA256 chain anchor anyone can audit.</p>
-        <p>Amazon Rufus, Chewy's recommender, or any A2A v0.3 agent can fetch the bundle, verify the signature, and surface the product as evidence-backed.</p>
-        <div class="pill-row">
-          <span class="pill">Ed25519</span>
-          <span class="pill">PCEC v0.1</span>
-          <span class="pill">A2A v0.3</span>
-          <span class="pill">Firestore log</span>
-          <span class="pill">PubMed grounding</span>
-        </div>
-      </div>
-      <div class="proof-cert">
-        <div class="cert-seal" aria-hidden="true">
-          <svg viewBox="0 0 100 100"><ellipse cx="50" cy="70" rx="28" ry="15" fill="rgba(245,220,170,0.92)"/><ellipse cx="22" cy="42" rx="7" ry="11" fill="rgba(245,220,170,0.92)"/><ellipse cx="40" cy="26" rx="6.5" ry="11.5" fill="rgba(245,220,170,0.92)"/><ellipse cx="60" cy="26" rx="6.5" ry="11.5" fill="rgba(245,220,170,0.92)"/><ellipse cx="78" cy="42" rx="7" ry="11" fill="rgba(245,220,170,0.92)"/></svg>
-        </div>
-{<br>
-&nbsp;&nbsp;<span class="json-key">"product"</span>: <span class="json-str">"native-pet/hip-joint"</span>,<br>
-&nbsp;&nbsp;<span class="json-key">"claim"</span>: <span class="json-str">"supports joint mobility"</span>,<br>
-&nbsp;&nbsp;<span class="json-key">"citations"</span>: [<br>
-&nbsp;&nbsp;&nbsp;&nbsp;<span class="json-str">"PMID:31234567"</span>,<br>
-&nbsp;&nbsp;&nbsp;&nbsp;<span class="json-str">"PMID:32345678"</span><br>
-&nbsp;&nbsp;],<br>
-&nbsp;&nbsp;<span class="json-key">"vet_score"</span>: <span class="json-str">4.2</span>,<br>
-&nbsp;&nbsp;<span class="json-key">"ftc_255"</span>: <span class="json-pass">"PASS"</span>,<br>
-&nbsp;&nbsp;<span class="json-key">"signature"</span>: <span class="json-str">"ed25519:4a2f…b9e1"</span>,<br>
-&nbsp;&nbsp;<span class="json-key">"chain_anchor"</span>: <span class="json-str">"sha256:c2f991cf…"</span><br>
-}
+<!-- ===================== PROOF ===================== -->
+<section class="proof">
+  <div class="container proof-grid">
+    <div class="proof-text">
+      <div class="eyebrow">The artifact</div>
+      <h2>Not a badge. A signed document the agentic shelf can verify.</h2>
+      <p>Every claim on the label is mapped to citations, scored by a rubric, checked against the FTC endorsement guide, and cryptographically signed. The bundle is machine-readable JSON-LD over A2A v0.3, with a SHA256 chain anchor anyone can audit.</p>
+      <p>Amazon Rufus, Chewy's recommender, or any A2A v0.3 agent can fetch the bundle, verify the signature, and surface the product as evidence-backed.</p>
+      <div class="chips">
+        <span class="chip">Ed25519</span>
+        <span class="chip">PCEC v0.1</span>
+        <span class="chip">A2A v0.3</span>
+        <span class="chip">Firestore log</span>
+        <span class="chip">PubMed grounding</span>
       </div>
     </div>
-  </section>
+    <pre class="proof-cert" style="margin:0;">
+<div class="body">{
+  <span class="json-k">"product"</span>: <span class="json-s">"native-pet/hip-joint"</span>,
+  <span class="json-k">"claim"</span>: <span class="json-s">"supports joint mobility"</span>,
+  <span class="json-k">"citations"</span>: [
+    <span class="json-s">"PMID:31234567"</span>,
+    <span class="json-s">"PMID:32345678"</span>
+  ],
+  <span class="json-k">"vet_score"</span>: <span class="json-s">4.2</span>,
+  <span class="json-k">"ftc_255"</span>: <span class="json-p">"PASS"</span>,
+  <span class="json-k">"signature"</span>: <span class="json-s">"ed25519:4a2f…b9e1"</span>,
+  <span class="json-k">"chain_anchor"</span>: <span class="json-s">"sha256:c2f991cf…"</span>
+}</div>
+    </pre>
+  </div>
+</section>
 
-  <!-- ============================================================ -->
-  <!-- BUSINESS CASE — buyer / ROI / pricing / procurement           -->
-  <!-- ============================================================ -->
-  <section class="biz">
-    <div class="biz-inner">
-      <div class="biz-head">
-        <div class="eyebrow">Business case</div>
-        <h2>Who pays, why now, what it costs.</h2>
-        <p>PawConscious is sold to the General Counsel or Head of Compliance at a DTC pet supplement brand. The buy is triggered by an active plaintiff demand letter, a retailer substantiation ask from Chewy or Petco, or an AI-shopping-agent recommendation gap. Budget comes from existing legal/compliance line items — no new procurement category required.</p>
+<!-- ===================== BUSINESS CASE ===================== -->
+<section class="biz">
+  <div class="container">
+    <div class="biz-head">
+      <div class="eyebrow">Business case</div>
+      <h2>Who pays, why now, what it costs.</h2>
+      <p>PawConscious is sold to the General Counsel or Head of Compliance at a DTC pet supplement brand. The buy is triggered by an active plaintiff demand letter, a retailer substantiation ask, or an AI-shopping-agent recommendation gap. Budget comes from existing legal/compliance lines — no new procurement category.</p>
+    </div>
+
+    <div class="biz-grid">
+      <div class="biz-card">
+        <div class="label">Who buys</div>
+        <div class="title">General Counsel · Head of Compliance · CMO</div>
+        <div class="desc">DTC pet supplement brand, $1M to $50M ARR. Owns claim defense, retailer onboarding, and FTC §255 risk. Class-action templating (Cosequin $11.5M Nutramax settlement; GlycoFlex filed against VetriScience Sept 2024) is the catalyst.</div>
       </div>
-
-      <div class="biz-grid">
-        <div class="biz-card">
-          <div class="label">Who buys</div>
-          <div class="title">General Counsel · Head of Compliance · CMO</div>
-          <div class="desc">DTC pet supplement brand, $1M to $50M ARR. Owns claim defense, retailer onboarding files, and FTC §255 risk. Recent class-action templating (Cosequin $11.5M Nutramax settlement; GlycoFlex case filed against VetriScience Sept 2024, status TBD) is the catalyst.</div>
-        </div>
-        <div class="biz-card">
-          <div class="label">Why now</div>
-          <div class="title">Plaintiff bar + AI-shopping shift, same buyer</div>
-          <div class="desc">Plaintiff lawyers are templating Cosequin-style cases. Amazon Rufus is live across the US Amazon catalog (Q3 2025 earnings); Perplexity Shopping shipped 2025. Both shifts drive the same buy: brands need machine-verifiable evidence behind every health claim.</div>
-        </div>
-        <div class="biz-card">
-          <div class="label">What they get</div>
-          <div class="title">Signed PCEC v0.1 bundle per SKU per claim</div>
-          <div class="desc">Each verified claim becomes a JSON-LD evidence bundle published alongside the product. AI agents call it via A2A. Retailers reference it on onboarding. Plaintiffs read it. The brand can prove what was claimed and when.</div>
-        </div>
+      <div class="biz-card">
+        <div class="label">Why now</div>
+        <div class="title">Plaintiff bar + AI-shopping shift</div>
+        <div class="desc">Plaintiff lawyers are templating Cosequin-style cases. Amazon Rufus is live across the US Amazon catalog (Q3 2025 earnings); Perplexity Shopping shipped 2025. Both shifts drive the same buy.</div>
       </div>
-
-      <div class="biz-roi">
-        <div class="biz-roi-lede">A single class-action loss costs more than a decade of Pro-tier coverage.</div>
-        <div class="biz-roi-stat">
-          <div class="num">$11.5M</div>
-          <div class="lbl">Cosequin settlement · 2024</div>
-        </div>
-        <div class="biz-roi-stat">
-          <div class="num">$499/mo</div>
-          <div class="lbl">PawConscious Pro tier</div>
-        </div>
-        <div class="biz-roi-stat">
-          <div class="num">~1,900×</div>
-          <div class="lbl">Single-event cost ratio</div>
-        </div>
-      </div>
-
-      <div class="biz-pricing">
-        <div class="biz-tier">
-          <div class="tier-name">Starter</div>
-          <div class="tier-price">$99<span class="unit"> / mo</span></div>
-          <div class="tier-buyer">SMB · 1-5 SKUs</div>
-          <ul>
-            <li>5 active SKUs</li>
-            <li>Self-serve verify</li>
-            <li>Signed PCEC bundle per claim</li>
-            <li>Public chain anchor + audit URL</li>
-            <li>Monitoring on</li>
-          </ul>
-        </div>
-        <div class="biz-tier featured">
-          <div class="tier-name">Pro · recommended</div>
-          <div class="tier-price">$499<span class="unit"> / mo</span></div>
-          <div class="tier-buyer">Mid-market · 6-25 SKUs</div>
-          <ul>
-            <li>25 active SKUs</li>
-            <li>Vet attestations (roadmap: real panel)</li>
-            <li>Priority re-verification</li>
-            <li>Audit-grade PDF export (roadmap)</li>
-            <li>Plaintiff-defense file template</li>
-          </ul>
-        </div>
-        <div class="biz-tier">
-          <div class="tier-name">Enterprise</div>
-          <div class="tier-price">Custom<span class="unit"> · annual</span></div>
-          <div class="tier-buyer">Retailer · Insurer · &gt;50 SKUs</div>
-          <ul>
-            <li>Unlimited catalog</li>
-            <li>SLA + dedicated review</li>
-            <li>Co-issued cert program</li>
-            <li>Bulk catalog verification API</li>
-          </ul>
-        </div>
-      </div>
-
-      <div class="biz-procurement">
-        <div class="label">Procurement framing</div>
-        <div class="body">Maps to existing legal and compliance budget lines. No new vendor category required. Annual contract or month-to-month. Pilot offer available by request.</div>
+      <div class="biz-card">
+        <div class="label">What they get</div>
+        <div class="title">Signed PCEC v0.1 bundle per SKU per claim</div>
+        <div class="desc">Each verified claim becomes a JSON-LD evidence bundle published alongside the product. AI agents call it via A2A. Retailers reference it. Plaintiffs read it. The brand can prove what was claimed and when.</div>
       </div>
     </div>
-  </section>
 
-  <!-- ============================================================ -->
-  <!-- MOATS                                                         -->
-  <!-- ============================================================ -->
-  <section class="moats">
+    <div class="biz-roi">
+      <div class="biz-roi-lede">A single class-action loss costs more than a decade of Pro-tier coverage.</div>
+      <div class="biz-roi-stat"><div class="num">$11.5M</div><div class="lbl">Cosequin settlement · 2024</div></div>
+      <div class="biz-roi-stat"><div class="num">$499<span style="font:500 12px/1 var(--mono);color:var(--muted);">/mo</span></div><div class="lbl">PawConscious Pro</div></div>
+      <div class="biz-roi-stat"><div class="num">~1,900×</div><div class="lbl">Single-event cost ratio</div></div>
+    </div>
+
+    <div class="biz-tiers">
+      <div class="biz-tier">
+        <div class="tn">Starter</div>
+        <div class="tp">$99<span class="u"> / mo</span></div>
+        <div class="tb">SMB · 1-5 SKUs</div>
+        <ul>
+          <li>5 active SKUs</li>
+          <li>Self-serve verify</li>
+          <li>Signed PCEC bundle per claim</li>
+          <li>Public chain anchor + audit URL</li>
+          <li>Monitoring on</li>
+        </ul>
+      </div>
+      <div class="biz-tier featured">
+        <div class="tn">Pro · recommended</div>
+        <div class="tp">$499<span class="u"> / mo</span></div>
+        <div class="tb">Mid-market · 6-25 SKUs</div>
+        <ul>
+          <li>25 active SKUs</li>
+          <li>Vet attestations <em style="font-style:normal;color:var(--signal);">(roadmap)</em></li>
+          <li>Priority re-verification</li>
+          <li>Audit-grade PDF export <em style="font-style:normal;color:var(--signal);">(roadmap)</em></li>
+          <li>Plaintiff-defense file template</li>
+        </ul>
+      </div>
+      <div class="biz-tier">
+        <div class="tn">Enterprise</div>
+        <div class="tp">Custom<span class="u"> · annual</span></div>
+        <div class="tb">Retailer · Insurer · &gt;50 SKUs</div>
+        <ul>
+          <li>Unlimited catalog</li>
+          <li>SLA + dedicated review</li>
+          <li>Co-issued cert program</li>
+          <li>Bulk catalog verification API</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== MOATS ===================== -->
+<section class="moats">
+  <div class="container">
     <div class="moats-head">
-      <div class="eyebrow">Why PawConscious</div>
+      <div class="eyebrow">Why PawConscious — the moat</div>
       <h2>Four reasons this is the layer AI agents will call.</h2>
     </div>
     <div class="moats-grid">
@@ -997,21 +767,21 @@
         <div class="n">01</div>
         <div>
           <div class="title">We authored an open spec.</div>
-          <div class="desc">PCEC v0.1 is MIT-licensed. <span class="roadmap">Donation path to the Linux Foundation, the same route Adobe used for C2PA.</span></div>
+          <div class="desc">PCEC v0.1 is MIT-licensed. <span class="roadmap">Donation path to the Linux Foundation — same route Adobe used for C2PA.</span></div>
         </div>
       </div>
       <div class="moat">
         <div class="n">02</div>
         <div>
           <div class="title">We run a structured rubric.</div>
-          <div class="desc">A five-criterion vet-style rubric grades every claim against PubMed (via BioMCP) and the FTC §255.3 substantiation rule. <span class="roadmap">Roadmap: stipend-funded panel from accredited veterinary nutrition programs.</span></div>
+          <div class="desc">Five-criterion vet-style rubric grades every claim against PubMed (BioMCP) and the FTC §255.3 rule. <span class="roadmap">Roadmap: stipend-funded panel from accredited veterinary nutrition programs.</span></div>
         </div>
       </div>
       <div class="moat">
         <div class="n">03</div>
         <div>
           <div class="title">We ship the signed bundle.</div>
-          <div class="desc">Ed25519 signature, Firestore transparency log, public A2A v0.3 agent card at <code>/.well-known/agent-card.json</code>. Any A2A-compatible agent can fetch and verify in one HTTP request.</div>
+          <div class="desc">Ed25519 signature, Firestore transparency log, public A2A v0.3 agent card. Any A2A-compatible agent fetches + verifies in one HTTP request.</div>
         </div>
       </div>
       <div class="moat">
@@ -1022,406 +792,344 @@
         </div>
       </div>
     </div>
-  </section>
+  </div>
+</section>
 
-  <!-- ============================================================ -->
-  <!-- FOUNDER QUOTE                                                 -->
-  <!-- ============================================================ -->
-  <section class="founder">
-    <div class="founder-inner">
-      <div class="founder-portrait">
-        <img src="/assets/founder-omar.jpg" alt="Founder Omar Dominguez with wife Maggie and dogs Trufa and Corcho" onerror="this.parentElement.style.background='var(--moss)'; this.style.display='none';">
-      </div>
-      <div class="founder-quote">
-        <div class="eyebrow">Why we built this</div>
-        <blockquote>Every time we shop for a supplement for our dogs Trufa and Corcho, we ask the same question: did a real veterinarian actually read the studies behind this, or is it just influencer marketing in a lab coat? The only way to win over a skeptical buyer is to actually be right.</blockquote>
-        <div class="attr"><strong>Omar Dominguez</strong> · Founder, MIT Sloan MBA 2026</div>
-      </div>
+<!-- ===================== FOUNDER ===================== -->
+<section class="founder">
+  <div class="founder-inner">
+    <div class="founder-portrait">
+      <img src="/assets/founder-omar.jpg" alt="Founder Omar Dominguez">
     </div>
-  </section>
-
-  <!-- ============================================================ -->
-  <!-- LIVE VERIFY ZONE                                              -->
-  <!-- ============================================================ -->
-  <section class="verify-zone" id="verify-zone">
-    <div class="verify-head">
-      <div class="eyebrow">Verify live</div>
-      <h2>Watch the mesh sign a real product right now.</h2>
-      <p>Pick a SKU above and the five agents run end-to-end on Google Cloud. One to three minutes total. Cold starts may take longer.</p>
+    <div class="founder-quote">
+      <div class="eyebrow">Why we built this</div>
+      <blockquote>Every time we shop for a supplement for our dogs Trufa and Corcho, we ask the same question: did a real veterinarian actually read the studies behind this, or is it just influencer marketing in a lab coat? The only way to win over a skeptical buyer is to actually be right.</blockquote>
+      <div class="attr"><strong>Omar Dominguez</strong> · Founder, MIT Sloan MBA 2026</div>
     </div>
-    <div class="stage-status" id="statusLine">Awaiting submission. Pick a brand product page above and click Verify.</div>
-    <div class="stage-grid">
-      <div class="mesh-wrap">
-        <svg class="mesh-svg" viewBox="0 0 520 520" aria-label="Live agent mesh fan-out">
-          <g id="meshEdges"></g>
-          <g class="mesh-center" id="meshCenter">
-            <text x="260" y="252" id="centerLabelTop">Endorsement</text>
-            <text x="260" y="272" id="centerLabelMid">Claim Bundle</text>
-            <text x="260" y="296" id="centerLabelSub" style="font-family:var(--mono);font-size:9px;fill:var(--amber);text-transform:uppercase;letter-spacing:0.18em;">PCEC v0.1</text>
-          </g>
-          <g id="meshNodes"></g>
-        </svg>
-      </div>
-      <div class="certificate-pane" id="certificate">
-        <div class="certificate-empty" id="certEmpty">
-          <span class="arrow">Certificate · awaiting signing</span>
-          A signed Endorsement Claim Bundle appears here once the mesh completes. Ed25519 over the canonical bundle JSON, anchored to <code>did:web:mesh-api-…run.app</code>, chained into the public transparency log.
-        </div>
-      </div>
-    </div>
-  </section>
+  </div>
+</section>
 
-  <section class="verdicts" id="verdictsSection">
-    <div class="eyebrow" style="margin-bottom:18px;">Per-claim adjudication</div>
-    <div class="verdict-list" id="verdictList"></div>
-  </section>
-
-  <!-- Track 3 mandate badges + architecture link -->
-  <div class="track3">
+<!-- ===================== TRACK 3 BADGES + FOOTER ===================== -->
+<section class="track3">
+  <div class="container track3-inner">
     <span class="label">Track 3 mandates · met</span>
     <a class="badge" href="https://github.com/odominguez7/PawConscious-Mesh-GFS/blob/main/BUSINESS_PLAN.md">B2B Focus</a>
     <a class="badge" href="/health">Cloud Run</a>
-    <a class="badge" href="https://github.com/odominguez7/PawConscious-Mesh-GFS/blob/main/agents/orchestrator.py">Gemini 2.5 Pro · ADK</a>
+    <a class="badge" href="https://github.com/odominguez7/PawConscious-Mesh-GFS/blob/main/agents/orchestrator.py">Gemini · ADK</a>
     <a class="badge" href="/.well-known/agent-card.json">A2A v0.3</a>
     <a class="badge" href="/health/agent-engine">Agent Engine</a>
     <a class="badge" href="/architecture">Architecture ↗</a>
   </div>
+</section>
 
-  <footer class="colophon">
+<footer class="footer">
+  <div class="container footer-inner">
     <div>did:web:mesh-api-…run.app · MIT License · Built on Google Cloud</div>
     <div>
       <a href="/.well-known/agent-card.json">Agent Card</a>
-      <span style="opacity:0.5;">·</span>
+      &nbsp;·&nbsp;
       <a href="/.well-known/did.json">DID</a>
-      <span style="opacity:0.5;">·</span>
+      &nbsp;·&nbsp;
       <a href="/pcec/v0/chain/head">Chain head</a>
-      <span style="opacity:0.5;">·</span>
+      &nbsp;·&nbsp;
       <a href="https://github.com/odominguez7/PawConscious-Mesh-GFS">Repo ↗</a>
     </div>
-  </footer>
+  </div>
+</footer>
 
-  <script>
-    /* ============================================================ */
-    /* CACHED DEMO — auto-loops the 5-agent fan-out + cert reveal   */
-    /* ============================================================ */
-    const DEMO_AGENTS = [
-      { id: 'claim-extractor', label: 'Extract' },
-      { id: 'evidence-grader', label: 'Evidence' },
-      { id: 'vet-panel',       label: 'Rubric' },
-      { id: 'compliance',      label: 'FTC §255' },
-      { id: 'auditor',         label: 'Auditor' },
-    ];
-    const DEMO_BRANDS = ['Native Pet', 'Honest Paws', 'Pet Honesty', 'Front of the Pack'];
-    const DEMO_SVG = document.getElementById('demoSvg');
-    const DEMO_EDGES = document.getElementById('demoEdges');
-    const DEMO_NODES = document.getElementById('demoNodes');
-    const DEMO_STATUS = document.getElementById('demoStatus');
-    const DEMO_CERT = document.getElementById('demoCert');
-    const DEMO_TICK = document.getElementById('demoTick');
-    const DEMO_BRAND = document.getElementById('demoBrand');
-    const DEMO_CENTER = document.getElementById('demoCenter').querySelector('circle');
+<script>
+/* ============================================================
+ * UNIFIED DEMO — cached loop + live verify + replay all in one
+ * container. Mode label changes; SVG + stream + cert stay put.
+ * ============================================================ */
+const AGENTS = [
+  { id: 'extract',    label: 'Extract'  },
+  { id: 'evidence',   label: 'Evidence' },
+  { id: 'rubric',     label: 'Rubric'   },
+  { id: 'compliance', label: 'FTC §255' },
+  { id: 'auditor',    label: 'Auditor'  },
+];
+const CACHED_BRANDS = [
+  { brand: 'Native Pet',   urn: 'urn:pcec:claim:tshh4bbtauijarh4i3pz7dza', hash: 'sha256:9c8e7e043305109044fc46df9f8f20319cade0d4159c8b7c…', anchor: 'sha256:f93e9d54e7e06dfae2f3b57ae8c76e0514d211cfeb3a…', sig: 'ed25519:did:web:mesh-api-…/sig-4a2f-b9e1', verdict: 'PASS · directional' },
+  { brand: 'Honest Paws',  urn: 'urn:pcec:claim:6dm2fdugwqozbwtnzvmfjqph',     hash: 'sha256:f0d9a28e86b41d90da6dcd5854c1e7be21d4e8a82…',     anchor: 'sha256:7b237e3a576f2f54479a51aef6b75391f3c9a07a…',     sig: 'ed25519:did:web:mesh-api-…/sig-6dm2-q88k', verdict: 'PASS' },
+  { brand: 'Pet Honesty',  urn: 'urn:pcec:claim:n7p9q3r5s1t2u4v6w8x0y2z4a',    hash: 'sha256:b8a47e09cd62f3a01d8e7b3c6f5142ab9d3e7c2a…',     anchor: 'sha256:e2c3d4f5a6b7c8d9e0f1a2b3c4d5e6f7a8b9c0d1…',     sig: 'ed25519:did:web:mesh-api-…/sig-n7p9-y2z4', verdict: 'PASS' },
+];
 
-    (function buildDemo() {
-      const CX = 260, CY = 230, R = 150;
-      DEMO_AGENTS.forEach((a, i) => {
-        const ang = (-Math.PI / 2) + (i * (2 * Math.PI / DEMO_AGENTS.length));
-        const x = CX + R * Math.cos(ang);
-        const y = CY + R * Math.sin(ang);
-        a.x = x; a.y = y;
-        const edge = document.createElementNS('http://www.w3.org/2000/svg', 'line');
-        edge.setAttribute('x1', CX); edge.setAttribute('y1', CY);
-        edge.setAttribute('x2', x); edge.setAttribute('y2', y);
-        edge.setAttribute('class', 'edge');
-        edge.dataset.agent = a.id;
-        DEMO_EDGES.appendChild(edge);
-        const g = document.createElementNS('http://www.w3.org/2000/svg', 'g');
-        g.setAttribute('class', 'node');
-        g.dataset.agent = a.id;
-        g.setAttribute('transform', `translate(${x},${y})`);
-        const halo = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
-        halo.setAttribute('class', 'halo'); halo.setAttribute('r', '24');
-        const body = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
-        body.setAttribute('class', 'body'); body.setAttribute('r', '18');
-        const text = document.createElementNS('http://www.w3.org/2000/svg', 'text');
-        const isUpper = y < CY;
-        text.setAttribute('y', isUpper ? -32 : 38);
-        text.setAttribute('text-anchor', 'middle');
-        text.textContent = a.label;
-        g.appendChild(halo); g.appendChild(body); g.appendChild(text);
-        DEMO_NODES.appendChild(g);
-      });
-    })();
+const DEMO_SVG    = document.getElementById('demoSvg');
+const DEMO_EDGES  = document.getElementById('demoEdges');
+const DEMO_NODES  = document.getElementById('demoNodes');
+const DEMO_STREAM = document.getElementById('demoStream');
+const DEMO_CERT   = document.getElementById('demoCert');
+const DEMO_MODE_B = document.getElementById('demoModeBadge');
+const DEMO_MODE_T = document.getElementById('demoModeText');
+const DEMO_RIGHT  = document.getElementById('demoRight');
+const DEMO_ANCHOR = document.querySelector('#demoAnchor .anchor-body');
 
-    function demoReset() {
-      DEMO_EDGES.querySelectorAll('.edge').forEach(e => e.classList.remove('active', 'done'));
-      DEMO_NODES.querySelectorAll('.node').forEach(n => n.classList.remove('active', 'done'));
-      DEMO_CENTER.classList.remove('done');
-      DEMO_CERT.classList.remove('visible');
-    }
+const URL_INPUT   = document.getElementById('urlInput');
+const MAX_CLAIMS  = document.getElementById('maxClaims');
+const RUN_BTN     = document.getElementById('runBtn');
 
-    async function demoRunOnce() {
-      const brand = DEMO_BRANDS[Math.floor(Math.random() * DEMO_BRANDS.length)];
-      DEMO_BRAND.textContent = brand;
-      demoReset();
-      await sleep(600);
-      DEMO_STATUS.textContent = `Fetching ${brand} product page…`;
-      await sleep(800);
-      DEMO_STATUS.textContent = `Mesh fan-out · 5 agents on A2A v0.3…`;
-      // activate each agent in cascade
-      const nodes = DEMO_NODES.querySelectorAll('.node');
-      const edges = DEMO_EDGES.querySelectorAll('.edge');
-      for (let i = 0; i < nodes.length; i++) {
-        edges[i].classList.add('active');
-        nodes[i].classList.add('active');
-        await sleep(420);
+let demoMode = 'auto'; // 'auto' | 'live' | 'replay'
+let interrupt = false;
+
+function tsNow() {
+  const d = new Date();
+  return d.toTimeString().slice(3,8); // mm:ss
+}
+function streamAdd(msg, cls='') {
+  const row = document.createElement('div');
+  row.className = 'row';
+  row.innerHTML = `<span class="ts">${tsNow()}</span><span class="msg ${cls}">${msg}</span>`;
+  DEMO_STREAM.appendChild(row);
+  DEMO_STREAM.scrollTop = DEMO_STREAM.scrollHeight;
+  // cap rows
+  while (DEMO_STREAM.children.length > 60) DEMO_STREAM.removeChild(DEMO_STREAM.firstChild);
+}
+function streamClear() { DEMO_STREAM.innerHTML = ''; }
+function setMode(mode, badgeText, modeText, rightText) {
+  demoMode = mode;
+  DEMO_MODE_B.className = 'badge' + (mode === 'live' ? ' live' : mode === 'replay' ? ' replay' : '');
+  DEMO_MODE_B.textContent = badgeText;
+  DEMO_MODE_T.textContent = modeText;
+  if (rightText !== undefined) DEMO_RIGHT.textContent = rightText;
+}
+function resetDemo() {
+  DEMO_EDGES.querySelectorAll('.edge').forEach(e => e.classList.remove('active','done'));
+  DEMO_NODES.querySelectorAll('.node').forEach(n => n.classList.remove('active','done'));
+  DEMO_ANCHOR.classList.remove('done');
+  DEMO_CERT.classList.remove('visible');
+}
+
+(function buildDemoSvg() {
+  const CX=260, CY=180, R=130;
+  AGENTS.forEach((a,i) => {
+    const ang = (-Math.PI/2) + i*(2*Math.PI/AGENTS.length);
+    const x = CX + R*Math.cos(ang), y = CY + R*Math.sin(ang);
+    a.x=x; a.y=y;
+    const edge = document.createElementNS('http://www.w3.org/2000/svg','line');
+    edge.setAttribute('x1',CX); edge.setAttribute('y1',CY); edge.setAttribute('x2',x); edge.setAttribute('y2',y);
+    edge.setAttribute('class','edge'); edge.dataset.agent=a.id;
+    DEMO_EDGES.appendChild(edge);
+    const g = document.createElementNS('http://www.w3.org/2000/svg','g');
+    g.setAttribute('class','node'); g.dataset.agent=a.id;
+    g.setAttribute('transform',`translate(${x},${y})`);
+    const halo = document.createElementNS('http://www.w3.org/2000/svg','circle');
+    halo.setAttribute('class','halo'); halo.setAttribute('r','22');
+    const body = document.createElementNS('http://www.w3.org/2000/svg','circle');
+    body.setAttribute('class','body'); body.setAttribute('r','16');
+    const text = document.createElementNS('http://www.w3.org/2000/svg','text');
+    text.setAttribute('y', y<CY ? -28 : 32); text.setAttribute('text-anchor','middle');
+    text.textContent = a.label;
+    g.append(halo,body,text);
+    DEMO_NODES.appendChild(g);
+  });
+})();
+
+function sleep(ms) { return new Promise(r => setTimeout(r, ms)); }
+
+async function cachedCycle() {
+  const b = CACHED_BRANDS[Math.floor(Math.random()*CACHED_BRANDS.length)];
+  resetDemo(); streamClear();
+  streamAdd(`POST /a2a/v1/tasks/send → ${b.brand}`, 'dim');
+  await sleep(600); if (interrupt) return;
+  streamAdd('task-cached · status: submitted', 'ok');
+  await sleep(700); if (interrupt) return;
+  streamAdd('orchestrator: ParallelAgent fan-out · 5 agents on A2A v0.3');
+  const nodes = DEMO_NODES.querySelectorAll('.node');
+  const edges = DEMO_EDGES.querySelectorAll('.edge');
+  const STEPS = [
+    'claim-extractor · Firecrawl + Gemini 2.5 Pro · 3 claims extracted',
+    'evidence-grader · BioMCP → PubMed · 6 papers · 247 citations',
+    'vet-rubric · Vertex AI Search · 4.2 / 5',
+    'compliance · FTC §255.3 mapping · PASS',
+    'auditor (Falsifier) · 3 challenges run · cleared',
+  ];
+  for (let i=0; i<nodes.length; i++) {
+    if (interrupt) return;
+    edges[i].classList.add('active'); nodes[i].classList.add('active');
+    streamAdd(STEPS[i]);
+    await sleep(550);
+  }
+  await sleep(400); if (interrupt) return;
+  for (let i=0; i<nodes.length; i++) {
+    nodes[i].classList.remove('active'); nodes[i].classList.add('done');
+    edges[i].classList.remove('active'); edges[i].classList.add('done');
+    await sleep(120);
+  }
+  if (interrupt) return;
+  streamAdd('SequentialAgent · merge + sign · Ed25519', 'ok');
+  await sleep(500); if (interrupt) return;
+  DEMO_ANCHOR.classList.add('done');
+  streamAdd(`chain_anchor appended → ${b.anchor.slice(0,32)}…`, 'ok');
+  await sleep(400); if (interrupt) return;
+  document.getElementById('dcUrn').textContent = b.urn;
+  document.getElementById('dcHash').textContent = b.hash;
+  document.getElementById('dcAnchor').textContent = b.anchor;
+  document.getElementById('dcSig').textContent = b.sig;
+  document.getElementById('dcVerdict').textContent = b.verdict;
+  DEMO_CERT.classList.add('visible');
+  streamAdd('bundle signed · ready to serve', 'ok');
+  await sleep(4200);
+}
+
+async function autoLoop() {
+  while (true) {
+    if (interrupt) { await sleep(300); continue; }
+    await cachedCycle();
+    if (demoMode !== 'auto') return;
+  }
+}
+
+(async function startAuto() {
+  setMode('auto', 'Auto loop', '5-agent mesh · cached cycle', 'PCEC v0.1');
+  await sleep(400);
+  autoLoop();
+})();
+
+// "Replay cached" — interrupts current cycle, plays one clean cycle, then resumes auto-loop
+async function replayCached(e) {
+  if (e) e.preventDefault();
+  if (demoMode === 'live') return false;
+  interrupt = true;
+  setMode('replay', 'Replay', 'deterministic · single cycle', 'CACHED');
+  document.getElementById('demo').scrollIntoView({ behavior:'smooth', block:'start' });
+  await sleep(200);
+  interrupt = false;
+  await cachedCycle();
+  setMode('auto', 'Auto loop', '5-agent mesh · cached cycle', 'PCEC v0.1');
+  autoLoop();
+  return false;
+}
+
+/* ============================================================
+ * LIVE VERIFY — runMesh() drives the SAME demo container.
+ * ============================================================ */
+async function runMesh() {
+  const url = URL_INPUT.value.trim();
+  if (!url || !url.startsWith('http')) {
+    streamAdd('Enter a valid product URL above.', 'err');
+    URL_INPUT.focus();
+    return;
+  }
+  interrupt = true; await sleep(200); interrupt = true; // ensure auto-loop yields
+  resetDemo(); streamClear();
+  setMode('live', 'Live · your URL', `mesh-api-…run.app · ${url.replace(/^https?:\/\//,'').slice(0,40)}…`, 'POST /a2a/v1/tasks/send');
+  RUN_BTN.disabled = true;
+  document.getElementById('demo').scrollIntoView({ behavior:'smooth', block:'start' });
+  streamAdd(`POST /a2a/v1/tasks/send → ${url}`);
+
+  try {
+    const submit = await fetch('/a2a/v1/tasks/send', {
+      method:'POST',
+      headers:{ 'Content-Type':'application/json', 'X-API-Key':'demo-key-2026-06' },
+      body: JSON.stringify({ skill:'verify_claim', input:{ product_url:url, max_claims: parseInt(MAX_CLAIMS.value,10) } }),
+    });
+    if (!submit.ok) throw new Error(`submit ${submit.status}`);
+    const sub = await submit.json();
+    const taskId = sub.task_id;
+    streamAdd(`task ${taskId.slice(0,12)}… queued · status: submitted`, 'ok');
+    // visually mark all nodes active during the wait
+    DEMO_NODES.querySelectorAll('.node').forEach(n => n.classList.add('active'));
+    DEMO_EDGES.querySelectorAll('.edge').forEach(e => e.classList.add('active'));
+
+    let attempts = 0; let lastMsg = '';
+    while (attempts < 60) {
+      await sleep(3500);
+      const get = await fetch(`/a2a/v1/tasks/get/${taskId}`);
+      if (!get.ok) throw new Error(`get ${get.status}`);
+      const data = await get.json();
+      if (data.progress_message && data.progress_message !== lastMsg) {
+        lastMsg = data.progress_message;
+        streamAdd(`mesh: ${lastMsg}`);
       }
-      await sleep(700);
-      // mark each done
-      for (let i = 0; i < nodes.length; i++) {
-        nodes[i].classList.remove('active');
-        nodes[i].classList.add('done');
-        edges[i].classList.remove('active');
-        edges[i].classList.add('done');
-        await sleep(180);
-      }
-      DEMO_STATUS.textContent = 'Auditor cleared · signing PCEC bundle…';
-      DEMO_CENTER.classList.add('done');
-      await sleep(900);
-      DEMO_STATUS.textContent = 'Ed25519 signed · chain-anchored';
-      DEMO_STATUS.classList.add('success');
-      DEMO_CERT.classList.add('visible');
-      await sleep(4200);
-      DEMO_STATUS.classList.remove('success');
-      DEMO_CERT.classList.remove('visible');
-      await sleep(800);
+      if (data.status === 'completed') { renderLive(data); return; }
+      if (data.status === 'failed') { streamAdd(`task failed: ${data.error || '—'}`, 'err'); RUN_BTN.disabled=false; return; }
+      attempts++;
     }
+    streamAdd('polling timed out after 3.5min', 'err');
+  } catch (err) {
+    streamAdd(`error: ${err.message}`, 'err');
+  } finally {
+    RUN_BTN.disabled = false;
+  }
+}
 
-    function sleep(ms) { return new Promise(r => setTimeout(r, ms)); }
-    let _liveMode = false;
-    (async function demoLoop() {
-      // small delay before first run
-      await sleep(400);
-      while (true) {
-        if (_liveMode) {
-          // user clicked Verify — pause the cached loop, let runMesh drive the demo UI
-          await sleep(2000);
-          continue;
-        }
-        await demoRunOnce();
-      }
-    })();
+function renderLive(data) {
+  const bundle = data.output || {};
+  const audits = bundle.audit || [];
+  const compliance = bundle.compliance || [];
+  const vetScores = bundle.vet_scores || [];
+  const allAuditsPass = audits.length > 0 && audits.every(a => (a.verdict||'').toUpperCase()==='PASS');
+  const anyViolation = compliance.some(c => c.violation_flag);
+  const passing = allAuditsPass && !anyViolation;
+  // mark nodes done
+  DEMO_NODES.querySelectorAll('.node').forEach(n => { n.classList.remove('active'); n.classList.add('done'); });
+  DEMO_EDGES.querySelectorAll('.edge').forEach(e => { e.classList.remove('active'); e.classList.add('done'); });
+  DEMO_ANCHOR.classList.add('done');
+  // per-claim summary in stream
+  audits.forEach((a,i) => {
+    const vs = vetScores[i]?.score ?? '—';
+    const c = compliance[i] || {};
+    const flag = c.violation_flag ? ' · FTC flag' : '';
+    streamAdd(`claim ${String(i+1).padStart(2,'0')} · vet ${vs}/5 · ${c.ftc_section || '—'}${flag} · audit ${a.verdict || '—'}`, (a.verdict==='PASS' && !c.violation_flag) ? 'ok' : 'err');
+  });
+  streamAdd('SequentialAgent · merge + sign · Ed25519', 'ok');
+  streamAdd(`chain_anchor appended → ${(data.chain_anchor||'').slice(0,32)}…`, 'ok');
+  // cert
+  document.getElementById('dcUrn').textContent = bundle.bundle_urn || '—';
+  document.getElementById('dcHash').textContent = data.bundle_hash || '—';
+  document.getElementById('dcAnchor').textContent = data.chain_anchor || '—';
+  document.getElementById('dcSig').textContent = data.bundle_signature || '—';
+  document.getElementById('dcVerdict').textContent = passing ? 'PASS · live' : 'NEEDS REVIEW · live';
+  DEMO_CERT.classList.add('visible');
+  setMode('live', 'Live · done', `signed bundle issued`, 'COMPLETED');
+}
 
-    // "Replay cached validation" link — explicitly retrigger one cached cycle
-    function replayCached(e) {
-      if (e) e.preventDefault();
-      _liveMode = false;
-      demoReset();
-      // jump to top of hero so user sees the demo cycle
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-      DEMO_STATUS.textContent = 'Replaying cached validation…';
-    }
+/* ============================================================
+ * ARCHITECTURE — interactive tooltip on hover/focus
+ * ============================================================ */
+const ARCH_TIPS = {
+  brand: { name:'Brand owner', meta:'Pet supplement brand (CMO / GC) submits a product URL.<br>POST <b>/a2a/v1/tasks/send</b> · X-API-Key header.' },
+  shopper: { name:'ShopperAgent · external A2A consumer', meta:'Separate Cloud Run service (open source MIT).<br>Discovers the mesh via <b>/.well-known/agent-card.json</b>, calls <b>verify_claim</b>, polls <b>/tasks/get</b>, ranks products by trust score.<br>Lives at shopper-agent-…run.app' },
+  'agent-engine': { name:'Vertex AI Agent Engine', meta:'<b>ADK 2.0</b> · ParallelAgent fan-out via asyncio.gather, SequentialAgent merge.<br>Reasoning Engine resource: projects/40952019806/locations/us-central1/reasoningEngines/1255381144908595200<br>Deterministic sampling (temperature 0).' },
+  'claim-extractor': { name:'Claim Extractor', meta:'Tool: <b>Firecrawl MCP</b> (PDP scraping)<br>Model: <b>Gemini 2.5 Pro</b> · temp 0.0<br>Returns: list[Claim{text, kind, position_on_page}]' },
+  'evidence-grader': { name:'Evidence Grader', meta:'Tool: <b>BioMCP</b> (PubMed) + <b>AI2 Asta MCP</b> (citation grading)<br>Model: <b>Gemini 2.5 Pro</b> · temp 0.0<br>Grounding: Google Search (situational)' },
+  'vet-panel': { name:'Vet Rubric', meta:'Grounding: <b>Vertex AI Search</b> over vet handbook corpus<br>Model: <b>Gemini 2.5 Pro</b> · temp 0.0<br>5-criterion rubric → score 1-5 per claim<br>Roadmap: real academic panel attestation' },
+  compliance: { name:'Compliance', meta:'Grounding: <b>Vertex AI Search</b> over regulator corpus<br>Corpora: FTC 16 CFR §255 federal text · AAFCO public docs · NASC public-side seal program<br>Model: <b>Gemini 2.5 Pro</b> · temp 0.0' },
+  auditor: { name:'Auditor (Falsifier)', meta:'Adversarial pass · <b>Gemini 2.5 Flash</b> · temp 0.0<br>Challenges: direction_only_falsifier_v0 · citation_existence · claim_direction_match<br>Tool: ADK Eval framework' },
+  merge: { name:'SequentialAgent · merge + sign', meta:'Canonical-JSON of EndorsementClaimBundle (excludes signature)<br>Sign: <b>Ed25519</b> via Secret Manager key<br>DID: did:web:mesh-api-40952019806.us-central1.run.app<br>If signer unavailable → labeled "unsigned" (no silent fakes)' },
+  response: { name:'Brand response', meta:'Async lifecycle per A2A v0.3:<br>POST tasks/send → 202 {task_id}<br>poll GET tasks/get/{id} → completed/failed' },
+  firestore: { name:'Firestore transparency log', meta:'Append-only.<br>chain_anchor = sha256(bundle_hash + prev_anchor)<br>Head pointer at acp-claims-meta/_chain_head<br>Public: <b>/pcec/v0/chain/head</b>' },
+};
 
-    /* ============================================================ */
-    /* LIVE MESH — runMesh() actually calls /a2a/v1/tasks/send       */
-    /* ============================================================ */
-    const STATUS = document.getElementById('statusLine');
-    const RUN_BTN = document.getElementById('runBtn');
-    const URL_INPUT = document.getElementById('urlInput');
-    const MAX_CLAIMS = document.getElementById('maxClaims');
-    const VERDICT_SECTION = document.getElementById('verdictsSection');
-    const VERDICT_LIST = document.getElementById('verdictList');
-    const CERT_EMPTY = document.getElementById('certEmpty');
-    const CERT_WRAP = document.getElementById('certificate');
-    const MESH_CENTER = document.getElementById('meshCenter');
+const ARCH_TIP = document.getElementById('archTip');
+const ARCH_TIP_NAME = document.getElementById('tipName');
+const ARCH_TIP_META = document.getElementById('tipMeta');
+document.querySelectorAll('#archSvg g.box').forEach(box => {
+  box.addEventListener('mouseenter', (e) => {
+    const tip = ARCH_TIPS[box.dataset.tip];
+    if (!tip) return;
+    ARCH_TIP_NAME.textContent = tip.name;
+    ARCH_TIP_META.innerHTML = tip.meta;
+    ARCH_TIP.classList.add('show');
+    // position near cursor inside canvas
+    const canvasRect = document.querySelector('.arch-canvas').getBoundingClientRect();
+    const x = Math.min(e.clientX - canvasRect.left + 18, canvasRect.width - 300);
+    const y = Math.max(e.clientY - canvasRect.top - 10, 12);
+    ARCH_TIP.style.left = `${x}px`;
+    ARCH_TIP.style.top = `${y}px`;
+  });
+  box.addEventListener('mousemove', (e) => {
+    if (!ARCH_TIP.classList.contains('show')) return;
+    const canvasRect = document.querySelector('.arch-canvas').getBoundingClientRect();
+    const x = Math.min(e.clientX - canvasRect.left + 18, canvasRect.width - 300);
+    const y = Math.max(e.clientY - canvasRect.top - 10, 12);
+    ARCH_TIP.style.left = `${x}px`;
+    ARCH_TIP.style.top = `${y}px`;
+  });
+  box.addEventListener('mouseleave', () => ARCH_TIP.classList.remove('show'));
+});
+</script>
 
-    const LIVE_AGENTS = [
-      { id: 'claim-extractor', label: 'Claim Extractor' },
-      { id: 'evidence-grader', label: 'Evidence Grader' },
-      { id: 'vet-panel',       label: 'Vet Panel' },
-      { id: 'compliance',      label: 'Compliance' },
-      { id: 'auditor',         label: 'Auditor' },
-    ];
-
-    (function drawLiveMesh() {
-      const CX = 260, CY = 260, R = 180;
-      const edges = document.getElementById('meshEdges');
-      const nodes = document.getElementById('meshNodes');
-      LIVE_AGENTS.forEach((agent, i) => {
-        const ang = (-Math.PI / 2) + (i * (2 * Math.PI / LIVE_AGENTS.length));
-        const x = CX + R * Math.cos(ang);
-        const y = CY + R * Math.sin(ang);
-        agent.x = x; agent.y = y;
-        const e = document.createElementNS('http://www.w3.org/2000/svg', 'line');
-        e.setAttribute('x1', CX); e.setAttribute('y1', CY);
-        e.setAttribute('x2', x); e.setAttribute('y2', y);
-        e.setAttribute('class', 'mesh-edge');
-        e.dataset.agent = agent.id;
-        edges.appendChild(e);
-        const g = document.createElementNS('http://www.w3.org/2000/svg', 'g');
-        g.setAttribute('class', 'agent-node');
-        g.dataset.agent = agent.id;
-        g.setAttribute('transform', `translate(${x},${y})`);
-        const halo = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
-        halo.setAttribute('class', 'halo'); halo.setAttribute('r', '28');
-        const body = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
-        body.setAttribute('class', 'body'); body.setAttribute('r', '20');
-        const text = document.createElementNS('http://www.w3.org/2000/svg', 'text');
-        const isUpper = y < CY;
-        text.setAttribute('y', isUpper ? -34 : 44);
-        text.setAttribute('text-anchor', 'middle');
-        text.textContent = agent.label;
-        g.appendChild(halo); g.appendChild(body); g.appendChild(text);
-        nodes.appendChild(g);
-      });
-    })();
-
-    function resetLiveMesh() {
-      document.querySelectorAll('.mesh-edge').forEach(e => e.classList.remove('active','done'));
-      document.querySelectorAll('.agent-node').forEach(n => n.classList.remove('active','done'));
-      VERDICT_SECTION.classList.remove('visible');
-      VERDICT_LIST.innerHTML = '';
-      CERT_WRAP.innerHTML = '<div class="certificate-empty" id="certEmpty"><span class="arrow">Certificate · awaiting signing</span>A signed Endorsement Claim Bundle appears here once the mesh completes. Ed25519 over the canonical bundle JSON, anchored to <code>did:web:mesh-api-…run.app</code>, chained into the public transparency log.</div>';
-    }
-
-    async function runMesh() {
-      const url = URL_INPUT.value.trim();
-      if (!url || !url.startsWith('http')) {
-        STATUS.textContent = 'Enter a valid product URL.';
-        STATUS.classList.add('failed');
-        // ALSO update hero demo status so users see feedback at the click site
-        if (DEMO_STATUS) DEMO_STATUS.textContent = 'Enter a valid product URL above.';
-        URL_INPUT.focus();
-        return;
-      }
-      STATUS.classList.remove('failed','completed');
-      RUN_BTN.disabled = true;
-      resetLiveMesh();
-
-      // HERO-ANCHORED FEEDBACK + scroll to live verify action (Omar 2026-05-19 fix —
-      // "nothing happens" on click was because the visual response was 5 sections down).
-      // The cached loop pauses + the hero demo status reflects the real verify in progress.
-      _liveMode = true;
-      try { if (DEMO_CERT) DEMO_CERT.classList.remove('visible'); } catch(_){}
-      try {
-        if (DEMO_STATUS) {
-          DEMO_STATUS.textContent = 'Submitting your URL to mesh…';
-          DEMO_STATUS.classList.add('success');
-        }
-        if (DEMO_TICK) DEMO_TICK.textContent = 'LIVE · YOUR VERIFY';
-      } catch(_){}
-      // smooth scroll to verify-zone after a tick (after browser paints the new hero status)
-      requestAnimationFrame(() => {
-        const target = document.querySelector('.verify-zone');
-        if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
-      });
-
-      STATUS.textContent = 'Submitting to mesh…';
-      // visually activate all nodes during the wait
-      document.querySelectorAll('.agent-node').forEach(n => n.classList.add('active'));
-      document.querySelectorAll('.mesh-edge').forEach(e => e.classList.add('active'));
-
-      try {
-        const submit = await fetch('/a2a/v1/tasks/send', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json', 'X-API-Key': 'demo-key-2026-06' },
-          body: JSON.stringify({
-            skill: 'verify_claim',
-            input: { product_url: url, max_claims: parseInt(MAX_CLAIMS.value, 10) },
-          }),
-        });
-        if (!submit.ok) throw new Error(`submit ${submit.status}`);
-        const sub = await submit.json();
-        const taskId = sub.task_id;
-        STATUS.textContent = `Task ${taskId.slice(0,8)}… queued · polling for completion`;
-
-        // poll
-        let attempts = 0;
-        while (attempts < 60) {
-          await sleep(3000);
-          const get = await fetch(`/a2a/v1/tasks/get/${taskId}`);
-          if (!get.ok) throw new Error(`get ${get.status}`);
-          const data = await get.json();
-          if (data.status === 'completed') {
-            renderCompleted(data);
-            return;
-          } else if (data.status === 'failed') {
-            STATUS.textContent = `Verification failed: ${data.error || 'unknown error'}`;
-            STATUS.classList.add('failed');
-            RUN_BTN.disabled = false;
-            return;
-          }
-          if (data.progress_message) {
-            STATUS.textContent = data.progress_message;
-          }
-          attempts++;
-        }
-        STATUS.textContent = 'Polling timed out. Try again.';
-        STATUS.classList.add('failed');
-      } catch (e) {
-        STATUS.textContent = `Error: ${e.message}`;
-        STATUS.classList.add('failed');
-      } finally {
-        RUN_BTN.disabled = false;
-      }
-    }
-
-    function renderCompleted(data) {
-      // VERIFIED RESPONSE SHAPE (E2E tested against live revision mesh-api-00021-9l7):
-      //   top-level: bundle_hash, bundle_signature, chain_anchor, status
-      //   output: { claims[], vet_scores[], compliance[], audit[], evidence, issuer, issued_at, bundle_urn }
-      //   Each compliance[i] has: claim, ftc_section, aafco_definition, violation_flag, rationale
-      //   Each audit[i] has: claim, verdict (PASS/FAIL), findings[]
-      document.querySelectorAll('.agent-node').forEach(n => { n.classList.remove('active'); n.classList.add('done'); });
-      document.querySelectorAll('.mesh-edge').forEach(e => { e.classList.remove('active'); e.classList.add('done'); });
-      const bundle = data.output || {};
-      const audits = bundle.audit || [];
-      const compliance = bundle.compliance || [];
-      // Move G: overall verdict aligned with row-level logic — PASS only if every audit PASSES
-      // AND every compliance row is free of violation_flag (no silent contradictions between
-      // header status and per-row status, which codex S2A flagged as a UX inconsistency).
-      const allAuditsPass = audits.length > 0 && audits.every(a => (a.verdict || '').toUpperCase() === 'PASS');
-      const anyViolation = compliance.some(c => c.violation_flag);
-      const overallVerdict = audits.length ? (allAuditsPass && !anyViolation ? 'PASS' : 'NEEDS REVIEW') : '';
-      STATUS.textContent = `Verification complete${overallVerdict ? ' · ' + overallVerdict : ''}`;
-      STATUS.classList.add('completed');
-      const claims = bundle.claims || [];
-      const vetScores = bundle.vet_scores || [];
-      VERDICT_LIST.innerHTML = '';
-      claims.forEach((c, i) => {
-        const vetScore = vetScores[i]?.score ?? null;
-        const comp = compliance[i] || {};
-        const aud = audits[i] || {};
-        const passing = ((aud.verdict || '').toUpperCase() === 'PASS') && !comp.violation_flag;
-        const row = document.createElement('div');
-        row.className = `verdict-row ${passing ? 'pass' : 'fail'}`;
-        const violation = comp.violation_flag ? ' · FTC flag' : '';
-        row.innerHTML = `
-          <div class="v-id">Claim ${String(i+1).padStart(2,'0')}</div>
-          <div class="v-claim">${escapeHtml(c.text || '—')}${comp.ftc_section ? ' <span style="color:var(--moss);opacity:0.7;font-family:var(--mono);font-size:10px;">' + escapeHtml(comp.ftc_section) + violation + '</span>' : ''}</div>
-          <div class="v-score">${vetScore !== null ? vetScore + '/5' : ''}</div>
-        `;
-        VERDICT_LIST.appendChild(row);
-      });
-      VERDICT_SECTION.classList.add('visible');
-      const issuedAt = bundle.issued_at ? bundle.issued_at.slice(0, 19).replace('T', ' ') : '';
-      CERT_WRAP.innerHTML = `
-        <div class="proof-cert" style="border:1px solid var(--moss);background:var(--vellum);">
-          <div class="cert-eyebrow" style="font-family:var(--mono);font-size:10px;letter-spacing:0.22em;text-transform:uppercase;color:var(--moss);font-weight:600;margin-bottom:14px;">PCEC v0.1 · signed bundle</div>
-          <div style="font-family:var(--mono);font-size:11px;line-height:1.7;color:var(--slate);">
-            <div><span style="color:var(--moss);">bundle_urn</span> <span style="color:var(--amber);word-break:break-all;">${escapeHtml(bundle.bundle_urn || '—')}</span></div>
-            <div><span style="color:var(--moss);">bundle_hash</span> <span style="color:var(--amber);word-break:break-all;">${escapeHtml(data.bundle_hash || '—')}</span></div>
-            <div><span style="color:var(--moss);">chain_anchor</span> <span style="color:var(--amber);word-break:break-all;">${escapeHtml(data.chain_anchor || '—')}</span></div>
-            <div><span style="color:var(--moss);">signature</span> <span style="color:var(--amber);word-break:break-all;">${escapeHtml(data.bundle_signature || '—')}</span></div>
-            ${issuedAt ? `<div><span style="color:var(--moss);">issued_at</span> <span>${escapeHtml(issuedAt)}Z</span></div>` : ''}
-            <div style="margin-top:12px;"><span style="color:var(--moss);">claims</span> <span>${claims.length} extracted · ${vetScores.length} graded · ${audits.length} audited</span></div>
-          </div>
-        </div>
-      `;
-    }
-
-    function escapeHtml(s) {
-      return String(s).replace(/[&<>"']/g, c => ({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' }[c]));
-    }
-  </script>
 </body>
 </html>
