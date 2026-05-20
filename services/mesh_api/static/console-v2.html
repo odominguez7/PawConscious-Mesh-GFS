@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <title>PawConscious — Agentic Compliance Protocol</title>
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="description" content="The trust layer AI agents can call before recommending a consumer product. Five Google ADK agents on Cloud Run sign every health claim with cryptographic evidence.">
+<meta name="description" content="The trust layer AI agents can call before recommending a consumer product. Seven specialized agents on Cloud Run verify, sign, and adversarially double-check every health claim with cryptographic evidence.">
 <meta name="theme-color" content="#0A0B0D">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -215,7 +215,7 @@
   }
   /* v0.8.5: cap raised + scroll fallback so Agent 6's full 3-5KB cert is readable.
      max-height kept finite so the demo doesn't push the whole page when cert is huge. */
-  .demo-cert.visible { opacity: 1; max-height: 1400px; overflow-y: auto; }
+  .demo-cert.visible { opacity: 1; max-height: 1400px; overflow-y: auto; -webkit-overflow-scrolling: touch; }
   .demo-cert.visible::-webkit-scrollbar { width: 8px; }
   .demo-cert.visible::-webkit-scrollbar-track { background: var(--bg); }
   .demo-cert.visible::-webkit-scrollbar-thumb { background: var(--electric-dim); border-radius: 4px; }
@@ -444,7 +444,7 @@
         <div class="dots"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span></div>
         <div class="mode">
           <span id="demoModeBadge" class="badge">Auto loop</span>
-          <span id="demoModeText">5-agent mesh · cached cycle</span>
+          <span id="demoModeText">7-agent mesh · cached cycle</span>
         </div>
         <div class="right" id="demoRight">PCEC v0.1</div>
       </div>
@@ -592,11 +592,11 @@
     <div class="arch-legend">
       <div class="item">
         <div class="h"><span class="name">ADK 2.0</span><span class="badge">Orchestration</span></div>
-        <p>Used by <b>claim-extractor</b> (<code style="color:var(--electric);font-family:var(--mono);">google.adk.agents.LlmAgent</code>). The other 4 agents call <code style="color:var(--electric);font-family:var(--mono);">google.genai</code> SDK direct for v0.1 simplicity. ADK ParallelAgent + SequentialAgent wrappers are <i>planned</i> for full Agent Engine deployment.</p>
+        <p>Used by <b>claim-extractor</b> (<code style="color:var(--electric);font-family:var(--mono);">google.adk.agents.LlmAgent</code>). The other 6 agents call <code style="color:var(--electric);font-family:var(--mono);">google.genai</code> SDK direct for v0.1 simplicity. ADK ParallelAgent + SequentialAgent wrappers are <i>planned</i> for full Agent Engine deployment.</p>
       </div>
       <div class="item">
         <div class="h"><span class="name">Gemini 2.5</span><span class="badge">Reasoning</span></div>
-        <p><b>2.5 Pro</b> for claim extraction, evidence grading, vet rubric, compliance mapping (4 agents). <b>2.5 Flash</b> for the adversarial auditor (1 agent). Every call uses <code style="color:var(--electric);font-family:var(--mono);">temperature=0.0</code> for reproducibility.</p>
+        <p><b>2.5 Pro</b> for claim extraction, evidence grading, vet rubric, compliance mapping, cert composer, and adversarial Second Opinion w/ Google Search grounding (6 agents). <b>2.5 Flash</b> for the deterministic auditor (1 agent). Most calls use <code style="color:var(--electric);font-family:var(--mono);">temperature=0.0</code>; Second Opinion uses 0.3 for adversarial breadth.</p>
       </div>
       <div class="item">
         <div class="h"><span class="name">Vertex AI Search</span><span class="badge">Grounding</span></div>
@@ -636,8 +636,8 @@
       </div>
       <div class="how-step">
         <div class="n">02 · Mesh</div>
-        <div class="title">Five agents fan out via A2A</div>
-        <div class="desc">claim-extractor (ADK + httpx) · evidence-grader (BioMCP → PubMed) · vet rubric (prompt-only) · compliance (Vertex AI Search) · auditor (Gemini 2.5 Flash). All deterministic (temperature 0).</div>
+        <div class="title">Seven agents collaborate via A2A</div>
+        <div class="desc">Five in parallel: claim-extractor (ADK + httpx) · evidence-grader (BioMCP → PubMed) · vet rubric (prompt-only) · compliance (Vertex AI Search) · auditor (Gemini 2.5 Flash). Then two post-merge: Cert Composer (branded HTML) and Second Opinion (Gemini + Google Search grounding · 4 adversarial stress tests).</div>
         <div class="code">async with task_store:
   await asyncio.gather(
     extractor(), grader(), rubric(),
@@ -996,7 +996,7 @@ async function autoLoop() {
 }
 
 (async function startAuto() {
-  setMode('auto', 'Auto loop', '5-agent mesh · cached cycle', 'PCEC v0.1');
+  setMode('auto', 'Auto loop', '7-agent mesh · cached cycle', 'PCEC v0.1');
   await sleep(400);
   autoLoop();
 })();
@@ -1011,7 +1011,7 @@ async function replayCached(e) {
   await sleep(200);
   interrupt = false;
   await cachedCycle();
-  setMode('auto', 'Auto loop', '5-agent mesh · cached cycle', 'PCEC v0.1');
+  setMode('auto', 'Auto loop', '7-agent mesh · cached cycle', 'PCEC v0.1');
   autoLoop();
   return false;
 }

@@ -144,11 +144,12 @@ A2A_AGENT_CARD = {
             "id": "verify_claim",
             "name": "Verify endorsement claim",
             "description": (
-                "Given a product URL, run the full mesh pipeline (5 specialized ADK agents on "
-                "Google Cloud) and return a signed PCEC v0.1 evidence bundle with vet-rubric "
-                "scoring, FTC §255 mapping, and adversarial audit verdict. ASYNC task: POST "
-                "returns 202 with task_id; poll GET /a2a/v1/tasks/get/{task_id} for completion. "
-                "~60s per claim."
+                "Given a product URL, run the full mesh pipeline (7 specialized agents on "
+                "Google Cloud: 1 ADK + 6 google.genai direct) and return a signed PCEC v0.1 "
+                "evidence bundle with vet-rubric scoring, FTC §255 mapping, adversarial audit "
+                "verdict, a branded executive cert, and an adversarial Second Opinion using "
+                "Google Search grounding. ASYNC task: POST returns 202 with task_id; poll GET "
+                "/a2a/v1/tasks/get/{task_id} for completion. ~30-45s per claim."
             ),
             "tags": ["trust", "endorsement", "substantiation", "pet-supplements", "PCEC"],
             "examples": [
