@@ -98,17 +98,29 @@ async def get_second_opinion(bundle: EndorsementClaimBundle) -> dict:
         config=types.GenerateContentConfig(
             temperature=0.3,
             tools=[types.Tool(google_search=types.GoogleSearch())],
-            max_output_tokens=2500,
+            max_output_tokens=4000,
         ),
     )
 
     text = (response.text or "").strip()
-    # Strip markdown fence if present
+    # Strip markdown fence if present (Gemini often wraps JSON in ```json...```)
     if text.startswith("```"):
         text = text.split("```", 2)[1] if text.count("```") >= 2 else text
         if text.startswith("json\n"):
             text = text[5:]
+        if text.startswith("json "):
+            text = text[5:]
     text = text.strip()
+    # Strip Google Search citation markers like [1] [2][3] that break JSON parsing
+    import re as _re
+    text = _re.sub(r'\[\d+(?:,\s*\d+)*\]', '', text)
+    # Strip control characters
+    text = text.replace("\r", "").translate({i: None for i in range(0x20) if i not in (0x09, 0x0A)})
+    # Extract the outer JSON object if there's prose before/after
+    first_brace = text.find('{')
+    last_brace = text.rfind('}')
+    if first_brace >= 0 and last_brace > first_brace:
+        text = text[first_brace:last_brace+1]
 
     try:
         return json.loads(text)
