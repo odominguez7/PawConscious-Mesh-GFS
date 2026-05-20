@@ -225,6 +225,54 @@
     .demo-cert .seal svg { width: 26px; height: 26px; opacity: 0.94; }
 
     /* ============================================================ */
+    /* ARCHITECTURE POSTER — new hero section                       */
+    /* ============================================================ */
+    .arch-hero {
+      background: var(--vellum);
+      padding: 96px 0 24px;
+      border-top: 1px solid var(--linen);
+    }
+    .arch-hero-inner {
+      max-width: 1320px; margin: 0 auto; padding: 0 40px;
+    }
+    .arch-hero .head {
+      display: grid; grid-template-columns: 1fr 1.4fr; gap: 56px;
+      align-items: end; margin-bottom: 40px;
+    }
+    .arch-hero h2 {
+      font-family: var(--display); font-weight: 400;
+      font-size: 44px; line-height: 1.1; letter-spacing: -0.02em;
+      color: var(--slate); margin: 12px 0 0;
+    }
+    .arch-hero p {
+      font-family: var(--body); font-size: 15px; line-height: 1.6;
+      color: var(--slate); opacity: 0.85; margin: 0;
+    }
+    .arch-hero .poster {
+      width: 100%; height: auto; display: block;
+      border: 1px solid var(--linen);
+      box-shadow: 0 24px 60px rgba(26,29,30,0.10);
+    }
+    .arch-hero .arch-actions {
+      margin-top: 28px;
+      display: flex; gap: 14px; align-items: center; flex-wrap: wrap;
+      font-family: var(--mono); font-size: 11px; letter-spacing: 0.18em;
+      text-transform: uppercase; color: var(--moss);
+    }
+    .arch-hero .arch-actions a {
+      color: var(--moss); text-decoration: underline; text-underline-offset: 3px;
+      padding: 6px 0;
+    }
+    .arch-hero .arch-actions a:hover { color: var(--amber); }
+    .arch-hero .arch-actions .sep { color: var(--linen); }
+    @media (max-width: 1024px) {
+      .arch-hero { padding: 56px 0; }
+      .arch-hero-inner { padding: 0 24px; }
+      .arch-hero .head { grid-template-columns: 1fr; gap: 24px; }
+      .arch-hero h2 { font-size: 32px; }
+    }
+
+    /* ============================================================ */
     /* WHY — single-line forces band                                */
     /* ============================================================ */
     .why {
@@ -680,6 +728,9 @@
         <span class="check">Firestore chain anchor</span>
         <span class="check">Open MIT</span>
       </div>
+      <div style="margin-top:14px;font-family:var(--mono);font-size:11px;letter-spacing:0.18em;text-transform:uppercase;color:var(--moss);">
+        <a href="#verify-zone" onclick="replayCached(event)" style="text-decoration:underline;text-underline-offset:3px;color:var(--moss);">↻ Or replay a cached validation (~12s)</a>
+      </div>
     </div>
 
     <!-- Cached agent demo — auto-loops, no click needed -->
@@ -740,6 +791,31 @@
         <div class="label">Cosequin · Nutramax settlement</div>
         <div class="num">$11.5M</div>
         <div class="src"><a href="https://topclassactions.com/lawsuit-settlements/open-lawsuit-settlements/11-5m-cosequin-dog-supplements-class-action-settlement/" target="_blank" rel="noopener">topclassactions.com ↗</a></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================ -->
+  <!-- ARCHITECTURE POSTER — new hero (Omar 2026-05-19 feedback)     -->
+  <!-- ============================================================ -->
+  <section class="arch-hero">
+    <div class="arch-hero-inner">
+      <div class="head">
+        <div>
+          <div class="eyebrow" style="font-family:var(--mono);font-size:11px;letter-spacing:0.22em;text-transform:uppercase;color:var(--moss);">Architecture</div>
+          <h2>Five Google ADK agents, one cryptographic seal.</h2>
+        </div>
+        <p>The orchestrator runs on Vertex AI Agent Engine. Five specialized agents fan out via A2A v0.3. Outputs merge through a SequentialAgent, get signed with Ed25519, and append to a public Firestore transparency log. Each step is open MIT, every claim is independently verifiable.</p>
+      </div>
+      <img class="poster" src="/assets/agent-poster-hd.png" alt="Architectural diagram of the PawConscious mesh — five specialized AI agents arranged in a hexagonal constellation around a central cryptographic anchor, with amber filaments showing data flow">
+      <div class="arch-actions">
+        <a href="/architecture">Full architecture detail ↗</a>
+        <span class="sep">·</span>
+        <a href="/.well-known/agent-card.json">A2A agent card ↗</a>
+        <span class="sep">·</span>
+        <a href="/pcec/v0/chain/head">Public chain head ↗</a>
+        <span class="sep">·</span>
+        <a href="https://github.com/odominguez7/PawConscious-Mesh-GFS">Source ↗</a>
       </div>
     </div>
   </section>
@@ -967,7 +1043,7 @@
   <!-- ============================================================ -->
   <!-- LIVE VERIFY ZONE                                              -->
   <!-- ============================================================ -->
-  <section class="verify-zone">
+  <section class="verify-zone" id="verify-zone">
     <div class="verify-head">
       <div class="eyebrow">Verify live</div>
       <h2>Watch the mesh sign a real product right now.</h2>
@@ -1121,13 +1197,29 @@
     }
 
     function sleep(ms) { return new Promise(r => setTimeout(r, ms)); }
+    let _liveMode = false;
     (async function demoLoop() {
       // small delay before first run
       await sleep(400);
       while (true) {
+        if (_liveMode) {
+          // user clicked Verify — pause the cached loop, let runMesh drive the demo UI
+          await sleep(2000);
+          continue;
+        }
         await demoRunOnce();
       }
     })();
+
+    // "Replay cached validation" link — explicitly retrigger one cached cycle
+    function replayCached(e) {
+      if (e) e.preventDefault();
+      _liveMode = false;
+      demoReset();
+      // jump to top of hero so user sees the demo cycle
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+      DEMO_STATUS.textContent = 'Replaying cached validation…';
+    }
 
     /* ============================================================ */
     /* LIVE MESH — runMesh() actually calls /a2a/v1/tasks/send       */
@@ -1196,12 +1288,33 @@
       if (!url || !url.startsWith('http')) {
         STATUS.textContent = 'Enter a valid product URL.';
         STATUS.classList.add('failed');
+        // ALSO update hero demo status so users see feedback at the click site
+        if (DEMO_STATUS) DEMO_STATUS.textContent = 'Enter a valid product URL above.';
         URL_INPUT.focus();
         return;
       }
       STATUS.classList.remove('failed','completed');
       RUN_BTN.disabled = true;
       resetLiveMesh();
+
+      // HERO-ANCHORED FEEDBACK + scroll to live verify action (Omar 2026-05-19 fix —
+      // "nothing happens" on click was because the visual response was 5 sections down).
+      // The cached loop pauses + the hero demo status reflects the real verify in progress.
+      _liveMode = true;
+      try { if (DEMO_CERT) DEMO_CERT.classList.remove('visible'); } catch(_){}
+      try {
+        if (DEMO_STATUS) {
+          DEMO_STATUS.textContent = 'Submitting your URL to mesh…';
+          DEMO_STATUS.classList.add('success');
+        }
+        if (DEMO_TICK) DEMO_TICK.textContent = 'LIVE · YOUR VERIFY';
+      } catch(_){}
+      // smooth scroll to verify-zone after a tick (after browser paints the new hero status)
+      requestAnimationFrame(() => {
+        const target = document.querySelector('.verify-zone');
+        if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      });
+
       STATUS.textContent = 'Submitting to mesh…';
       // visually activate all nodes during the wait
       document.querySelectorAll('.agent-node').forEach(n => n.classList.add('active'));
