@@ -94,15 +94,14 @@ async def compose_cert(bundle: EndorsementClaimBundle, bundle_hash: str | None, 
     prompt = CERT_PROMPT.format(bundle_json=json.dumps(bundle_for_prompt, indent=2))
 
     client = _client()
-    # gemini-2.5-pro — known-working on our Vertex project (gemini-2.5-flash-002 returns 404
-    # and bare gemini-2.5-flash returned empty in our region's preview).
-    # A/B eval against gemini-3.5-flash queued per WIN_PLAN Day 4 once it stabilizes.
+    # gemini-2.5-pro — known-working on our Vertex project.
+    # max_output_tokens=8000 (was 2000 — cert was truncated mid-CSS in v0.8.1).
     response = client.models.generate_content(
         model="gemini-2.5-pro",
         contents=prompt,
         config=types.GenerateContentConfig(
             temperature=0.2,
-            max_output_tokens=2000,
+            max_output_tokens=8000,
         ),
     )
 
@@ -112,4 +111,7 @@ async def compose_cert(bundle: EndorsementClaimBundle, bundle_hash: str | None, 
         html = "\n".join(html.split("\n")[1:-1]) if html.count("```") >= 2 else html.split("```", 2)[1]
     if html.startswith("html\n"):
         html = html[5:]
+    # Sanitize control characters that break JSON parsing on the wire
+    # (Pydantic auto-escapes \n but some clients fail on \r and ASCII < 0x20)
+    html = html.replace("\r", "").translate({i: None for i in range(0x20) if i not in (0x09, 0x0A)})
     return html.strip()
