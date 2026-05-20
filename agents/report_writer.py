@@ -94,10 +94,11 @@ async def compose_cert(bundle: EndorsementClaimBundle, bundle_hash: str | None, 
     prompt = CERT_PROMPT.format(bundle_json=json.dumps(bundle_for_prompt, indent=2))
 
     client = _client()
-    # gemini-2.5-flash for speed (cert composition is HTML, doesn't need 2.5 Pro depth).
-    # Upgrade to gemini-3.5-flash queued per WIN_PLAN Day 4 A/B eval.
+    # gemini-2.5-pro — known-working on our Vertex project (gemini-2.5-flash-002 returns 404
+    # and bare gemini-2.5-flash returned empty in our region's preview).
+    # A/B eval against gemini-3.5-flash queued per WIN_PLAN Day 4 once it stabilizes.
     response = client.models.generate_content(
-        model="gemini-2.5-flash-002",
+        model="gemini-2.5-pro",
         contents=prompt,
         config=types.GenerateContentConfig(
             temperature=0.2,
