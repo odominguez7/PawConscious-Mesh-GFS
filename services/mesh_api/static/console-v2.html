@@ -871,6 +871,7 @@ const RUN_BTN     = document.getElementById('runBtn');
 
 let demoMode = 'auto'; // 'auto' | 'live' | 'replay'
 let interrupt = false;
+let cycleGen = 0; // generation counter — cached cycles abort if a newer gen exists
 
 function tsNow() {
   const d = new Date();
@@ -928,40 +929,43 @@ function resetDemo() {
 function sleep(ms) { return new Promise(r => setTimeout(r, ms)); }
 
 async function cachedCycle() {
+  const myGen = ++cycleGen;
+  const aborted = () => interrupt || myGen !== cycleGen;
   const b = CACHED_BRANDS[Math.floor(Math.random()*CACHED_BRANDS.length)];
   resetDemo(); streamClear();
   streamAdd(`POST /a2a/v1/tasks/send → ${b.brand}`, 'dim');
-  await sleep(600); if (interrupt) return;
+  await sleep(600); if (aborted()) return;
   streamAdd('task-cached · status: submitted', 'ok');
-  await sleep(700); if (interrupt) return;
-  streamAdd('orchestrator: ParallelAgent fan-out · 5 agents on A2A v0.3');
+  await sleep(700); if (aborted()) return;
+  streamAdd('orchestrator: asyncio.gather · 5 specialized agents on A2A v0.3');
   const nodes = DEMO_NODES.querySelectorAll('.node');
   const edges = DEMO_EDGES.querySelectorAll('.edge');
   const STEPS = [
-    'claim-extractor · Firecrawl + Gemini 2.5 Pro · 3 claims extracted',
+    'claim-extractor · ADK + httpx · 3 claims extracted',
     'evidence-grader · BioMCP → PubMed · 6 papers · 247 citations',
-    'vet-rubric · Vertex AI Search · 4.2 / 5',
-    'compliance · FTC §255.3 mapping · PASS',
-    'auditor (Falsifier) · 3 challenges run · cleared',
+    'vet-rubric · prompt-only 5-vet simulation · 4.2 / 5',
+    'compliance · Vertex AI Search FTC §255.3 · PASS',
+    'auditor (Falsifier v0) · 2 checks cleared',
   ];
   for (let i=0; i<nodes.length; i++) {
-    if (interrupt) return;
+    if (aborted()) return;
     edges[i].classList.add('active'); nodes[i].classList.add('active');
     streamAdd(STEPS[i]);
     await sleep(550);
   }
-  await sleep(400); if (interrupt) return;
+  await sleep(400); if (aborted()) return;
   for (let i=0; i<nodes.length; i++) {
+    if (aborted()) return;
     nodes[i].classList.remove('active'); nodes[i].classList.add('done');
     edges[i].classList.remove('active'); edges[i].classList.add('done');
     await sleep(120);
   }
-  if (interrupt) return;
+  if (aborted()) return;
   streamAdd('SequentialAgent · merge + sign · Ed25519', 'ok');
-  await sleep(500); if (interrupt) return;
+  await sleep(500); if (aborted()) return;
   DEMO_ANCHOR.classList.add('done');
   streamAdd(`chain_anchor appended → ${b.anchor.slice(0,32)}…`, 'ok');
-  await sleep(400); if (interrupt) return;
+  await sleep(400); if (aborted()) return;
   document.getElementById('dcUrn').textContent = b.urn;
   document.getElementById('dcHash').textContent = b.hash;
   document.getElementById('dcAnchor').textContent = b.anchor;
@@ -1011,8 +1015,13 @@ async function runMesh() {
     URL_INPUT.focus();
     return;
   }
-  interrupt = true; await sleep(200); interrupt = true; // ensure auto-loop yields
-  resetDemo(); streamClear();
+  // Kill any in-flight cached cycle — bump generation, set interrupt, wait one frame for the
+  // async cachedCycle to observe the abort, then reset DOM cleanly.
+  cycleGen++;
+  interrupt = true;
+  await sleep(50);
+  resetDemo();
+  streamClear();
   setMode('live', 'Live · your URL', `mesh-api-…run.app · ${url.replace(/^https?:\/\//,'').slice(0,40)}…`, 'POST /a2a/v1/tasks/send');
   RUN_BTN.disabled = true;
   document.getElementById('demo').scrollIntoView({ behavior:'smooth', block:'start' });
@@ -1028,25 +1037,36 @@ async function runMesh() {
     const sub = await submit.json();
     const taskId = sub.task_id;
     streamAdd(`task ${taskId.slice(0,12)}… queued · status: submitted`, 'ok');
+    streamAdd(`polling /a2a/v1/tasks/get/${taskId.slice(0,12)}… every 3s · ~60-180s typical`, 'dim');
     // visually mark all nodes active during the wait
-    DEMO_NODES.querySelectorAll('.node').forEach(n => n.classList.add('active'));
-    DEMO_EDGES.querySelectorAll('.edge').forEach(e => e.classList.add('active'));
+    DEMO_NODES.querySelectorAll('.node').forEach(n => { n.classList.remove('done'); n.classList.add('active'); });
+    DEMO_EDGES.querySelectorAll('.edge').forEach(e => { e.classList.remove('done'); e.classList.add('active'); });
 
-    let attempts = 0; let lastMsg = '';
-    while (attempts < 60) {
-      await sleep(3500);
+    let attempts = 0; let lastMsg = ''; let lastStatus = ''; const t0 = Date.now();
+    while (attempts < 80) {
+      await sleep(3000);
+      attempts++;
       const get = await fetch(`/a2a/v1/tasks/get/${taskId}`);
       if (!get.ok) throw new Error(`get ${get.status}`);
       const data = await get.json();
-      if (data.progress_message && data.progress_message !== lastMsg) {
-        lastMsg = data.progress_message;
-        streamAdd(`mesh: ${lastMsg}`);
+      const elapsed = Math.round((Date.now()-t0)/1000);
+      // ALWAYS log the poll so user sees activity (codex S2E P2 — backend only emits 2 progress msgs)
+      if (data.status !== lastStatus || (data.progress_message && data.progress_message !== lastMsg)) {
+        lastStatus = data.status;
+        if (data.progress_message && data.progress_message !== lastMsg) {
+          lastMsg = data.progress_message;
+          streamAdd(`mesh [${elapsed}s] · ${data.status} · ${lastMsg}`, 'ok');
+        } else {
+          streamAdd(`mesh [${elapsed}s] · ${data.status}`);
+        }
+      } else if (attempts % 3 === 0) {
+        // heartbeat every 9s so the user knows polling is alive
+        streamAdd(`[${elapsed}s] still ${data.status}… (poll ${attempts})`, 'dim');
       }
-      if (data.status === 'completed') { renderLive(data); return; }
+      if (data.status === 'completed') { renderLive(data); RUN_BTN.disabled = false; return; }
       if (data.status === 'failed') { streamAdd(`task failed: ${data.error || '—'}`, 'err'); RUN_BTN.disabled=false; return; }
-      attempts++;
     }
-    streamAdd('polling timed out after 3.5min', 'err');
+    streamAdd('polling timed out after 4min', 'err');
   } catch (err) {
     streamAdd(`error: ${err.message}`, 'err');
   } finally {
