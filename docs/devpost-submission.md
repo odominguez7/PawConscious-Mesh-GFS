@@ -13,7 +13,7 @@
 > Agentic compliance protocol for pet-supplement endorsement claims. 7 agents on Google Cloud. Real PubMed. Live A2A. Signed bundles, chained.
 
 ## Tagline (longer)
-> The verifiable claim infrastructure for consumer goods. Built on Google ADK + Gemini 2.5 + A2A. PawConscious Mesh is the pet-supplement reference deployment of a protocol that scales to every consumer vertical AI shopping will mediate.
+> The verifiable claim infrastructure for consumer goods. Built on Gemini 2.5 + A2A v0.3 + Cloud Run with a Google ADK Phase 4 Agent Engine deployment surface scaffolded into the claim-extractor. PawConscious Mesh is the pet-supplement reference deployment of a protocol that scales to every consumer vertical AI shopping will mediate.
 
 ## Cover image
 1280×640 architecture poster (gpt-image-1 rendered, repo `deck/assets/`): 7-agent mesh fan-out around the chain anchor, Track 3 mandates labeled.
@@ -38,7 +38,7 @@ A brand pastes a product URL into PawConscious Mesh. The flow on Google Cloud:
 
 The final result is callable from any external AI agent via our public A2A v0.3 agent card. The seven agents:
 
-1. **claim-extractor** (ADK + Gemini 2.5 Pro) — pulls every health claim from the PDP via httpx + BeautifulSoup, with Firecrawl fallback for retailer pages
+1. **claim-extractor** (Gemini 2.5 Pro via `google.genai`; ADK `LlmAgent` + `FunctionTool` scaffolded for Phase 4 Agent Engine deployment) — pulls every health claim from the PDP via httpx + BeautifulSoup, with Firecrawl fallback for retailer pages
 2. **evidence-grader** (google.genai + Gemini 2.5 Pro) — queries PubMed live via BioMCP, then enriches every paper with real citation and influential-citation counts from Semantic Scholar Graph API
 3. **vet-panel** (google.genai + Gemini 2.5 Pro) — runs a 5-vet rubric simulation per claim and flags any that need human-vet escalation
 4. **compliance** (google.genai + Gemini 2.5 Pro + Vertex AI Search) — maps each claim to FTC 16 CFR §255, AAFCO public definitions, and NASC seal-program standards, grounded against an indexed regulatory corpus with snippet provenance hashes
@@ -54,11 +54,11 @@ The mesh exposes a public A2A v0.3 agent card at `/.well-known/agent-card.json` 
 
 ## How we built it
 
-**Mandatory Track 3 tech (all present):**
-- **Google ADK** — claim-extractor agent built on the Agent Development Kit; other six agents run on `google.genai` direct (we state this honestly rather than overclaim a full ADK estate)
-- **Gemini** — 2.5 Pro for reasoning agents, 2.5 Flash for the audit pass
-- **Cloud Run** — per-agent deployment, auto-scales to zero
-- **A2A v0.3 (Linux Foundation)** — public agent card + ShopperAgent integration
+**Track 3 mandatory tech (honest status):**
+- **Gemini** ✅ — 2.5 Pro for six reasoning agents, 2.5 Flash for the auditor pass
+- **Cloud Run** ✅ — per-agent deployment, auto-scales to zero
+- **A2A v0.3 (Linux Foundation)** ✅ — public agent card at `/.well-known/agent-card.json` + working external ShopperAgent that proves the protocol round-trip
+- **Google ADK** 🟡 — `LlmAgent` + `FunctionTool` are scaffolded for claim-extractor (`agents/claim_extractor.py::build_claim_extractor_agent`); `ParallelAgent`/`SequentialAgent` shape is documented in the orchestrator as the Phase 4 Vertex AI Agent Engine deployment surface. The v0.1 runtime executes all seven agents via `google.genai` direct for deterministic latency under load. We surface this honestly rather than dress google.genai calls up as ADK; converting the claim-extractor runtime to ADK `LlmAgent` execution is on the pre-submission checklist.
 
 **Key Considerations (honest mapping):**
 - **Multi-agent orchestration** — production orchestrator (`agents/orchestrator.py`) uses `asyncio.gather` for per-claim parallel fan-out (evidence-grader + vet-panel + compliance) with auditor running on the merged evidence. The ParallelAgent + SequentialAgent shape is documented in the orchestrator docstring as the Phase 4 public API surface; v0.1 ships with asyncio for deterministic stability under load
@@ -85,7 +85,7 @@ The mesh exposes a public A2A v0.3 agent card at `/.well-known/agent-card.json` 
 
 2. **Self-certifying was wrong.** First draft positioned the mesh as the certifier. An adversarial review pointed out that without ISO 17065/17025 accreditation and E&O coverage, we become the liability target. We pivoted to "program manager + evidence infrastructure" — the mesh issues evidence, an accredited body (NASC, NSF, vet-school panel) signs the cert. Partners are optional in v0.1 with the second-opinion agent as the credibility layer; partner channel is the long-term moat.
 
-3. **Truth-up discipline.** Eight rounds of adversarial codex reviews caught overclaims at every stage: "5 ADK agents" was actually 1 ADK + 4 google.genai → corrected; "AI2 Asta MCP integration" was a TODO → now real via Semantic Scholar; "regulator-grade" → softened to "evidence infrastructure"; "Perplexity integration" → replaced with our own ShopperAgent. Each block verdict made the submission stronger.
+3. **Truth-up discipline.** Multiple rounds of adversarial codex reviews caught overclaims at every stage: the original "5 ADK agents fanning out via A2A" framing was actually 7 agents on `google.genai` direct with an ADK scaffold for Phase 4 → corrected and surfaced honestly; "AI2 Asta MCP integration" was a TODO → now real via Semantic Scholar Graph API; "regulator-grade" → softened to "evidence infrastructure"; "Perplexity integration" → replaced with our own ShopperAgent. Each block verdict made the submission stronger.
 
 4. **Real biomedical retrieval has options and tradeoffs.** PubMed E-utilities are free but return raw XML with no relevance ranking. Vertex AI Search Healthcare is FHIR-shaped and overkill for pet evidence. BioMCP won out with 21 biomedical tools and a single-line install. Semantic Scholar Graph API added citation-influence grading on top — batch endpoint preserves request order so we get a clean Evidence-keyed enrichment.
 
@@ -128,8 +128,8 @@ The mesh exposes a public A2A v0.3 agent card at `/.well-known/agent-card.json` 
 ## Built with (Devpost tech-list)
 
 - Google Cloud
-- Google ADK (claim-extractor)
-- google.genai SDK (six other agents)
+- Google ADK (`LlmAgent` + `FunctionTool` scaffold for claim-extractor; ParallelAgent/SequentialAgent shape documented for Phase 4 Agent Engine deployment)
+- google.genai SDK (v0.1 runtime across all 7 agents)
 - Gemini 2.5 Pro
 - Gemini 2.5 Flash
 - Vertex AI Search (compliance grounding)

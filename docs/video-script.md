@@ -23,28 +23,31 @@
 
 ### 00:12 — 00:30 · THE PRODUCT (paste URL → fan-out)
 
-**VISUAL:** Screen capture — `mesh-api-40952019806.us-central1.run.app` portal. Cursor pastes the live Honest Paws hip-and-joint PDP URL into the input box. Click "Validate." Mesh Console UI lights up — five A2A agent cards animate in parallel.
+**VISUAL:** Screen capture — `mesh-api-40952019806.us-central1.run.app` portal. Cursor pastes the live Native Pet hip-and-joint PDP URL into the input box. Click "Validate." Mesh Console UI lights up — the orchestrator runs claim-extractor, then the three-way fan-out (evidence-grader · vet-panel · compliance) animates per claim, then auditor reviews the merged bundle.
 
-**VO:** "PawConscious Mesh — built on Google's Agent Development Kit. A brand pastes a product URL. Five specialized agents fan out via the A2A protocol on Google Cloud."
+**VO:** "PawConscious Mesh — seven agents on Google Cloud, callable by any AI shopping agent over A2A. A brand pastes a product URL. The mesh fans out, signs the evidence, and chains it."
 
 **ON-SCREEN CALLOUTS:**
-- ADK 2.0
-- Gemini 3 Pro
-- Vertex AI Agent Engine
+- Gemini 2.5 Pro / 2.5 Flash
 - A2A v0.3
 - Cloud Run
+- Vertex AI Search
+- BioMCP + Semantic Scholar
+- Google ADK (Phase 4 scaffold)
 
 ### 00:30 — 01:10 · LIVE MESH TRAFFIC (pre-recorded for reliability per codex G7.3 P0.5)
 
-**VISUAL:** Mesh Console live-traffic view. Each agent card fills in as it completes:
+**VISUAL:** Mesh Console live-traffic view. Each agent fills in as it completes:
 
 - `claim-extractor` → "7 claims extracted from PDP"
-- `evidence-grader` → "12 PubMed citations · top: 247 total / 18 influential (AI2 Asta)"
+- `evidence-grader` → "12 PubMed citations · top: 247 total / 18 influential (Semantic Scholar)"
 - `vet-panel` → "5-vet rubric: 4 of 5 claims pass at 4+/5; 1 claim flagged for escalation"
 - `compliance` → "FTC §255 mapping: 2 violations flagged"
-- `auditor` → "Adversarial pass: 1 citation flagged as claim-direction mismatch — forcing re-grade"
+- `auditor` → "Adversarial pass: 1 PMID format mismatch flagged"
+- `report-writer` → "Cert composed: signed Ed25519, chain-anchored"
+- `second-opinion` → "Google Search grounded: FDA warning letter to Natural Native LLC + Cosequin $11.5M precedent — verdict flipped PASS → NEEDS REVIEW"
 
-**VO:** "Claim extractor pulls every health claim from the PDP. Evidence grader queries PubMed live via BioMCP and scores citations by influence using AI2 Asta. Vet panel runs a five-vet rubric simulation. Compliance maps each claim to FTC two-five-five. And the auditor — adversarial — catches a citation that doesn't support the claim direction. It forces a re-grade."
+**VO:** "Claim extractor pulls every health claim from the PDP. Evidence grader queries PubMed live via BioMCP and grades citations by influence using Semantic Scholar. Vet panel runs a five-vet rubric. Compliance maps each claim to FTC two-five-five with snippet provenance. Auditor catches format mismatches. Then the second opinion — our adversarial agent — searches the live web for evidence that contradicts the brand's own conclusion. It finds an FDA warning letter and the Cosequin precedent, and flips the verdict to NEEDS REVIEW."
 
 **MUSIC:** Lyria builds, drums enter.
 
@@ -80,7 +83,7 @@ Cut to the ShopperAgent UI showing the ranked answer with trust scores attached 
 
 ### 02:20 — 02:45 · THE THESIS (closing card)
 
-**VISUAL:** Cinematic plate — close-up on a vet's hands signing an attestation tablet (Veo 3.1 generated). Cut to the Google Cloud stack logos in sequence: ADK 2.0, Gemini 3 Pro, Vertex AI Agent Engine, Vertex AI Search, A2A v0.3, Cloud Run, BioMCP.
+**VISUAL:** Cinematic plate — close-up on a vet's hands signing an attestation tablet (Veo 3.1 generated). Cut to the Google Cloud stack logos in sequence: Gemini 2.5, A2A v0.3, Cloud Run, Vertex AI Search, BioMCP, Google ADK (Phase 4 scaffold).
 
 **VO:** "ACP — the Agentic Compliance Protocol. Verifiable claim infrastructure for consumer goods. Pet supplements are the proving ground. Human supplements, beauty, functional food — same protocol, mechanical expansion. We built this on Google Cloud because A2A is the substrate AI commerce will run on. PawConscious Mesh is the reference deployment. We're shipping the protocol open and partner-ready from day one."
 
@@ -98,7 +101,7 @@ pcec.dev (coming soon)         — protocol spec
 
 **MUSIC:** Lyria resolves, falls to single piano outro.
 
-**END CARD:** Three Google Cloud logos (ADK · Gemini · A2A) + MIT license badge.
+**END CARD:** Google Cloud stack (Gemini · A2A · Cloud Run · ADK scaffold) + MIT license badge.
 
 ---
 

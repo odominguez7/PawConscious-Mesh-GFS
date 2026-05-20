@@ -17,7 +17,7 @@ Day 1 ships: 13 commits · 4 codex handshakes cleared · cached agent demo + Bus
 | Demo & Presentation | 20% | 17-19 | 20 |
 | **Total** | **100%** | **~81-88** | **100** |
 
-Track 3 hard mandates ✅ all 4 met. Key Considerations ✅ all 5 met. Mandatory tech ✅ all 3 present.
+Track 3 hard mandates ✅ all 4 met (B2B · Cloud Run · Gemini · A2A). Mandatory tech: Gemini ✅ · Cloud Run ✅ · ADK 🟡 — ADK `LlmAgent` + `FunctionTool` are scaffolded in `agents/claim_extractor.py::build_claim_extractor_agent` and ADK ParallelAgent/SequentialAgent wrappers are documented as the Phase 4 Vertex AI Agent Engine deployment surface; the v0.1 runtime executes via `google.genai` direct for deterministic latency. Key Considerations: Vertex AI Search grounding ✅ (compliance agent) · multi-agent collaboration via A2A ✅ (public agent card + working ShopperAgent) · Agent Engine 🟡 (same Phase 4 surface).
 
 ## The 9 moves to 100/100
 
@@ -42,7 +42,7 @@ Track 3 hard mandates ✅ all 4 met. Key Considerations ✅ all 5 met. Mandatory
 
 ## What 100/100 requires per each rubric line (verbatim)
 
-**Technical Implementation 30%** — code quality + use of mandatory tech (Gemini + ADK + Cloud Run) + Key Considerations (Agent Engine ✅ + Vertex AI Search grounding ✅ + multi-agent collaboration via A2A ✅) + Track 3 hard mandates (B2B + Cloud Run + Gemini + A2A all ✅). Gap-closers: A2A round-trip (Move D) + ADK eval badge (Move E) + repo public for code review (Move H).
+**Technical Implementation 30%** — code quality + use of mandatory tech (Gemini ✅ + Cloud Run ✅ + ADK 🟡 LlmAgent + FunctionTool scaffold in claim-extractor; v0.1 runtime via google.genai direct) + Key Considerations (Vertex AI Search grounding ✅ + multi-agent collaboration via A2A ✅ + Agent Engine 🟡 asyncio fan-out with ParallelAgent wrappers documented for Phase 4) + Track 3 hard mandates (B2B + Cloud Run + Gemini + A2A all ✅). Gap-closers: convert claim-extractor runtime to ADK LlmAgent execution before submission, A2A round-trip (Move D), ADK eval badge (Move E), repo public for code review (Move H).
 
 **Business Case 30%** — per the rule's only specification ("Clearly articulate a compelling business use case for your multi-agent solution"). Articulation, not external proof. Moves B (live page) + J (Devpost text) max this. No LOIs/quotes required by rules.
 
