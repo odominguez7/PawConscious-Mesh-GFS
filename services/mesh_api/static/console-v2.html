@@ -412,7 +412,7 @@
     <div class="hero-left">
       <div class="eyebrow">PawConscious · Agentic Compliance Protocol</div>
       <h1>The <span class="grad">trust layer</span> AI agents call before recommending a consumer product.</h1>
-      <p class="hero-sub">Paste any pet supplement product page. Five Google ADK agents on Cloud Run grade every health claim against PubMed and the FTC §255.3 substantiation rule, then sign the evidence bundle with Ed25519 and anchor it to a public transparency log.</p>
+      <p class="hero-sub">Paste any pet supplement product page. Five specialized agents on Google Cloud (one ADK, four <code style="color:var(--electric);font-family:var(--mono);">google.genai</code> direct) grade every health claim against PubMed and the FTC §255.3 substantiation rule, then sign the evidence bundle with Ed25519 and anchor it to a public Firestore transparency log.</p>
       <div class="hero-cta">
         <input type="text" id="urlInput" placeholder="https://www.nativepet.com/products/hip-joint"
                value="https://www.nativepet.com/products/hip-joint" autocomplete="off">
@@ -425,7 +425,7 @@
       </div>
       <div class="hero-secondary">
         <a href="#" onclick="return replayCached(event)">↻ Replay cached validation (~12s)</a>
-        <span class="pill">5 ADK agents</span>
+        <span class="pill">5 specialized agents</span>
         <span class="pill">Ed25519 signed</span>
         <span class="pill">Open MIT</span>
       </div>
@@ -472,7 +472,7 @@
   <div class="container">
     <div class="arch-head">
       <div class="eyebrow">Architecture · Google Cloud native</div>
-      <h2>Five ADK agents · A2A · Agent Engine · Vertex AI Search · Firestore.</h2>
+      <h2>Five specialized agents · A2A · Vertex AI Search · Ed25519 · Firestore chain.</h2>
       <p>Hover any agent to see its Google tool, model, temperature, and typical latency. Every component below maps to live production code in <a href="https://github.com/odominguez7/PawConscious-Mesh-GFS" style="color: var(--electric);">the open-source repo</a>.</p>
     </div>
 
@@ -530,27 +530,27 @@
         <g class="box agent" data-tip="claim-extractor">
           <rect x="780" y="34" width="200" height="56"/>
           <text class="label" x="796" y="54">01 Claim Extractor</text>
-          <text class="meta" x="796" y="74">Firecrawl · Gemini 2.5 Pro</text>
+          <text class="meta" x="796" y="74">ADK + httpx · Firecrawl fallback</text>
         </g>
         <g class="box agent" data-tip="evidence-grader">
           <rect x="780" y="114" width="200" height="56"/>
           <text class="label" x="796" y="134">02 Evidence Grader</text>
-          <text class="meta" x="796" y="154">BioMCP · AI2 Asta MCP</text>
+          <text class="meta" x="796" y="154">BioMCP → PubMed live</text>
         </g>
         <g class="box agent" data-tip="vet-panel">
           <rect x="780" y="194" width="200" height="56"/>
           <text class="label" x="796" y="214">03 Vet Rubric</text>
-          <text class="meta" x="796" y="234">Vertex AI Search vet corpus</text>
+          <text class="meta" x="796" y="234">prompt-only 5-vet simulation</text>
         </g>
         <g class="box agent" data-tip="compliance">
           <rect x="780" y="274" width="200" height="56"/>
           <text class="label" x="796" y="294">04 Compliance</text>
-          <text class="meta" x="796" y="314">Vertex AI Search FTC §255</text>
+          <text class="meta" x="796" y="314">Vertex AI Search · FTC §255</text>
         </g>
         <g class="box agent" data-tip="auditor">
           <rect x="780" y="354" width="200" height="56"/>
-          <text class="label" x="796" y="374">05 Auditor (Falsifier)</text>
-          <text class="meta" x="796" y="394">Gemini 2.5 Flash · ADK Eval</text>
+          <text class="label" x="796" y="374">05 Auditor (Falsifier v0)</text>
+          <text class="meta" x="796" y="394">Gemini 2.5 Flash · custom</text>
         </g>
 
         <!-- Merge + sign -->
@@ -585,27 +585,27 @@
     <div class="arch-legend">
       <div class="item">
         <div class="h"><span class="name">ADK 2.0</span><span class="badge">Orchestration</span></div>
-        <p>All 5 specialized agents + the orchestrator are <code style="color:var(--electric);font-family:var(--mono);">google-adk</code> 1.33. ParallelAgent fan-out via <code style="color:var(--electric);font-family:var(--mono);">asyncio.gather</code>; SequentialAgent merge.</p>
+        <p>Used by <b>claim-extractor</b> (<code style="color:var(--electric);font-family:var(--mono);">google.adk.agents.LlmAgent</code>). The other 4 agents call <code style="color:var(--electric);font-family:var(--mono);">google.genai</code> SDK direct for v0.1 simplicity. ADK ParallelAgent + SequentialAgent wrappers are <i>planned</i> for full Agent Engine deployment.</p>
       </div>
       <div class="item">
         <div class="h"><span class="name">Gemini 2.5</span><span class="badge">Reasoning</span></div>
-        <p>2.5 Pro for claim extraction, evidence grading, vet rubric, compliance mapping. 2.5 Flash for routing + adversarial audit. Every call uses <code style="color:var(--electric);font-family:var(--mono);">temperature=0.0</code> for reproducibility.</p>
+        <p><b>2.5 Pro</b> for claim extraction, evidence grading, vet rubric, compliance mapping (4 agents). <b>2.5 Flash</b> for the adversarial auditor (1 agent). Every call uses <code style="color:var(--electric);font-family:var(--mono);">temperature=0.0</code> for reproducibility.</p>
       </div>
       <div class="item">
         <div class="h"><span class="name">Vertex AI Search</span><span class="badge">Grounding</span></div>
-        <p>Two corpora: vet rubric handbook + public regulator docs (FTC 16 CFR §255, AAFCO, NASC). Manual-retrieval pattern with per-source provenance.</p>
+        <p>One corpus: public-redistributable regulator docs (FTC 16 CFR §255, AAFCO PF7, NASC public-side seal program). Used by the <b>compliance</b> agent. Vet-panel is prompt-only — no licensed handbook ingest (codex G7 P0.7).</p>
       </div>
       <div class="item">
         <div class="h"><span class="name">A2A v0.3</span><span class="badge">Interop</span></div>
-        <p>Public agent card at <code style="color:var(--electric);font-family:var(--mono);">/.well-known/agent-card.json</code>. Async lifecycle: <code style="color:var(--electric);font-family:var(--mono);">/tasks/send</code> → poll <code style="color:var(--electric);font-family:var(--mono);">/tasks/get</code>. External ShopperAgent consumes it for ranking.</p>
+        <p>Public agent card at <code style="color:var(--electric);font-family:var(--mono);">/.well-known/agent-card.json</code>. Async lifecycle: <code style="color:var(--electric);font-family:var(--mono);">/tasks/send</code> → poll <code style="color:var(--electric);font-family:var(--mono);">/tasks/get</code>. External ShopperAgent consumes it for ranking. No third-party integrations claimed.</p>
       </div>
       <div class="item">
         <div class="h"><span class="name">Cloud Run</span><span class="badge">Runtime</span></div>
-        <p>Mesh API + ShopperAgent each their own service. Auto-scales to zero. Container images in Artifact Registry.</p>
+        <p>Mesh API + ShopperAgent each their own service. Auto-scales to zero. Container images in Artifact Registry. Both use the <code style="color:var(--electric);font-family:var(--mono);">acp-runtime</code> service account.</p>
       </div>
       <div class="item">
         <div class="h"><span class="name">Firestore</span><span class="badge">Chain</span></div>
-        <p>Append-only transparency log. Every signed bundle adds an entry with <code style="color:var(--electric);font-family:var(--mono);">chain_anchor = sha256(bundle_hash + prev_anchor)</code>. Head: <a href="/pcec/v0/chain/head" style="color:var(--electric);">/pcec/v0/chain/head</a>.</p>
+        <p>Append-only transparency log. Per <code style="color:var(--electric);font-family:var(--mono);">shared/transparency_log.py</code>: <code style="color:var(--electric);font-family:var(--mono);">chain_anchor = sha256(bundle_hash + ":" + (prev_hash or "genesis"))</code>. Head: <a href="/pcec/v0/chain/head" style="color:var(--electric);">/pcec/v0/chain/head</a>.</p>
       </div>
     </div>
   </div>
@@ -630,7 +630,7 @@
       <div class="how-step">
         <div class="n">02 · Mesh</div>
         <div class="title">Five agents fan out via A2A</div>
-        <div class="desc">claim-extractor · evidence-grader (BioMCP) · vet rubric · FTC §255.3 compliance · adversarial auditor. All on Gemini 2.5 Pro, deterministic sampling.</div>
+        <div class="desc">claim-extractor (ADK + httpx) · evidence-grader (BioMCP → PubMed) · vet rubric (prompt-only) · compliance (Vertex AI Search) · auditor (Gemini 2.5 Flash). All deterministic (temperature 0).</div>
         <div class="code">async with task_store:
   await asyncio.gather(
     extractor(), grader(), rubric(),
@@ -654,8 +654,8 @@
     <div class="proof-text">
       <div class="eyebrow">The artifact</div>
       <h2>Not a badge. A signed document the agentic shelf can verify.</h2>
-      <p>Every claim on the label is mapped to citations, scored by a rubric, checked against the FTC endorsement guide, and cryptographically signed. The bundle is machine-readable JSON-LD over A2A v0.3, with a SHA256 chain anchor anyone can audit.</p>
-      <p>Amazon Rufus, Chewy's recommender, or any A2A v0.3 agent can fetch the bundle, verify the signature, and surface the product as evidence-backed.</p>
+      <p>Every claim on the label is mapped to citations, scored by a rubric, checked against the FTC endorsement guide, and cryptographically signed. The bundle is machine-readable Pydantic JSON over A2A v0.3 (JSON-LD evolution on the PCEC v0.2 roadmap), with a SHA256 chain anchor anyone can audit.</p>
+      <p>Any A2A v0.3-compatible agent (e.g. our reference ShopperAgent in the repo) can fetch the bundle, verify the signature, and use it to surface the product as evidence-backed. No third-party integrations claimed — Amazon Rufus, Perplexity Shopping, etc. are the <em>use case</em>, not <em>current integrations</em>.</p>
       <div class="chips">
         <span class="chip">Ed25519</span>
         <span class="chip">PCEC v0.1</span>
@@ -1089,17 +1089,17 @@ function renderLive(data) {
  * ARCHITECTURE — interactive tooltip on hover/focus
  * ============================================================ */
 const ARCH_TIPS = {
-  brand: { name:'Brand owner', meta:'Pet supplement brand (CMO / GC) submits a product URL.<br>POST <b>/a2a/v1/tasks/send</b> · X-API-Key header.' },
-  shopper: { name:'ShopperAgent · external A2A consumer', meta:'Separate Cloud Run service (open source MIT).<br>Discovers the mesh via <b>/.well-known/agent-card.json</b>, calls <b>verify_claim</b>, polls <b>/tasks/get</b>, ranks products by trust score.<br>Lives at shopper-agent-…run.app' },
-  'agent-engine': { name:'Vertex AI Agent Engine', meta:'<b>ADK 2.0</b> · ParallelAgent fan-out via asyncio.gather, SequentialAgent merge.<br>Reasoning Engine resource: projects/40952019806/locations/us-central1/reasoningEngines/1255381144908595200<br>Deterministic sampling (temperature 0).' },
-  'claim-extractor': { name:'Claim Extractor', meta:'Tool: <b>Firecrawl MCP</b> (PDP scraping)<br>Model: <b>Gemini 2.5 Pro</b> · temp 0.0<br>Returns: list[Claim{text, kind, position_on_page}]' },
-  'evidence-grader': { name:'Evidence Grader', meta:'Tool: <b>BioMCP</b> (PubMed) + <b>AI2 Asta MCP</b> (citation grading)<br>Model: <b>Gemini 2.5 Pro</b> · temp 0.0<br>Grounding: Google Search (situational)' },
-  'vet-panel': { name:'Vet Rubric', meta:'Grounding: <b>Vertex AI Search</b> over vet handbook corpus<br>Model: <b>Gemini 2.5 Pro</b> · temp 0.0<br>5-criterion rubric → score 1-5 per claim<br>Roadmap: real academic panel attestation' },
-  compliance: { name:'Compliance', meta:'Grounding: <b>Vertex AI Search</b> over regulator corpus<br>Corpora: FTC 16 CFR §255 federal text · AAFCO public docs · NASC public-side seal program<br>Model: <b>Gemini 2.5 Pro</b> · temp 0.0' },
-  auditor: { name:'Auditor (Falsifier)', meta:'Adversarial pass · <b>Gemini 2.5 Flash</b> · temp 0.0<br>Challenges: direction_only_falsifier_v0 · citation_existence · claim_direction_match<br>Tool: ADK Eval framework' },
-  merge: { name:'SequentialAgent · merge + sign', meta:'Canonical-JSON of EndorsementClaimBundle (excludes signature)<br>Sign: <b>Ed25519</b> via Secret Manager key<br>DID: did:web:mesh-api-40952019806.us-central1.run.app<br>If signer unavailable → labeled "unsigned" (no silent fakes)' },
-  response: { name:'Brand response', meta:'Async lifecycle per A2A v0.3:<br>POST tasks/send → 202 {task_id}<br>poll GET tasks/get/{id} → completed/failed' },
-  firestore: { name:'Firestore transparency log', meta:'Append-only.<br>chain_anchor = sha256(bundle_hash + prev_anchor)<br>Head pointer at acp-claims-meta/_chain_head<br>Public: <b>/pcec/v0/chain/head</b>' },
+  brand: { name:'Brand owner', meta:'Pet supplement brand (CMO / GC / Compliance) submits a product URL.<br>POST <b>/a2a/v1/tasks/send</b> · X-API-Key header.' },
+  shopper: { name:'ShopperAgent · external A2A consumer', meta:'Separate Cloud Run service (open source MIT).<br>Discovers the mesh via <b>/.well-known/agent-card.json</b>, calls <b>verify_claim</b>, polls <b>/tasks/get</b>, ranks products by trust score.<br>Lives at shopper-agent-…run.app — the only A2A consumer we ship today.' },
+  'agent-engine': { name:'Orchestrator', meta:'<b>asyncio.gather</b> primitive for parallel fan-out (deterministic).<br>ADK ParallelAgent/SequentialAgent wrappers <i>planned</i> for full Agent Engine deployment per PLAN.md §2.<br>Reasoning Engine resource registered: 1255381144908595200<br>Deterministic sampling (temperature 0) across all 5 agents.' },
+  'claim-extractor': { name:'Claim Extractor', meta:'Uses <b>ADK 2.0</b> (<code>google.adk.agents.LlmAgent</code>).<br>PDP fetch: <b>httpx + BeautifulSoup</b> primary; <b>Firecrawl API</b> fallback for anti-bot retailers.<br>Model: <b>Gemini 2.5 Pro</b> · temp 0.0<br>Returns: list[Claim{text, kind, position_on_page}]' },
+  'evidence-grader': { name:'Evidence Grader', meta:'Tool: <b>BioMCP</b> → live PubMed search.<br>Model: <b>Gemini 2.5 Pro</b> · temp 0.0<br>AI2 Asta MCP (citation grading) + Vertex AI Search over PubMed-in-BigQuery: <i>roadmap (Phase 2.5 / 5)</i>, not shipped.' },
+  'vet-panel': { name:'Vet Rubric', meta:'<b>Prompt-only</b> 5-vet rubric simulation. No Vertex AI Search, no licensed handbook ingest (codex G7 P0.7).<br>Model: <b>Gemini 2.5 Pro</b> · temp 0.0<br>Score 1-5 + escalate_to_human_vet flag.<br>Roadmap: real Boston/MIT vet panel attestation.' },
+  compliance: { name:'Compliance', meta:'Grounding: <b>Vertex AI Search</b> over PUBLIC-redistributable regulator corpus.<br>Corpora: FTC 16 CFR §255 (Endorsement Guides) · AAFCO PF7 (public summary) · NASC public-side seal program.<br>Model: <b>Gemini 2.5 Pro</b> · temp 0.0<br>NO licensed handbook ingest (codex G7 P0.7).' },
+  auditor: { name:'Auditor · Falsifier v0', meta:'Adversarial pass · <b>Gemini 2.5 Flash</b> · temp 0.0<br>2 checks: <b>citation_existence</b> (PMID format) + <b>claim_direction_match</b><br>Custom prompt-only. NOT ADK Eval (which requires datasets not built in 18 days, per PLAN.md §2).<br>Roadmap: cherry-pick detection · sample-size adequacy · stat-significance.' },
+  merge: { name:'merge + sign', meta:'Canonical-JSON of EndorsementClaimBundle (excludes signature)<br>Sign: <b>Ed25519</b> via Secret Manager key.<br>DID: did:web:mesh-api-40952019806.us-central1.run.app<br>If signer unavailable → labeled "unsigned (no signer available)" — no silent fakes (codex C1 P1#11 guard).' },
+  response: { name:'Brand response', meta:'Async lifecycle per A2A v0.3:<br>POST tasks/send → 202 {task_id}<br>poll GET tasks/get/{id} → completed/failed<br>Returns: bundle_hash · bundle_signature · chain_anchor · output={claims, vet_scores, compliance, audit}' },
+  firestore: { name:'Firestore transparency log', meta:'Append-only. Formula (from shared/transparency_log.py:105):<br><code>chain_anchor = sha256(bundle_hash + ":" + (prev_hash or "genesis"))</code><br>Head pointer at acp-claims-meta/_chain_head<br>Public: <b>/pcec/v0/chain/head</b>' },
 };
 
 const ARCH_TIP = document.getElementById('archTip');

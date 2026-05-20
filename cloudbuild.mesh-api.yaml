@@ -3,11 +3,11 @@ steps:
     args:
       - 'build'
       - '-t'
-      - 'us-central1-docker.pkg.dev/pawconscious-mesh-2026/acp-images/mesh-api:v0.7.0-dark'
+      - 'us-central1-docker.pkg.dev/pawconscious-mesh-2026/acp-images/mesh-api:v0.7.1-truth'
       - '-f'
       - 'services/mesh_api/Dockerfile'
       - '.'
 images:
-  - 'us-central1-docker.pkg.dev/pawconscious-mesh-2026/acp-images/mesh-api:v0.7.0-dark'
+  - 'us-central1-docker.pkg.dev/pawconscious-mesh-2026/acp-images/mesh-api:v0.7.1-truth'
 options:
   logging: CLOUD_LOGGING_ONLY
