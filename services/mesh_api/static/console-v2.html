@@ -179,10 +179,14 @@
     overflow: hidden;
     box-shadow: 0 32px 80px -16px rgba(0,0,0,0.5), 0 0 0 1px var(--border) inset;
     /* v0.10.1c: container grows 520 → 600 (codex A-codex-4 Option A criteria).
-       Gives diagram + result row breathing room without breaking fixed-height. */
+       v0.10.2 H.toggle: in done state, container grows 600 → 700 so the cert
+       can take 280px of room (stream collapses 140 → 60). Codex absorbed
+       above-the-fold cost: hero is action-target during the run; user scrolls
+       when cycle finishes because that's when they have a reason to scroll. */
     height: 600px; display: flex; flex-direction: column;
-    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+    transition: border-color 0.3s ease, box-shadow 0.3s ease, height 0.5s ease;
   }
+  .demo[data-mode="done"] { height: 700px; }
   /* A4: outer border colour swaps with mode — peripherally visible even if badge below fold */
   .demo[data-mode="ready"]   { border-color: var(--border-strong); }
   .demo[data-mode="auto"]    { border-color: rgba(0,212,255,0.35); }
@@ -479,15 +483,55 @@
   .demo-svg .anchor-body.done + .anchor-label { fill: var(--bg); }
   .demo-svg .anchor-sub { font: 500 7px/1 var(--mono); fill: var(--electric); text-anchor: middle; text-transform: uppercase; letter-spacing: 0.18em; }
 
+  /* v0.10.2 Phase F: stream state machine.
+     During the run, stream is the prominent surface (140px, wraps).
+     When the cycle completes, stream collapses (60px) and cert takes the room. */
   .demo-stream {
     background: var(--bg); border: 1px solid var(--border);
     border-radius: 4px; padding: 8px 12px;
-    font: 500 10.5px/1.5 var(--mono); color: var(--muted);
-    height: 60px; overflow-y: auto; flex-shrink: 0;
+    font: 500 10.5px/1.55 var(--mono); color: var(--muted);
+    height: 140px; overflow-y: auto; flex-shrink: 0;
+    transition: height 0.5s ease, max-height 0.5s ease;
   }
-  .demo-stream .row { display: flex; gap: 8px; align-items: baseline; }
+  /* While the cycle is running (live or replay), stream gets max prominence. */
+  .demo[data-mode="live"]   .demo-stream,
+  .demo[data-mode="replay"] .demo-stream { height: 140px; }
+  /* When cycle finishes, stream collapses so cert can take the space. */
+  .demo[data-mode="done"]   .demo-stream { height: 60px; }
+  .demo-stream .row {
+    display: flex; gap: 8px; align-items: baseline;
+    padding: 2px 4px 2px 8px;
+    margin: 0 0 1px 0;
+    /* v0.10.2 A-codex-3: 4px colored left bar keyed to agent/stage
+       instead of per-row chip badge (less visual clutter). Default is
+       border-strong; per-agent selectors below override. */
+    border-left: 4px solid var(--border-strong);
+    cursor: default;
+    transition: background 0.15s ease;
+  }
+  .demo-stream .row[data-agent="extract"],
+  .demo-stream .row[data-agent="evidence"],
+  .demo-stream .row[data-agent="rubric"],
+  .demo-stream .row[data-agent="compliance"],
+  .demo-stream .row[data-agent="auditor"] {
+    border-left-color: var(--electric);
+    background: rgba(0,212,255,0.045);
+  }
+  .demo-stream .row[data-agent="sign"] {
+    border-left-color: var(--moss-glow);
+    background: rgba(0,212,155,0.06);
+  }
+  .demo-stream .row[data-agent="composer"],
+  .demo-stream .row[data-agent="opinion"] {
+    border-left-color: #B9AEFF;
+    background: rgba(123,108,255,0.06);
+  }
+  .demo-stream .row:hover { background: rgba(0,212,255,0.1); }
   .demo-stream .row .ts { color: var(--dim); flex-shrink: 0; min-width: 56px; }
-  .demo-stream .row .msg { color: var(--ink); }
+  .demo-stream .row .msg {
+    color: var(--ink);
+    word-break: break-word; overflow-wrap: anywhere;
+  }
   .demo-stream .row .msg.ok { color: var(--moss-glow); }
   .demo-stream .row .msg.err { color: var(--warning); }
   .demo-stream .row .msg.dim { color: var(--muted); }
@@ -503,9 +547,12 @@
   }
   /* v0.10.0a: cert pane scrolls INSIDE the fixed-height demo container.
      v0.10.1c: max-height bumped 96 → 160 since container grew to 600px (codex
-     A-codex-4 Option A criteria allow this). Result prominence (codex C4): the
-     FAIL headline + first ~5 lines of cert narrative now visible without scroll. */
+     A-codex-4 Option A criteria allow this).
+     v0.10.2 H.toggle: cert grows 160 → 320 when container is in done state
+     (paired with stream collapsing 140 → 60). Codex A-codex-1 absorbed: stream
+     and cert are mutually exclusive in time, not competing for fixed slots. */
   .demo-cert.visible { opacity: 1; max-height: 160px; padding: 12px 16px; overflow-y: auto; -webkit-overflow-scrolling: touch; }
+  .demo[data-mode="done"] .demo-cert.visible { max-height: 320px; }
   /* v0.10.1c: verdict + per-claim block get visual prominence inside the cert pane */
   .demo-cert.visible .cert-headline,
   .demo-cert.visible h3 { font-size: 0.95rem !important; line-height: 1.3 !important; margin-bottom: 8px !important; }
@@ -515,6 +562,21 @@
   .demo-cert .line { display: flex; justify-content: space-between; gap: 12px; word-break: break-all; }
   .demo-cert .line .k { color: var(--electric); }
   .demo-cert .line .v.pass { color: var(--moss-glow); font-weight: 700; }
+  /* v0.10.2 H.toggle: forward-compatible bundle link, routed today to the
+     existing /pcec/v0/claim/{urn} JSON endpoint. v0.11.0 swaps target to
+     /cert/{urn} HTML PDF page (codex A-codex-6 stable URL scheme). */
+  .demo-cert .cert-bundle-link {
+    margin-top: 10px; padding-top: 10px;
+    border-top: 1px dashed var(--border-strong);
+    font: 500 10.5px/1 var(--mono);
+    letter-spacing: 0.14em; text-transform: uppercase;
+  }
+  .demo-cert .cert-bundle-link a {
+    color: var(--electric); text-decoration: none;
+    border-bottom: 1px solid transparent;
+    transition: border-color 0.2s ease;
+  }
+  .demo-cert .cert-bundle-link a:hover { border-bottom-color: var(--electric); }
 
   /* ===================== ARCHITECTURE (interactive technical SVG) ===================== */
   .arch { padding: 96px 0; background: var(--bg-elevated); border-bottom: 1px solid var(--border); }
@@ -1471,9 +1533,22 @@ function tsNow() {
   // HH:MM:SS — human local time, not the ambiguous mm:ss format
   return new Date().toTimeString().slice(0,8);
 }
-function streamAdd(msg, cls='') {
+// v0.10.2 Phase F (A-codex-3): optional agent id tags the row with a colored
+// left border keyed to the agent/stage. Hovering the row briefly pulses the
+// matching diagram chip (180ms chipPulseLink animation). Existing callers that
+// pass only (msg, cls) keep working — agent is opt-in.
+function streamAdd(msg, cls='', agent=null) {
   const row = document.createElement('div');
   row.className = 'row';
+  if (agent) {
+    row.dataset.agent = agent;
+    row.addEventListener('mouseenter', () => {
+      const chip = DEMO_NODES.querySelector(`.node[data-agent="${agent}"]`);
+      if (!chip) return;
+      chip.classList.add('pulse-link');
+      setTimeout(() => chip.classList.remove('pulse-link'), 200);
+    });
+  }
   row.innerHTML = `<span class="ts">${tsNow()}</span><span class="msg ${cls}">${msg}</span>`;
   DEMO_STREAM.appendChild(row);
   DEMO_STREAM.scrollTop = DEMO_STREAM.scrollHeight;
@@ -1656,7 +1731,9 @@ async function cachedCycle() {
     const agentId = nodes[i].dataset.agent;
     edgesFor(agentId).forEach(e => e.classList.add('active'));
     nodes[i].classList.add('active');
-    streamAdd(STEPS[i]);
+    // v0.10.2 Phase F: tag stream row with the firing agent so it gets the
+    // colored left border + hover linkage back to the diagram chip.
+    streamAdd(STEPS[i], '', agentId);
     await sleep(550);
   }
   await sleep(400); if (aborted()) return;
@@ -1672,18 +1749,18 @@ async function cachedCycle() {
   b.per_claim.forEach((c) => {
     const flag = c.flag ? ' · FTC flag' : '';
     const cls = (c.audit === 'PASS' && !c.flag) ? 'ok' : 'err';
-    streamAdd(`claim ${String(c.idx).padStart(2,'0')} · vet ${c.vet}/5 · ${c.ftc}${flag} · audit ${c.audit}`, cls);
+    streamAdd(`claim ${String(c.idx).padStart(2,'0')} · vet ${c.vet}/5 · ${c.ftc}${flag} · audit ${c.audit}`, cls, 'auditor');
   });
   // v0.10.1c Phase C: Stage 1 → Stage 2 (sign event, dramatic 3s flash)
   setStage('stage2');
-  streamAdd('SequentialAgent · merge + sign · Ed25519', 'ok');
+  streamAdd('SequentialAgent · merge + sign · Ed25519', 'ok', 'sign');
   await sleep(500); if (aborted()) return;
   DEMO_ANCHOR.classList.add('done');
   // v0.10.2 Phase G: particle burst fires when the SIGN anchor turns moss-green
   // — the actual signature-being-written moment. Codex A-codex-2 stagger met:
   // moss flash on perimeter at t=0, anchor lights at t=+500ms, burst at +600ms.
   setTimeout(fireSignParticles, 100);
-  streamAdd(`chain_anchor appended → ${b.anchor.slice(0,40)}…`, 'ok');
+  streamAdd(`chain_anchor appended → ${b.anchor.slice(0,40)}…`, 'ok', 'sign');
   await sleep(2200); if (aborted()) return;  // let the Stage 2 flash play
   // v0.10.1c Phase C: Stage 2 → Stage 3 (adversarial double-check)
   setStage('stage3');
@@ -1692,10 +1769,15 @@ async function cachedCycle() {
   // render functions the live run uses. Structurally identical preview.
   renderCertHtml(JFFD_CERT_HTML);
   renderSecondOpinion(JFFD_SECOND_OPINION);
-  streamAdd('bundle signed · cached preview matches real urn:pcec:claim:syrz7izwfbatx6go2hgn2ipy', 'ok');
+  streamAdd('bundle signed · cached preview matches real urn:pcec:claim:syrz7izwfbatx6go2hgn2ipy', 'ok', 'composer');
   // v0.10.1c Phase C: Stage 3 done → final verdict state (JFFD = FAIL → amber)
   await sleep(800);
   setStage('done-fail');
+  // v0.10.2 H.toggle: fire the done-state machine RIGHT when verdict lands so
+  // the cert appears already at 320px (not 160 then animate). Container grows
+  // 600→700, stream collapses 140→60, cert expands 160→320. The outer click
+  // handler later re-emits setMode('done') with final copy — idempotent.
+  setMode('done', '✓ DONE', 'cached cycle complete · result visible below', 'COMPLETED');
   await sleep(4200);
 }
 
@@ -1948,9 +2030,11 @@ async function pollForAgent6and7(taskId) {
       if (!r.ok) break;
       const d = await r.json();
       if (!renderedCert && d.cert_html) {
-        renderCertHtml(d.cert_html);
+        // v0.10.2 H.toggle: pass real URN to renderCertHtml so the bundle-link
+        // in the cert footer routes to THIS task's signed bundle, not the cached one.
+        renderCertHtml(d.cert_html, d.bundle_urn);
         renderedCert = true;
-        streamAdd(`✓ Agent 6 (Cert Composer) delivered · ${d.cert_html.length} bytes of branded cert (Gemini 2.5 Pro)`, 'ok');
+        streamAdd(`✓ Agent 6 (Cert Composer) delivered · ${d.cert_html.length} bytes of branded cert (Gemini 2.5 Pro)`, 'ok', 'composer');
         setCoverage('completed', `Cert composed · Agent 7 running adversarial Second Opinion…`);
       }
       if (!renderedSO && d.second_opinion) {
@@ -1966,12 +2050,22 @@ async function pollForAgent6and7(taskId) {
   }
 }
 
-function renderCertHtml(html) {
+function renderCertHtml(html, urn=null) {
   // Replace the static cert pane content with Agent 6's branded HTML.
   // Removes the composing banner inserted during the wait.
   const cert = document.getElementById('demoCert');
   if (!cert) return;
   cert.innerHTML = html;
+  // v0.10.2 H.toggle: forward-compatible "View signed bundle ↗" link.
+  // Today routes to the existing /pcec/v0/claim/{urn} JSON endpoint
+  // (stable URL scheme). v0.11.0 swaps target to /cert/{urn} HTML PDF page
+  // with no markup rewrite per codex A-codex-6.
+  const u = urn || 'urn:pcec:claim:syrz7izwfbatx6go2hgn2ipy';
+  const linkRow = document.createElement('div');
+  linkRow.className = 'cert-bundle-link';
+  linkRow.innerHTML = '<a href="/pcec/v0/claim/' + encodeURIComponent(u) +
+    '" target="_blank" rel="noopener">View signed bundle &nearr;</a>';
+  cert.appendChild(linkRow);
   cert.classList.add('visible');
 }
 
