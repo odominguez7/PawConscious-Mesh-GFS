@@ -1269,7 +1269,7 @@ async def agents_page() -> HTMLResponse:
 
 @app.get("/architecture", response_class=HTMLResponse)
 async def architecture() -> HTMLResponse:
-    """Standalone architecture diagram surface (Move F per WIN_PLAN.md).
+    """Standalone architecture diagram surface.
 
     Serves the SVG inline so judges and reviewers can link to a clean,
     self-contained architecture view that labels all 4 Track 3 mandates.

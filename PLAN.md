@@ -1,11 +1,10 @@
 # ACP — Engineering Roadmap (PawConscious Mesh reference deployment)
 
-**Date:** 2026-05-18 · **Deadline:** 2026-06-05 (**18 days**) · **Status:** AMENDED post-codex-G7, pending codex G7.2 on ACP framing
-**Author:** Claude Opus 4.7 · **Source research:** 4 parallel agents + Omar's own `reviews/v9-CEO-pivot.md` (Option E draft) + codex G7 verdict (BLOCK → absorbed)
+**Submission:** Google for Startups AI Agents Challenge 2026 · Track 3 (Refactor for Marketplace + Gemini Enterprise) · Deadline 2026-06-05 5:00 PM PT.
 
-This is the **engineering roadmap.** For business strategy, retention model, economic buyers, competitive landscape, GTM, and 5-year arc, see `BUSINESS_PLAN.md`.
+This is the engineering roadmap. For business strategy, retention model, economic buyers, competitive landscape, GTM, and 5-year arc, see [`BUSINESS_PLAN.md`](BUSINESS_PLAN.md). For day-by-day shipping state, see [`docs/RESUME_2026-05-21.md`](docs/RESUME_2026-05-21.md).
 
-**Northstar:** Every claim made on a commerce surface becomes machine-verifiable, AI-agent-callable, and regulator-grade by default. ACP is the protocol. PawConscious Mesh is the pet-supplement reference deployment shipped at GFS hackathon.
+**Northstar:** Every claim made on a commerce surface becomes machine-verifiable, AI-agent-callable, and regulator-grade by default. ACP is the protocol. PawConscious Mesh is the pet-supplement reference deployment shipped at the Google for Startups AI Agents Challenge 2026.
 
 ---
 

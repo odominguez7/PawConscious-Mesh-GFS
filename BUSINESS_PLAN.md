@@ -1,11 +1,11 @@
 # ACP — Agentic Compliance Protocol
-## Business Plan v1 — built with /plan-ceo-review rigor, pending codex G7.2 handshake
+## Business Plan — PawConscious Mesh reference deployment
 
-**Date:** 2026-05-18 · **Status:** PROPOSED → pending codex CLEAR · **Authors:** Omar (founder), Claude (drafting partner)
+**Submission:** Google for Startups AI Agents Challenge 2026 · Track 3 (Refactor for Marketplace + Gemini Enterprise) · Deadline 2026-06-05 5:00 PM PT.
 
 ---
 
-## NORTHSTAR (single guiding sentence, every decision tests against this)
+## Northstar
 
 **Every claim made on a commerce surface — about ingredients, efficacy, expertise, provenance, safety, or performance — becomes machine-verifiable, AI-agent-callable, and regulator-grade by default. Pet is the proving ground. AI-mediated commerce is the platform shift that makes it inevitable.**
 
