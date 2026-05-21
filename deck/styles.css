@@ -90,9 +90,9 @@ deck-stage > section {
   position: absolute;
   right: var(--margin-x);
   bottom: 44px;
-  max-width: 720px;
+  max-width: 1100px;
   font-family: var(--mono);
-  font-size: 14px;
+  font-size: 13px;
   font-weight: 400;
   text-transform: uppercase;
   letter-spacing: 0.18em;
@@ -119,7 +119,7 @@ deck-stage > section {
 }
 .eyebrow .dot {
   width: 8px; height: 8px; border-radius: 50%;
-  background: var(--amber);
+  background: var(--moss);
   display: inline-block;
 }
 .eyebrow .rule {
@@ -179,7 +179,7 @@ deck-stage > section {
   font-feature-settings: "tnum";
   letter-spacing: -0.04em;
   line-height: 0.92;
-  color: var(--amber);
+  color: var(--slate);
 }
 
 /* ---------- grid helpers ---------- */
@@ -295,15 +295,15 @@ deck-stage > section {
   padding-top: 40px;
 }
 .cover .seal-wrap {
-  position: absolute;
-  top: 130px;
-  left: 130px;
-  filter: drop-shadow(8px 14px 22px rgba(70, 40, 4, 0.18));
+  filter: drop-shadow(6px 12px 18px rgba(70, 40, 4, 0.18));
   z-index: 1;
+  display: flex;
+  justify-content: center;
+  margin-bottom: -8px;
 }
 .cover .seal-wrap .seal {
-  width: 168px;
-  height: 168px;
+  width: 132px;
+  height: 132px;
 }
 .cover .seal-caption {
   margin-top: 18px;
@@ -346,21 +346,26 @@ deck-stage > section {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  gap: 24px;
   font-family: var(--mono);
-  font-size: 18px;
+  font-size: 13px;
   text-transform: uppercase;
-  letter-spacing: 0.22em;
+  letter-spacing: 0.18em;
   color: var(--slate);
   opacity: 0.65;
   padding-top: 28px;
   border-top: 1px solid rgba(26,29,30,0.18);
+  white-space: nowrap;
+}
+.cover-footer > span {
+  flex: 0 0 auto;
 }
 
 /* ---------- 1. Hook ---------- */
 .hook {
   display: grid;
-  grid-template-columns: 6fr 6fr;
-  gap: 64px;
+  grid-template-columns: 4fr 8fr;
+  gap: 56px;
   height: 100%;
 }
 .hook-left { display: flex; flex-direction: column; justify-content: space-between; }
@@ -390,7 +395,7 @@ deck-stage > section {
 .dual-panel .panel.before { opacity: 0.6; }
 .dual-panel .arrow {
   display: grid; place-items: center;
-  color: var(--amber);
+  color: var(--slate);
   font-size: 28px;
 }
 .dual-panel .arrow svg { width: 32px; height: 32px; }
@@ -404,7 +409,7 @@ deck-stage > section {
 .panel .doc-line.amber { background: var(--amber); }
 .panel .claim-mark {
   position: absolute;
-  border: 1.5px solid var(--amber);
+  border: 1.5px solid var(--signal);
   border-radius: 4px;
   left: 18px; right: 18px;
   height: 38px;
@@ -628,13 +633,13 @@ deck-stage > section {
 }
 .team-card {
   display: grid;
-  grid-template-columns: 280px 1fr;
-  gap: 36px;
+  grid-template-columns: 380px 1fr;
+  gap: 44px;
   align-items: center;
 }
 .portrait {
-  width: 280px;
-  height: 280px;
+  width: 380px;
+  height: 380px;
   border-radius: 50%;
   position: relative;
   overflow: hidden;
@@ -666,7 +671,7 @@ deck-stage > section {
   font-size: 13px;
   text-transform: uppercase;
   letter-spacing: 0.22em;
-  color: var(--amber);
+  color: var(--moss);
   margin-top: 12px;
 }
 .team-creds {
@@ -696,7 +701,7 @@ deck-stage > section {
 .team-together strong {
   font-style: normal;
   font-weight: 400;
-  color: var(--amber);
+  color: var(--moss);
   font-family: var(--mono);
   font-size: 14px;
   text-transform: uppercase;
@@ -806,8 +811,8 @@ deck-stage > section {
   font-family: var(--mono);
   font-feature-settings: "tnum";
   font-size: 17px;
-  color: var(--amber);
-  font-weight: 500;
+  color: var(--slate);
+  font-weight: 600;
 }
 .rev-table .cell.margin {
   font-family: var(--mono);
@@ -819,7 +824,7 @@ deck-stage > section {
 }
 
 .unit-econ {
-  border-top: 3px solid var(--amber);
+  border-top: 3px solid var(--slate);
   padding-top: 24px;
   display: grid;
   grid-template-columns: 1fr 1fr 1fr 2fr;
@@ -1221,8 +1226,8 @@ deck-stage > section {
 }
 .plot .dot.amber {
   width: 48px; height: 48px;
-  background: var(--amber);
-  box-shadow: 0 0 0 12px rgba(166,112,26,0.16);
+  background: var(--slate);
+  box-shadow: 0 0 0 12px rgba(26,29,30,0.10);
 }
 .plot .dot.signal { background: var(--signal); }
 .plot .dot.linen { background: var(--linen); border: 1px solid var(--slate); }
@@ -1249,7 +1254,8 @@ deck-stage > section {
 }
 .plot.amber-plot .lab {
   font-size: 22px;
-  color: var(--amber);
+  color: var(--slate);
+  font-weight: 600;
 }
 .status-quo {
   position: absolute;
@@ -1281,7 +1287,7 @@ deck-stage > section {
   font-family: var(--mono);
   font-size: 22px;
   font-weight: 600;
-  color: var(--amber);
+  color: var(--slate);
   font-feature-settings: "tnum";
   line-height: 1;
 }
@@ -1305,7 +1311,7 @@ deck-stage > section {
   margin-top: 6px;
 }
 .use .item {
-  border-top: 3px solid var(--amber);
+  border-top: 3px solid var(--slate);
   padding-top: 18px;
   display: flex; flex-direction: column;
   gap: 8px;
@@ -1346,7 +1352,7 @@ deck-stage > section {
   left: 8px;
   right: 32px;
   height: 4px;
-  background: var(--amber);
+  background: var(--slate);
   z-index: 0;
 }
 .ms-arrow {
@@ -1354,7 +1360,7 @@ deck-stage > section {
   top: 14px;
   right: 0;
   width: 0; height: 0;
-  border-left: 24px solid var(--amber);
+  border-left: 24px solid var(--slate);
   border-top: 12px solid transparent;
   border-bottom: 12px solid transparent;
   z-index: 1;

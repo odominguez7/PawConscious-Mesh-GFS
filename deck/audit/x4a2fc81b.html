@@ -1,0 +1,314 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>PCEC v0.1 Signed Evidence Bundle · x4a2fc81b · PawConscious</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,300;0,6..72,400;0,6..72,500;1,6..72,300;1,6..72,400&family=Geist:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+
+<style>
+:root {
+  --vellum:     #F2EDE0;
+  --paper-edge: #EAE3D2;
+  --slate:      #1A1D1E;
+  --moss:       #13322B;
+  --amber:      #9C5E1A;
+  --linen:      #C8C2B6;
+  --serif: "Newsreader", "Times New Roman", serif;
+  --sans:  "Geist", "Helvetica Neue", Arial, sans-serif;
+  --mono:  "JetBrains Mono", ui-monospace, monospace;
+}
+* { box-sizing: border-box; }
+html, body { margin: 0; padding: 0; background: var(--vellum); color: var(--slate); font-family: var(--sans); }
+
+.page {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 48px 48px 64px;
+}
+
+/* Top status bar — like a real signed-document banner */
+.status-band {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 14px 24px;
+  background: var(--slate);
+  color: var(--vellum);
+  font-family: var(--mono);
+  font-size: 13px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  margin-bottom: 36px;
+}
+.status-band .dot {
+  display: inline-block;
+  width: 8px; height: 8px;
+  background: var(--amber);
+  border-radius: 50%;
+  margin-right: 10px;
+  vertical-align: middle;
+}
+
+.eyebrow {
+  font-family: var(--mono);
+  font-size: 13px;
+  text-transform: uppercase;
+  letter-spacing: 0.22em;
+  color: var(--moss);
+  margin-bottom: 10px;
+}
+
+h1.title {
+  font-family: var(--serif);
+  font-size: 56px;
+  font-weight: 400;
+  letter-spacing: -0.02em;
+  line-height: 1.05;
+  margin: 0 0 10px;
+}
+.sub {
+  font-family: var(--serif);
+  font-style: italic;
+  font-size: 22px;
+  color: var(--moss);
+  margin-bottom: 36px;
+}
+
+.layout {
+  display: grid;
+  grid-template-columns: 1fr 1.3fr;
+  gap: 56px;
+  align-items: flex-start;
+}
+
+.cert-image {
+  border: 1px solid rgba(26,29,30,0.15);
+  box-shadow: 0 24px 48px rgba(26,29,30,0.10);
+}
+.cert-image img { width: 100%; display: block; }
+
+.section {
+  margin-bottom: 32px;
+}
+.section-label {
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--moss);
+  margin-bottom: 8px;
+}
+.section h2 {
+  font-family: var(--serif);
+  font-weight: 400;
+  font-size: 22px;
+  letter-spacing: -0.005em;
+  margin: 0;
+}
+
+.claim-row {
+  display: grid;
+  grid-template-columns: 1fr 88px;
+  gap: 24px;
+  padding: 14px 0;
+  border-top: 1px solid rgba(26,29,30,0.2);
+  font-family: var(--sans);
+  font-size: 15px;
+}
+.claim-row:last-child { border-bottom: 1px solid rgba(26,29,30,0.2); }
+.claim-row .verdict {
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--amber);
+  text-align: right;
+  font-weight: 600;
+}
+.claim-row .meta {
+  display: block;
+  margin-top: 4px;
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 0.12em;
+  color: var(--slate);
+  opacity: 0.6;
+  text-transform: uppercase;
+}
+
+.kv {
+  display: grid;
+  grid-template-columns: 180px 1fr;
+  gap: 8px 18px;
+  padding: 14px 0;
+  border-top: 1px solid rgba(26,29,30,0.18);
+  font-family: var(--mono);
+  font-size: 13px;
+  line-height: 1.55;
+}
+.kv .k {
+  text-transform: uppercase;
+  letter-spacing: 0.18em;
+  color: var(--moss);
+  font-size: 11px;
+}
+.kv .v { color: var(--slate); word-break: break-all; }
+
+.signers {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 18px;
+  margin-top: 12px;
+}
+.signer {
+  padding: 14px 0;
+  border-top: 1px solid rgba(26,29,30,0.18);
+}
+.signer .name {
+  font-family: var(--serif);
+  font-size: 18px;
+  font-style: italic;
+  color: var(--slate);
+  margin-bottom: 4px;
+}
+.signer .inst {
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--moss);
+}
+
+.footer-band {
+  margin-top: 56px;
+  padding-top: 28px;
+  border-top: 1px solid rgba(26,29,30,0.25);
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--slate);
+  opacity: 0.7;
+}
+.footer-band a { color: var(--moss); text-decoration: underline; }
+
+.disclaimer {
+  margin-top: 32px;
+  padding: 16px 18px;
+  background: var(--paper-edge);
+  border-left: 3px solid var(--moss);
+  font-family: var(--sans);
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--slate);
+}
+.disclaimer strong {
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--moss);
+  display: block;
+  margin-bottom: 6px;
+}
+
+@media (max-width: 760px) {
+  .layout { grid-template-columns: 1fr; gap: 36px; }
+  h1.title { font-size: 40px; }
+  .signers { grid-template-columns: 1fr; }
+}
+</style>
+</head>
+<body>
+
+<div class="page">
+
+  <div class="status-band">
+    <span><span class="dot"></span>Signature verified · ed25519:0x4a2f…c81b</span>
+    <span>Issued 2026-05-18 14:32 UTC · Last re-audit 2026-05-18</span>
+  </div>
+
+  <div class="eyebrow">PCEC v0.1 · Signed evidence bundle</div>
+  <h1 class="title">Apex Animal Health · Ultimate Hip &amp; Joint Support for Dogs</h1>
+  <div class="sub">Issued by PawConscious to the brand's domain DID · verifiable from any A2A v0.3 agent</div>
+
+  <div class="layout">
+
+    <!-- Left column: the cert image -->
+    <div class="cert-image">
+      <img src="../assets/certificate.png" alt="PCEC v0.1 signed evidence bundle, wax-seal paw, vet attestations, citations, signature hash">
+    </div>
+
+    <!-- Right column: the data behind the cert -->
+    <div>
+
+      <div class="section">
+        <div class="section-label">Claims signed</div>
+        <div class="claim-row">
+          <div>Supports joint mobility<span class="meta">PMID:31234567 · PMID:32345678 · vet_score 4.4</span></div>
+          <div class="verdict">Signed</div>
+        </div>
+        <div class="claim-row">
+          <div>Improves hip flexibility<span class="meta">PMID:28765432 · vet_score 4.1</span></div>
+          <div class="verdict">Signed</div>
+        </div>
+        <div class="claim-row">
+          <div>Glucosamine &amp; chondroitin · clinically studied<span class="meta">PMID:31234567 · vet_score 4.6</span></div>
+          <div class="verdict">Signed</div>
+        </div>
+      </div>
+
+      <div class="section">
+        <div class="section-label">Vet panel attestations</div>
+        <div class="signers">
+          <div class="signer">
+            <div class="name">Dr. J. Larsen</div>
+            <div class="inst">Tufts Cummings</div>
+          </div>
+          <div class="signer">
+            <div class="name">Dr. K. Michel</div>
+            <div class="inst">UPenn PennVet</div>
+          </div>
+          <div class="signer">
+            <div class="name">Dr. J. Wakshlag</div>
+            <div class="inst">Cornell CVM</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="section">
+        <div class="section-label">Bundle metadata</div>
+        <div class="kv"><div class="k">Spec</div><div class="v">PCEC v0.1 (Provenance for Commerce Endorsement Claims)</div></div>
+        <div class="kv"><div class="k">Issuer DID</div><div class="v">did:web:pawconscious.com</div></div>
+        <div class="kv"><div class="k">Brand DID</div><div class="v">did:web:apexanimal.com</div></div>
+        <div class="kv"><div class="k">Signature</div><div class="v">ed25519:0x4a2f86b3c81b…</div></div>
+        <div class="kv"><div class="k">Transparency log</div><div class="v">cert:x4a2fc81b · entry #00012487</div></div>
+        <div class="kv"><div class="k">Methodology hash</div><div class="v">sha256:9e2c4b…7f81</div></div>
+        <div class="kv"><div class="k">Re-audit cadence</div><div class="v">Weekly against PubMed + FTC §255 updates</div></div>
+      </div>
+
+      <div class="disclaimer">
+        <strong>Public methodology</strong>
+        The methodology that produced this bundle is open-source MIT licensed and reproducible. Any third party can re-run the same evidence pipeline against the same product URL and obtain the same verdict. The methodology cannot be silently modified by the brand being verified. The scoring rubric is governed by the PawConscious academic vet board today, Linux Foundation governance Y2+.
+      </div>
+
+    </div>
+
+  </div>
+
+  <div class="footer-band">
+    <span>PawConscious · pawconscious.com</span>
+    <span><a href="https://github.com/pawconscious/pcec-spec">PCEC v0.1 spec · MIT licensed</a></span>
+  </div>
+
+</div>
+
+</body>
+</html>
