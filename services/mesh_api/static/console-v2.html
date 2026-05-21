@@ -178,15 +178,13 @@
     border: 1.5px solid var(--border-strong); border-radius: 8px;
     overflow: hidden;
     box-shadow: 0 32px 80px -16px rgba(0,0,0,0.5), 0 0 0 1px var(--border) inset;
-    /* v0.10.1c: container grows 520 → 600 (codex A-codex-4 Option A criteria).
-       v0.10.2 H.toggle: in done state, container grows 600 → 700 so the cert
-       can take 280px of room (stream collapses 140 → 60). Codex absorbed
-       above-the-fold cost: hero is action-target during the run; user scrolls
-       when cycle finishes because that's when they have a reason to scroll. */
+    /* v0.10.3 ISSUE 2 (Omar feedback): no state-machine resize. Container is
+       fixed 600px ALWAYS. Stream is fixed 180px ALWAYS. The cert is no
+       longer inside the container at all — it renders into the separate
+       full-width <section class="result-report"> below the hero (ISSUE 1). */
     height: 600px; display: flex; flex-direction: column;
-    transition: border-color 0.3s ease, box-shadow 0.3s ease, height 0.5s ease;
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
   }
-  .demo[data-mode="done"] { height: 700px; }
   /* A4: outer border colour swaps with mode — peripherally visible even if badge below fold */
   .demo[data-mode="ready"]   { border-color: var(--border-strong); }
   .demo[data-mode="auto"]    { border-color: rgba(0,212,255,0.35); }
@@ -401,6 +399,27 @@
     stroke-width: 2; opacity: 0.8;
     animation: haloPulse 1.2s ease-in-out infinite;
   }
+  /* v0.10.3 ISSUE 3: work-pulse — a dashed ring overlaid on the active chip
+     with the dashes "marching" around the circumference via stroke-dashoffset.
+     No transform (avoids SVG transform-origin viewBox bugs). Says "this agent
+     is THINKING NOW", distinct from the ambient halo. */
+  .demo-svg .node circle.work-pulse {
+    fill: none; stroke: var(--electric);
+    stroke-width: 1.6;
+    stroke-dasharray: 5 6;
+    stroke-dashoffset: 0;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.25s ease;
+  }
+  .demo-svg .node.active circle.work-pulse {
+    opacity: 0.85;
+    animation: workMarch 1.4s linear infinite;
+  }
+  .demo-svg .node.done circle.work-pulse { opacity: 0; }
+  @keyframes workMarch {
+    to { stroke-dashoffset: -22; }
+  }
   @keyframes haloPulse {
     0%,100% { transform: scale(1); opacity: 0.8; }
     50% { transform: scale(1.35); opacity: 0.1; }
@@ -428,37 +447,45 @@
     50% { transform: scale(1.18); }
     100% { transform: scale(1); }
   }
-  /* v0.10.2 Phase G: Stage 2 sign particle burst.
-     Fires when the SIGN anchor turns moss-green (the actual signature moment),
-     AFTER the stage2 cinema card has had its trust-moment beat. Larger & brighter
-     than v1 so it reads on the live URL at 1440x900. */
-  .demo-svg .sign-particles { pointer-events: none; opacity: 0; }
-  .demo-svg .sign-particles.fire { opacity: 1; animation: signParticlesFire 1.4s ease-out forwards; }
-  .demo-svg .sign-particles circle {
-    fill: var(--moss-glow);
-    filter: drop-shadow(0 0 4px var(--moss-glow));
+  /* v0.10.3 ISSUE 3: SONAR RING expansion from SIGN anchor at the moment of
+     signature. Replaces the v0.10.2 particle burst. Two concentric rings
+     expand outward over 1.6s — single coherent visual event, reads at any
+     viewport size, no overflow leak. Triggered via JS adding .fire class. */
+  .demo-svg .sonar-ring {
+    fill: none;
+    stroke: var(--moss-glow);
+    stroke-width: 2;
+    transform-origin: center;
+    transform-box: fill-box;
     opacity: 0;
-    transform-origin: 0 0;
+    pointer-events: none;
   }
-  .demo-svg .sign-particles.fire circle {
-    animation: particleFly 1.4s cubic-bezier(.22,.7,.34,1) forwards;
+  .demo-svg .sonar-ring.fire {
+    animation: sonarExpand 1.6s cubic-bezier(.22,.7,.34,1) forwards;
   }
-  .demo-svg .sign-particles.fire circle:nth-child(1) { --pa: 0deg; }
-  .demo-svg .sign-particles.fire circle:nth-child(2) { --pa: 45deg; }
-  .demo-svg .sign-particles.fire circle:nth-child(3) { --pa: 90deg; }
-  .demo-svg .sign-particles.fire circle:nth-child(4) { --pa: 135deg; }
-  .demo-svg .sign-particles.fire circle:nth-child(5) { --pa: 180deg; }
-  .demo-svg .sign-particles.fire circle:nth-child(6) { --pa: 225deg; }
-  .demo-svg .sign-particles.fire circle:nth-child(7) { --pa: 270deg; }
-  .demo-svg .sign-particles.fire circle:nth-child(8) { --pa: 315deg; }
-  @keyframes signParticlesFire { 0%{opacity:0} 8%{opacity:1} 80%{opacity:1} 100%{opacity:0} }
-  /* v0.10.2 Phase G: fly far enough to exit the centered Stage 2 cinema card
-     (card ~280px wide × 80px tall). 110px end-state takes particles past the
-     card's ±140px half-width edges so they're visible during the trust beat. */
-  @keyframes particleFly {
-    0%   { opacity: 1; transform: rotate(var(--pa, 0deg)) translateX(0)   scale(1); }
-    50%  { opacity: 1; transform: rotate(var(--pa, 0deg)) translateX(80px) scale(0.8); }
-    100% { opacity: 0; transform: rotate(var(--pa, 0deg)) translateX(110px) scale(0.4); }
+  /* v0.10.3 codex-1: use transform: scale() instead of animating the `r`
+     attribute via CSS — Safari support for CSS-animated SVG `r` shipped
+     in 16+ but is still inconsistent. Scale is universally supported. */
+  @keyframes sonarExpand {
+    0%   { transform: scale(1);   opacity: 0.95; stroke-width: 2.4; }
+    100% { transform: scale(6.1); opacity: 0;    stroke-width: 0.4; }
+  }
+  /* v0.10.3 ISSUE 3: stage radial-glow backgrounds that fade in during the
+     active stage. Reinforces the perimeter pulse + cinema card without competing. */
+  .demo-svg .stage-glow {
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.5s ease;
+  }
+  .demo[data-stage="stage1"] .demo-svg .stage-glow.s1,
+  .demo[data-stage="stage2"] .demo-svg .stage-glow.s2,
+  .demo[data-stage="stage3"] .demo-svg .stage-glow.s3 {
+    opacity: 1;
+    animation: stageGlowBreathe 2.6s ease-in-out infinite;
+  }
+  @keyframes stageGlowBreathe {
+    0%, 100% { opacity: 0.85; }
+    50%      { opacity: 0.55; }
   }
   .demo-svg .node.done text.label { fill: var(--moss-glow); }
 
@@ -469,21 +496,14 @@
   .demo-svg .anchor-body.done + .anchor-label { fill: var(--bg); }
   .demo-svg .anchor-sub { font: 500 7px/1 var(--mono); fill: var(--electric); text-anchor: middle; text-transform: uppercase; letter-spacing: 0.18em; }
 
-  /* v0.10.2 Phase F: stream state machine.
-     During the run, stream is the prominent surface (140px, wraps).
-     When the cycle completes, stream collapses (60px) and cert takes the room. */
+  /* v0.10.3 ISSUE 2: stream is fixed at 180px ALWAYS. No state-machine resize.
+     Long lines wrap, overflow scrolls internally. Always-prominent surface. */
   .demo-stream {
     background: var(--bg); border: 1px solid var(--border);
     border-radius: 4px; padding: 8px 12px;
     font: 500 10.5px/1.55 var(--mono); color: var(--muted);
-    height: 140px; overflow-y: auto; flex-shrink: 0;
-    transition: height 0.5s ease, max-height 0.5s ease;
+    height: 180px; overflow-y: auto; flex-shrink: 0;
   }
-  /* While the cycle is running (live or replay), stream gets max prominence. */
-  .demo[data-mode="live"]   .demo-stream,
-  .demo[data-mode="replay"] .demo-stream { height: 140px; }
-  /* When cycle finishes, stream collapses so cert can take the space. */
-  .demo[data-mode="done"]   .demo-stream { height: 60px; }
   .demo-stream .row {
     display: flex; gap: 8px; align-items: baseline;
     padding: 2px 4px 2px 8px;
@@ -531,14 +551,13 @@
     opacity: 0; max-height: 0; overflow: hidden; flex-shrink: 0;
     transition: opacity 0.35s ease, max-height 0.35s ease, padding 0.35s ease;
   }
-  /* v0.10.0a: cert pane scrolls INSIDE the fixed-height demo container.
-     v0.10.1c: max-height bumped 96 → 160 since container grew to 600px (codex
-     A-codex-4 Option A criteria allow this).
-     v0.10.2 H.toggle: cert grows 160 → 320 when container is in done state
-     (paired with stream collapsing 140 → 60). Codex A-codex-1 absorbed: stream
-     and cert are mutually exclusive in time, not competing for fixed slots. */
-  .demo-cert.visible { opacity: 1; max-height: 160px; padding: 12px 16px; overflow-y: auto; -webkit-overflow-scrolling: touch; }
-  .demo[data-mode="done"] .demo-cert.visible { max-height: 320px; }
+  /* v0.10.3 ISSUE 1: demoCert inside the container is now ALWAYS hidden.
+     Cert renders into the separate full-width <section class="result-report">
+     below the hero. We keep the in-container element + .visible class as a
+     no-op fallback so existing JS doesn't break, but display: none guarantees
+     it never shows. */
+  .demo-cert { display: none !important; }
+  .demo-cert.visible { display: none !important; }
   /* v0.10.1c: verdict + per-claim block get visual prominence inside the cert pane */
   .demo-cert.visible .cert-headline,
   .demo-cert.visible h3 { font-size: 0.95rem !important; line-height: 1.3 !important; margin-bottom: 8px !important; }
@@ -563,6 +582,83 @@
     transition: border-color 0.2s ease;
   }
   .demo-cert .cert-bundle-link a:hover { border-bottom-color: var(--electric); }
+
+  /* ===================== RESULT REPORT (v0.10.3 ISSUE 1) =====================
+     The cert / signed-report section lives BELOW the hero as an independent
+     full-width surface. When a cycle completes, showResultReport() unhides
+     this and the user sees the certificate read like a real report. */
+  .result-report {
+    padding: 80px 0 96px;
+    background:
+      radial-gradient(ellipse at 20% 0%, rgba(0,212,255,0.05), transparent 60%),
+      radial-gradient(ellipse at 80% 100%, rgba(123,108,255,0.04), transparent 60%),
+      var(--bg);
+    border-top: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+  }
+  .result-report[hidden] { display: none; }
+  .result-report .container { max-width: 1240px; margin: 0 auto; padding: 0 32px; }
+  .result-report .eyebrow {
+    color: var(--electric); font: 600 11px/1 var(--mono);
+    letter-spacing: 0.22em; text-transform: uppercase;
+    margin-bottom: 14px;
+  }
+  .result-report .result-title {
+    font: 600 28px/1.2 var(--sans); color: var(--ink);
+    margin: 0 0 18px 0; letter-spacing: -0.01em;
+  }
+  .result-report .result-meta {
+    display: flex; gap: 16px; flex-wrap: wrap;
+    align-items: center; margin-bottom: 36px;
+    font: 500 11.5px/1 var(--mono); letter-spacing: 0.04em;
+  }
+  .result-report .meta-pill {
+    padding: 6px 12px; border: 1px solid var(--border-strong);
+    border-radius: 4px; color: var(--muted);
+    word-break: break-all;
+  }
+  .result-report .meta-link {
+    color: var(--electric); text-decoration: none;
+    border-bottom: 1px solid transparent;
+    padding-bottom: 2px;
+    text-transform: uppercase; letter-spacing: 0.14em;
+    transition: border-color 0.2s ease;
+  }
+  .result-report .meta-link:hover { border-bottom-color: var(--electric); }
+  .result-report .result-body {
+    background: var(--surface);
+    border: 1px solid var(--border-strong);
+    border-radius: 8px;
+    padding: 36px 44px;
+    color: var(--ink);
+    font: 500 14.5px/1.65 var(--sans);
+    box-shadow: 0 16px 48px -16px rgba(0,0,0,0.4),
+                0 0 0 1px var(--border) inset;
+  }
+  /* The Agent 6 cert is full HTML with its own inline styles and class hooks.
+     We override font-sizes inside the result-body for readability at this
+     prominence (cert composed for the inline panel was tuned for 11px mono).  */
+  .result-report .result-body .cert-headline,
+  .result-report .result-body h3 {
+    font: 700 22px/1.3 var(--sans) !important;
+    color: var(--ink) !important;
+    margin: 0 0 18px 0 !important;
+    letter-spacing: -0.005em !important;
+  }
+  .result-report .result-body p { font-size: 15px !important; line-height: 1.65 !important; }
+  .result-report .result-body ol,
+  .result-report .result-body ul { font-size: 14.5px !important; line-height: 1.7 !important; }
+  .result-report .result-body details { font-size: 13px; }
+  .result-report .result-body summary { cursor: pointer; color: var(--electric); }
+  .result-report .result-second-opinion {
+    margin-top: 32px;
+    background: var(--surface);
+    border: 1px solid #B9AEFF;
+    border-radius: 8px;
+    padding: 28px 36px;
+    color: var(--ink);
+  }
+  .result-report .result-second-opinion[hidden] { display: none; }
 
   /* ===================== ARCHITECTURE (interactive technical SVG) ===================== */
   .arch { padding: 96px 0; background: var(--bg-elevated); border-bottom: 1px solid var(--border); }
@@ -893,6 +989,29 @@
                Class names preserved (.node, .edge, .active, .done, .anchor-body)
                so the existing autoLoop/cachedCycle JS animates this without modification. -->
           <svg class="demo-svg" viewBox="0 0 600 260" preserveAspectRatio="xMidYMid meet" id="demoSvg" aria-hidden="true">
+            <!-- v0.10.3 ISSUE 3: radial-glow gradients per stage. The .stage-glow
+                 rects sit BEHIND the stage-bg dashed borders and fade in only
+                 when their stage is active (CSS .demo[data-stage="stageN"]). -->
+            <defs>
+              <radialGradient id="glowStage1" cx="50%" cy="50%" r="60%">
+                <stop offset="0%"   stop-color="#00D4FF" stop-opacity="0.18"/>
+                <stop offset="60%"  stop-color="#00D4FF" stop-opacity="0.04"/>
+                <stop offset="100%" stop-color="#00D4FF" stop-opacity="0"/>
+              </radialGradient>
+              <radialGradient id="glowStage2" cx="50%" cy="50%" r="60%">
+                <stop offset="0%"   stop-color="#00D49B" stop-opacity="0.28"/>
+                <stop offset="60%"  stop-color="#00D49B" stop-opacity="0.06"/>
+                <stop offset="100%" stop-color="#00D49B" stop-opacity="0"/>
+              </radialGradient>
+              <radialGradient id="glowStage3" cx="50%" cy="50%" r="60%">
+                <stop offset="0%"   stop-color="#B9AEFF" stop-opacity="0.18"/>
+                <stop offset="60%"  stop-color="#B9AEFF" stop-opacity="0.04"/>
+                <stop offset="100%" stop-color="#B9AEFF" stop-opacity="0"/>
+              </radialGradient>
+            </defs>
+            <rect class="stage-glow s1" x="20"  y="22" width="290" height="218" fill="url(#glowStage1)" rx="8"/>
+            <rect class="stage-glow s2" x="328" y="92" width="80"  height="78"  fill="url(#glowStage2)" rx="8"/>
+            <rect class="stage-glow s3" x="424" y="22" width="156" height="218" fill="url(#glowStage3)" rx="8"/>
             <!-- Stage group backgrounds (decorative — codex A1 keeps stages visible always) -->
             <g class="stage-group">
               <rect class="stage-bg" x="20" y="22" width="290" height="218"/>
@@ -935,6 +1054,29 @@
         </div>
       </div>
     </div>
+  </div>
+</section>
+
+<!-- ===================== RESULT REPORT (cert as independent full-width section) =====================
+     v0.10.3 ISSUE 1: cert leaves the demo container entirely. After a cycle
+     completes, this section reveals with the full Agent 6 cert HTML plus the
+     adversarial Second Opinion. Hidden by default; revealed via showResultReport(). -->
+<section class="result-report" id="result" hidden>
+  <div class="container">
+    <div class="result-head">
+      <div class="eyebrow">Verified certificate · signed bundle</div>
+      <h2 class="result-title">The mesh produced this signed report.</h2>
+      <div class="result-meta">
+        <span class="meta-pill" id="resultUrnPill">urn:pcec:claim:—</span>
+        <a class="meta-link" id="resultBundleLink" href="#" target="_blank" rel="noopener">View signed bundle &nearr;</a>
+      </div>
+    </div>
+    <article class="result-body" id="resultBody">
+      <!-- renderCertHtml(html, urn) injects the full Agent 6 cert HTML here. -->
+    </article>
+    <aside class="result-second-opinion" id="resultSecondOpinion" hidden>
+      <!-- renderSecondOpinion(so) injects the adversarial Second Opinion here. -->
+    </aside>
   </div>
 </section>
 
@@ -1581,6 +1723,22 @@ function resetDemo() {
   DEMO_NODES.querySelectorAll('.node').forEach(n => n.classList.remove('active','done'));
   DEMO_ANCHOR.classList.remove('done');
   DEMO_CERT.classList.remove('visible');
+  // v0.10.3 ISSUE 1: hide the external result-report on each new cycle so it
+  // reveals fresh when this cycle's verdict lands.
+  // v0.10.3 codex-3: also CLEAR resultBody so stale cert HTML can't reappear
+  // if showResultReport() races renderCertHtml on a fast replay.
+  const r = document.getElementById('result');
+  if (r) r.hidden = true;
+  const body = document.getElementById('resultBody');
+  if (body) body.innerHTML = '';
+  const so = document.getElementById('resultSecondOpinion');
+  if (so) { so.hidden = true; so.innerHTML = ''; }
+  // v0.10.3 codex-2: cancel any pending scrollIntoView from a previous cycle
+  // so a fast Replay doesn't yank the page mid-cycle.
+  if (window._resultScrollTimer) {
+    clearTimeout(window._resultScrollTimer);
+    window._resultScrollTimer = null;
+  }
 }
 
 /* v0.10.0a — build the 3-stage pipeline geometry.
@@ -1630,6 +1788,8 @@ function resetDemo() {
 
   // ---- Build agent chips ---------------------------------------------------
   // v0.10.2 Phase G: chip body r=14→16, halo r=20→22. Subtle scale-up.
+  // v0.10.3 ISSUE 3: each chip gets an extra .work-pulse rotating dashed ring
+  // that fades in while the agent is .active — communicates "thinking now".
   AGENTS.forEach(a => {
     const g = document.createElementNS('http://www.w3.org/2000/svg','g');
     g.setAttribute('class', 'node');
@@ -1638,6 +1798,8 @@ function resetDemo() {
 
     const halo = document.createElementNS('http://www.w3.org/2000/svg','circle');
     halo.setAttribute('class', 'halo'); halo.setAttribute('r', '22');
+    const work = document.createElementNS('http://www.w3.org/2000/svg','circle');
+    work.setAttribute('class', 'work-pulse'); work.setAttribute('r', '26');
     const body = document.createElementNS('http://www.w3.org/2000/svg','circle');
     body.setAttribute('class', 'body'); body.setAttribute('r', '16');
     const num = document.createElementNS('http://www.w3.org/2000/svg','text');
@@ -1647,37 +1809,46 @@ function resetDemo() {
     label.setAttribute('class', 'label'); label.setAttribute('y', '30');
     label.textContent = a.label;
 
-    g.append(halo, body, num, label);
+    g.append(halo, work, body, num, label);
     DEMO_NODES.appendChild(g);
   });
 
-  // ---- Build Stage 2 sign particle group (codex G.3 + A-codex-2 stagger).
-  // 8 dots radiating from the SIGN anchor when fireSignParticles() runs.
-  // r=4 + drop-shadow so they pop on the dark bg; sized to read on full hero.
-  const partGroup = document.createElementNS('http://www.w3.org/2000/svg','g');
-  partGroup.setAttribute('class', 'sign-particles');
-  partGroup.setAttribute('id', 'demoSignParticles');
-  partGroup.setAttribute('transform', `translate(${SIGN_CX},${SIGN_CY})`);
-  for (let i=0; i<8; i++) {
-    const c = document.createElementNS('http://www.w3.org/2000/svg','circle');
-    c.setAttribute('r', '4');
-    partGroup.appendChild(c);
+  // ---- Build sonar-ring pair for the SIGN moment (v0.10.3 ISSUE 3).
+  // Two concentric rings that expand from SIGN anchor when fireSonar() runs.
+  // Replaces the v0.10.2 8-particle burst with a single coherent visual event.
+  // Ring 2 fires 280ms after ring 1 via JS for the sonar-pulse effect.
+  const sonarGroup = document.createElementNS('http://www.w3.org/2000/svg','g');
+  sonarGroup.setAttribute('id', 'demoSonarGroup');
+  sonarGroup.setAttribute('transform', `translate(${SIGN_CX},${SIGN_CY})`);
+  for (let i=0; i<2; i++) {
+    const r = document.createElementNS('http://www.w3.org/2000/svg','circle');
+    r.setAttribute('class', 'sonar-ring');
+    r.setAttribute('id', 'sonarRing' + (i + 1));
+    r.setAttribute('r', '18');
+    sonarGroup.appendChild(r);
   }
-  DEMO_NODES.appendChild(partGroup);
+  DEMO_NODES.appendChild(sonarGroup);
 })();
 
-/* v0.10.2 Phase G: fire the sign particle burst. Called from setStage('stage2')
- * +400ms (codex A-codex-2 stagger) so the moss flash runs first, then the
- * "signature being written" burst. Self-clearing via CSS animation onend. */
-function fireSignParticles() {
-  const el = document.getElementById('demoSignParticles');
-  if (!el) return;
-  el.classList.remove('fire');
-  // Force reflow so a re-fire actually plays the animation again
-  void el.getBoundingClientRect();
-  el.classList.add('fire');
-  setTimeout(() => el.classList.remove('fire'), 1300);
+/* v0.10.3 ISSUE 3: fire the sonar-ring expansion at the SIGN anchor.
+ * Replaces v0.10.2 fireSignParticles (renamed for clarity; old name kept as
+ * thin alias below for any orphan call sites). Ring 2 fires 280ms after
+ * ring 1 for the sonar-pulse effect. */
+function fireSonar() {
+  const r1 = document.getElementById('sonarRing1');
+  const r2 = document.getElementById('sonarRing2');
+  function play(el) {
+    if (!el) return;
+    el.classList.remove('fire');
+    void el.getBoundingClientRect();
+    el.classList.add('fire');
+    setTimeout(() => el.classList.remove('fire'), 1700);
+  }
+  play(r1);
+  setTimeout(() => play(r2), 280);
 }
+// Back-compat alias for any orphan call sites from v0.10.2.
+function fireSignParticles() { fireSonar(); }
 
 function sleep(ms) { return new Promise(r => setTimeout(r, ms)); }
 
@@ -1759,11 +1930,10 @@ async function cachedCycle() {
   // v0.10.1c Phase C: Stage 3 done → final verdict state (JFFD = FAIL → amber)
   await sleep(800);
   setStage('done-fail');
-  // v0.10.2 H.toggle: fire the done-state machine RIGHT when verdict lands so
-  // the cert appears already at 320px (not 160 then animate). Container grows
-  // 600→700, stream collapses 140→60, cert expands 160→320. The outer click
-  // handler later re-emits setMode('done') with final copy — idempotent.
-  setMode('done', '✓ DONE', 'cached cycle complete · result visible below', 'COMPLETED');
+  // v0.10.3 ISSUE 1: cert is rendered into the external <section class="result-report">
+  // by renderCertHtml(). Reveal it now so the user sees the full report appear below
+  // the hero exactly when the verdict lands.
+  showResultReport();
   await sleep(4200);
 }
 
@@ -2019,9 +2189,12 @@ async function pollForAgent6and7(taskId) {
         // v0.10.2 H.toggle: pass real URN to renderCertHtml so the bundle-link
         // in the cert footer routes to THIS task's signed bundle, not the cached one.
         renderCertHtml(d.cert_html, d.bundle_urn);
+        // v0.10.3 ISSUE 1: reveal the external result-report section so the
+        // cert appears as a full-width independent surface below the hero.
+        showResultReport();
         renderedCert = true;
         streamAdd(`✓ Agent 6 (Cert Composer) delivered · ${d.cert_html.length} bytes of branded cert (Gemini 2.5 Pro)`, 'ok', 'composer');
-        setCoverage('completed', `Cert composed · Agent 7 running adversarial Second Opinion…`);
+        setCoverage('completed', `Cert composed · full report below · Agent 7 running adversarial Second Opinion…`);
       }
       if (!renderedSO && d.second_opinion) {
         renderSecondOpinion(d.second_opinion);
@@ -2037,22 +2210,41 @@ async function pollForAgent6and7(taskId) {
 }
 
 function renderCertHtml(html, urn=null) {
-  // Replace the static cert pane content with Agent 6's branded HTML.
-  // Removes the composing banner inserted during the wait.
-  const cert = document.getElementById('demoCert');
-  if (!cert) return;
-  cert.innerHTML = html;
-  // v0.10.2 H.toggle: forward-compatible "View signed bundle ↗" link.
-  // Today routes to the existing /pcec/v0/claim/{urn} JSON endpoint
-  // (stable URL scheme). v0.11.0 swaps target to /cert/{urn} HTML PDF page
-  // with no markup rewrite per codex A-codex-6.
+  // v0.10.3 ISSUE 1: cert renders into the EXTERNAL <section class="result-report">
+  // below the hero (not the in-container .demo-cert pane).
+  // The in-container demoCert is kept for legacy paths but display:none in CSS.
   const u = urn || 'urn:pcec:claim:syrz7izwfbatx6go2hgn2ipy';
-  const linkRow = document.createElement('div');
-  linkRow.className = 'cert-bundle-link';
-  linkRow.innerHTML = '<a href="/pcec/v0/claim/' + encodeURIComponent(u) +
-    '" target="_blank" rel="noopener">View signed bundle &nearr;</a>';
-  cert.appendChild(linkRow);
-  cert.classList.add('visible');
+  const body = document.getElementById('resultBody');
+  if (body) body.innerHTML = html;
+  const urnPill = document.getElementById('resultUrnPill');
+  if (urnPill) urnPill.textContent = u;
+  const bundleLink = document.getElementById('resultBundleLink');
+  if (bundleLink) bundleLink.href = '/pcec/v0/claim/' + encodeURIComponent(u);
+  // Keep the legacy demoCert.visible call for any orphan paths that still
+  // check it as a state signal — CSS hides it regardless.
+  const legacy = document.getElementById('demoCert');
+  if (legacy) legacy.classList.add('visible');
+}
+
+/* v0.10.3 ISSUE 1: reveal the full-width result-report section below the hero.
+ * Called from cachedCycle / runMesh at the moment the verdict lands so the
+ * full cert report appears immediately. Scrolls into view after a short delay
+ * so the user sees the diagram's done state before the page jumps.
+ * v0.10.3 codex-2: store the timer on window so resetDemo() can cancel it
+ * — prevents a fast Replay from yanking the page to a now-hidden section. */
+function showResultReport() {
+  const sec = document.getElementById('result');
+  if (!sec) return;
+  sec.hidden = false;
+  if (window._resultScrollTimer) clearTimeout(window._resultScrollTimer);
+  window._resultScrollTimer = setTimeout(() => {
+    // Re-check the section is still visible (in case resetDemo flipped hidden=true
+    // between this setTimeout and now without clearing the timer fast enough)
+    if (!sec.hidden) {
+      sec.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+    window._resultScrollTimer = null;
+  }, 1200);
 }
 
 // pulse animation for the composing banner
@@ -2065,9 +2257,12 @@ function renderCertHtml(html, urn=null) {
 })();
 
 function renderSecondOpinion(so) {
-  // Append a Second Opinion badge + collapsible details below the cert
-  const cert = document.getElementById('demoCert');
+  // v0.10.3 ISSUE 1: Second Opinion now lands inside the external
+  // result-report section (#resultSecondOpinion), not the hidden demoCert pane.
+  const cert = document.getElementById('resultSecondOpinion');
   if (!cert) return;
+  cert.hidden = false;
+  cert.innerHTML = ''; // replace on replay rather than accumulate
   const overall = (so.overall_verdict || '').toUpperCase();
   const summary = so.summary || '';
   const tests = so.tests || [];
