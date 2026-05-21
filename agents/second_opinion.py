@@ -125,11 +125,12 @@ async def get_second_opinion(bundle: EndorsementClaimBundle) -> dict:
     try:
         return json.loads(text)
     except json.JSONDecodeError as e:
-        # Defensive fallback — never let the second opinion crash the verify flow
+        # Fail CLOSED: an adversarial agent must never silently agree on its own failure.
+        # UNAVAILABLE surfaces the gap to the UI instead of fabricating consensus.
         return {
             "tests": [],
-            "strongest_counter": "Second Opinion JSON parse failed — falling back to base verdict.",
-            "overall_verdict": "CONFIRMS",
-            "summary": f"Second opinion unavailable this run ({type(e).__name__}); base 5+1-agent bundle stands.",
+            "strongest_counter": "Second Opinion JSON parse failed; adversarial verdict unavailable this run.",
+            "overall_verdict": "UNAVAILABLE",
+            "summary": f"Second opinion unavailable ({type(e).__name__}); base 5+1-agent bundle stands without adversarial confirmation.",
             "_parse_error": str(e)[:200],
         }

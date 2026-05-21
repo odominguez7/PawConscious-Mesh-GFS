@@ -878,17 +878,13 @@
   <div class="masthead-inner">
     <a href="#top" class="wordmark">PawConscious<span class="dot">.</span></a>
     <nav class="masthead-nav">
-      <a href="#how">How it works</a>
+      <a href="/" class="active" aria-current="page">Buyers</a>
       <span class="sep">·</span>
-      <a href="/agents">For agents</a>
+      <a href="/agents">Developers</a>
       <span class="sep">·</span>
-      <a href="#architecture">Architecture</a>
+      <a href="/architecture">Architecture</a>
       <span class="sep">·</span>
-      <a href="#proof">Proof</a>
-      <span class="sep">·</span>
-      <a href="#biz">Business case</a>
-      <span class="sep">·</span>
-      <a href="https://github.com/odominguez7/PawConscious-Mesh-GFS" target="_blank" rel="noopener">Repo ↗</a>
+      <a href="https://github.com/odominguez7/PawConscious-Mesh-GFS" target="_blank" rel="noopener">GitHub ↗</a>
     </nav>
   </div>
 </header>
@@ -2204,7 +2200,11 @@ async function pollForAgent6and7(taskId) {
         const overall = (d.second_opinion.overall_verdict || '').toUpperCase();
         const tests = d.second_opinion.tests || [];
         const survived = tests.filter(t=>(t.verdict||'').toUpperCase()==='SURVIVES').length;
-        streamAdd(`✓ Agent 7 (Second Opinion) delivered · ${overall} · ${survived}/${tests.length} stress tests survived`, overall==='CONFIRMS' ? 'ok' : 'err');
+        const soTone = overall==='CONFIRMS' ? 'ok' : overall==='UNAVAILABLE' ? 'warn' : 'err';
+        const soLine = overall==='UNAVAILABLE'
+          ? `⚠ Agent 7 (Second Opinion) unavailable · base 5+1-agent bundle stands without adversarial confirmation`
+          : `✓ Agent 7 (Second Opinion) delivered · ${overall} · ${survived}/${tests.length} stress tests survived`;
+        streamAdd(soLine, soTone);
         setCoverage('completed', `All 7 agents complete · Second Opinion: ${overall}`);
       }
     } catch (_) { break; }
@@ -2272,7 +2272,7 @@ function renderSecondOpinion(so) {
   const total = tests.length;
   const wrap = document.createElement('div');
   wrap.style.cssText = 'margin-top:14px;padding:14px 16px;background:var(--surface-2);border:1px solid var(--electric);border-radius:6px;font:500 11px/1.6 var(--mono);color:var(--ink);';
-  const verdictColor = overall === 'CONFIRMS' ? 'var(--moss-glow)' : 'var(--warning)';
+  const verdictColor = overall === 'CONFIRMS' ? 'var(--moss-glow)' : overall === 'UNAVAILABLE' ? 'var(--muted)' : 'var(--warning)';
   let testsHtml = tests.map(t => {
     const v = (t.verdict||'').toUpperCase();
     const c = v === 'SURVIVES' ? 'var(--moss-glow)' : 'var(--warning)';
