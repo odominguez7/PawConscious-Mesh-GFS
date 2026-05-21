@@ -24,6 +24,16 @@ steps:
       - '--region=us-central1'
       - '--platform=managed'
       - '--quiet'
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
+    entrypoint: 'gcloud'
+    args:
+      - 'run'
+      - 'services'
+      - 'update-traffic'
+      - 'mesh-api'
+      - '--region=us-central1'
+      - '--to-latest'
+      - '--quiet'
 images:
   - 'us-central1-docker.pkg.dev/pawconscious-mesh-2026/acp-images/mesh-api:$SHORT_SHA'
   - 'us-central1-docker.pkg.dev/pawconscious-mesh-2026/acp-images/mesh-api:latest'
