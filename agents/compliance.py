@@ -148,7 +148,15 @@ async def retrieve_grounding_sources(claim: Claim, max_results: int = 5) -> list
                 ))
         return sources
     except Exception as e:
-        print(f"[compliance] retrieval failed: {e}")
+        # N3c (Day 23): intentional broad catch — Vertex AI Search may fail
+        # for any of: NotFound (corpus not deployed), PermissionDenied,
+        # DeadlineExceeded, ResourceExhausted, transient gRPC errors.
+        # Returns [] → map_claim() falls back to prompt-only (line ~225) with
+        # an explicit "(grounding unavailable — using prompt-only knowledge)"
+        # block injected into the prompt. The returned ComplianceMapping's
+        # grounding_sources field stays empty so the bundle JSON honestly
+        # reflects ungrounded reasoning. Never silently swallowed.
+        print(f"[compliance] retrieval failed: {type(e).__name__}: {e}")
         return []
 
 

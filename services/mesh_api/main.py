@@ -699,6 +699,9 @@ class A2ATaskStatusResponse(BaseModel):
     bundle_hash: Optional[str] = None
     bundle_signature: Optional[str] = None
     chain_anchor: Optional[str] = None
+    # Day 23 N3b: explicit status so a null chain_anchor can never read as "appended".
+    # Values: "appended" | "unavailable" | None (still in-flight).
+    chain_anchor_status: Optional[str] = None
     # v0.8.0 — outputs from Agent 6 (Cert Composer) + Agent 7 (Second Opinion).
     # Both are post-merge and don't block the signed bundle if they fail.
     cert_html: Optional[str] = None
@@ -803,7 +806,10 @@ async def _run_verify_claim_background(task_id: str, product_url: str, max_claim
         # Append to Firestore transparency log (best effort; failure does not block A2A response)
         # G20 P1: capture chain_anchor from the log entry so the certificate can
         # display the real chain anchor (not bundle_hash) as judge-visible proof.
+        # Day 23 N3b: also track chain_anchor_status so the UI never silently reads
+        # null as "appended" — explicit "unavailable" surfaces the failure mode.
         chain_anchor: Optional[str] = None
+        chain_anchor_status: str = "unavailable"
         try:
             log_entry = await append_bundle_async(
                 urn=bundle.bundle_urn,
@@ -814,8 +820,15 @@ async def _run_verify_claim_background(task_id: str, product_url: str, max_claim
                 issuer=bundle.issuer,
             )
             chain_anchor = log_entry.get("chain_anchor") if isinstance(log_entry, dict) else None
+            if chain_anchor:
+                chain_anchor_status = "appended"
+            else:
+                # Append returned but didn't yield an anchor — log path probably
+                # ran in fallback mode (no Firestore). Surface as unavailable.
+                print(f"[mesh_api] WARN: transparency log returned no chain_anchor (entry={log_entry!r})")
         except Exception as log_err:
             print(f"[mesh_api] WARN: transparency log append failed: {log_err}")
+            chain_anchor_status = "unavailable"
 
         # Mark the bundle stage complete BEFORE the cert + second-opinion agents
         # run, so the frontend sees the verify finish and immediately starts
@@ -823,11 +836,16 @@ async def _run_verify_claim_background(task_id: str, product_url: str, max_claim
         await task_store.update(
             task_id,
             status="completed",
-            progress_message="bundle signed · composing cert",
+            progress_message=(
+                "bundle signed · composing cert"
+                if chain_anchor_status == "appended"
+                else "bundle signed · chain anchor unavailable · composing cert"
+            ),
             output=json.loads(bundle.model_dump_json()),
             bundle_hash=bundle_hash,
             bundle_signature=bundle.signature,
             chain_anchor=chain_anchor,
+            chain_anchor_status=chain_anchor_status,
         )
 
         # AGENT 6 — Cert Composer. Best-effort: if Gemini fails, frontend falls back
@@ -1006,6 +1024,7 @@ async def a2a_get(task_id: str) -> A2ATaskStatusResponse:
         bundle_hash=state.bundle_hash,
         bundle_signature=state.bundle_signature,
         chain_anchor=state.chain_anchor,
+        chain_anchor_status=state.chain_anchor_status,
         cert_html=state.cert_html,
         second_opinion=state.second_opinion,
         created_at=state.created_at,
@@ -1192,15 +1211,21 @@ def _global_nav(active: str) -> str:
 def _render_page(filename: str, active: str) -> str:
     """Read a static HTML file and inject global chrome.
 
-    Substitutes `<!--GLOBAL_NAV-->`, `<!--GLOBAL_FOOTER-->`, and
-    `<!--GLOBAL_CHROME_CSS-->` markers. If a marker is missing the
-    file is returned unchanged (defensive — pages can opt out).
+    Substitutes `<!--GLOBAL_NAV-->`, `<!--GLOBAL_FOOTER-->`,
+    `<!--GLOBAL_CHROME_CSS-->`, and `<!--PUBLIC_BASE_URL-->` markers. If a
+    marker is missing the file is returned unchanged (defensive — pages
+    can opt out).
+
+    Day 23 N4: `<!--PUBLIC_BASE_URL-->` lets code samples in /agents render
+    the live Cloud Run URL (or any operator-configured replacement) instead
+    of a hardcoded host. Same source builds against any deployment target.
     """
     path = Path(__file__).parent / "static" / filename
     html = path.read_text(encoding="utf-8")
     html = html.replace("<!--GLOBAL_CHROME_CSS-->", _GLOBAL_CHROME_CSS)
     html = html.replace("<!--GLOBAL_NAV-->", _global_nav(active))
     html = html.replace("<!--GLOBAL_FOOTER-->", _GLOBAL_FOOTER_HTML)
+    html = html.replace("<!--PUBLIC_BASE_URL-->", PUBLIC_BASE_URL)
     return html
 
 

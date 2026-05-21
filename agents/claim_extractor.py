@@ -49,7 +49,12 @@ def _load_firecrawl_key() -> str | None:
         response = client.access_secret_version(request={"name": FIRECRAWL_SECRET_RESOURCE})
         return response.payload.data.decode("utf-8").strip()
     except Exception as e:
-        print(f"[claim-extractor] firecrawl key unavailable: {e}")
+        # N3c (Day 23): intentional broad catch — Secret Manager failures vary
+        # (PermissionDenied, NotFound, DefaultCredentialsError, transient network).
+        # Surfaces as None → callers explicitly check (line ~63) and either
+        # use env-var fallback or raise RuntimeError with a clear "key not
+        # configured" message. Never silently swallowed.
+        print(f"[claim-extractor] firecrawl key unavailable: {type(e).__name__}: {e}")
         return None
 
 

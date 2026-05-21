@@ -87,7 +87,13 @@ def run_case(client: httpx.Client, case: dict[str, Any], timeout_s: int = 900) -
     try:
         submit = client.post(
             f"{MESH_URL}/a2a/v1/tasks/send",
-            json={"skill": "verify_claim", "input": {"product_url": url, "max_claims": 1}},
+            # N2 (Day 23): max_claims=3 matches the prod default
+            # (ACP_DEFAULT_MAX_CLAIMS=3 in Cloud Run env + the console-v2 hero
+            # widget). Eval previously submitted 1 — that scored the easy path
+            # only and disagreed with the user-visible "Demo verifies the first
+            # 3 claims" footnote on /. Now consistent: eval exercises the same
+            # fan-out depth a real demo run does.
+            json={"skill": "verify_claim", "input": {"product_url": url, "max_claims": 3}},
             headers={"X-API-Key": MESH_API_KEY, "Content-Type": "application/json"},
             timeout=60.0,
         )

@@ -323,7 +323,7 @@
 
     <div class="tab-panel active" id="panel-curl">
       <pre class="with-copy" data-copy><button class="copy-btn">copy</button><code><span class="tok-cmt"># A2A v0.3 standard envelope</span>
-curl -X POST <span class="tok-str">"https://mesh-api-oasa5mxega-uc.a.run.app/a2a/v1/tasks/send"</span> \
+curl -X POST <span class="tok-str">"<!--PUBLIC_BASE_URL-->/a2a/v1/tasks/send"</span> \
   -H <span class="tok-str">"X-API-Key: demo-key-2026-06"</span> \
   -H <span class="tok-str">"Content-Type: application/json"</span> \
   -d <span class="tok-str">'{
@@ -339,14 +339,14 @@ curl -X POST <span class="tok-str">"https://mesh-api-oasa5mxega-uc.a.run.app/a2a
 <span class="tok-cmt"># → HTTP 202 { task_id, poll_url, head_anchor_at_submit }
 # Poll until status=completed (~30-45s per claim)</span>
 
-curl <span class="tok-str">"https://mesh-api-oasa5mxega-uc.a.run.app/a2a/v1/tasks/get/&lt;task_id&gt;"</span> \
+curl <span class="tok-str">"<!--PUBLIC_BASE_URL-->/a2a/v1/tasks/get/&lt;task_id&gt;"</span> \
   -H <span class="tok-str">"X-API-Key: demo-key-2026-06"</span></code></pre>
     </div>
 
     <div class="tab-panel" id="panel-py">
       <pre class="with-copy" data-copy><button class="copy-btn">copy</button><code><span class="tok-key">import</span> httpx, time
 
-BASE = <span class="tok-str">"https://mesh-api-oasa5mxega-uc.a.run.app"</span>
+BASE = <span class="tok-str">"<!--PUBLIC_BASE_URL-->"</span>
 HEADERS = {<span class="tok-str">"X-API-Key"</span>: <span class="tok-str">"demo-key-2026-06"</span>}
 
 <span class="tok-cmt"># Submit via A2A v0.3 standard envelope</span>
@@ -369,7 +369,7 @@ task_id = r.json()[<span class="tok-str">"task_id"</span>]
     </div>
 
     <div class="tab-panel" id="panel-ts">
-      <pre class="with-copy" data-copy><button class="copy-btn">copy</button><code><span class="tok-key">const</span> BASE = <span class="tok-str">"https://mesh-api-oasa5mxega-uc.a.run.app"</span>;
+      <pre class="with-copy" data-copy><button class="copy-btn">copy</button><code><span class="tok-key">const</span> BASE = <span class="tok-str">"<!--PUBLIC_BASE_URL-->"</span>;
 <span class="tok-key">const</span> headers = {
   <span class="tok-str">"X-API-Key"</span>: <span class="tok-str">"demo-key-2026-06"</span>,
   <span class="tok-str">"Content-Type"</span>: <span class="tok-str">"application/json"</span>,
@@ -457,7 +457,7 @@ task_id = r.json()[<span class="tok-str">"task_id"</span>]
   <pre class="with-copy" data-copy><button class="copy-btn">copy</button><code><span class="tok-key">from</span> cryptography.hazmat.primitives.asymmetric.ed25519 <span class="tok-key">import</span> Ed25519PublicKey
 <span class="tok-key">import</span> base58, base64, httpx, json
 
-did = httpx.get(<span class="tok-str">"https://mesh-api-oasa5mxega-uc.a.run.app/.well-known/did.json"</span>).json()
+did = httpx.get(<span class="tok-str">"<!--PUBLIC_BASE_URL-->/.well-known/did.json"</span>).json()
 pk_multibase = did[<span class="tok-str">"verificationMethod"</span>][<span class="tok-num">0</span>][<span class="tok-str">"publicKeyMultibase"</span>]
 pk_bytes = base58.b58decode(pk_multibase[<span class="tok-num">1</span>:])[<span class="tok-num">2</span>:]  <span class="tok-cmt"># strip multibase 'z' + 0xed01 prefix</span>
 pub = Ed25519PublicKey.from_public_bytes(pk_bytes)

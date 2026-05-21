@@ -227,6 +227,10 @@ def describe_mesh_shape() -> dict:
 
 
 def _adk_version() -> str:
+    """N3c (Day 23): probe used by /health/mesh-shape. Returns 'unknown' if
+    google.adk isn't importable (broken install, version-incompatibility) so
+    the introspection endpoint never 500s. The 'unknown' value surfaces
+    directly in the mesh-shape JSON, signalling the ADK is unhealthy."""
     try:
         import google.adk as _adk
         return getattr(_adk, "__version__", "unknown")

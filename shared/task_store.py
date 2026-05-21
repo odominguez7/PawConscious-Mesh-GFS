@@ -25,6 +25,10 @@ class TaskState:
     bundle_hash: Optional[str] = None
     bundle_signature: Optional[str] = None
     chain_anchor: Optional[str] = None
+    # Day 23 N3b: explicit honesty about whether the Firestore transparency-log
+    # append succeeded. "appended" | "unavailable" | None (pre-completion).
+    # UI surfaces this so a null chain_anchor never silently reads as "appended".
+    chain_anchor_status: Optional[str] = None
     # v0.8.0 — Agent 6 (Cert Composer) HTML + Agent 7 (Second Opinion) dict
     cert_html: Optional[str] = None
     second_opinion: Optional[dict[str, Any]] = None
@@ -62,6 +66,7 @@ class TaskStore:
         bundle_hash: Optional[str] = None,
         bundle_signature: Optional[str] = None,
         chain_anchor: Optional[str] = None,
+        chain_anchor_status: Optional[str] = None,
         cert_html: Optional[str] = None,
         second_opinion: Optional[dict[str, Any]] = None,
     ) -> None:
@@ -85,6 +90,8 @@ class TaskStore:
                 state.bundle_signature = bundle_signature
             if chain_anchor is not None:
                 state.chain_anchor = chain_anchor
+            if chain_anchor_status is not None:
+                state.chain_anchor_status = chain_anchor_status
             if cert_html is not None:
                 state.cert_html = cert_html
             if second_opinion is not None:
