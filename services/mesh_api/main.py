@@ -366,7 +366,12 @@ class A2ATaskRequest(BaseModel):
                         )
                         if url:
                             break
-            if not url:
+            # Only accept the text fallback if it looks like a URL. Codex 2026-05-21:
+            # accepting "verify this product" as a URL would let garbage reach the
+            # downstream fetch logic (services/mesh_api/main.py:300).
+            if not url and text_fallback and (
+                text_fallback.startswith("http://") or text_fallback.startswith("https://")
+            ):
                 url = text_fallback
         if url and "product_url" not in replay_input:
             replay_input["product_url"] = url

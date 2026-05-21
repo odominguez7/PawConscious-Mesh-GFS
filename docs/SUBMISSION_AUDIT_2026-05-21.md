@@ -108,19 +108,44 @@ The submission needs to optimize for the rubric, not for the buyer hero. Three b
 - Mobile QA on hero (codex C2 P0-3 mobile call-out)
 - Stranger test with 3 fresh readers (Day 15 per WIN_PLAN, still valid)
 
-### Timeline (post-codex reframe)
+### Timeline (post-codex + Option C decision 2026-05-21 PM)
+
+Omar accepted the revised plan AND chose Option C for the shopper demo: build a live page used as the recording target for the video, judges can verify if they want.
 
 ```
-Day 17 (today): B0 judge-access checklist · B4 A2A envelope · L1 ADK eval re-run · L2 hero cert fix
-Day 18:         B1 repo public + README polish
-Day 19-22:      B2 demo video shoot + edit (4 days; the real bottleneck)
-Day 23-24:      B3 Devpost text + stranger test
-Day 25:         🔒 DEMO FREEZE (codex final sweep)
-Day 26-27:      Absorb stranger test findings · optional L3 revisit if budget allows
-Day 28 (06-05): 🚀 SUBMIT by noon PT
+Day 17 (today):  ✅ B0 demo key in 401 · ✅ B4 A2A v0.3 envelope (rev 41 deployed)
+                 IN PROGRESS: /agents Stripe-style A2A reference (0.5d)
+                 NEXT: /demo/shopper live page (1d)
+Day 18:          B1 repo public + README polish · L1 ADK eval re-run · finish /demo/shopper
+Day 19-22:       B2 demo video — centerpiece segment is shopper-agent live-calls-mesh on
+                 /demo/shopper, recorded in controlled conditions (Option C de-risks the
+                 wifi/flake attack codex raised)
+Day 23-24:       B3 Devpost ~700w + stranger test
+Day 25:          🔒 DEMO FREEZE (codex final sweep)
+Day 26-27:       Absorb stranger findings · buffer
+Day 28 (06-05):  🚀 SUBMIT by noon PT
 ```
 
-7 items in 12 days, with a 2-day buffer in Days 26–27. Codex called the prior 12/12 version overpacked; this version preserves submission requirements + the highest-ROI lifts and treats everything else as bonus.
+8 items in 10 days with a 2-day buffer. Cut from this plan: **L2 hero cert fix** (visual regression of placeholder dashes accepted; recording avoids panning below verdict ribbon).
+
+### Option C decision (2026-05-21 PM)
+
+**Codex stance:** /demo/shopper as a live page is risky theater. Wifi/flake risk during judge interaction.
+**Omar stance:** PawConscious's pitch IS agents calling agents. A submission claiming this with no live surface to witness it is a credibility gap.
+**Compromise (Option C):** Build the page (~1d as single static HTML + vanilla JS, no backend). Record video against it in controlled conditions for primary delivery. Judges who want proof can visit live. If recording reveals flakiness by end of Day 19, time-box and switch to Option A (video-only animation).
+
+### Tasks live in Claude Code as of 2026-05-21 15:45 UTC
+
+| # | Task | Status |
+|---|---|---|
+| 7 | B4: A2A v0.3 envelope dual-shape acceptance | ✅ shipped (rev 41) |
+| 8 | B0: judge-access in 401 message + agent card | ✅ shipped (rev 41) |
+| 9 | Deploy + verify A2A v0.3 returns 202 | ✅ verified |
+| 10 | Codex clear on B0+B4 | running |
+| 11 | /agents route — Stripe-style A2A reference | IN PROGRESS |
+| 12 | /demo/shopper live page | pending |
+
+Plus the remaining audit items from B1, B2, B3, L1.
 
 ### Projected score after this plan (post-codex cuts)
 
