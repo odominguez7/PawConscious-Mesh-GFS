@@ -151,6 +151,23 @@
   }
   .hero-pills .pill::before { content: "✓"; color: var(--moss-glow); font-weight: 700; }
 
+  /* v0.10.1c / codex A-codex-8: first-10s trust anchor above the URL input.
+     Buyers (compliance / GC / CMO) need a "why should I trust this" cue
+     before they commit to pasting a URL. Single line, mono, electric accent. */
+  .hero-trust {
+    margin: 18px 0 14px; max-width: 540px;
+    padding: 10px 14px;
+    background: rgba(0,212,255,0.05); border-left: 3px solid var(--electric);
+    border-radius: 0 4px 4px 0;
+    font: 500 12.5px/1.55 var(--sans); color: var(--muted);
+  }
+  .hero-trust strong { color: var(--ink); font-weight: 700; }
+  .hero-trust .icon { color: var(--electric); margin-right: 6px; font-weight: 700; }
+
+  /* v0.10.1c / codex A-codex-7: mobile breakpoints moved to the
+     RESPONSIVE section near end of file (was here, but cascaded before
+     base .demo definitions and got overridden — codex C.combined P2 fix). */
+
   /* ===================== DEMO CONTAINER (unified — cached/live/replay) =====================
      v0.10.0a (commit 1 of hero rebuild) — FIXED-HEIGHT 520px container.
      Codex amendment A4: mode distinction = badge color + ●/▶ icon + outer border color.
@@ -161,8 +178,10 @@
     border: 1.5px solid var(--border-strong); border-radius: 8px;
     overflow: hidden;
     box-shadow: 0 32px 80px -16px rgba(0,0,0,0.5), 0 0 0 1px var(--border) inset;
-    height: 520px; display: flex; flex-direction: column;
-    transition: border-color 0.3s ease;
+    /* v0.10.1c: container grows 520 → 600 (codex A-codex-4 Option A criteria).
+       Gives diagram + result row breathing room without breaking fixed-height. */
+    height: 600px; display: flex; flex-direction: column;
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
   }
   /* A4: outer border colour swaps with mode — peripherally visible even if badge below fold */
   .demo[data-mode="ready"]   { border-color: var(--border-strong); }
@@ -170,6 +189,50 @@
   .demo[data-mode="live"]    { border-color: var(--warning); }
   .demo[data-mode="replay"]  { border-color: #B9AEFF; }
   .demo[data-mode="done"]    { border-color: var(--moss-glow); }
+
+  /* v0.10.1c — Phase C perimeter glow narrative per active stage.
+     data-stage overrides border-color during stage transitions; the
+     pulse animation runs continuously while a stage is "active". */
+  .demo[data-stage="stage1"] {
+    border-color: var(--electric);
+    animation: stage1Pulse 1.6s ease-in-out infinite;
+  }
+  .demo[data-stage="stage2"] {
+    border-color: var(--moss-glow);
+    animation: stage2Flash 3s ease-in-out 1;
+  }
+  .demo[data-stage="stage3"] {
+    border-color: #B9AEFF;
+    animation: stage3Pulse 1.6s ease-in-out infinite;
+  }
+  .demo[data-stage="done-pass"] {
+    border-color: var(--moss-glow);
+    animation: none;
+    box-shadow: 0 0 24px -4px rgba(0,212,155,0.35),
+                0 32px 80px -16px rgba(0,0,0,0.5),
+                0 0 0 1px var(--border) inset;
+  }
+  .demo[data-stage="done-fail"] {
+    border-color: var(--warning);
+    animation: none;
+    box-shadow: 0 0 24px -4px rgba(255,92,53,0.35),
+                0 32px 80px -16px rgba(0,0,0,0.5),
+                0 0 0 1px var(--border) inset;
+  }
+  @keyframes stage1Pulse {
+    0%, 100% { box-shadow: 0 0 0 0 rgba(0,212,255,0), 0 32px 80px -16px rgba(0,0,0,0.5), 0 0 0 1px var(--border) inset; }
+    50%      { box-shadow: 0 0 24px 0 rgba(0,212,255,0.55), 0 32px 80px -16px rgba(0,0,0,0.5), 0 0 0 1px var(--border) inset; }
+  }
+  @keyframes stage2Flash {
+    0%       { box-shadow: 0 0 0 0 rgba(0,212,155,0); border-color: var(--border-strong); }
+    20%      { box-shadow: 0 0 36px 4px rgba(0,212,155,0.85); border-color: var(--moss-glow); }
+    50%      { box-shadow: 0 0 24px 2px rgba(0,212,155,0.55); border-color: var(--moss-glow); }
+    100%     { box-shadow: 0 0 12px 0 rgba(0,212,155,0.3); border-color: var(--moss-glow); }
+  }
+  @keyframes stage3Pulse {
+    0%, 100% { box-shadow: 0 0 0 0 rgba(123,108,255,0), 0 32px 80px -16px rgba(0,0,0,0.5), 0 0 0 1px var(--border) inset; }
+    50%      { box-shadow: 0 0 24px 0 rgba(123,108,255,0.55), 0 32px 80px -16px rgba(0,0,0,0.5), 0 0 0 1px var(--border) inset; }
+  }
 
   .demo-chrome {
     display: grid; grid-template-columns: auto 1fr auto; gap: 14px; align-items: center;
@@ -242,8 +305,50 @@
   .demo-coverage .cov-replay:disabled { opacity: 0.4; cursor: not-allowed; }
 
   .demo-body { padding: 16px 22px 20px; flex: 1; min-height: 0; display: flex; flex-direction: column; gap: 10px; overflow: hidden; }
-  .demo-stage { flex-shrink: 0; height: 220px; position: relative; }
+  /* v0.10.1c: diagram grows 220 → 260 inside the taller container, more readable.
+     Stage cinema cards float over the SVG via absolute positioning. */
+  .demo-stage { flex-shrink: 0; height: 260px; position: relative; }
   .demo-svg { width: 100%; height: 100%; display: block; }
+
+  /* Stage cinema cards — codex A-codex-3 trimmed: ≤3 lines each, sequential
+     show/hide (never two visible at once), positioned in diagram corners. */
+  .stage-card {
+    position: absolute; top: 8px; right: 8px;
+    min-width: 220px; max-width: 280px;
+    padding: 10px 12px;
+    background: rgba(22,24,29,0.92);
+    border: 1px solid var(--electric); border-radius: 6px;
+    font: 500 11px/1.45 var(--mono);
+    color: var(--ink); letter-spacing: 0.04em;
+    opacity: 0; pointer-events: none;
+    transition: opacity 0.35s ease, transform 0.35s ease;
+    transform: translateX(8px);
+    z-index: 4;
+    backdrop-filter: blur(4px);
+  }
+  .stage-card[data-card="stage2"] {
+    top: 50%; left: 50%; right: auto;
+    transform: translate(-50%, -50%) scale(0.95);
+    border-color: var(--moss-glow);
+    min-width: 280px;
+    text-align: center;
+  }
+  .stage-card[data-card="stage3"] {
+    top: 8px; left: 8px; right: auto;
+    border-color: #B9AEFF;
+    transform: translateX(-8px);
+  }
+  .stage-card.show { opacity: 1; pointer-events: auto; transform: translateX(0); }
+  .stage-card[data-card="stage2"].show { transform: translate(-50%, -50%) scale(1); }
+  .stage-card .sc-header {
+    font-size: 9.5px; font-weight: 700; letter-spacing: 0.22em;
+    text-transform: uppercase; color: var(--electric);
+    margin-bottom: 6px;
+  }
+  .stage-card[data-card="stage2"] .sc-header { color: var(--moss-glow); }
+  .stage-card[data-card="stage3"] .sc-header { color: #B9AEFF; }
+  .stage-card .sc-body { color: var(--muted); margin-bottom: 4px; }
+  .stage-card .sc-tail { color: var(--ink); font-weight: 600; font-size: 10.5px; }
 
   /* Stage groups (subtle dashed cyan bounds — mirror /architecture canonical) */
   .demo-svg .stage-bg {
@@ -332,9 +437,13 @@
     transition: opacity 0.35s ease, max-height 0.35s ease, padding 0.35s ease;
   }
   /* v0.10.0a: cert pane scrolls INSIDE the fixed-height demo container.
-     Cap at 120px so it never pushes the page (was 1400px → caused vertical growth Omar flagged).
-     Agent 6's full cert HTML still readable via internal scroll. */
-  .demo-cert.visible { opacity: 1; max-height: 96px; padding: 10px 14px; overflow-y: auto; -webkit-overflow-scrolling: touch; }
+     v0.10.1c: max-height bumped 96 → 160 since container grew to 600px (codex
+     A-codex-4 Option A criteria allow this). Result prominence (codex C4): the
+     FAIL headline + first ~5 lines of cert narrative now visible without scroll. */
+  .demo-cert.visible { opacity: 1; max-height: 160px; padding: 12px 16px; overflow-y: auto; -webkit-overflow-scrolling: touch; }
+  /* v0.10.1c: verdict + per-claim block get visual prominence inside the cert pane */
+  .demo-cert.visible .cert-headline,
+  .demo-cert.visible h3 { font-size: 0.95rem !important; line-height: 1.3 !important; margin-bottom: 8px !important; }
   .demo-cert.visible::-webkit-scrollbar { width: 8px; }
   .demo-cert.visible::-webkit-scrollbar-track { background: var(--bg); }
   .demo-cert.visible::-webkit-scrollbar-thumb { background: var(--electric-dim); border-radius: 4px; }
@@ -509,7 +618,11 @@
   .footer a { color: var(--muted); }
   .footer a:hover { color: var(--electric); }
 
-  /* ===================== RESPONSIVE ===================== */
+  /* ===================== RESPONSIVE =====================
+     v0.10.1c / codex C.combined P2 fix: mobile demo + stage-card overrides
+     declared HERE (after base .demo / .stage-card) so the cascade lets them win.
+     Previously declared up in the hero section — same specificity meant the
+     LATER base rules clobbered them and mobile layout never activated. */
   @media (max-width: 1024px) {
     .hero { padding: 56px 0; }
     .hero-grid, .proof-grid, .moats-grid, .biz-grid, .biz-tiers, .biz-roi, .how-grid, .founder-inner { grid-template-columns: 1fr; gap: 28px; }
@@ -517,8 +630,31 @@
     .container { padding: 0 22px; }
     .arch, .how, .proof, .biz, .moats, .founder { padding: 56px 0; }
     .arch-canvas { padding: 18px; }
-    .demo-body { min-height: 360px; padding: 20px; }
-    .demo-svg { max-height: 240px; }
+    .demo { height: 560px; }
+    .demo-stage { height: 220px; }
+    .demo-body { padding: 14px 18px 18px; }
+    .demo-svg { max-height: 220px; }
+    .stage-card { max-width: 70%; font-size: 10px; }
+  }
+  @media (max-width: 720px) {
+    .hero h1 { font-size: 32px; }
+    .hero-sub { font-size: 13.5px; }
+    .demo { height: 540px; }
+    .demo-stage { height: 200px; }
+    .demo-svg { max-height: 200px; }
+    /* Cinema cards reposition to bottom of diagram on narrow viewports so
+       they don't cover chips. Codex A-codex-7 says cards must stay readable. */
+    .stage-card {
+      top: auto; bottom: 4px; right: 4px; left: 4px;
+      max-width: none; min-width: 0;
+      padding: 8px 10px; font-size: 10px;
+    }
+    .stage-card[data-card="stage2"] {
+      top: 50%; left: 4px; right: 4px;
+      transform: translateY(-50%) scale(0.95);
+    }
+    .stage-card[data-card="stage2"].show { transform: translateY(-50%) scale(1); }
+    .stage-card[data-card="stage3"] { left: 4px; }
   }
 </style>
 </head>
@@ -556,6 +692,12 @@
            Architecture section legend below. Speaks to the brand owner's
            three concerns: plaintiff exposure, retailer trust, AI-shopper trust. -->
       <p class="hero-sub">Paste your product page URL. Seven specialized agents extract every health claim, check it against PubMed and the FTC endorsement guide, sign the evidence with cryptographic provenance, and adversarially double-check the conclusion. In 60-180 seconds you get a signed bundle that plaintiffs, retailers, and AI shopping agents can verify on their own.</p>
+      <!-- v0.10.1c / codex A-codex-8: first-10-seconds trust anchor.
+           Tells the buyer WHY this matters before they paste anything. -->
+      <div class="hero-trust">
+        <span class="icon">✦</span> <strong>Signed evidence</strong> brands can show plaintiffs, retailers, and AI shopping agents.
+        Ed25519 + Firestore chain anchor + adversarial Second Opinion.
+      </div>
       <div class="hero-cta">
         <input type="text" id="urlInput" placeholder="https://www.justfoodfordogs.com/product/calming-chews-for-dogs/50020180.html"
                value="https://www.justfoodfordogs.com/product/calming-chews-for-dogs/50020180.html?gclsrc=aw.ds&amp;gad_source=1&amp;gad_campaignid=21670453374&amp;gbraid=0AAAAADrJDwQ9nOM0CT4IkGF7qtnkpYkQb&amp;gclid=CjwKCAjwt7XQBhBkEiwAtStppykhJ7PLw6bBUjqLuFIj_leMIeQmJfWwQteZEc-mkc0CHL1f99bD1BoCIDwQAvD_BwE" autocomplete="off"
@@ -615,6 +757,23 @@
       </div>
       <div class="demo-body">
         <div class="demo-stage">
+          <!-- v0.10.1c / codex A-codex-3: stage cinema callouts.
+               Sequential (never two visible at once). Trimmed to ≤3 lines each. -->
+          <div class="stage-card" data-card="stage1">
+            <div class="sc-header">Stage 1 · Reasoning Mesh</div>
+            <div class="sc-body" id="card1Body">Extracting claims · grading evidence · vet rubric · compliance · auditor</div>
+            <div class="sc-tail" id="card1Tail">3 claims · 7 papers · vet sim 1-2/5 · 2 FTC flags · 1 FAIL</div>
+          </div>
+          <div class="stage-card" data-card="stage2">
+            <div class="sc-header">Stage 2 · Sign ✦</div>
+            <div class="sc-body">Canonical JSON · Ed25519 signature · chain anchor</div>
+            <div class="sc-tail" id="card2Tail">sha256:5fb540b6… → Firestore</div>
+          </div>
+          <div class="stage-card" data-card="stage3">
+            <div class="sc-header">Stage 3 · Adversarial</div>
+            <div class="sc-body">Cert composing · Second Opinion stress-testing</div>
+            <div class="sc-tail" id="card3Tail">COURT ✓ · REGULATOR ⚠ · CONSENSUS ⚠ · PUBLIC ⚠</div>
+          </div>
           <!-- 3-STAGE PIPELINE MINIATURE
                viewBox 600×260. Stage groups as subtle dashed-cyan rects.
                7 numbered chips (01-07) match canonical /architecture.
@@ -1268,6 +1427,29 @@ function setMode(mode, badgeText, modeText, rightText) {
   const demoEl = document.getElementById('demo');
   if (demoEl) demoEl.setAttribute('data-mode', mode);
 }
+
+/* v0.10.1c / Phase C: per-stage perimeter glow narrative + cinema cards.
+ * setStage(name) drives BOTH the outer container border animation AND
+ * which cinema card is visible. Sequential (never 2 cards at once per A-codex-3).
+ * Stages: null (clear) · 'stage1' · 'stage2' · 'stage3' · 'done-pass' · 'done-fail'. */
+const STAGE_CARDS = {
+  stage1: document.querySelector('.stage-card[data-card="stage1"]'),
+  stage2: document.querySelector('.stage-card[data-card="stage2"]'),
+  stage3: document.querySelector('.stage-card[data-card="stage3"]'),
+};
+function setStage(name) {
+  const demoEl = document.getElementById('demo');
+  if (!demoEl) return;
+  if (name) demoEl.setAttribute('data-stage', name);
+  else      demoEl.removeAttribute('data-stage');
+  // Show only the matching cinema card; hide all others.
+  Object.entries(STAGE_CARDS).forEach(([key, el]) => {
+    if (!el) return;
+    if (key === name) el.classList.add('show');
+    else              el.classList.remove('show');
+  });
+}
+function clearStage() { setStage(null); }
 function resetDemo() {
   DEMO_EDGES.querySelectorAll('.edge').forEach(e => e.classList.remove('active','done'));
   DEMO_NODES.querySelectorAll('.node').forEach(n => n.classList.remove('active','done'));
@@ -1374,6 +1556,8 @@ async function cachedCycle() {
   function edgesFor(agentId) {
     return DEMO_EDGES.querySelectorAll(`.edge[data-agent="${agentId}"]`);
   }
+  // v0.10.1c Phase C: kick off Stage 1 cinema + perimeter glow
+  setStage('stage1');
   for (let i=0; i<nodes.length; i++) {
     if (aborted()) return;
     const agentId = nodes[i].dataset.agent;
@@ -1397,16 +1581,24 @@ async function cachedCycle() {
     const cls = (c.audit === 'PASS' && !c.flag) ? 'ok' : 'err';
     streamAdd(`claim ${String(c.idx).padStart(2,'0')} · vet ${c.vet}/5 · ${c.ftc}${flag} · audit ${c.audit}`, cls);
   });
+  // v0.10.1c Phase C: Stage 1 → Stage 2 (sign event, dramatic 3s flash)
+  setStage('stage2');
   streamAdd('SequentialAgent · merge + sign · Ed25519', 'ok');
   await sleep(500); if (aborted()) return;
   DEMO_ANCHOR.classList.add('done');
   streamAdd(`chain_anchor appended → ${b.anchor.slice(0,40)}…`, 'ok');
-  await sleep(400); if (aborted()) return;
+  await sleep(2200); if (aborted()) return;  // let the Stage 2 flash play
+  // v0.10.1c Phase C: Stage 2 → Stage 3 (adversarial double-check)
+  setStage('stage3');
+  await sleep(500); if (aborted()) return;
   // Inject the verbatim Agent 6 cert + Agent 7 Second Opinion via the SAME
   // render functions the live run uses. Structurally identical preview.
   renderCertHtml(JFFD_CERT_HTML);
   renderSecondOpinion(JFFD_SECOND_OPINION);
   streamAdd('bundle signed · cached preview matches real urn:pcec:claim:syrz7izwfbatx6go2hgn2ipy', 'ok');
+  // v0.10.1c Phase C: Stage 3 done → final verdict state (JFFD = FAIL → amber)
+  await sleep(800);
+  setStage('done-fail');
   await sleep(4200);
 }
 
@@ -1437,6 +1629,7 @@ function setError(problem, cause, fix) {
 function setReady() {
   setMode('ready', 'Ready', 'click Verify to run · or Replay for a cached preview', 'PCEC v0.1');
   setCoverage('', 'Ready · paste a URL above and click Verify');
+  clearStage(); // v0.10.1c: clear any leftover stage glow/cinema cards
 }
 
 /* Initial state — no animation. Static chips, static Sign anchor. */
@@ -1504,6 +1697,11 @@ async function runMesh() {
   REPLAY_BTN.disabled = true;
   setMode('live', '● LIVE · YOUR URL', `${url.replace(/^https?:\/\//,'').slice(0,40)}…`, 'POST /a2a/v1/tasks/send');
   setCoverage('live', 'Live mesh running · ~60-180s typical · please wait');
+  // v0.10.1c Phase C: kick off Stage 1 perimeter glow + cinema card for the live run.
+  // Live mode stays on Stage 1 until orchestrator emits stage-2 progress (cert/sign);
+  // backend currently only emits 2 progress msgs (codex S2E P2 known limitation),
+  // so the cinema for live is intentionally simpler than the cached cycle.
+  setStage('stage1');
   RUN_BTN.disabled = true;
   document.getElementById('demo').scrollIntoView({ behavior:'smooth', block:'start' });
   streamAdd(`POST /a2a/v1/tasks/send → ${url}`);
@@ -1558,6 +1756,7 @@ async function runMesh() {
         // v0.10.0b codex review fix: reset demoMode so Replay isn't gated as 'live'.
         setMode('ready', 'Error', 'live mesh failed · retry or run cached', 'PCEC v0.1');
         setCoverage('error', 'Live mesh task failed');
+        clearStage(); // v0.10.1c codex C.combined P2: stop the Stage 1 cyan pulse on failure
         RUN_BTN.disabled=false; REPLAY_BTN.disabled = false;
         return;
       }
@@ -1569,6 +1768,7 @@ async function runMesh() {
              'Click Verify again to retry, or click ▶ Replay cached demo to preview a pre-recorded run.');
     setMode('ready', 'Timeout', 'live mesh ran >4min · retry or run cached', 'PCEC v0.1');
     setCoverage('error', 'Live mesh timed out · retry or run cached demo');
+    clearStage(); // v0.10.1c codex C.combined P2: clear stale animation on timeout
   } catch (err) {
     streamAdd(`error: ${err.message}`, 'err');
     setError('Live mesh hit an error',
@@ -1576,6 +1776,7 @@ async function runMesh() {
              'Retry or click ▶ Replay cached demo to confirm the agent flow works.');
     setMode('ready', 'Error', 'live mesh error · retry or run cached', 'PCEC v0.1');
     setCoverage('error', `Live mesh error · ${err.message || 'unknown'}`);
+    clearStage(); // v0.10.1c codex C.combined P2: clear stale animation on exception
   } finally {
     RUN_BTN.disabled = false;
     REPLAY_BTN.disabled = false;
@@ -1617,6 +1818,8 @@ function renderLive(data) {
   // v0.10.0b: coverage line shows honest verified-count vs total claims found.
   const totalClaims = (bundle.claims && bundle.claims.length) ? bundle.claims.length : audits.length;
   setCoverage('completed', `Verified ${audits.length} of ${totalClaims} claims · ${passing ? 'PASS' : 'NEEDS REVIEW'} · signed bundle below`);
+  // v0.10.1c Phase C: final perimeter glow state — moss for PASS, amber for FAIL/NEEDS REVIEW.
+  setStage(passing ? 'done-pass' : 'done-fail');
 
   // v0.8.0: continue polling for Agent 6 (cert_html) + Agent 7 (second_opinion)
   // since they attach AFTER status=completed. Show them as they arrive.
