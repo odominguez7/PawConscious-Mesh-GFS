@@ -557,8 +557,8 @@
            three concerns: plaintiff exposure, retailer trust, AI-shopper trust. -->
       <p class="hero-sub">Paste your product page URL. Seven specialized agents extract every health claim, check it against PubMed and the FTC endorsement guide, sign the evidence with cryptographic provenance, and adversarially double-check the conclusion. In 60-180 seconds you get a signed bundle that plaintiffs, retailers, and AI shopping agents can verify on their own.</p>
       <div class="hero-cta">
-        <input type="text" id="urlInput" placeholder="https://www.nativepet.com/products/hip-joint"
-               value="https://www.nativepet.com/products/hip-joint" autocomplete="off"
+        <input type="text" id="urlInput" placeholder="https://www.justfoodfordogs.com/product/calming-chews-for-dogs/50020180.html"
+               value="https://www.justfoodfordogs.com/product/calming-chews-for-dogs/50020180.html?gclsrc=aw.ds&amp;gad_source=1&amp;gad_campaignid=21670453374&amp;gbraid=0AAAAADrJDwQ9nOM0CT4IkGF7qtnkpYkQb&amp;gclid=CjwKCAjwt7XQBhBkEiwAtStppykhJ7PLw6bBUjqLuFIj_leMIeQmJfWwQteZEc-mkc0CHL1f99bD1BoCIDwQAvD_BwE" autocomplete="off"
                aria-describedby="urlError">
         <button id="runBtn" onclick="runMesh()" class="pulse" aria-label="Verify your product">Verify your product</button>
       </div>
@@ -1140,11 +1140,79 @@ const AGENTS = [
   { id: 'composer',   num: '06', label: 'COMPOSE',     cx: 502, cy:  82 },                   // Top of Stage 3
   { id: 'opinion',    num: '07', label: '2ND OPINION', cx: 502, cy: 198 },                   // Bottom of Stage 3
 ];
-const CACHED_BRANDS = [
-  { brand: 'Native Pet',   urn: 'urn:pcec:claim:tshh4bbtauijarh4i3pz7dza', hash: 'sha256:9c8e7e043305109044fc46df9f8f20319cade0d4159c8b7c…', anchor: 'sha256:f93e9d54e7e06dfae2f3b57ae8c76e0514d211cfeb3a…', sig: 'ed25519:did:web:mesh-api-…/sig-4a2f-b9e1', verdict: 'PASS · directional' },
-  { brand: 'Honest Paws',  urn: 'urn:pcec:claim:6dm2fdugwqozbwtnzvmfjqph',     hash: 'sha256:f0d9a28e86b41d90da6dcd5854c1e7be21d4e8a82…',     anchor: 'sha256:7b237e3a576f2f54479a51aef6b75391f3c9a07a…',     sig: 'ed25519:did:web:mesh-api-…/sig-6dm2-q88k', verdict: 'PASS' },
-  { brand: 'Pet Honesty',  urn: 'urn:pcec:claim:n7p9q3r5s1t2u4v6w8x0y2z4a',    hash: 'sha256:b8a47e09cd62f3a01d8e7b3c6f5142ab9d3e7c2a…',     anchor: 'sha256:e2c3d4f5a6b7c8d9e0f1a2b3c4d5e6f7a8b9c0d1…',     sig: 'ed25519:did:web:mesh-api-…/sig-n7p9-y2z4', verdict: 'PASS' },
-];
+/* v0.10.0c: cached demo replays the REAL JustFoodForDogs · Calming Chews audit
+ * that ran on 2026-05-21 (urn:pcec:claim:syrz7izwfbatx6go2hgn2ipy).
+ * Every byte here came from the live mesh — no fabrications. The Agent 6
+ * cert + Agent 7 Second Opinion HTML are stored verbatim and replayed via
+ * renderCertHtml() / renderSecondOpinion() — the SAME code paths the live
+ * run uses, so the cached preview is structurally identical to a real call.
+ *
+ * Why JFFD: it FAILS the audit with substantive, citable facts (2018 FDA
+ * Listeria recall, weak L-Tryptophan/chamomile evidence, 2/3 claims flagged
+ * for FTC §255.1). A passing demo doesn't show the product's actual value;
+ * a real failure does.
+ */
+const JFFD_BUNDLE = {
+  brand: 'JustFoodForDogs · Calming Chews',
+  urn:    'urn:pcec:claim:syrz7izwfbatx6go2hgn2ipy',
+  hash:   'sha256:5fb540b67785d054c1d1694c35fd9bbd87acf95b9b13d2f7a4cdef416543ed0c',
+  anchor: 'sha256:5fb540b67785d054c1d1694c35fd9bbd87acf95b9b13d2f7a4cdef416543ed0c',
+  sig:    'ed25519:did:web:mesh-api-40952019806.us-central1.run.app/sig-syrz-543ed0c',
+  verdict: 'FAIL · 2 of 3 claims FTC-flagged',
+  total_claims: 3,
+  per_claim: [
+    { idx: 1, vet: 2, ftc: '§255.1 General', flag: true,  audit: 'PASS' },
+    { idx: 2, vet: 1, ftc: '—',              flag: false, audit: 'FAIL' },
+    { idx: 3, vet: 2, ftc: '§255.1 General', flag: true,  audit: 'PASS' },
+  ],
+};
+
+// Agent 6 cert HTML — verbatim from the JFFD live run, Gemini 2.5 Pro, 4622 bytes.
+const JFFD_CERT_HTML = `<div class="cert-composed">
+    <style>
+        .cert-composed { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; color: var(--ink); background-color: #1A1A1A; padding: 16px 18px; border: 1px solid var(--muted); border-radius: 6px; }
+        .cert-header { font-size: 1rem; font-weight: 700; letter-spacing: 0.04em; margin-bottom: 12px; }
+        .cert-narrative { color: var(--muted); font-size: 0.78rem; line-height: 1.55; margin-bottom: 12px; }
+        .cert-narrative strong { color: var(--ink); font-weight: 600; }
+        .cert-fixes { margin-top: 12px; border-top: 1px solid var(--border); padding-top: 12px; }
+        .cert-fixes h3 { font-size: 0.78rem; font-weight: 700; color: var(--electric); margin: 0 0 8px; letter-spacing: 0.12em; text-transform: uppercase; }
+        .cert-fixes ol { padding-left: 18px; margin: 0; font-size: 0.78rem; line-height: 1.5; }
+        .cert-fixes li { color: var(--muted); margin-bottom: 8px; }
+        .cert-fixes li::marker { color: var(--electric); }
+        .cert-footer { margin-top: 14px; padding-top: 10px; border-top: 1px solid var(--border); font-family: 'JetBrains Mono', monospace; font-size: 0.66rem; color: var(--dim); line-height: 1.5; word-break: break-all; }
+        .status-fail { color: var(--warning); }
+        .status-flag { color: var(--signal); }
+    </style>
+    <div class="cert-header">JustFoodForDogs · Calming Efficacy &amp; Ingredient Claims · <span class="status-fail">FAIL</span></div>
+    <div class="cert-narrative">PawConscious has completed its verification of three marketing claims for JustFoodForDogs' "Calming Chews for Dogs," based on the evidence bundle signed on May 21, 2026. The review assessed claims related to calming efficacy and ingredient composition, analyzing a total of 7 scientific papers. The AI vet-rubric simulation assigned low confidence scores, ranging from <strong>1 to 2 out of 5</strong>, citing a lack of robust, peer-reviewed clinical trials in dogs to substantiate the product's effects. The rubric noted that while the mechanisms of action for the ingredients are plausible, the supporting evidence is sparse and relies on vague marketing terms like "clean ingredients." Crucially, the compliance audit flagged two of the three claims for potential violation of <span class="status-flag">FTC §255.1</span>. The specific efficacy claims "Calming" and "help your dog handle...stressors" require "competent and reliable scientific evidence," which was not present in the provided bundle. This lack of substantiation resulted in an audit failure for a central claim, posing a significant compliance risk.</div>
+    <div class="cert-fixes">
+        <h3>Ship-before-launch fixes</h3>
+        <ol>
+            <li><strong>Revise Efficacy Claims:</strong> The claims "Calming" and "work together to help your dog handle...stressors" are specific efficacy claims that failed substantiation. Rephrase them to general wellness claims (e.g., "supports a calm disposition") or remove them to mitigate FTC compliance risk.</li>
+            <li><strong>Define "Clean Ingredients":</strong> The term "clean ingredients" was flagged by the rubric as vague and undefined. Substantiate this claim by defining specific, verifiable attributes on the product page (e.g., "No artificial preservatives, colors, or flavors") or remove the term.</li>
+            <li><strong>Strengthen Evidence Dossier:</strong> The current evidence is insufficient for the claims being made. To support stronger efficacy claims in the future, the brand must invest in robust, placebo-controlled, peer-reviewed clinical trials conducted on dogs to demonstrate a statistically significant calming effect.</li>
+        </ol>
+    </div>
+    <div class="cert-footer">
+        urn:pcec:claim:syrz7izwfbatx6go2hgn2ipy<br>
+        sha256:5fb540b67785d054c1d1694c35fd9bbd87acf95b9b13d2f7a4cdef416543ed0c<br>
+        <span style="color:var(--dim);font-size:0.6rem;">Disclosure: vet rubric is Gemini 2.5 Pro simulating a 5-vet panel; v0.2 roadmap replaces with licensed-DVM attestation.</span>
+    </div>
+</div>`;
+
+// Agent 7 Second Opinion — verbatim from the JFFD live run.
+// Google Search grounded, Gemini 2.5 Pro, 4 stress tests, 1 SURVIVES.
+const JFFD_SECOND_OPINION = {
+  overall_verdict: 'NEEDS REVIEW',
+  summary: "While we're clear on lawsuits, the science behind the calming claims is shaky and we've had past FDA recalls, so this product needs another look before we can stand behind it.",
+  tests: [
+    { name: 'COURT', verdict: 'SURVIVES', rationale: "No class-action lawsuits were found related to the efficacy or advertising of JustFoodForDogs' calming chews; prior lawsuits against the company involve unrelated matters like FACTA violations and website accessibility." },
+    { name: 'REGULATOR', verdict: 'NEEDS REVIEW', rationale: 'While no FTC or FDA actions were found for this specific product, JustFoodForDogs had a significant 2018 FDA recall for Listeria in other products, indicating past quality control issues.' },
+    { name: 'SCIENTIFIC CONSENSUS', verdict: 'NEEDS REVIEW', rationale: 'Scientific evidence for the calming efficacy of the active ingredients (L-Tryptophan, Chamomile, Magnesium) is mixed and inconclusive; recent reviews show L-Tryptophan has conflicting results, and evidence for chamomile in dogs is weak or extrapolated from other species.' },
+    { name: 'PUBLIC SKEPTICISM', verdict: 'NEEDS REVIEW', rationale: 'Veterinary and expert sources consistently state that while some calming ingredients may help mild anxiety, they are not a cure, work best as part of a larger behavioral plan, and the supplement industry is loosely regulated.' },
+  ],
+  strongest_counter: 'The scientific evidence supporting the calming effect of the key ingredients in this product, particularly L-Tryptophan and chamomile, is inconsistent and considered weak or preliminary in recent veterinary scientific reviews.',
+};
 
 const DEMO_SVG    = document.getElementById('demoSvg');
 const DEMO_EDGES  = document.getElementById('demoEdges');
@@ -1269,7 +1337,8 @@ function sleep(ms) { return new Promise(r => setTimeout(r, ms)); }
 async function cachedCycle() {
   const myGen = ++cycleGen;
   const aborted = () => interrupt || myGen !== cycleGen;
-  const b = CACHED_BRANDS[Math.floor(Math.random()*CACHED_BRANDS.length)];
+  // v0.10.0c: cached cycle replays the real JFFD audit verbatim.
+  const b = JFFD_BUNDLE;
   resetDemo(); streamClear();
   streamAdd(`POST /a2a/v1/tasks/send → ${b.brand}`, 'dim');
   await sleep(600); if (aborted()) return;
@@ -1277,19 +1346,19 @@ async function cachedCycle() {
   await sleep(700); if (aborted()) return;
   streamAdd('orchestrator: asyncio.gather · 7 specialized agents on A2A v0.3');
   const nodes = DEMO_NODES.querySelectorAll('.node');
-  // v0.10.0a fix (codex review P2): the new 3-stage geometry has 13 edge
-  // segments, not 7. Index-based edges[i] → nodes[i] mapped only the first
-  // 7 segments and left Stage 3 edges (06, 07) dark. Switching to
-  // data-agent matching so each agent's activation lights ALL edges
-  // pointed at it (e.g., the trunk into 02 + the junction segment).
+  /* STEPS narrate the actual JFFD audit findings — every number traceable
+   * to the live run captured 2026-05-21. claim-extractor produced 3 claims;
+   * evidence-grader pulled 7 papers; vet rubric returned 1-2/5 across the
+   * board; compliance flagged 2 of 3 under FTC §255.1; auditor surfaced
+   * 1 FAIL. v0.10.0a edge-by-data-agent matching (codex P2) still applies. */
   const STEPS = [
-    'claim-extractor · ADK + httpx · 3 claims extracted',
-    'evidence-grader · BioMCP → PubMed · 6 papers · 247 citations',
-    'vet-rubric · prompt-only 5-vet simulation · 4.2 / 5',
-    'compliance · Vertex AI Search FTC §255.3 · PASS',
-    'auditor (Falsifier v0) · 2 checks cleared',
-    'Agent 6 (Cert Composer) · branded cert · Gemini 2.5 Pro',
-    'Agent 7 (Second Opinion) · 4 stress tests · Gemini 2.5 Pro + Google Search grounding',
+    'claim-extractor · ADK + httpx · 3 claims extracted from PDP',
+    'evidence-grader · BioMCP → PubMed · 7 papers retrieved · L-Tryptophan + chamomile evidence reviewed',
+    'vet-rubric · Gemini 2.5 Pro simulating 5-vet panel · scores 1-2 / 5 across claims',
+    'compliance · Vertex AI Search · FTC §255.1 general flag on 2 of 3 claims',
+    'auditor (Falsifier v0) · PMID + claim-direction checks · 1 FAIL surfaced',
+    'Agent 6 (Cert Composer) · 4622-byte branded cert · Gemini 2.5 Pro',
+    'Agent 7 (Second Opinion) · 4 stress tests · 1 SURVIVES · 3 NEEDS REVIEW',
   ];
   function edgesFor(agentId) {
     return DEMO_EDGES.querySelectorAll(`.edge[data-agent="${agentId}"]`);
@@ -1311,18 +1380,22 @@ async function cachedCycle() {
     await sleep(120);
   }
   if (aborted()) return;
+  // Stage-by-stage outcome lines that mirror what the buyer sees on a real run.
+  b.per_claim.forEach((c) => {
+    const flag = c.flag ? ' · FTC flag' : '';
+    const cls = (c.audit === 'PASS' && !c.flag) ? 'ok' : 'err';
+    streamAdd(`claim ${String(c.idx).padStart(2,'0')} · vet ${c.vet}/5 · ${c.ftc}${flag} · audit ${c.audit}`, cls);
+  });
   streamAdd('SequentialAgent · merge + sign · Ed25519', 'ok');
   await sleep(500); if (aborted()) return;
   DEMO_ANCHOR.classList.add('done');
-  streamAdd(`chain_anchor appended → ${b.anchor.slice(0,32)}…`, 'ok');
+  streamAdd(`chain_anchor appended → ${b.anchor.slice(0,40)}…`, 'ok');
   await sleep(400); if (aborted()) return;
-  document.getElementById('dcUrn').textContent = b.urn;
-  document.getElementById('dcHash').textContent = b.hash;
-  document.getElementById('dcAnchor').textContent = b.anchor;
-  document.getElementById('dcSig').textContent = b.sig;
-  document.getElementById('dcVerdict').textContent = b.verdict;
-  DEMO_CERT.classList.add('visible');
-  streamAdd('bundle signed · ready to serve', 'ok');
+  // Inject the verbatim Agent 6 cert + Agent 7 Second Opinion via the SAME
+  // render functions the live run uses. Structurally identical preview.
+  renderCertHtml(JFFD_CERT_HTML);
+  renderSecondOpinion(JFFD_SECOND_OPINION);
+  streamAdd('bundle signed · cached preview matches real urn:pcec:claim:syrz7izwfbatx6go2hgn2ipy', 'ok');
   await sleep(4200);
 }
 
@@ -1394,7 +1467,7 @@ async function runMesh() {
   if (!url) {
     setError('Enter your product URL',
              'We need an HTTPS link to fetch the label.',
-             'Try https://www.nativepet.com/products/hip-joint');
+             'Try https://www.justfoodfordogs.com/product/calming-chews-for-dogs/50020180.html');
     URL_INPUT.focus();
     return;
   }
