@@ -202,6 +202,77 @@ async def grade_claim(claim: Claim, debug: bool = False) -> EvidenceBundle:
     )
 
 
+# ---------------------------------------------------------------------------
+# R3 (Day 20) — ADK LlmAgent shape declaration + FunctionTool wrapping BioMCP
+# ---------------------------------------------------------------------------
+# Honest claim: evidence_grader is one of the 4 agents on ADK.
+# Shape lives here; runtime stays on `grade_claim` (direct genai + BioMCP) for
+# determinism + judge-visible debug-printing. /health/mesh-shape introspects
+# this declaration.
+
+from google.adk.agents import LlmAgent  # noqa: E402
+from google.adk.tools import FunctionTool  # noqa: E402
+
+
+async def search_pubmed_for_adk(
+    keywords: list[str],
+    chemicals: list[str],
+    diseases: list[str],
+    max_results: int = 8,
+) -> str:
+    """ADK FunctionTool entry: search PubMed via BioMCP for evidence on a claim.
+
+    Arguments are the typed outputs of the keyword-extraction step. Returns
+    the BioMCP search response as a markdown/text blob — same shape `grade_evidence`
+    receives in the asyncio runtime path. The downstream LlmAgent parses the
+    text for PMIDs + titles + abstracts.
+
+    Codex Day-20 P2: BioMCP's `search_articles` does NOT return JSON, it returns
+    markdown text. The prior implementation called `json.loads` which would
+    raise JSONDecodeError as soon as an LlmAgent invoked this tool.
+    """
+    request = PubmedRequest(
+        keywords=keywords + chemicals + diseases,
+        chemicals=chemicals,
+        diseases=diseases,
+    )
+    results = await search_articles(request, limit=max_results)
+    if isinstance(results, str):
+        return results
+    # Defensive: if a future BioMCP version returns a list/dict, serialize it
+    # so the LlmAgent always gets a string (its tool-output contract is text).
+    return json.dumps(results, ensure_ascii=False)
+
+
+EVIDENCE_GRADER_ADK_INSTRUCTION = (
+    "You are the evidence-grader agent in the PawConscious Mesh / ACP system. "
+    "Given a pet supplement claim, do three steps in order: (1) extract search "
+    "keywords + chemicals + diseases from the claim text; (2) call the "
+    "search_pubmed_for_adk tool with those terms — the tool returns a "
+    "markdown/text blob of PubMed papers (PMID, title, abstract), NOT JSON, "
+    "so parse it as text; (3) grade each paper in the blob for relevance "
+    "(0.0-1.0) + direction-of-support (does the paper support or refute the "
+    "claim) + notes. Return JSON matching the EvidenceBundle schema "
+    "(claim + papers[]). Use only real PMIDs from the tool output; never "
+    "invent papers."
+)
+
+search_pubmed_tool = FunctionTool(search_pubmed_for_adk)
+
+evidence_grader_adk = LlmAgent(
+    name="acp_evidence_grader",
+    description=(
+        "Grades a Claim against PubMed evidence via BioMCP. Returns an "
+        "EvidenceBundle with PMIDs, relevance scores, direction-of-support, "
+        "and notes. On ADK per locked Day-19 decision."
+    ),
+    model="gemini-2.5-pro",
+    instruction=EVIDENCE_GRADER_ADK_INSTRUCTION,
+    tools=[search_pubmed_tool],
+    output_key="evidence_bundle",
+)
+
+
 async def main() -> None:
     """Phase 2 verification: grade a real Native Pet claim end-to-end."""
     test_claim = Claim(

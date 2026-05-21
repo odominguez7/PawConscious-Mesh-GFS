@@ -1061,8 +1061,14 @@
   </div>
 </section>
 
-<!-- ===================== ARCHITECTURE (interactive technical SVG) ===================== -->
-<section class="arch" id="architecture">
+<!-- ===================== HOW IT WORKS (U4: arch + how merged) ===================== -->
+<section id="how-it-works" class="how-it-works-group">
+  <!-- v0.15.0 U4: collapsed nine top-level sections to five.
+       Architecture + How merged into one "How it works" group. The inner
+       <div class="arch" id="architecture"> and <div class="how" id="how">
+       keep their anchor IDs so /architecture and /#how links still scroll
+       to the right place. -->
+<div class="arch" id="architecture">
   <div class="container">
     <div class="arch-head">
       <div class="eyebrow">Architecture · Google Cloud native</div>
@@ -1281,10 +1287,9 @@
       </div>
     </div>
   </div>
-</section>
+</div><!-- /.arch (id=architecture) -->
 
-<!-- ===================== HOW ===================== -->
-<section class="how" id="how">
+<div class="how" id="how">
   <div class="container">
     <div class="how-head">
       <div class="eyebrow">How it works</div>
@@ -1319,40 +1324,10 @@ for claim in claims:
       </div>
     </div>
   </div>
-</section>
+</div><!-- /.how (id=how) -->
+</section><!-- /#how-it-works -->
 
-<!-- ===================== PROOF ===================== -->
-<section class="proof" id="proof">
-  <div class="container proof-grid">
-    <div class="proof-text">
-      <div class="eyebrow">The artifact</div>
-      <h2>Not a badge. A signed document the agentic shelf can verify.</h2>
-      <p>Every claim on the label is mapped to citations, scored by a rubric, checked against the FTC endorsement guide, and cryptographically signed. The bundle is machine-readable Pydantic JSON over A2A v0.3 (JSON-LD evolution on the PCEC v0.2 roadmap), with a SHA256 chain anchor anyone can audit.</p>
-      <p>Any A2A v0.3-compatible agent (e.g. our reference ShopperAgent in the repo) can fetch the bundle, verify the signature, and use it to surface the product as evidence-backed. No third-party integrations claimed — Amazon Rufus, Perplexity Shopping, etc. are the <em>use case</em>, not <em>current integrations</em>.</p>
-      <div class="chips">
-        <span class="chip">Ed25519</span>
-        <span class="chip">PCEC v0.1</span>
-        <span class="chip">A2A v0.3</span>
-        <span class="chip">Firestore log</span>
-        <span class="chip">PubMed grounding</span>
-      </div>
-    </div>
-    <pre class="proof-cert" style="margin:0;">
-<div class="body">{
-  <span class="json-k">"product"</span>: <span class="json-s">"native-pet/hip-joint"</span>,
-  <span class="json-k">"claim"</span>: <span class="json-s">"supports joint mobility"</span>,
-  <span class="json-k">"citations"</span>: [
-    <span class="json-s">"PMID:31234567"</span>,
-    <span class="json-s">"PMID:32345678"</span>
-  ],
-  <span class="json-k">"vet_score"</span>: <span class="json-s">4.2</span>,
-  <span class="json-k">"ftc_255"</span>: <span class="json-p">"PASS"</span>,
-  <span class="json-k">"signature"</span>: <span class="json-s">"ed25519:4a2f…b9e1"</span>,
-  <span class="json-k">"chain_anchor"</span>: <span class="json-s">"sha256:c2f991cf…"</span>
-}</div>
-    </pre>
-  </div>
-</section>
+<!-- v0.15.0 U4: proof block relocated into #why-trust-this group below biz. -->
 
 <!-- ===================== BUSINESS CASE ===================== -->
 <section class="biz" id="biz">
@@ -1428,8 +1403,45 @@ for claim in claims:
   </div>
 </section>
 
-<!-- ===================== MOATS ===================== -->
-<section class="moats">
+<!-- ===================== WHY TRUST THIS (U4: proof + moats + founder + track3 merged) ===================== -->
+<section id="why-trust-this" class="why-trust-this-group">
+  <!-- v0.15.0 U4: proof + moats + founder + track3 merged into one
+       "Why trust this" group. Inner divs keep their anchors so /#proof
+       and the moats/founder visual anchors still work. -->
+
+<div class="proof" id="proof">
+  <div class="container proof-grid">
+    <div class="proof-text">
+      <div class="eyebrow">The artifact</div>
+      <h2>Not a badge. A signed document the agentic shelf can verify.</h2>
+      <p>Every claim on the label is mapped to citations, scored by a rubric, checked against the FTC endorsement guide, and cryptographically signed. The bundle is machine-readable Pydantic JSON over A2A v0.3 (JSON-LD evolution on the PCEC v0.2 roadmap), with a SHA256 chain anchor anyone can audit.</p>
+      <p>Any A2A v0.3-compatible agent (e.g. our reference ShopperAgent in the repo) can fetch the bundle, verify the signature, and use it to surface the product as evidence-backed. No third-party integrations claimed — Amazon Rufus, Perplexity Shopping, etc. are the <em>use case</em>, not <em>current integrations</em>.</p>
+      <div class="chips">
+        <span class="chip">Ed25519</span>
+        <span class="chip">PCEC v0.1</span>
+        <span class="chip">A2A v0.3</span>
+        <span class="chip">Firestore log</span>
+        <span class="chip">PubMed grounding</span>
+      </div>
+    </div>
+    <pre class="proof-cert" style="margin:0;">
+<div class="body">{
+  <span class="json-k">"product"</span>: <span class="json-s">"native-pet/hip-joint"</span>,
+  <span class="json-k">"claim"</span>: <span class="json-s">"supports joint mobility"</span>,
+  <span class="json-k">"citations"</span>: [
+    <span class="json-s">"PMID:31234567"</span>,
+    <span class="json-s">"PMID:32345678"</span>
+  ],
+  <span class="json-k">"vet_score"</span>: <span class="json-s">4.2</span>,
+  <span class="json-k">"ftc_255"</span>: <span class="json-p">"PASS"</span>,
+  <span class="json-k">"signature"</span>: <span class="json-s">"ed25519:4a2f…b9e1"</span>,
+  <span class="json-k">"chain_anchor"</span>: <span class="json-s">"sha256:c2f991cf…"</span>
+}</div>
+    </pre>
+  </div>
+</div><!-- /.proof (id=proof) -->
+
+<div class="moats">
   <div class="container">
     <div class="moats-head">
       <div class="eyebrow">Why PawConscious — the moat</div>
@@ -1466,10 +1478,9 @@ for claim in claims:
       </div>
     </div>
   </div>
-</section>
+</div><!-- /.moats -->
 
-<!-- ===================== FOUNDER ===================== -->
-<section class="founder">
+<div class="founder">
   <div class="founder-inner">
     <div class="founder-portrait">
       <img src="/assets/founder-omar.jpg" alt="Founder Omar Dominguez">
@@ -1480,10 +1491,9 @@ for claim in claims:
       <div class="attr"><strong>Omar Dominguez</strong> · Founder, MIT Sloan MBA 2026</div>
     </div>
   </div>
-</section>
+</div><!-- /.founder -->
 
-<!-- ===================== TRACK 3 BADGES + FOOTER ===================== -->
-<section class="track3">
+<div class="track3">
   <div class="container track3-inner">
     <span class="label">Track 3 mandates · met</span>
     <a class="badge" href="https://github.com/odominguez7/PawConscious-Mesh-GFS/blob/main/BUSINESS_PLAN.md">B2B Focus</a>
@@ -1493,7 +1503,9 @@ for claim in claims:
     <a class="badge" href="/health/agent-engine">Agent Engine</a>
     <a class="badge" href="/architecture">Architecture ↗</a>
   </div>
-</section>
+</div><!-- /.track3 -->
+
+</section><!-- /#why-trust-this -->
 
 <footer class="footer">
   <div class="container footer-inner">
