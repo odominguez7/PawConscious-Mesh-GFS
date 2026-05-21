@@ -126,18 +126,30 @@
   }
   .hero-secondary .pill::before { content: "✓"; color: var(--moss-glow); font-weight: 700; }
 
-  /* ===================== DEMO CONTAINER (unified — cached/live/replay) ===================== */
+  /* ===================== DEMO CONTAINER (unified — cached/live/replay) =====================
+     v0.10.0a (commit 1 of hero rebuild) — FIXED-HEIGHT 520px container.
+     Codex amendment A4: mode distinction = badge color + ●/▶ icon + outer border color.
+     Codex amendment A5: SVG geometry locked here BEFORE rewiring JS in v0.10.0b.
+     ============================================================================ */
   .demo {
     position: relative; background: var(--bg-elevated);
-    border: 1px solid var(--border-strong); border-radius: 8px;
+    border: 1.5px solid var(--border-strong); border-radius: 8px;
     overflow: hidden;
     box-shadow: 0 32px 80px -16px rgba(0,0,0,0.5), 0 0 0 1px var(--border) inset;
+    height: 520px; display: flex; flex-direction: column;
+    transition: border-color 0.3s ease;
   }
+  /* A4: outer border colour swaps with mode — peripherally visible even if badge below fold */
+  .demo[data-mode="live"]    { border-color: var(--warning); }
+  .demo[data-mode="replay"]  { border-color: #B9AEFF; }
+  .demo[data-mode="auto"]    { border-color: rgba(0,212,255,0.35); }
+
   .demo-chrome {
-    display: flex; justify-content: space-between; align-items: center;
-    padding: 12px 16px; border-bottom: 1px solid var(--border);
+    display: grid; grid-template-columns: auto 1fr auto; gap: 14px; align-items: center;
+    padding: 9px 16px; border-bottom: 1px solid var(--border);
     background: var(--surface);
     font: 500 10.5px/1 var(--mono); letter-spacing: 0.18em; text-transform: uppercase;
+    flex-shrink: 0;
   }
   .demo-chrome .dots { display: inline-flex; gap: 6px; }
   .demo-chrome .dot { width: 9px; height: 9px; border-radius: 50%; background: var(--surface-2); }
@@ -145,23 +157,66 @@
   .demo-chrome .dot.y { background: #FFBD2E; }
   .demo-chrome .dot.g { background: #27C93F; }
   .demo-chrome .mode {
-    display: inline-flex; align-items: center; gap: 8px;
-    color: var(--muted);
+    display: inline-flex; align-items: center; gap: 10px;
+    color: var(--muted); min-width: 0;
   }
   .demo-chrome .mode .badge {
-    padding: 3px 8px; background: var(--electric-dim); color: var(--electric);
-    border-radius: 3px; font-weight: 700; letter-spacing: 0.14em;
+    padding: 3px 9px; background: var(--electric-dim); color: var(--electric);
+    border-radius: 3px; font-weight: 700; letter-spacing: 0.16em;
+    display: inline-flex; align-items: center; gap: 6px;
+    white-space: nowrap;
   }
+  /* A4: shape signal in addition to color — ● for live, ▶ for cached, ◌ for auto */
+  .demo-chrome .mode .badge::before { content: "◌"; font-size: 11px; }
   .demo-chrome .mode .badge.live { background: rgba(255,92,53,0.18); color: var(--warning); }
-  .demo-chrome .mode .badge.replay { background: rgba(123,108,255,0.18); color: #B9AEFF; }
-  .demo-chrome .right { color: var(--dim); }
+  .demo-chrome .mode .badge.live::before { content: "●"; }
+  .demo-chrome .mode .badge.replay { background: rgba(123,108,255,0.22); color: #B9AEFF; }
+  .demo-chrome .mode .badge.replay::before { content: "▶"; }
+  .demo-chrome .mode-text { color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .demo-chrome .right { color: var(--dim); white-space: nowrap; }
 
-  .demo-body { padding: 28px; min-height: 420px; display: flex; flex-direction: column; gap: 14px; }
-  .demo-stage { flex: 1; position: relative; display: flex; align-items: center; justify-content: center; }
-  .demo-svg { width: 100%; height: 100%; max-height: 320px; display: block; }
+  /* A3: coverage line — second row inside chrome, post-run summary. Pre-run shows readiness. */
+  .demo-coverage {
+    padding: 8px 16px; border-bottom: 1px solid var(--border);
+    background: var(--bg);
+    font: 500 10.5px/1 var(--mono); letter-spacing: 0.14em; text-transform: uppercase;
+    color: var(--muted); flex-shrink: 0;
+    display: flex; align-items: center; gap: 8px;
+  }
+  .demo-coverage .dot-marker {
+    display: inline-block; width: 6px; height: 6px; border-radius: 50%;
+    background: var(--electric); box-shadow: 0 0 6px var(--electric);
+    animation: livePulse 2.2s ease-in-out infinite;
+  }
+  .demo-coverage.completed .dot-marker { background: var(--moss-glow); box-shadow: 0 0 6px var(--moss-glow); animation: none; }
+  .demo-coverage.error .dot-marker { background: var(--warning); box-shadow: 0 0 6px var(--warning); animation: none; }
+
+  .demo-body { padding: 16px 22px 20px; flex: 1; min-height: 0; display: flex; flex-direction: column; gap: 10px; overflow: hidden; }
+  .demo-stage { flex-shrink: 0; height: 220px; position: relative; }
+  .demo-svg { width: 100%; height: 100%; display: block; }
+
+  /* Stage groups (subtle dashed cyan bounds — mirror /architecture canonical) */
+  .demo-svg .stage-bg {
+    fill: rgba(0,212,255,0.018);
+    stroke: rgba(0,212,255,0.22);
+    stroke-width: 1; stroke-dasharray: 4 4;
+    rx: 8;
+  }
+  .demo-svg .stage-label {
+    font: 700 8.5px/1 var(--mono); fill: var(--electric);
+    text-transform: uppercase; letter-spacing: 0.22em;
+  }
+  .demo-svg .stage-sub {
+    font: 500 8px/1 var(--mono); fill: var(--dim);
+    text-transform: uppercase; letter-spacing: 0.08em;
+  }
+
+  /* Edges + animation classes preserved from the radial version so existing JS still drives them */
   .demo-svg .edge { stroke: var(--border-strong); stroke-width: 1.4; fill: none; transition: stroke 0.4s ease, stroke-width 0.4s ease; }
   .demo-svg .edge.active { stroke: var(--electric); stroke-width: 1.8; filter: drop-shadow(0 0 6px var(--electric)); }
   .demo-svg .edge.done { stroke: var(--moss-glow); stroke-width: 1.6; }
+
+  /* Agent chips — numbered circles (codex A1 decision). Labels below, truncate if needed. */
   .demo-svg .node circle.body {
     fill: var(--surface); stroke: var(--border-strong); stroke-width: 1.5;
     transition: fill 0.4s ease, stroke 0.4s ease;
@@ -180,22 +235,31 @@
     0%,100% { transform: scale(1); opacity: 0.8; }
     50% { transform: scale(1.35); opacity: 0.1; }
   }
-  .demo-svg .node text {
-    font: 600 9px/1 var(--mono); fill: var(--muted);
-    text-transform: uppercase; letter-spacing: 0.12em;
+  .demo-svg .node text.num {
+    font: 700 9px/1 var(--mono); fill: var(--ink);
+    text-anchor: middle; letter-spacing: 0.04em;
   }
-  .demo-svg .node.active text { fill: var(--electric); }
-  .demo-svg .node.done text { fill: var(--moss-glow); }
+  .demo-svg .node.active text.num { fill: var(--bg); }
+  .demo-svg .node.done text.num { fill: var(--bg); }
+  .demo-svg .node text.label {
+    font: 600 7.5px/1 var(--mono); fill: var(--muted);
+    text-anchor: middle; text-transform: uppercase; letter-spacing: 0.14em;
+  }
+  .demo-svg .node.active text.label { fill: var(--electric); }
+  .demo-svg .node.done text.label { fill: var(--moss-glow); }
+
+  /* Sign anchor — special Stage 2 trust event, moss-green when done */
   .demo-svg .anchor-body { fill: var(--surface-2); stroke: var(--border-strong); stroke-width: 1.5; }
-  .demo-svg .anchor-body.done { fill: var(--moss-glow); stroke: var(--moss-glow); }
-  .demo-svg .anchor-label { font: 600 9px/1 var(--mono); fill: var(--ink); text-anchor: middle; text-transform: uppercase; letter-spacing: 0.16em; }
-  .demo-svg .anchor-sub { font: 500 7.5px/1 var(--mono); fill: var(--electric); text-anchor: middle; text-transform: uppercase; letter-spacing: 0.18em; }
+  .demo-svg .anchor-body.done { fill: var(--moss-glow); stroke: var(--moss-glow); filter: drop-shadow(0 0 12px rgba(0,212,155,0.4)); }
+  .demo-svg .anchor-label { font: 700 9px/1 var(--mono); fill: var(--ink); text-anchor: middle; text-transform: uppercase; letter-spacing: 0.16em; }
+  .demo-svg .anchor-body.done + .anchor-label { fill: var(--bg); }
+  .demo-svg .anchor-sub { font: 500 7px/1 var(--mono); fill: var(--electric); text-anchor: middle; text-transform: uppercase; letter-spacing: 0.18em; }
 
   .demo-stream {
     background: var(--bg); border: 1px solid var(--border);
-    border-radius: 4px; padding: 12px 14px;
-    font: 500 11.5px/1.65 var(--mono); color: var(--muted);
-    max-height: 132px; overflow-y: auto;
+    border-radius: 4px; padding: 8px 12px;
+    font: 500 10.5px/1.5 var(--mono); color: var(--muted);
+    height: 60px; overflow-y: auto; flex-shrink: 0;
   }
   .demo-stream .row { display: flex; gap: 8px; align-items: baseline; }
   .demo-stream .row .ts { color: var(--dim); flex-shrink: 0; min-width: 56px; }
@@ -208,14 +272,15 @@
 
   .demo-cert {
     background: var(--surface); border: 1px solid var(--electric); border-radius: 6px;
-    padding: 16px 18px;
+    padding: 0 14px;
     font: 500 11px/1.7 var(--mono); color: var(--ink);
-    opacity: 0; max-height: 0; overflow: hidden;
-    transition: opacity 0.45s ease, max-height 0.45s ease, padding 0.45s ease;
+    opacity: 0; max-height: 0; overflow: hidden; flex-shrink: 0;
+    transition: opacity 0.35s ease, max-height 0.35s ease, padding 0.35s ease;
   }
-  /* v0.8.5: cap raised + scroll fallback so Agent 6's full 3-5KB cert is readable.
-     max-height kept finite so the demo doesn't push the whole page when cert is huge. */
-  .demo-cert.visible { opacity: 1; max-height: 1400px; overflow-y: auto; -webkit-overflow-scrolling: touch; }
+  /* v0.10.0a: cert pane scrolls INSIDE the fixed-height demo container.
+     Cap at 120px so it never pushes the page (was 1400px → caused vertical growth Omar flagged).
+     Agent 6's full cert HTML still readable via internal scroll. */
+  .demo-cert.visible { opacity: 1; max-height: 96px; padding: 10px 14px; overflow-y: auto; -webkit-overflow-scrolling: touch; }
   .demo-cert.visible::-webkit-scrollbar { width: 8px; }
   .demo-cert.visible::-webkit-scrollbar-track { background: var(--bg); }
   .demo-cert.visible::-webkit-scrollbar-thumb { background: var(--electric-dim); border-radius: 4px; }
@@ -449,36 +514,83 @@
       </div>
     </div>
 
-    <!-- Unified demo container — cached / live / replay all in this same space -->
-    <div class="demo" id="demo" aria-label="Agent mesh visualization. Auto-loops a cached run by default. Switches to live mode when you click Verify; replays a deterministic cached run when you click Replay.">
+    <!-- ================================================================
+         Demo container (unified cached/live/replay) — v0.10.0a rebuild.
+         Fixed-height 520px. Visualization = canonical 3-stage pipeline
+         miniature (mirrors /architecture + Architecture section diagram).
+
+         DIAGRAM PROPAGATION CHECKLIST (codex amendment A2 — manual):
+         If you change the architecture, also update:
+           1. services/mesh_api/static/assets/architecture.svg
+           2. console-v2.html #archSvg (Architecture section inline)
+           3. THIS hero #demoSvg (below)
+           4. HOW section copy (the 3 numbered steps)
+           5. README.md architecture ASCII block
+           6. docs/ARCHITECTURE.md
+           7. docs/video-script.md (narration beats per stage)
+         Codex sweep on diagram-touching commits enforces drift detection.
+         ================================================================= -->
+    <div class="demo" id="demo" data-mode="auto" aria-label="Agent mesh visualization. Mirrors the canonical 3-stage architecture: Stage 1 Reasoning Mesh (5 agents) → Stage 2 Sign → Stage 3 Adversarial (2 agents). Cached loop runs on landing; live mesh runs when you click Verify.">
       <div class="demo-chrome">
         <div class="dots"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span></div>
         <div class="mode">
-          <span id="demoModeBadge" class="badge">Auto loop</span>
-          <span id="demoModeText">7-agent mesh · cached cycle</span>
+          <span id="demoModeBadge" class="badge">Auto · cached</span>
+          <span class="mode-text" id="demoModeText">7-agent mesh · pre-recorded cycle</span>
         </div>
         <div class="right" id="demoRight">PCEC v0.1</div>
       </div>
+      <!-- A3: coverage line — shows readiness pre-run, claim coverage post-run. -->
+      <div class="demo-coverage" id="demoCoverage">
+        <span class="dot-marker"></span>
+        <span id="demoCoverageText">Ready · click Verify to run the live mesh</span>
+      </div>
       <div class="demo-body">
         <div class="demo-stage">
-          <svg class="demo-svg" viewBox="0 0 520 360" preserveAspectRatio="xMidYMid meet" id="demoSvg" aria-hidden="true">
-            <g id="demoEdges"></g>
-            <g id="demoAnchor">
-              <circle class="anchor-body" cx="260" cy="180" r="42"/>
-              <text class="anchor-label" x="260" y="178">CHAIN</text>
-              <text class="anchor-label" x="260" y="192">ANCHOR</text>
-              <text class="anchor-sub" x="260" y="208">sha256 · ed25519</text>
+          <!-- 3-STAGE PIPELINE MINIATURE
+               viewBox 600×260. Stage groups as subtle dashed-cyan rects.
+               7 numbered chips (01-07) match canonical /architecture.
+               Class names preserved (.node, .edge, .active, .done, .anchor-body)
+               so the existing autoLoop/cachedCycle JS animates this without modification. -->
+          <svg class="demo-svg" viewBox="0 0 600 260" preserveAspectRatio="xMidYMid meet" id="demoSvg" aria-hidden="true">
+            <!-- Stage group backgrounds (decorative — codex A1 keeps stages visible always) -->
+            <g class="stage-group">
+              <rect class="stage-bg" x="20" y="22" width="290" height="218"/>
+              <text class="stage-label" x="32" y="40">Stage 1 · Reasoning</text>
+              <text class="stage-sub" x="32" y="54">5 agents · per-claim fan-out</text>
             </g>
+            <g class="stage-group">
+              <rect class="stage-bg" x="328" y="92" width="80" height="78"/>
+              <text class="stage-label" x="336" y="108">Stage 2 · Sign</text>
+            </g>
+            <g class="stage-group">
+              <rect class="stage-bg" x="424" y="22" width="156" height="218"/>
+              <text class="stage-label" x="436" y="40">Stage 3 · Adversarial</text>
+              <text class="stage-sub" x="436" y="54">2 agents · post-sign</text>
+            </g>
+
+            <!-- Edges (built by JS so they can be animated; declared in #demoEdges) -->
+            <g id="demoEdges"></g>
+
+            <!-- Stage 2 anchor — special "trust event" node (independent from #demoNodes for sizing) -->
+            <g id="demoAnchor">
+              <circle class="anchor-body" cx="368" cy="138" r="22"/>
+              <text class="anchor-label" x="368" y="135">SIGN</text>
+              <text class="anchor-sub" x="368" y="150">Ed25519</text>
+            </g>
+
+            <!-- Agent chips (01..07) — built by JS in buildDemoSvg(). Mirror canonical IDs/labels. -->
             <g id="demoNodes"></g>
           </svg>
         </div>
         <div class="demo-stream" id="demoStream"></div>
         <div class="demo-cert" id="demoCert">
+          <!-- v0.10.0a: verdict moved to TOP so it's always the first visible line.
+               At 96px cert max-height, lower lines scroll. Verdict is the buyer's primary signal. -->
+          <div class="line"><span class="k">verdict</span><span class="v pass" id="dcVerdict">—</span></div>
           <div class="line"><span class="k">bundle_urn</span><span class="v" id="dcUrn">—</span></div>
           <div class="line"><span class="k">bundle_hash</span><span class="v" id="dcHash">—</span></div>
           <div class="line"><span class="k">chain_anchor</span><span class="v" id="dcAnchor">—</span></div>
           <div class="line"><span class="k">signature</span><span class="v" id="dcSig">—</span></div>
-          <div class="line"><span class="k">verdict</span><span class="v pass" id="dcVerdict">—</span></div>
         </div>
       </div>
     </div>
@@ -939,14 +1051,25 @@ for claim in claims:
  * UNIFIED DEMO — cached loop + live verify + replay all in one
  * container. Mode label changes; SVG + stream + cert stay put.
  * ============================================================ */
+/* v0.10.0a — 7 agents laid out as a 3-stage horizontal pipeline miniature.
+ * Coordinates target the demo-svg viewBox (600×260) and mirror the canonical
+ * /architecture diagram: Stage 1 has claim-extractor (top) → 3 parallel
+ * (evidence/vet/compliance, middle row) → auditor (bottom), Stage 2 sign
+ * anchor in the middle column, Stage 3 has cert-composer (top) and
+ * second-opinion (bottom) on the right.
+ *
+ * num = the visible "01..07" chip text. label = the short uppercase caption
+ * rendered below the chip; truncates to icon only if width forces. */
 const AGENTS = [
-  { id: 'extract',    label: 'Extract'  },
-  { id: 'evidence',   label: 'Evidence' },
-  { id: 'rubric',     label: 'Rubric'   },
-  { id: 'compliance', label: 'FTC §255' },
-  { id: 'auditor',    label: 'Auditor'  },
-  { id: 'composer',   label: 'Compose'  },   // Agent 6 (post-merge)
-  { id: 'opinion',    label: 'Second Op' },  // Agent 7 (adversarial)
+  // Stage 1 — Reasoning Mesh
+  { id: 'extract',    num: '01', label: 'EXTRACT',     cx: 165, cy:  82 },                    // Top of Stage 1
+  { id: 'evidence',   num: '02', label: 'EVIDENCE',    cx:  68, cy: 138 },                   // Parallel row, left
+  { id: 'rubric',     num: '03', label: 'VET',         cx: 165, cy: 138 },                   // Parallel row, middle
+  { id: 'compliance', num: '04', label: 'FTC §255',    cx: 262, cy: 138 },                   // Parallel row, right
+  { id: 'auditor',    num: '05', label: 'AUDITOR',     cx: 165, cy: 198 },                   // Bottom of Stage 1
+  // Stage 3 — Adversarial (Stage 2 sign anchor lives in static markup at cx=368, cy=138)
+  { id: 'composer',   num: '06', label: 'COMPOSE',     cx: 502, cy:  82 },                   // Top of Stage 3
+  { id: 'opinion',    num: '07', label: '2ND OPINION', cx: 502, cy: 198 },                   // Bottom of Stage 3
 ];
 const CACHED_BRANDS = [
   { brand: 'Native Pet',   urn: 'urn:pcec:claim:tshh4bbtauijarh4i3pz7dza', hash: 'sha256:9c8e7e043305109044fc46df9f8f20319cade0d4159c8b7c…', anchor: 'sha256:f93e9d54e7e06dfae2f3b57ae8c76e0514d211cfeb3a…', sig: 'ed25519:did:web:mesh-api-…/sig-4a2f-b9e1', verdict: 'PASS · directional' },
@@ -992,6 +1115,10 @@ function setMode(mode, badgeText, modeText, rightText) {
   DEMO_MODE_B.textContent = badgeText;
   DEMO_MODE_T.textContent = modeText;
   if (rightText !== undefined) DEMO_RIGHT.textContent = rightText;
+  // v0.10.0a / codex A4: outer demo border colour swaps with mode so the
+  // distinction is peripherally visible even if the chrome bar is below fold.
+  const demoEl = document.getElementById('demo');
+  if (demoEl) demoEl.setAttribute('data-mode', mode);
 }
 function resetDemo() {
   DEMO_EDGES.querySelectorAll('.edge').forEach(e => e.classList.remove('active','done'));
@@ -1000,27 +1127,70 @@ function resetDemo() {
   DEMO_CERT.classList.remove('visible');
 }
 
+/* v0.10.0a — build the 3-stage pipeline geometry.
+ * Each agent gets a numbered chip (halo + body + "##" inside + label below).
+ * Edges traverse the canonical flow:
+ *   01 → 02/03/04 (fan-out tree)
+ *   02/03/04 → 05 (fan-in tree)
+ *   05 → Sign (diagonal out of Stage 1)
+ *   Sign → 06 and Sign → 07 (parallel post-sign)
+ * Edge `data-agent` is set to the DESTINATION agent so JS toggling `.active`
+ * on the matching agent's edge produces the expected "approaching now" cue. */
 (function buildDemoSvg() {
-  const CX=260, CY=180, R=130;
-  AGENTS.forEach((a,i) => {
-    const ang = (-Math.PI/2) + i*(2*Math.PI/AGENTS.length);
-    const x = CX + R*Math.cos(ang), y = CY + R*Math.sin(ang);
-    a.x=x; a.y=y;
-    const edge = document.createElementNS('http://www.w3.org/2000/svg','line');
-    edge.setAttribute('x1',CX); edge.setAttribute('y1',CY); edge.setAttribute('x2',x); edge.setAttribute('y2',y);
-    edge.setAttribute('class','edge'); edge.dataset.agent=a.id;
-    DEMO_EDGES.appendChild(edge);
+  const SIGN_CX = 368, SIGN_CY = 138; // matches static anchor in markup
+
+  // ---- Build edges ---------------------------------------------------------
+  // 01 → fan-out tree (3 children: 02, 03, 04)
+  function addEdge(x1, y1, x2, y2, agentId) {
+    const e = document.createElementNS('http://www.w3.org/2000/svg','line');
+    e.setAttribute('x1', x1); e.setAttribute('y1', y1);
+    e.setAttribute('x2', x2); e.setAttribute('y2', y2);
+    e.setAttribute('class', 'edge');
+    if (agentId) e.dataset.agent = agentId;
+    DEMO_EDGES.appendChild(e);
+  }
+  // Every edge tagged with its DESTINATION agent so cachedCycle's data-agent
+  // selector lights up the correct segments (codex review P2 fix).
+  // Stage 1 → 1 (evidence-grader first parallel child)
+  addEdge(165, 100, 165, 116, 'evidence'); // 01 trunk down to junction
+  addEdge( 68, 116, 262, 116, 'evidence'); // junction horizontal — shared trunk
+  addEdge( 68, 116,  68, 122, 'evidence'); // into 02
+  addEdge(165, 116, 165, 122, 'rubric');   // into 03
+  addEdge(262, 116, 262, 122, 'compliance'); // into 04
+
+  // Parallel-outs + fan-in to auditor (all light up when auditor fires)
+  addEdge( 68, 154,  68, 180, 'auditor');  // 02 down
+  addEdge(165, 154, 165, 180, 'auditor');  // 03 down
+  addEdge(262, 154, 262, 180, 'auditor');  // 04 down
+  addEdge( 68, 180, 262, 180, 'auditor');  // fan-in horizontal
+  addEdge(165, 180, 165, 198, 'auditor');  // into 05
+
+  // 05 → Sign (auditor produces the bundle; Sign anchor lights separately post-loop)
+  addEdge(183, 198, SIGN_CX - 22, SIGN_CY + 6, 'auditor');
+
+  // Sign → Stage 3 (06 + 07 in parallel post-sign)
+  addEdge(SIGN_CX + 22, SIGN_CY - 6, 484,  82, 'composer'); // Sign → 06
+  addEdge(SIGN_CX + 22, SIGN_CY + 6, 484, 198, 'opinion');  // Sign → 07
+
+  // ---- Build agent chips ---------------------------------------------------
+  AGENTS.forEach(a => {
     const g = document.createElementNS('http://www.w3.org/2000/svg','g');
-    g.setAttribute('class','node'); g.dataset.agent=a.id;
-    g.setAttribute('transform',`translate(${x},${y})`);
+    g.setAttribute('class', 'node');
+    g.dataset.agent = a.id;
+    g.setAttribute('transform', `translate(${a.cx},${a.cy})`);
+
     const halo = document.createElementNS('http://www.w3.org/2000/svg','circle');
-    halo.setAttribute('class','halo'); halo.setAttribute('r','22');
+    halo.setAttribute('class', 'halo'); halo.setAttribute('r', '20');
     const body = document.createElementNS('http://www.w3.org/2000/svg','circle');
-    body.setAttribute('class','body'); body.setAttribute('r','16');
-    const text = document.createElementNS('http://www.w3.org/2000/svg','text');
-    text.setAttribute('y', y<CY ? -28 : 32); text.setAttribute('text-anchor','middle');
-    text.textContent = a.label;
-    g.append(halo,body,text);
+    body.setAttribute('class', 'body'); body.setAttribute('r', '14');
+    const num = document.createElementNS('http://www.w3.org/2000/svg','text');
+    num.setAttribute('class', 'num'); num.setAttribute('y', '3'); // optical center
+    num.textContent = a.num;
+    const label = document.createElementNS('http://www.w3.org/2000/svg','text');
+    label.setAttribute('class', 'label'); label.setAttribute('y', '28');
+    label.textContent = a.label;
+
+    g.append(halo, body, num, label);
     DEMO_NODES.appendChild(g);
   });
 })();
@@ -1038,7 +1208,11 @@ async function cachedCycle() {
   await sleep(700); if (aborted()) return;
   streamAdd('orchestrator: asyncio.gather · 7 specialized agents on A2A v0.3');
   const nodes = DEMO_NODES.querySelectorAll('.node');
-  const edges = DEMO_EDGES.querySelectorAll('.edge');
+  // v0.10.0a fix (codex review P2): the new 3-stage geometry has 13 edge
+  // segments, not 7. Index-based edges[i] → nodes[i] mapped only the first
+  // 7 segments and left Stage 3 edges (06, 07) dark. Switching to
+  // data-agent matching so each agent's activation lights ALL edges
+  // pointed at it (e.g., the trunk into 02 + the junction segment).
   const STEPS = [
     'claim-extractor · ADK + httpx · 3 claims extracted',
     'evidence-grader · BioMCP → PubMed · 6 papers · 247 citations',
@@ -1048,17 +1222,23 @@ async function cachedCycle() {
     'Agent 6 (Cert Composer) · branded cert · Gemini 2.5 Pro',
     'Agent 7 (Second Opinion) · 4 stress tests · Gemini 2.5 Pro + Google Search grounding',
   ];
+  function edgesFor(agentId) {
+    return DEMO_EDGES.querySelectorAll(`.edge[data-agent="${agentId}"]`);
+  }
   for (let i=0; i<nodes.length; i++) {
     if (aborted()) return;
-    edges[i].classList.add('active'); nodes[i].classList.add('active');
+    const agentId = nodes[i].dataset.agent;
+    edgesFor(agentId).forEach(e => e.classList.add('active'));
+    nodes[i].classList.add('active');
     streamAdd(STEPS[i]);
     await sleep(550);
   }
   await sleep(400); if (aborted()) return;
   for (let i=0; i<nodes.length; i++) {
     if (aborted()) return;
+    const agentId = nodes[i].dataset.agent;
     nodes[i].classList.remove('active'); nodes[i].classList.add('done');
-    edges[i].classList.remove('active'); edges[i].classList.add('done');
+    edgesFor(agentId).forEach(e => { e.classList.remove('active'); e.classList.add('done'); });
     await sleep(120);
   }
   if (aborted()) return;
