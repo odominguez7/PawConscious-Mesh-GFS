@@ -722,6 +722,23 @@ async def root(v: Optional[str] = None) -> HTMLResponse:
     return HTMLResponse(content=console_path.read_text(encoding="utf-8"))
 
 
+@app.get("/demo/shopper", response_class=HTMLResponse)
+async def shopper_demo() -> HTMLResponse:
+    """Live shopper-agent → mesh A2A round trip on a fake commerce surface.
+
+    Use case: a judge clicks "Should I buy this?" on a faux pet-store SKU.
+    A shopping copilot (vanilla JS, runs in the judge's browser) issues a real
+    A2A v0.3 task to /a2a/v1/tasks/send, polls, streams mesh activity in the
+    right rail, and makes a recommendation grounded in the signed bundle.
+
+    This is the demo-video centerpiece per docs/SUBMISSION_AUDIT_2026-05-21.md
+    Option C. Live page exists so judges can verify; the controlled-conditions
+    recording is the primary delivery.
+    """
+    path = Path(__file__).parent / "static" / "shopper-demo.html"
+    return HTMLResponse(content=path.read_text(encoding="utf-8"))
+
+
 @app.get("/agents", response_class=HTMLResponse)
 async def agents_page() -> HTMLResponse:
     """First-class A2A reference for any external agent wanting to call us.
