@@ -1,0 +1,590 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>PawConscious for Agents — A2A reference</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="Connect any A2A v0.3 client to the PawConscious trust mesh. Demo key + curl + verification snippets in 30 seconds.">
+<meta name="theme-color" content="#0A0B0D">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg:           #0A0B0D;
+    --bg-elevated:  #111316;
+    --surface:      #16181D;
+    --surface-2:    #1C1F25;
+    --border:       rgba(255,255,255,0.08);
+    --border-strong:rgba(255,255,255,0.16);
+    --ink:          #EDEEF1;
+    --muted:        rgba(237,238,241,0.62);
+    --dim:          rgba(237,238,241,0.42);
+    --electric:     #00D4FF;
+    --electric-dim: rgba(0,212,255,0.18);
+    --moss-glow:    #00D49B;
+    --warning:      #FF5C35;
+    --signal:       #FFB446;
+    --sans:  'Geist','Inter','Söhne',-apple-system,BlinkMacSystemFont,system-ui,sans-serif;
+    --mono:  'JetBrains Mono','IBM Plex Mono',ui-monospace,SFMono-Regular,Menlo,monospace;
+  }
+  *,*:before,*:after { box-sizing: border-box; }
+  html,body { margin:0; padding:0; background: var(--bg); color: var(--ink); }
+  body { font: 400 15px/1.6 var(--sans); -webkit-font-smoothing: antialiased; }
+  a { color: var(--electric); text-decoration: none; }
+  a:hover { text-decoration: underline; }
+
+  /* Nav */
+  .nav {
+    position: sticky; top: 0; z-index: 50;
+    backdrop-filter: blur(12px);
+    background: rgba(10,11,13,0.72);
+    border-bottom: 1px solid var(--border);
+    padding: 14px 24px;
+    display: flex; align-items: center; justify-content: space-between;
+  }
+  .brand { font: 600 16px/1 var(--sans); letter-spacing: -0.01em; }
+  .brand a { color: var(--ink); }
+  .brand .dot { color: var(--electric); }
+  .nav-links { display: flex; gap: 22px; font: 500 13px/1 var(--sans); }
+  .nav-links a { color: var(--muted); }
+  .nav-links a:hover { color: var(--ink); text-decoration: none; }
+  .nav-links a.active { color: var(--electric); }
+
+  /* Layout */
+  .container { max-width: 1080px; margin: 0 auto; padding: 56px 24px 96px; }
+  .hero { margin-bottom: 48px; }
+  .eyebrow {
+    font: 500 11px/1 var(--mono); letter-spacing: 0.14em; text-transform: uppercase;
+    color: var(--electric); margin-bottom: 16px;
+  }
+  h1 {
+    font: 600 44px/1.05 var(--sans); letter-spacing: -0.025em;
+    margin: 0 0 20px; max-width: 760px;
+  }
+  h1 .accent { color: var(--electric); }
+  .lede {
+    font-size: 18px; line-height: 1.55; color: var(--muted);
+    max-width: 680px; margin: 0;
+  }
+
+  h2 {
+    font: 600 24px/1.15 var(--sans); letter-spacing: -0.015em;
+    margin: 56px 0 16px;
+  }
+  h3 {
+    font: 600 16px/1.2 var(--sans);
+    margin: 28px 0 10px; color: var(--ink);
+  }
+  p { color: var(--muted); max-width: 720px; }
+
+  /* Cards */
+  .card {
+    background: var(--bg-elevated);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 24px;
+    margin-bottom: 20px;
+  }
+  .card.featured {
+    border-color: var(--electric-dim);
+    box-shadow: 0 0 0 1px var(--electric-dim), 0 24px 60px -24px rgba(0,212,255,0.15);
+  }
+
+  /* Code blocks */
+  pre {
+    background: #07080A;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 18px 20px;
+    overflow-x: auto;
+    font: 400 13px/1.6 var(--mono);
+    color: var(--ink);
+    margin: 12px 0;
+  }
+  pre.with-copy { position: relative; }
+  pre code { color: inherit; }
+  .tok-key    { color: #8AB4F8; }
+  .tok-str    { color: #95E1A4; }
+  .tok-num    { color: #FFB446; }
+  .tok-cmt    { color: var(--dim); font-style: italic; }
+  .tok-meth   { color: var(--electric); }
+  code.inline {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 2px 6px;
+    font: 500 13px var(--mono);
+    color: var(--ink);
+  }
+
+  .copy-btn {
+    position: absolute; top: 10px; right: 10px;
+    background: var(--surface-2); border: 1px solid var(--border-strong);
+    color: var(--muted); padding: 4px 10px; border-radius: 6px;
+    font: 500 11px var(--mono); cursor: pointer;
+    transition: all 0.15s ease;
+  }
+  .copy-btn:hover { color: var(--electric); border-color: var(--electric-dim); }
+  .copy-btn.copied { color: var(--moss-glow); border-color: var(--moss-glow); }
+
+  /* Tabs */
+  .tabs { display: flex; gap: 2px; border-bottom: 1px solid var(--border); margin: 18px 0 0; }
+  .tab {
+    background: none; border: none; color: var(--muted);
+    font: 500 13px var(--sans); cursor: pointer;
+    padding: 10px 16px; border-bottom: 2px solid transparent;
+    transition: all 0.15s ease;
+  }
+  .tab:hover { color: var(--ink); }
+  .tab.active { color: var(--electric); border-bottom-color: var(--electric); }
+  .tab-panel { display: none; }
+  .tab-panel.active { display: block; }
+
+  /* 30-second box */
+  .quickstart {
+    background: linear-gradient(135deg, rgba(0,212,255,0.04), rgba(123,108,255,0.04));
+    border: 1px solid var(--electric-dim);
+    border-radius: 16px;
+    padding: 32px;
+    margin-bottom: 48px;
+  }
+  .quickstart h3 {
+    margin-top: 0;
+    font: 600 20px/1.2 var(--sans);
+    color: var(--ink);
+  }
+  .quickstart .badge {
+    display: inline-block;
+    background: var(--electric-dim);
+    color: var(--electric);
+    font: 600 11px/1 var(--mono); letter-spacing: 0.08em;
+    padding: 5px 10px; border-radius: 999px;
+    margin-bottom: 14px;
+  }
+
+  /* Grid of well-knowns */
+  .endpoints {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 16px; margin: 16px 0 24px;
+  }
+  .endpoint {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 18px;
+  }
+  .endpoint .path {
+    font: 600 13px var(--mono); color: var(--electric);
+    margin-bottom: 6px;
+  }
+  .endpoint .desc { font-size: 13px; color: var(--muted); margin-bottom: 12px; }
+  .endpoint a {
+    font: 500 12px var(--mono); color: var(--muted);
+  }
+  .endpoint a:hover { color: var(--electric); }
+
+  /* Tracking-3 strip */
+  .mandates {
+    display: flex; flex-wrap: wrap; gap: 12px;
+    margin: 24px 0 48px;
+  }
+  .mandate {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 999px;
+    padding: 8px 14px;
+    font: 500 13px/1 var(--sans);
+    color: var(--muted);
+    display: inline-flex; align-items: center; gap: 6px;
+  }
+  .mandate::before { content: "✓"; color: var(--moss-glow); font-weight: 700; }
+
+  /* Try-it box */
+  .tryit {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 20px;
+    margin: 16px 0;
+  }
+  .tryit input {
+    width: 100%; box-sizing: border-box;
+    background: var(--bg-elevated);
+    border: 1px solid var(--border);
+    color: var(--ink); padding: 12px 14px;
+    border-radius: 8px;
+    font: 400 13px var(--mono);
+    margin-bottom: 12px;
+  }
+  .tryit input:focus { outline: none; border-color: var(--electric); }
+  .tryit-btn {
+    background: var(--electric); color: #0A0B0D;
+    border: none; padding: 10px 20px;
+    border-radius: 8px; font: 600 13px var(--sans);
+    cursor: pointer;
+  }
+  .tryit-btn:hover { filter: brightness(1.1); }
+  .tryit-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+  .tryit-output {
+    background: #07080A;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 14px 18px;
+    margin-top: 12px;
+    font: 400 12px/1.5 var(--mono);
+    color: var(--muted);
+    min-height: 64px;
+    max-height: 220px; overflow-y: auto;
+    white-space: pre-wrap;
+  }
+  .tryit-output .ok { color: var(--moss-glow); }
+  .tryit-output .fail { color: var(--warning); }
+  .tryit-output .head { color: var(--electric); }
+
+  /* Footer */
+  .foot {
+    border-top: 1px solid var(--border);
+    margin-top: 64px; padding-top: 24px;
+    font-size: 13px; color: var(--dim);
+    display: flex; flex-wrap: wrap; gap: 18px; justify-content: space-between;
+  }
+  .foot a { color: var(--muted); }
+  .foot a:hover { color: var(--electric); }
+
+  @media (max-width: 640px) {
+    h1 { font-size: 32px; }
+    .container { padding: 32px 16px 64px; }
+    .quickstart { padding: 22px; }
+  }
+</style>
+</head>
+<body>
+
+<nav class="nav">
+  <div class="brand"><a href="/">PawConscious<span class="dot">.</span></a></div>
+  <div class="nav-links">
+    <a href="/">Buyers</a>
+    <a href="/agents" class="active">Agents</a>
+    <a href="/architecture">Architecture</a>
+    <a href="https://github.com/odominguez7/PawConscious-Mesh-GFS">Repo ↗</a>
+  </div>
+</nav>
+
+<main class="container">
+
+  <section class="hero">
+    <div class="eyebrow">PawConscious for Agents · A2A v0.3 reference</div>
+    <h1>The trust layer to call <span class="accent">before recommending</span> a consumer product.</h1>
+    <p class="lede">Send us a product URL. Seven specialized agents on Google Cloud return a signed PCEC v0.1 evidence bundle in ~30 seconds. Any A2A v0.3 client can call us. Discoverable agent card. Verifiable did:web signature. We grade evidence; your agent decides.</p>
+  </section>
+
+  <div class="mandates">
+    <span class="mandate">Linux Foundation A2A v0.3 spec</span>
+    <span class="mandate">PawConscious flat shape</span>
+    <span class="mandate">JSON-RPC 2.0 wrapping</span>
+    <span class="mandate">Ed25519 signed bundles</span>
+    <span class="mandate">Async tasks with idempotency</span>
+  </div>
+
+  <section class="quickstart">
+    <span class="badge">connect in 30 seconds</span>
+    <h3>One curl. Two minutes. Real signed bundle.</h3>
+    <p style="margin:0 0 16px;">Demo key for GFS judges: <code class="inline">demo-key-2026-06</code>. Add as <code class="inline">X-API-Key</code> header.</p>
+
+    <div class="tabs">
+      <button class="tab active" data-tab="curl">curl</button>
+      <button class="tab" data-tab="py">Python</button>
+      <button class="tab" data-tab="ts">TypeScript</button>
+    </div>
+
+    <div class="tab-panel active" id="panel-curl">
+      <pre class="with-copy" data-copy><button class="copy-btn">copy</button><code><span class="tok-cmt"># A2A v0.3 standard envelope</span>
+curl -X POST <span class="tok-str">"https://mesh-api-oasa5mxega-uc.a.run.app/a2a/v1/tasks/send"</span> \
+  -H <span class="tok-str">"X-API-Key: demo-key-2026-06"</span> \
+  -H <span class="tok-str">"Content-Type: application/json"</span> \
+  -d <span class="tok-str">'{
+    "message": {
+      "role": "user",
+      "parts": [
+        {"type":"text","text":"https://www.nativepet.com/products/hip-joint"}
+      ]
+    },
+    "skill": "verify_claim"
+  }'</span>
+
+<span class="tok-cmt"># → HTTP 202 { task_id, poll_url, head_anchor_at_submit }
+# Poll until status=completed (~30-45s per claim)</span>
+
+curl <span class="tok-str">"https://mesh-api-oasa5mxega-uc.a.run.app/a2a/v1/tasks/get/&lt;task_id&gt;"</span> \
+  -H <span class="tok-str">"X-API-Key: demo-key-2026-06"</span></code></pre>
+    </div>
+
+    <div class="tab-panel" id="panel-py">
+      <pre class="with-copy" data-copy><button class="copy-btn">copy</button><code><span class="tok-key">import</span> httpx, time
+
+BASE = <span class="tok-str">"https://mesh-api-oasa5mxega-uc.a.run.app"</span>
+HEADERS = {<span class="tok-str">"X-API-Key"</span>: <span class="tok-str">"demo-key-2026-06"</span>}
+
+<span class="tok-cmt"># Submit via A2A v0.3 standard envelope</span>
+r = httpx.post(<span class="tok-str">f"{BASE}/a2a/v1/tasks/send"</span>, headers=HEADERS, json={
+    <span class="tok-str">"message"</span>: {<span class="tok-str">"role"</span>: <span class="tok-str">"user"</span>, <span class="tok-str">"parts"</span>: [
+        {<span class="tok-str">"type"</span>: <span class="tok-str">"text"</span>, <span class="tok-str">"text"</span>: <span class="tok-str">"https://www.nativepet.com/products/hip-joint"</span>}
+    ]},
+    <span class="tok-str">"skill"</span>: <span class="tok-str">"verify_claim"</span>,
+})
+task_id = r.json()[<span class="tok-str">"task_id"</span>]
+
+<span class="tok-cmt"># Poll for completion</span>
+<span class="tok-key">while</span> <span class="tok-num">True</span>:
+    s = httpx.get(<span class="tok-str">f"{BASE}/a2a/v1/tasks/get/{task_id}"</span>, headers=HEADERS).json()
+    <span class="tok-key">if</span> s[<span class="tok-str">"status"</span>] <span class="tok-key">in</span> (<span class="tok-str">"completed"</span>, <span class="tok-str">"failed"</span>):
+        <span class="tok-key">break</span>
+    time.sleep(<span class="tok-num">3</span>)
+
+<span class="tok-cmt"># s["bundle_signature"], s["chain_anchor"], s["output"]</span></code></pre>
+    </div>
+
+    <div class="tab-panel" id="panel-ts">
+      <pre class="with-copy" data-copy><button class="copy-btn">copy</button><code><span class="tok-key">const</span> BASE = <span class="tok-str">"https://mesh-api-oasa5mxega-uc.a.run.app"</span>;
+<span class="tok-key">const</span> headers = {
+  <span class="tok-str">"X-API-Key"</span>: <span class="tok-str">"demo-key-2026-06"</span>,
+  <span class="tok-str">"Content-Type"</span>: <span class="tok-str">"application/json"</span>,
+};
+
+<span class="tok-cmt">// A2A v0.3 standard envelope</span>
+<span class="tok-key">const</span> r = <span class="tok-key">await</span> fetch(<span class="tok-str">`${BASE}/a2a/v1/tasks/send`</span>, {
+  method: <span class="tok-str">"POST"</span>, headers,
+  body: JSON.stringify({
+    message: { role: <span class="tok-str">"user"</span>, parts: [
+      { type: <span class="tok-str">"text"</span>, text: <span class="tok-str">"https://www.nativepet.com/products/hip-joint"</span> }
+    ]},
+    skill: <span class="tok-str">"verify_claim"</span>,
+  })
+});
+<span class="tok-key">const</span> { task_id } = <span class="tok-key">await</span> r.json();
+
+<span class="tok-key">while</span> (<span class="tok-num">true</span>) {
+  <span class="tok-key">const</span> s = <span class="tok-key">await</span> (<span class="tok-key">await</span> fetch(<span class="tok-str">`${BASE}/a2a/v1/tasks/get/${task_id}`</span>, { headers })).json();
+  <span class="tok-key">if</span> ([<span class="tok-str">"completed"</span>, <span class="tok-str">"failed"</span>].includes(s.status)) <span class="tok-key">break</span>;
+  <span class="tok-key">await</span> <span class="tok-key">new</span> Promise(r =&gt; setTimeout(r, <span class="tok-num">3000</span>));
+}</code></pre>
+    </div>
+  </section>
+
+
+  <h2>Try it from the browser</h2>
+  <p>Paste any pet-supplement product URL. Your demo key is pre-loaded. The call goes to our live Cloud Run mesh.</p>
+  <div class="tryit">
+    <input type="text" id="tryit-url" placeholder="https://www.nativepet.com/products/hip-joint" value="https://www.nativepet.com/products/hip-joint">
+    <button class="tryit-btn" id="tryit-go">Submit A2A task</button>
+    <span style="font: 500 12px var(--mono); color: var(--dim); margin-left: 14px;" id="tryit-status">ready</span>
+    <div class="tryit-output" id="tryit-out">Click "Submit A2A task" to send a real A2A v0.3 request to the mesh.</div>
+  </div>
+
+
+  <h2>Discovery — well-knowns</h2>
+  <p>Standards-compliant A2A clients discover us by fetching the agent card. Everything below is publicly accessible.</p>
+  <div class="endpoints">
+    <div class="endpoint">
+      <div class="path">/.well-known/agent-card.json</div>
+      <div class="desc">A2A v0.3 agent card. Declares skills, envelopes, auth, Agent Engine resource.</div>
+      <a href="/.well-known/agent-card.json" target="_blank">fetch ↗</a>
+    </div>
+    <div class="endpoint">
+      <div class="path">/.well-known/did.json</div>
+      <div class="desc">did:web document with Ed25519 verification method. Verify bundle signatures offline.</div>
+      <a href="/.well-known/did.json" target="_blank">fetch ↗</a>
+    </div>
+    <div class="endpoint">
+      <div class="path">/pcec/v0/chain/head</div>
+      <div class="desc">Current transparency-log chain anchor. Bundles link back to this in publication order.</div>
+      <a href="/pcec/v0/chain/head" target="_blank">fetch ↗</a>
+    </div>
+    <div class="endpoint">
+      <div class="path">/pcec/v0/claim/&lt;urn&gt;</div>
+      <div class="desc">Fetch any historically-signed bundle by its <code class="inline">urn:pcec:claim:*</code> URN.</div>
+      <a href="/pcec/v0/claim/" target="_blank">resolver ↗</a>
+    </div>
+  </div>
+
+
+  <h2>What we return</h2>
+  <p>A completed task's <code class="inline">output</code> contains the signed PCEC v0.1 evidence bundle. Sample shape:</p>
+  <pre class="with-copy" data-copy><button class="copy-btn">copy</button><code>{
+  <span class="tok-key">"task_id"</span>: <span class="tok-str">"task-44acb19bf7c74b9a"</span>,
+  <span class="tok-key">"status"</span>: <span class="tok-str">"completed"</span>,
+  <span class="tok-key">"bundle_hash"</span>: <span class="tok-str">"sha256:9e3f...a04c"</span>,
+  <span class="tok-key">"bundle_signature"</span>: <span class="tok-str">"z6Mk...Bxk"</span>,    <span class="tok-cmt">// multibase Ed25519</span>
+  <span class="tok-key">"chain_anchor"</span>: <span class="tok-str">"sha256:426fe5283278..."</span>,
+  <span class="tok-key">"output"</span>: {
+    <span class="tok-key">"claims"</span>: [...],                  <span class="tok-cmt">// from claim_extractor agent</span>
+    <span class="tok-key">"evidence"</span>: [...],                <span class="tok-cmt">// BioMCP + Semantic Scholar PMIDs</span>
+    <span class="tok-key">"vet_rubric"</span>: [...],              <span class="tok-cmt">// 5-criterion 1-5 score per claim</span>
+    <span class="tok-key">"compliance"</span>: [...],              <span class="tok-cmt">// FTC §255 + AAFCO + NASC mapping</span>
+    <span class="tok-key">"audit_verdict"</span>: <span class="tok-str">"FAIL"</span>,        <span class="tok-cmt">// Falsifier auditor verdict</span>
+    <span class="tok-key">"second_opinion"</span>: {...}            <span class="tok-cmt">// Google Search grounded adversarial</span>
+  },
+  <span class="tok-key">"cert_html"</span>: <span class="tok-str">"&lt;executive cert HTML&gt;..."</span>
+}</code></pre>
+
+
+  <h2>Verify a signature offline</h2>
+  <p>The bundle is canonical-JSON, signed with the Ed25519 key advertised in <code class="inline">/.well-known/did.json</code>. Verify with 6 lines:</p>
+  <pre class="with-copy" data-copy><button class="copy-btn">copy</button><code><span class="tok-key">from</span> cryptography.hazmat.primitives.asymmetric.ed25519 <span class="tok-key">import</span> Ed25519PublicKey
+<span class="tok-key">import</span> base58, base64, httpx, json
+
+did = httpx.get(<span class="tok-str">"https://mesh-api-oasa5mxega-uc.a.run.app/.well-known/did.json"</span>).json()
+pk_multibase = did[<span class="tok-str">"verificationMethod"</span>][<span class="tok-num">0</span>][<span class="tok-str">"publicKeyMultibase"</span>]
+pk_bytes = base58.b58decode(pk_multibase[<span class="tok-num">1</span>:])[<span class="tok-num">2</span>:]  <span class="tok-cmt"># strip multibase 'z' + 0xed01 prefix</span>
+pub = Ed25519PublicKey.from_public_bytes(pk_bytes)
+
+<span class="tok-cmt"># canonical_json = bundle minus the signature field, no whitespace</span>
+pub.verify(base64.b64decode(bundle[<span class="tok-str">"signature"</span>]), canonical_json.encode())
+<span class="tok-cmt"># Raises InvalidSignature if tampered. Else: trust the bundle.</span></code></pre>
+
+
+  <h2>Pricing for agent calls</h2>
+  <p><strong>Hackathon window (now → 2026-06-30):</strong> free. Use the demo key. No rate limit beyond Cloud Run defaults.</p>
+  <p><strong>Post-hackathon:</strong> per-claim pricing tiered by mesh stage. Estimated $0.10–$0.40 per verified claim. Brands pay; calling agents inherit the trust at no cost. Reach out if you're a shopping-agent platform.</p>
+
+
+  <h2>We grade. We don't decide.</h2>
+  <p>PawConscious does not recommend products. We extract claims, ground them in PubMed + Semantic Scholar, map them against FTC §255 + AAFCO + NASC corpora via Vertex AI Search, and sign the result. Your agent makes the recommendation. The cert is your evidence trail, not our verdict on commerce.</p>
+
+
+  <div class="foot">
+    <div>
+      <a href="https://github.com/odominguez7/PawConscious-Mesh-GFS">github.com/odominguez7/PawConscious-Mesh-GFS</a>
+      · MIT · GFS AI Agents Challenge 2026
+    </div>
+    <div>
+      <a href="/architecture">Architecture</a> ·
+      <a href="/.well-known/agent-card.json">Agent card</a> ·
+      <a href="/.well-known/did.json">DID</a> ·
+      <a href="/pcec/v0/chain/head">Chain head</a>
+    </div>
+  </div>
+</main>
+
+<script>
+  // Copy buttons
+  document.querySelectorAll('pre[data-copy]').forEach(pre => {
+    const btn = pre.querySelector('.copy-btn');
+    btn.addEventListener('click', () => {
+      const txt = pre.querySelector('code').innerText;
+      navigator.clipboard.writeText(txt).then(() => {
+        btn.textContent = 'copied';
+        btn.classList.add('copied');
+        setTimeout(() => { btn.textContent = 'copy'; btn.classList.remove('copied'); }, 1400);
+      });
+    });
+  });
+
+  // Tabs
+  document.querySelectorAll('.tab').forEach(tab => {
+    tab.addEventListener('click', () => {
+      const target = tab.dataset.tab;
+      tab.parentElement.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+      tab.classList.add('active');
+      const container = tab.closest('.quickstart');
+      container.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+      container.querySelector('#panel-' + target).classList.add('active');
+    });
+  });
+
+  // Try-it live mesh call
+  const tryitBtn = document.getElementById('tryit-go');
+  const tryitUrl = document.getElementById('tryit-url');
+  const tryitOut = document.getElementById('tryit-out');
+  const tryitStatus = document.getElementById('tryit-status');
+  const BASE = window.location.origin;
+  const KEY = 'demo-key-2026-06';
+
+  function log(msg, cls) {
+    const span = cls ? `<span class="${cls}">${msg}</span>` : msg;
+    tryitOut.innerHTML += span + '\n';
+    tryitOut.scrollTop = tryitOut.scrollHeight;
+  }
+
+  tryitBtn.addEventListener('click', async () => {
+    const url = tryitUrl.value.trim();
+    if (!url.startsWith('http')) {
+      tryitOut.innerHTML = '';
+      log('error: paste a full https:// URL', 'fail');
+      return;
+    }
+    tryitBtn.disabled = true;
+    tryitOut.innerHTML = '';
+    tryitStatus.textContent = 'submitting...';
+    log(`POST ${BASE}/a2a/v1/tasks/send`, 'head');
+    log(`X-API-Key: demo-key-2026-06`);
+    log(`body: {message:{role:"user",parts:[{type:"text",text:"${url}"}]}, skill:"verify_claim"}`);
+    log('');
+
+    try {
+      const r = await fetch(`${BASE}/a2a/v1/tasks/send`, {
+        method: 'POST',
+        headers: { 'X-API-Key': KEY, 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          message: { role: 'user', parts: [{ type: 'text', text: url }] },
+          skill: 'verify_claim',
+        }),
+      });
+      if (!r.ok) {
+        const detail = await r.text();
+        log(`HTTP ${r.status}: ${detail}`, 'fail');
+        tryitStatus.textContent = 'failed';
+        tryitBtn.disabled = false;
+        return;
+      }
+      const sub = await r.json();
+      log(`HTTP 202 task_id=${sub.task_id}`, 'ok');
+      log(`head_anchor_at_submit=${sub.head_anchor_at_submit}`);
+      log(`estimated_seconds=${sub.estimated_seconds}`);
+      log('');
+
+      // Poll
+      let attempts = 0;
+      const maxAttempts = 60;  // ~3 min cap
+      while (attempts < maxAttempts) {
+        attempts++;
+        await new Promise(res => setTimeout(res, 3000));
+        const sr = await fetch(`${BASE}/a2a/v1/tasks/get/${sub.task_id}`, {
+          headers: { 'X-API-Key': KEY },
+        });
+        const s = await sr.json();
+        tryitStatus.textContent = `${s.status} (poll ${attempts})`;
+        if (s.progress_message) log(`  · ${s.progress_message}`);
+        if (s.status === 'completed') {
+          log('');
+          log(`✓ COMPLETED`, 'ok');
+          log(`bundle_hash=${s.bundle_hash}`);
+          log(`bundle_signature=${(s.bundle_signature || '').slice(0,40)}…`);
+          log(`chain_anchor=${s.chain_anchor}`);
+          if (s.output) {
+            log(`claims=${(s.output.claims || []).length}`);
+            log(`audit_verdict=${s.output.audit_verdict || '(none)'}`);
+          }
+          tryitStatus.textContent = 'completed';
+          break;
+        }
+        if (s.status === 'failed') {
+          log(`✗ FAILED: ${s.error || 'unknown'}`, 'fail');
+          tryitStatus.textContent = 'failed';
+          break;
+        }
+      }
+      if (attempts >= maxAttempts) {
+        log('timeout — task still running. Poll manually: /a2a/v1/tasks/get/' + sub.task_id, 'fail');
+        tryitStatus.textContent = 'timeout';
+      }
+    } catch (e) {
+      log(`error: ${e.message}`, 'fail');
+      tryitStatus.textContent = 'error';
+    }
+    tryitBtn.disabled = false;
+  });
+</script>
+</body>
+</html>

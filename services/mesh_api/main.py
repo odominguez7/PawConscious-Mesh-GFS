@@ -722,6 +722,20 @@ async def root(v: Optional[str] = None) -> HTMLResponse:
     return HTMLResponse(content=console_path.read_text(encoding="utf-8"))
 
 
+@app.get("/agents", response_class=HTMLResponse)
+async def agents_page() -> HTMLResponse:
+    """First-class A2A reference for any external agent wanting to call us.
+
+    Stripe-API-Reference shape: 30-second connect quickstart with copy-paste
+    curl + Python + TS, in-browser try-it that calls our live mesh, well-known
+    endpoints map, signed-bundle output sample, offline signature verification
+    snippet, and pricing teaser. The page is also the agent-platform-developer
+    pitch surface judges land on when they click `Agents` in primary nav.
+    """
+    path = Path(__file__).parent / "static" / "agents.html"
+    return HTMLResponse(content=path.read_text(encoding="utf-8"))
+
+
 @app.get("/architecture", response_class=HTMLResponse)
 async def architecture() -> HTMLResponse:
     """Standalone architecture diagram surface (Move F per WIN_PLAN.md).
