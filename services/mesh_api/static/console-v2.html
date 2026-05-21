@@ -368,8 +368,15 @@
 
   /* Edges + animation classes preserved from the radial version so existing JS still drives them */
   .demo-svg .edge { stroke: var(--border-strong); stroke-width: 1.4; fill: none; transition: stroke 0.4s ease, stroke-width 0.4s ease; }
-  .demo-svg .edge.active { stroke: var(--electric); stroke-width: 1.8; filter: drop-shadow(0 0 6px var(--electric)); }
+  /* v0.10.2 Phase G: marching-ants flow on active edges — data flowing visualization */
+  .demo-svg .edge.active {
+    stroke: var(--electric); stroke-width: 1.8;
+    filter: drop-shadow(0 0 6px var(--electric));
+    stroke-dasharray: 4 6;
+    animation: edgeFlow 1.2s linear infinite;
+  }
   .demo-svg .edge.done { stroke: var(--moss-glow); stroke-width: 1.6; }
+  @keyframes edgeFlow { to { stroke-dashoffset: -20; } }
 
   /* Agent chips — numbered circles (codex A1 decision). Labels below, truncate if needed. */
   .demo-svg .node circle.body {
@@ -405,6 +412,64 @@
     text-anchor: middle; text-transform: uppercase; letter-spacing: 0.14em;
   }
   .demo-svg .node.active text.label { fill: var(--electric); }
+  /* v0.10.2 Phase G: Lucide icon glyphs inside each chip.
+     14x14 path centered. Fill follows chip state (idle/active/done). */
+  .demo-svg .node .glyph {
+    fill: none;
+    stroke: var(--muted);
+    stroke-width: 1.6;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    transition: stroke 0.4s ease;
+    pointer-events: none;
+  }
+  .demo-svg .node.active .glyph { stroke: var(--bg); }
+  .demo-svg .node.done .glyph { stroke: var(--bg); }
+  .demo-svg .node.preview-on .glyph { stroke: var(--electric); }
+  /* v0.10.2 Phase G: pulse-link — when a stream row is hovered, the matching
+     chip briefly flashes electric to confirm "this log came from THAT agent". */
+  .demo-svg .node.pulse-link circle.body {
+    fill: var(--electric); stroke: var(--electric);
+    filter: drop-shadow(0 0 12px var(--electric));
+    animation: chipPulseLink 0.18s ease-out;
+  }
+  @keyframes chipPulseLink {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.18); }
+    100% { transform: scale(1); }
+  }
+  /* v0.10.2 Phase G: Stage 2 sign particle burst.
+     Fires when the SIGN anchor turns moss-green (the actual signature moment),
+     AFTER the stage2 cinema card has had its trust-moment beat. Larger & brighter
+     than v1 so it reads on the live URL at 1440x900. */
+  .demo-svg .sign-particles { pointer-events: none; opacity: 0; }
+  .demo-svg .sign-particles.fire { opacity: 1; animation: signParticlesFire 1.4s ease-out forwards; }
+  .demo-svg .sign-particles circle {
+    fill: var(--moss-glow);
+    filter: drop-shadow(0 0 4px var(--moss-glow));
+    opacity: 0;
+    transform-origin: 0 0;
+  }
+  .demo-svg .sign-particles.fire circle {
+    animation: particleFly 1.4s cubic-bezier(.22,.7,.34,1) forwards;
+  }
+  .demo-svg .sign-particles.fire circle:nth-child(1) { --pa: 0deg; }
+  .demo-svg .sign-particles.fire circle:nth-child(2) { --pa: 45deg; }
+  .demo-svg .sign-particles.fire circle:nth-child(3) { --pa: 90deg; }
+  .demo-svg .sign-particles.fire circle:nth-child(4) { --pa: 135deg; }
+  .demo-svg .sign-particles.fire circle:nth-child(5) { --pa: 180deg; }
+  .demo-svg .sign-particles.fire circle:nth-child(6) { --pa: 225deg; }
+  .demo-svg .sign-particles.fire circle:nth-child(7) { --pa: 270deg; }
+  .demo-svg .sign-particles.fire circle:nth-child(8) { --pa: 315deg; }
+  @keyframes signParticlesFire { 0%{opacity:0} 8%{opacity:1} 80%{opacity:1} 100%{opacity:0} }
+  /* v0.10.2 Phase G: fly far enough to exit the centered Stage 2 cinema card
+     (card ~280px wide × 80px tall). 110px end-state takes particles past the
+     card's ±140px half-width edges so they're visible during the trust beat. */
+  @keyframes particleFly {
+    0%   { opacity: 1; transform: rotate(var(--pa, 0deg)) translateX(0)   scale(1); }
+    50%  { opacity: 1; transform: rotate(var(--pa, 0deg)) translateX(80px) scale(0.8); }
+    100% { opacity: 0; transform: rotate(var(--pa, 0deg)) translateX(110px) scale(0.4); }
+  }
   .demo-svg .node.done text.label { fill: var(--moss-glow); }
 
   /* Sign anchor — special Stage 2 trust event, moss-green when done */
@@ -1503,6 +1568,7 @@ function resetDemo() {
   addEdge(SIGN_CX + 22, SIGN_CY + 6, 484, 198, 'opinion');  // Sign → 07
 
   // ---- Build agent chips ---------------------------------------------------
+  // v0.10.2 Phase G: chip body r=14→16, halo r=20→22. Subtle scale-up.
   AGENTS.forEach(a => {
     const g = document.createElementNS('http://www.w3.org/2000/svg','g');
     g.setAttribute('class', 'node');
@@ -1510,20 +1576,47 @@ function resetDemo() {
     g.setAttribute('transform', `translate(${a.cx},${a.cy})`);
 
     const halo = document.createElementNS('http://www.w3.org/2000/svg','circle');
-    halo.setAttribute('class', 'halo'); halo.setAttribute('r', '20');
+    halo.setAttribute('class', 'halo'); halo.setAttribute('r', '22');
     const body = document.createElementNS('http://www.w3.org/2000/svg','circle');
-    body.setAttribute('class', 'body'); body.setAttribute('r', '14');
+    body.setAttribute('class', 'body'); body.setAttribute('r', '16');
     const num = document.createElementNS('http://www.w3.org/2000/svg','text');
     num.setAttribute('class', 'num'); num.setAttribute('y', '3'); // optical center
     num.textContent = a.num;
     const label = document.createElementNS('http://www.w3.org/2000/svg','text');
-    label.setAttribute('class', 'label'); label.setAttribute('y', '28');
+    label.setAttribute('class', 'label'); label.setAttribute('y', '30');
     label.textContent = a.label;
 
     g.append(halo, body, num, label);
     DEMO_NODES.appendChild(g);
   });
+
+  // ---- Build Stage 2 sign particle group (codex G.3 + A-codex-2 stagger).
+  // 8 dots radiating from the SIGN anchor when fireSignParticles() runs.
+  // r=4 + drop-shadow so they pop on the dark bg; sized to read on full hero.
+  const partGroup = document.createElementNS('http://www.w3.org/2000/svg','g');
+  partGroup.setAttribute('class', 'sign-particles');
+  partGroup.setAttribute('id', 'demoSignParticles');
+  partGroup.setAttribute('transform', `translate(${SIGN_CX},${SIGN_CY})`);
+  for (let i=0; i<8; i++) {
+    const c = document.createElementNS('http://www.w3.org/2000/svg','circle');
+    c.setAttribute('r', '4');
+    partGroup.appendChild(c);
+  }
+  DEMO_NODES.appendChild(partGroup);
 })();
+
+/* v0.10.2 Phase G: fire the sign particle burst. Called from setStage('stage2')
+ * +400ms (codex A-codex-2 stagger) so the moss flash runs first, then the
+ * "signature being written" burst. Self-clearing via CSS animation onend. */
+function fireSignParticles() {
+  const el = document.getElementById('demoSignParticles');
+  if (!el) return;
+  el.classList.remove('fire');
+  // Force reflow so a re-fire actually plays the animation again
+  void el.getBoundingClientRect();
+  el.classList.add('fire');
+  setTimeout(() => el.classList.remove('fire'), 1300);
+}
 
 function sleep(ms) { return new Promise(r => setTimeout(r, ms)); }
 
@@ -1586,6 +1679,10 @@ async function cachedCycle() {
   streamAdd('SequentialAgent · merge + sign · Ed25519', 'ok');
   await sleep(500); if (aborted()) return;
   DEMO_ANCHOR.classList.add('done');
+  // v0.10.2 Phase G: particle burst fires when the SIGN anchor turns moss-green
+  // — the actual signature-being-written moment. Codex A-codex-2 stagger met:
+  // moss flash on perimeter at t=0, anchor lights at t=+500ms, burst at +600ms.
+  setTimeout(fireSignParticles, 100);
   streamAdd(`chain_anchor appended → ${b.anchor.slice(0,40)}…`, 'ok');
   await sleep(2200); if (aborted()) return;  // let the Stage 2 flash play
   // v0.10.1c Phase C: Stage 2 → Stage 3 (adversarial double-check)
