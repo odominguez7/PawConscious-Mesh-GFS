@@ -1,185 +1,277 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1400 900" preserveAspectRatio="xMidYMid meet" font-family="JetBrains Mono, ui-monospace, monospace" role="img" aria-label="PawConscious Mesh Architecture — five-agent multi-agent system on Google Cloud (ADK + Gemini + Cloud Run + A2A v0.3)">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1400 900" preserveAspectRatio="xMidYMid meet" font-family="Geist, ui-sans-serif, system-ui, sans-serif" role="img" aria-label="PawConscious Mesh Architecture — 7-agent, 3-stage multi-agent system on Google Cloud (ADK + Gemini 2.5 + Cloud Run + A2A v0.3 + Vertex AI Search + Google Search grounding)">
   <defs>
     <style>
-      .bg { fill: #F2EDE0; }
-      .ink { fill: #1A1D1E; }
-      .moss { fill: #13322B; }
-      .amber { fill: #9C5E1A; }
-      .linen { fill: #C8C2B6; }
-      .paper { fill: #EAE3D2; }
-      .display { font-family: Newsreader, Georgia, serif; font-weight: 400; }
-      .mono-sm { font-size: 11px; letter-spacing: 0.16em; text-transform: uppercase; font-weight: 500; }
-      .mono-md { font-size: 13px; letter-spacing: 0.18em; text-transform: uppercase; font-weight: 600; }
-      .label { font-size: 12px; letter-spacing: 0.06em; font-weight: 500; }
-      .edge { stroke: #1A1D1E; stroke-width: 1.4; fill: none; }
-      .edge-moss { stroke: #13322B; stroke-width: 1.6; fill: none; }
-      .edge-amber { stroke: #9C5E1A; stroke-width: 1.6; fill: none; }
+      .bg          { fill: #0A0B0D; }
+      .panel       { fill: #16181D; }
+      .panel-2     { fill: #1C1F25; }
+      .ink         { fill: #EDEEF1; }
+      .muted       { fill: rgba(237,238,241,0.62); }
+      .dim         { fill: rgba(237,238,241,0.42); }
+      .electric    { fill: #00D4FF; }
+      .moss        { fill: #00D49B; }
+      .warn        { fill: #FFB446; }
+      .stage-fill  { fill: rgba(0,212,255,0.025); }
+      .stage-stroke{ stroke: rgba(0,212,255,0.28); stroke-dasharray: 5 5; fill: none; }
+      .display     { font-family: Geist, ui-sans-serif, system-ui, sans-serif; }
+      .mono        { font-family: "JetBrains Mono", ui-monospace, monospace; }
+      .h1          { font-size: 30px; font-weight: 600; letter-spacing: -0.02em; }
+      .h2          { font-size: 13px; font-weight: 700; letter-spacing: 0.22em; text-transform: uppercase; }
+      .stage-sub   { font-size: 11px; letter-spacing: 0.08em; }
+      .lbl         { font-size: 11px; font-weight: 700; letter-spacing: 0.18em; text-transform: uppercase; }
+      .ttl         { font-size: 14px; font-weight: 600; letter-spacing: -0.005em; }
+      .meta        { font-size: 11px; }
+      .meta-sm     { font-size: 10.5px; }
+      .box         { fill: #16181D; stroke: rgba(255,255,255,0.16); stroke-width: 1.4; }
+      .box-agent   { fill: #16181D; stroke: rgba(0,212,255,0.32); stroke-width: 1.4; }
+      .box-sign    { fill: #1C1F25; stroke: #00D49B; stroke-width: 1.6; }
+      .edge        { stroke: rgba(255,255,255,0.22); stroke-width: 1.2; fill: none; }
+      .edge-flow   { stroke: #00D4FF; stroke-width: 1.6; fill: none; }
+      .edge-dash   { stroke: rgba(255,255,255,0.22); stroke-width: 1.1; stroke-dasharray: 4 5; fill: none; }
     </style>
-    <marker id="arrow-ink" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
-      <path d="M 0 0 L 10 5 L 0 10 z" fill="#1A1D1E"/>
+    <marker id="arr-mute" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="rgba(255,255,255,0.4)"/>
     </marker>
-    <marker id="arrow-moss" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
-      <path d="M 0 0 L 10 5 L 0 10 z" fill="#13322B"/>
+    <marker id="arr-flow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#00D4FF"/>
     </marker>
+    <filter id="signing-glow" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur stdDeviation="6" result="blur"/>
+      <feMerge>
+        <feMergeNode in="blur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
   </defs>
 
-  <!-- Background -->
+  <!-- ===== Background ===== -->
   <rect width="1400" height="900" class="bg"/>
 
-  <!-- Title block -->
+  <!-- Subtle grid (radial dot pattern feel) -->
+  <g opacity="0.5">
+    <pattern id="dotgrid" x="0" y="0" width="28" height="28" patternUnits="userSpaceOnUse">
+      <circle cx="1" cy="1" r="1" fill="rgba(255,255,255,0.025)"/>
+    </pattern>
+    <rect x="0" y="0" width="1400" height="900" fill="url(#dotgrid)"/>
+  </g>
+
+  <!-- ===== Title block ===== -->
   <g>
-    <text x="60" y="50" class="display" font-size="36" fill="#1A1D1E">PawConscious — Agentic Compliance Protocol</text>
-    <text x="60" y="78" class="mono-sm" fill="#13322B">Architecture · Google for Startups AI Agents Challenge · Track 3</text>
-    <line x1="60" y1="100" x2="1340" y2="100" stroke="#C8C2B6" stroke-width="1"/>
+    <text x="60" y="64" class="display h1 ink">PawConscious Mesh · Agentic Compliance Protocol</text>
+    <text x="60" y="90" class="mono h2 electric">Architecture · 7 agents · 3 stages · Google Cloud native</text>
+    <line x1="60" y1="106" x2="1340" y2="106" stroke="rgba(255,255,255,0.08)"/>
   </g>
 
-  <!-- Track 3 mandate band (top) -->
-  <g transform="translate(60, 130)">
-    <text class="mono-sm" fill="#13322B">Track 3 hard mandates · met</text>
-    <g transform="translate(0, 18)">
-      <rect x="0" y="0" width="290" height="42" class="paper" stroke="#13322B" stroke-width="1.4"/>
-      <text x="14" y="18" class="mono-sm" fill="#13322B">✓ B2B Focus</text>
-      <text x="14" y="34" class="label" fill="#1A1D1E">DTC pet brand → enterprise retailer/insurer</text>
+  <!-- ===== Track 3 mandate band ===== -->
+  <g transform="translate(60, 124)">
+    <text x="0" y="0" class="mono h2 electric">Track 3 hard mandates · met</text>
+    <g transform="translate(0, 14)">
+      <rect width="300" height="46" rx="6" class="panel" stroke="rgba(0,212,155,0.4)" stroke-width="1.2"/>
+      <text x="16" y="20" class="mono lbl moss">✓ B2B</text>
+      <text x="16" y="38" class="mono meta-sm muted">DTC pet brand → retailer / insurer</text>
     </g>
-    <g transform="translate(310, 18)">
-      <rect x="0" y="0" width="290" height="42" class="paper" stroke="#13322B" stroke-width="1.4"/>
-      <text x="14" y="18" class="mono-sm" fill="#13322B">✓ Cloud-Native Runtime</text>
-      <text x="14" y="34" class="label" fill="#1A1D1E">Cloud Run + Vertex AI Agent Engine</text>
+    <g transform="translate(320, 14)">
+      <rect width="300" height="46" rx="6" class="panel" stroke="rgba(0,212,155,0.4)" stroke-width="1.2"/>
+      <text x="16" y="20" class="mono lbl moss">✓ Cloud Run</text>
+      <text x="16" y="38" class="mono meta-sm muted">per-agent · scale-to-zero · Artifact Registry</text>
     </g>
-    <g transform="translate(620, 18)">
-      <rect x="0" y="0" width="290" height="42" class="paper" stroke="#13322B" stroke-width="1.4"/>
-      <text x="14" y="18" class="mono-sm" fill="#13322B">✓ Gemini Powered</text>
-      <text x="14" y="34" class="label" fill="#1A1D1E">Gemini 2.5 Pro reasoning · 2.5 Flash routing</text>
+    <g transform="translate(640, 14)">
+      <rect width="300" height="46" rx="6" class="panel" stroke="rgba(0,212,155,0.4)" stroke-width="1.2"/>
+      <text x="16" y="20" class="mono lbl moss">✓ Gemini 2.5</text>
+      <text x="16" y="38" class="mono meta-sm muted">2.5 Pro reasoning · 2.5 Flash auditor</text>
     </g>
-    <g transform="translate(930, 18)">
-      <rect x="0" y="0" width="290" height="42" class="paper" stroke="#13322B" stroke-width="1.4"/>
-      <text x="14" y="18" class="mono-sm" fill="#13322B">✓ A2A Interoperability</text>
-      <text x="14" y="34" class="label" fill="#1A1D1E">A2A v0.3 public agent card + ShopperAgent</text>
-    </g>
-  </g>
-
-  <!-- User / Brand input -->
-  <g transform="translate(60, 240)">
-    <rect x="0" y="0" width="240" height="68" class="bg" stroke="#1A1D1E" stroke-width="1.6"/>
-    <text x="14" y="22" class="mono-sm" fill="#13322B">Brand owner</text>
-    <text x="14" y="42" class="display" font-size="14" fill="#1A1D1E">POST /a2a/v1/tasks/send</text>
-    <text x="14" y="58" class="label" fill="#1A1D1E">{ skill: verify_claim, product_url }</text>
-  </g>
-  <line x1="300" y1="274" x2="430" y2="274" class="edge" marker-end="url(#arrow-ink)"/>
-
-  <!-- Vertex AI Agent Engine orchestrator -->
-  <g transform="translate(430, 230)">
-    <rect x="0" y="0" width="320" height="120" class="paper" stroke="#13322B" stroke-width="2"/>
-    <text x="20" y="24" class="mono-md" fill="#13322B">Vertex AI Agent Engine</text>
-    <text x="20" y="48" class="display" font-size="16" fill="#1A1D1E">Multi-agent orchestrator</text>
-    <text x="20" y="68" class="label" fill="#1A1D1E">ADK 2.0 · ParallelAgent fan-out</text>
-    <text x="20" y="84" class="label" fill="#1A1D1E">SequentialAgent merge + sign</text>
-    <text x="20" y="100" class="label" fill="#9C5E1A">reasoningEngines/1255381144908595200</text>
-  </g>
-
-  <!-- 5 specialized agents -->
-  <g transform="translate(810, 130)">
-    <!-- agent 1 -->
-    <g transform="translate(0, 0)">
-      <line x1="-60" y1="44" x2="40" y2="44" class="edge-amber" marker-end="url(#arrow-moss)"/>
-      <rect x="40" y="0" width="290" height="88" class="bg" stroke="#9C5E1A" stroke-width="1.6"/>
-      <text x="56" y="22" class="mono-sm" fill="#9C5E1A">01 · Claim Extractor</text>
-      <text x="56" y="44" class="display" font-size="14" fill="#1A1D1E">Pulls every health claim from PDP</text>
-      <text x="56" y="62" class="label" fill="#1A1D1E">Tool: Firecrawl MCP</text>
-      <text x="56" y="78" class="label" fill="#1A1D1E">Model: Gemini 2.5 Pro · temperature 0</text>
-    </g>
-    <!-- agent 2 -->
-    <g transform="translate(0, 110)">
-      <line x1="-60" y1="44" x2="40" y2="44" class="edge-amber" marker-end="url(#arrow-moss)"/>
-      <rect x="40" y="0" width="290" height="88" class="bg" stroke="#9C5E1A" stroke-width="1.6"/>
-      <text x="56" y="22" class="mono-sm" fill="#9C5E1A">02 · Evidence Grader</text>
-      <text x="56" y="44" class="display" font-size="14" fill="#1A1D1E">Grades PubMed citations per claim</text>
-      <text x="56" y="62" class="label" fill="#1A1D1E">Tool: BioMCP + AI2 Asta MCP</text>
-      <text x="56" y="78" class="label" fill="#1A1D1E">Grounding: Vertex AI Search</text>
-    </g>
-    <!-- agent 3 -->
-    <g transform="translate(0, 220)">
-      <line x1="-60" y1="44" x2="40" y2="44" class="edge-amber" marker-end="url(#arrow-moss)"/>
-      <rect x="40" y="0" width="290" height="88" class="bg" stroke="#9C5E1A" stroke-width="1.6"/>
-      <text x="56" y="22" class="mono-sm" fill="#9C5E1A">03 · Vet Rubric</text>
-      <text x="56" y="44" class="display" font-size="14" fill="#1A1D1E">5-criterion rubric scores each claim</text>
-      <text x="56" y="62" class="label" fill="#1A1D1E">Tool: Vertex AI Search (vet corpus)</text>
-      <text x="56" y="78" class="label" fill="#1A1D1E">Roadmap: real academic panel</text>
-    </g>
-    <!-- agent 4 -->
-    <g transform="translate(0, 330)">
-      <line x1="-60" y1="44" x2="40" y2="44" class="edge-amber" marker-end="url(#arrow-moss)"/>
-      <rect x="40" y="0" width="290" height="88" class="bg" stroke="#9C5E1A" stroke-width="1.6"/>
-      <text x="56" y="22" class="mono-sm" fill="#9C5E1A">04 · Compliance</text>
-      <text x="56" y="44" class="display" font-size="14" fill="#1A1D1E">Maps claims to FTC §255.3 + AAFCO</text>
-      <text x="56" y="62" class="label" fill="#1A1D1E">Tool: Vertex AI Search (regulator corpus)</text>
-      <text x="56" y="78" class="label" fill="#1A1D1E">Outputs: ftc_section, violation_flag</text>
-    </g>
-    <!-- agent 5 -->
-    <g transform="translate(0, 440)">
-      <line x1="-60" y1="44" x2="40" y2="44" class="edge-amber" marker-end="url(#arrow-moss)"/>
-      <rect x="40" y="0" width="290" height="88" class="bg" stroke="#9C5E1A" stroke-width="1.6"/>
-      <text x="56" y="22" class="mono-sm" fill="#9C5E1A">05 · Auditor (Falsifier)</text>
-      <text x="56" y="44" class="display" font-size="14" fill="#1A1D1E">Adversarial pass — catches hallucinations</text>
-      <text x="56" y="62" class="label" fill="#1A1D1E">Tool: ADK Eval + direction falsifier</text>
-      <text x="56" y="78" class="label" fill="#1A1D1E">Model: Gemini 2.5 Flash · temperature 0</text>
+    <g transform="translate(960, 14)">
+      <rect width="320" height="46" rx="6" class="panel" stroke="rgba(0,212,155,0.4)" stroke-width="1.2"/>
+      <text x="16" y="20" class="mono lbl moss">✓ A2A v0.3</text>
+      <text x="16" y="38" class="mono meta-sm muted">public agent card + external ShopperAgent</text>
     </g>
   </g>
 
-  <!-- Fan-out edges from orchestrator to agents -->
+  <!-- ===== STAGE GROUP RECTS ===== -->
+  <g transform="translate(0,0)">
+    <!-- Stage 1 -->
+    <rect x="252" y="232" width="630" height="540" rx="14" class="stage-fill"/>
+    <rect x="252" y="232" width="630" height="540" rx="14" class="stage-stroke"/>
+    <text x="276" y="266" class="mono h2 electric">Stage 1 · Reasoning Mesh</text>
+    <text x="276" y="288" class="mono stage-sub dim">5 agents · ADK + google.genai · asyncio.gather per claim</text>
+
+    <!-- Stage 2 -->
+    <rect x="912" y="380" width="180" height="280" rx="14" class="stage-fill"/>
+    <rect x="912" y="380" width="180" height="280" rx="14" class="stage-stroke"/>
+    <text x="930" y="414" class="mono h2 electric">Stage 2</text>
+    <text x="930" y="432" class="mono stage-sub dim">Sign · mesh-api</text>
+
+    <!-- Stage 3 -->
+    <rect x="1122" y="232" width="218" height="540" rx="14" class="stage-fill"/>
+    <rect x="1122" y="232" width="218" height="540" rx="14" class="stage-stroke"/>
+    <text x="1142" y="266" class="mono h2 electric">Stage 3 · Adversarial</text>
+    <text x="1142" y="288" class="mono stage-sub dim">2 agents · post-sign</text>
+  </g>
+
+  <!-- ===== EDGES (rendered behind boxes) ===== -->
   <g>
-    <line x1="750" y1="290" x2="810" y2="174" class="edge-amber" marker-end="url(#arrow-moss)"/>
-    <line x1="750" y1="290" x2="810" y2="284" class="edge-amber" marker-end="url(#arrow-moss)"/>
-    <line x1="750" y1="290" x2="810" y2="394" class="edge-amber" marker-end="url(#arrow-moss)"/>
-    <line x1="750" y1="290" x2="810" y2="504" class="edge-amber" marker-end="url(#arrow-moss)"/>
-    <line x1="750" y1="290" x2="810" y2="614" class="edge-amber" marker-end="url(#arrow-moss)"/>
+    <!-- Brand POST → 01 -->
+    <line x1="230" y1="332" x2="298" y2="332" class="edge-flow" marker-end="url(#arr-flow)"/>
+
+    <!-- 01 → fan-out tree -->
+    <line x1="566" y1="378" x2="566" y2="408" class="edge"/>
+    <line x1="358" y1="408" x2="774" y2="408" class="edge"/>
+    <line x1="358" y1="408" x2="358" y2="432" class="edge" marker-end="url(#arr-mute)"/>
+    <line x1="566" y1="408" x2="566" y2="432" class="edge" marker-end="url(#arr-mute)"/>
+    <line x1="774" y1="408" x2="774" y2="432" class="edge" marker-end="url(#arr-mute)"/>
+
+    <!-- 3 parallel → 05 (fan-in tree) -->
+    <line x1="358" y1="528" x2="358" y2="554" class="edge"/>
+    <line x1="566" y1="528" x2="566" y2="554" class="edge"/>
+    <line x1="774" y1="528" x2="774" y2="554" class="edge"/>
+    <line x1="358" y1="554" x2="774" y2="554" class="edge"/>
+    <line x1="566" y1="554" x2="566" y2="580" class="edge" marker-end="url(#arr-mute)"/>
+
+    <!-- 05 Auditor → Stage 2 Sign -->
+    <line x1="882" y1="618" x2="932" y2="494" class="edge-flow" marker-end="url(#arr-flow)"/>
+
+    <!-- Sign → Stage 3 (parallel fan-out to Cert + Second Opinion) -->
+    <line x1="1072" y1="450" x2="1142" y2="356" class="edge-flow" marker-end="url(#arr-flow)"/>
+    <line x1="1072" y1="540" x2="1142" y2="612" class="edge-flow" marker-end="url(#arr-flow)"/>
+
+    <!-- ShopperAgent → POST (dashed A2A path) -->
+    <line x1="148" y1="476" x2="148" y2="350" class="edge-dash"/>
+    <line x1="148" y1="350" x2="218" y2="332" class="edge-dash" marker-end="url(#arr-mute)"/>
+
+    <!-- Brand response output (from Stage 3 down to response box) -->
+    <line x1="1232" y1="772" x2="1232" y2="820" class="edge-flow" marker-end="url(#arr-flow)"/>
+
+    <!-- Sign → Firestore log -->
+    <line x1="1002" y1="660" x2="1002" y2="704" class="edge-flow" marker-end="url(#arr-flow)"/>
   </g>
 
-  <!-- Merge + Sign + Anchor -->
-  <g transform="translate(430, 690)">
-    <line x1="160" y1="-340" x2="160" y2="0" class="edge" stroke-dasharray="4 6"/>
-    <rect x="0" y="0" width="320" height="92" class="paper" stroke="#13322B" stroke-width="2"/>
-    <text x="20" y="24" class="mono-md" fill="#13322B">SequentialAgent · merge + sign</text>
-    <text x="20" y="48" class="display" font-size="14" fill="#1A1D1E">PCEC v0.1 bundle · Ed25519</text>
-    <text x="20" y="68" class="label" fill="#1A1D1E">bundle_hash sha256 · canonical JSON</text>
-    <text x="20" y="84" class="label" fill="#9C5E1A">did:web:mesh-api-…run.app</text>
+  <!-- ===== I/O endpoints (left) ===== -->
+  <g>
+    <rect x="60" y="302" width="170" height="62" rx="6" class="box"/>
+    <text x="76" y="324" class="mono lbl electric">Brand</text>
+    <text x="76" y="346" class="display ttl ink">POST verify_claim</text>
+    <text x="76" y="360" class="mono meta muted">/a2a/v1/tasks/send</text>
+
+    <rect x="60" y="476" width="170" height="82" rx="6" class="box"/>
+    <text x="76" y="498" class="mono lbl electric">External A2A consumer</text>
+    <text x="76" y="520" class="display ttl ink">ShopperAgent</text>
+    <text x="76" y="536" class="mono meta muted">Cloud Run</text>
+    <text x="76" y="550" class="mono meta muted">discovers /agent-card.json</text>
+
+    <text x="62" y="456" class="mono lbl electric" font-size="10">↑ A2A v0.3 round trip</text>
   </g>
 
-  <!-- Transparency log -->
-  <g transform="translate(810, 690)">
-    <line x1="-60" y1="46" x2="40" y2="46" class="edge" marker-end="url(#arrow-ink)"/>
-    <rect x="40" y="0" width="290" height="92" class="bg" stroke="#1A1D1E" stroke-width="1.6"/>
-    <text x="56" y="24" class="mono-sm" fill="#13322B">Transparency log</text>
-    <text x="56" y="48" class="display" font-size="14" fill="#1A1D1E">Firestore append-only chain</text>
-    <text x="56" y="68" class="label" fill="#1A1D1E">chain_anchor = sha256(bundle_hash + prev)</text>
-    <text x="56" y="84" class="label" fill="#9C5E1A">/pcec/v0/chain/head</text>
+  <!-- ===== STAGE 1 AGENTS ===== -->
+  <!-- 01 Claim Extractor -->
+  <g transform="translate(298, 308)">
+    <rect width="540" height="70" rx="6" class="box-agent"/>
+    <text x="18" y="22" class="mono lbl electric">01 · Claim Extractor</text>
+    <text x="18" y="44" class="display ttl ink">Pulls every health claim from the PDP</text>
+    <text x="18" y="60" class="mono meta muted">ADK 2.0 · LlmAgent · httpx + Firecrawl fallback · Gemini 2.5 Pro · temp 0.0</text>
   </g>
 
-  <!-- Response to brand -->
-  <g transform="translate(60, 690)">
-    <line x1="240" y1="46" x2="430" y2="46" class="edge" marker-end="url(#arrow-ink)" stroke-dasharray="6 4"/>
-    <rect x="0" y="0" width="240" height="92" class="bg" stroke="#1A1D1E" stroke-width="1.6"/>
-    <text x="14" y="24" class="mono-sm" fill="#13322B">Brand response</text>
-    <text x="14" y="48" class="display" font-size="14" fill="#1A1D1E">GET /a2a/v1/tasks/get</text>
-    <text x="14" y="68" class="label" fill="#1A1D1E">bundle_hash · signature · chain_anchor</text>
-    <text x="14" y="84" class="label" fill="#1A1D1E">output: {claims, vet_scores, compliance, audit}</text>
+  <!-- 02 Evidence Grader -->
+  <g transform="translate(298, 432)">
+    <rect width="160" height="96" rx="6" class="box-agent"/>
+    <text x="14" y="22" class="mono lbl electric">02 · Evidence</text>
+    <text x="14" y="42" class="display ttl ink">Grader</text>
+    <text x="14" y="60" class="mono meta muted">BioMCP → PubMed</text>
+    <text x="14" y="74" class="mono meta muted">+ Semantic Scholar</text>
+    <text x="14" y="88" class="mono meta muted">Gemini 2.5 Pro</text>
   </g>
 
-  <!-- ShopperAgent (external A2A caller) -->
-  <g transform="translate(60, 420)">
-    <rect x="0" y="0" width="240" height="92" class="bg" stroke="#9C5E1A" stroke-width="1.8"/>
-    <text x="14" y="24" class="mono-sm" fill="#9C5E1A">External A2A consumer</text>
-    <text x="14" y="48" class="display" font-size="14" fill="#1A1D1E">ShopperAgent (Cloud Run)</text>
-    <text x="14" y="68" class="label" fill="#1A1D1E">Discovers via /.well-known/agent-card.json</text>
-    <text x="14" y="84" class="label" fill="#1A1D1E">Calls verify_claim · ranks by trust score</text>
-    <line x1="240" y1="46" x2="430" y2="280" class="edge-amber" stroke-dasharray="8 4" marker-end="url(#arrow-moss)"/>
-    <text x="260" y="180" class="mono-sm" fill="#9C5E1A" font-size="10">A2A v0.3 round trip</text>
+  <!-- 03 Vet Rubric -->
+  <g transform="translate(486, 432)">
+    <rect width="160" height="96" rx="6" class="box-agent"/>
+    <text x="14" y="22" class="mono lbl electric">03 · Vet Rubric</text>
+    <text x="14" y="42" class="display ttl ink">5-vet sim</text>
+    <text x="14" y="60" class="mono meta muted">Prompt-only</text>
+    <text x="14" y="74" class="mono meta muted">1-5 score + escalate</text>
+    <text x="14" y="88" class="mono meta muted">Gemini 2.5 Pro</text>
   </g>
 
-  <!-- Footer / metadata -->
-  <g transform="translate(60, 830)">
-    <line x1="0" y1="0" x2="1280" y2="0" stroke="#C8C2B6"/>
-    <text x="0" y="22" class="mono-sm" fill="#1A1D1E" opacity="0.7">MIT licensed · PCEC v0.1 spec CC-BY-4.0 · Built on Google Cloud · github.com/odominguez7/PawConscious-Mesh-GFS</text>
-    <text x="0" y="42" class="mono-sm" fill="#13322B" opacity="0.7">PawConscious Mesh · Reference deployment for the Agentic Compliance Protocol</text>
+  <!-- 04 Compliance -->
+  <g transform="translate(674, 432)">
+    <rect width="160" height="96" rx="6" class="box-agent"/>
+    <text x="14" y="22" class="mono lbl electric">04 · Compliance</text>
+    <text x="14" y="42" class="display ttl ink">FTC mapping</text>
+    <text x="14" y="60" class="mono meta muted">Vertex AI Search</text>
+    <text x="14" y="74" class="mono meta muted">FTC §255 · AAFCO</text>
+    <text x="14" y="88" class="mono meta muted">+ NASC corpus</text>
+  </g>
+
+  <!-- 05 Auditor (Falsifier) -->
+  <g transform="translate(298, 580)">
+    <rect width="540" height="80" rx="6" class="box-agent"/>
+    <text x="18" y="22" class="mono lbl electric">05 · Auditor · Falsifier v0</text>
+    <text x="18" y="44" class="display ttl ink">Adversarial pre-sign pass — catches hallucinations</text>
+    <text x="18" y="60" class="mono meta muted">Gemini 2.5 Flash · temp 0.0 · PMID format check + claim-direction match</text>
+    <text x="18" y="74" class="mono meta dim">Custom prompt-only. NOT ADK Eval (datasets not built in 18 days).</text>
+  </g>
+
+  <!-- Stage 1 hand-off label -->
+  <g>
+    <text x="298" y="704" class="mono lbl muted">↓ EndorsementClaimBundle (merged)</text>
+    <text x="298" y="722" class="mono meta-sm dim">Pydantic JSON · canonical sha256 · ready for signing</text>
+  </g>
+
+  <!-- ===== STAGE 2 SIGN ===== -->
+  <g filter="url(#signing-glow)">
+    <rect x="932" y="450" width="140" height="140" rx="8" class="box-sign"/>
+  </g>
+  <g transform="translate(932, 450)">
+    <text x="16" y="24" class="mono lbl moss">Merge + Sign</text>
+    <text x="16" y="46" class="display ttl ink">Ed25519</text>
+    <text x="16" y="64" class="mono meta muted">canonical JSON</text>
+    <text x="16" y="80" class="mono meta muted">did:web mesh-api</text>
+    <text x="16" y="100" class="mono meta muted">+ chain anchor</text>
+    <text x="16" y="116" class="mono meta muted">sha256(bundle :</text>
+    <text x="16" y="130" class="mono meta muted">prev or "genesis")</text>
+  </g>
+
+  <!-- Firestore log -->
+  <g>
+    <rect x="912" y="704" width="180" height="68" rx="6" class="box"/>
+    <text x="930" y="724" class="mono lbl muted">Transparency log</text>
+    <text x="930" y="744" class="display ttl ink">Firestore</text>
+    <text x="930" y="760" class="mono meta muted">append-only chain</text>
+  </g>
+
+  <!-- ===== STAGE 3 AGENTS ===== -->
+  <!-- 06 Cert Composer -->
+  <g transform="translate(1142, 308)">
+    <rect width="178" height="92" rx="6" class="box-agent"/>
+    <text x="14" y="22" class="mono lbl electric">06 · Cert Composer</text>
+    <text x="14" y="44" class="display ttl ink">Branded HTML cert</text>
+    <text x="14" y="62" class="mono meta muted">Gemini 2.5 Pro</text>
+    <text x="14" y="76" class="mono meta muted">post-sign · runs in</text>
+    <text x="14" y="90" class="mono meta muted">parallel with #07</text>
+  </g>
+
+  <!-- 07 Second Opinion -->
+  <g transform="translate(1142, 564)">
+    <rect width="178" height="160" rx="6" class="box-agent"/>
+    <text x="14" y="22" class="mono lbl electric">07 · Second Opinion</text>
+    <text x="14" y="44" class="display ttl ink">Adversarial double-check</text>
+    <text x="14" y="64" class="mono meta muted">Gemini 2.5 Pro · temp 0.3</text>
+    <text x="14" y="80" class="mono meta muted">+ Google Search grounding</text>
+    <text x="14" y="104" class="mono lbl warn">4 stress tests:</text>
+    <text x="14" y="122" class="mono meta-sm muted">• COURT — plaintiff use?</text>
+    <text x="14" y="136" class="mono meta-sm muted">• REGULATOR — FTC flag?</text>
+    <text x="14" y="150" class="mono meta-sm muted">• CONSENSUS · PUBLIC</text>
+  </g>
+
+  <!-- ===== Output: Brand response ===== -->
+  <g transform="translate(1142, 820)">
+    <rect width="198" height="56" rx="6" class="box"/>
+    <text x="14" y="22" class="mono lbl electric">Brand response</text>
+    <text x="14" y="40" class="display ttl ink">GET /a2a/v1/tasks/get</text>
+    <text x="14" y="52" class="mono meta-sm muted">bundle_hash · sig · chain_anchor</text>
+  </g>
+
+  <!-- ===== Footer ===== -->
+  <g transform="translate(60, 870)">
+    <line x1="0" y1="-10" x2="1280" y2="-10" stroke="rgba(255,255,255,0.08)"/>
+    <text x="0" y="6" class="mono meta-sm dim">MIT licensed · PCEC v0.1 spec CC-BY-4.0 · Built on Google Cloud · github.com/odominguez7/PawConscious-Mesh-GFS</text>
+    <text x="0" y="22" class="mono meta-sm electric" opacity="0.7">PawConscious Mesh · Reference deployment for the Agentic Compliance Protocol · GFS AI Agents Challenge · Track 3</text>
   </g>
 </svg>

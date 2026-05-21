@@ -584,23 +584,51 @@ async def architecture() -> HTMLResponse:
 <html lang="en"><head><meta charset="utf-8">
 <title>PawConscious — Architecture</title>
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#0A0B0D">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
-  body {{ margin:0; padding:48px 24px; background:#F2EDE0; font-family:'JetBrains Mono',ui-monospace,monospace; }}
+  :root {{
+    --bg: #0A0B0D;
+    --bg-elev: #111316;
+    --ink: #EDEEF1;
+    --muted: rgba(237,238,241,0.62);
+    --dim: rgba(237,238,241,0.42);
+    --electric: #00D4FF;
+    --border: rgba(255,255,255,0.08);
+  }}
+  * {{ box-sizing: border-box; }}
+  body {{ margin:0; padding:56px 24px 80px; background:var(--bg); color:var(--ink); font-family:'Geist', ui-sans-serif, system-ui, sans-serif; }}
   .frame {{ max-width:1400px; margin:0 auto; }}
-  .nav {{ margin-bottom:28px; font-size:11px; letter-spacing:0.18em; text-transform:uppercase; color:#13322B; }}
-  .nav a {{ color:inherit; text-decoration:underline; text-underline-offset:3px; }}
+  .nav {{ display:flex; gap:18px; flex-wrap:wrap; margin-bottom:36px; font-family:'JetBrains Mono', ui-monospace, monospace; font-size:11px; letter-spacing:0.18em; text-transform:uppercase; color:var(--muted); }}
+  .nav a {{ color:var(--electric); text-decoration:none; padding:8px 14px; border:1px solid var(--border); border-radius:4px; transition: border-color 0.15s ease, color 0.15s ease; }}
+  .nav a:hover {{ border-color: var(--electric); }}
+  .nav .sep {{ opacity: 0.3; }}
+  .svg-wrap {{ background:var(--bg-elev); border:1px solid var(--border); border-radius:10px; padding:24px; overflow:hidden; }}
   svg {{ width:100%; height:auto; display:block; }}
+  .caption {{ margin-top:28px; padding:20px 24px; background:var(--bg-elev); border:1px solid var(--border); border-radius:8px; }}
+  .caption h3 {{ margin:0 0 10px; font-size:13px; font-weight:700; letter-spacing:0.18em; text-transform:uppercase; color:var(--electric); font-family:'JetBrains Mono', ui-monospace, monospace; }}
+  .caption p {{ margin:6px 0; font-size:13.5px; line-height:1.6; color:var(--muted); max-width:1100px; }}
+  .caption code {{ color:var(--electric); font-family:'JetBrains Mono', ui-monospace, monospace; font-size:12px; }}
 </style>
 </head><body>
 <div class="frame">
   <div class="nav">
     <a href="/">← Back to PawConscious</a>
-    &nbsp;·&nbsp;
     <a href="/assets/architecture.svg" target="_blank" rel="noopener">Open SVG ↗</a>
-    &nbsp;·&nbsp;
     <a href="https://github.com/odominguez7/PawConscious-Mesh-GFS" target="_blank" rel="noopener">Source ↗</a>
+    <a href="/.well-known/agent-card.json" target="_blank" rel="noopener">Agent card ↗</a>
+    <a href="/pcec/v0/chain/head" target="_blank" rel="noopener">Chain head ↗</a>
   </div>
-  {svg}
+  <div class="svg-wrap">{svg}</div>
+  <div class="caption">
+    <h3>How to read this diagram</h3>
+    <p><b style="color:var(--ink)">Stage 1 — Reasoning Mesh.</b> The five-agent core. <code>claim-extractor</code> runs first (sequential), then for every claim the orchestrator fans out <code>evidence-grader</code>, <code>vet-rubric</code>, and <code>compliance</code> via <code>asyncio.gather</code>. The <code>auditor</code> (Falsifier v0) merges the evidence and runs an adversarial pre-sign pass. ADK <code>LlmAgent</code> is scaffolded on the claim-extractor; the others use <code>google.genai</code> direct for deterministic v0.1 latency.</p>
+    <p><b style="color:var(--ink)">Stage 2 — Sign.</b> The merged <code>EndorsementClaimBundle</code> is canonicalized, signed with <code>Ed25519</code> against <code>did:web:mesh-api-…</code>, and the chain anchor <code>sha256(bundle_hash + ":" + (prev_hash or "genesis"))</code> is appended to the Firestore transparency log.</p>
+    <p><b style="color:var(--ink)">Stage 3 — Adversarial.</b> After signing, two agents run in parallel: <code>cert-composer</code> renders the human-readable HTML certificate, and <code>second-opinion</code> uses <code>Gemini 2.5 Pro</code> with <b style="color:var(--ink)">Google Search grounding</b> to run four adversarial stress tests against the conclusion (court, regulator, scientific consensus, public skepticism) and try to break it.</p>
+    <p><b style="color:var(--ink)">A2A v0.3.</b> The public agent card at <code>/.well-known/agent-card.json</code> lets any A2A-compatible consumer call <code>verify_claim</code>. Our reference <code>ShopperAgent</code> is the live external consumer used end-to-end during evaluation — no third-party integrations claimed.</p>
+  </div>
 </div>
 </body></html>"""
     return HTMLResponse(content=html)
