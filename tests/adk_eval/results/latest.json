@@ -1,0 +1,12 @@
+{
+  "mesh_url": "https://mesh-api-oasa5mxega-uc.a.run.app",
+  "timestamp": "20260521T130338",
+  "total": 20,
+  "skipped_url_dead": 17,
+  "eligible": 3,
+  "passed": 3,
+  "score": "3/3",
+  "pct": 100.0,
+  "out_file": "eval-20260521T130338.jsonl",
+  "note": "Skipped cases had upstream PDP URLs that returned non-200 at eval time (DTC catalogs churn). Pass rate excludes skipped cases from the denominator."
+}

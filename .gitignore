@@ -39,4 +39,5 @@ research/raw/
 .cloud-run-temp/
 .gstack/
 .gbrain-source
-tests/adk_eval/results/
+tests/adk_eval/results/eval-*.jsonl
+!tests/adk_eval/results/latest.json

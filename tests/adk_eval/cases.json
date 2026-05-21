@@ -3,9 +3,11 @@
     "spec_version": "0.1",
     "description": "ADK eval baseline for PawConscious Mesh — the verify_claim multi-agent flow. Each case is a real DTC pet supplement PDP URL. Pass criteria are structural: the mesh must return a signed PCEC bundle with the expected agent outputs populated. Run via tests/adk_eval/run.py against a live mesh-api revision.",
     "agent_under_test": "verify_claim",
-    "agents_in_mesh": ["claim_extractor", "evidence_grader", "vet_rubric", "compliance", "auditor"],
-    "scoring": "case PASSES if all 4 structural assertions pass; baseline target is 27/30 (90%) — anything lower indicates a regression in one of the 5 specialized agents",
-    "last_updated": "2026-05-19"
+    "agents_in_mesh": ["claim_extractor", "evidence_grader", "vet_rubric", "compliance", "auditor", "report_writer", "second_opinion"],
+    "agents_under_eval": ["claim_extractor", "evidence_grader", "vet_rubric", "compliance", "auditor"],
+    "agents_under_eval_note": "report_writer (cert composition) and second_opinion (adversarial Google Search grounding) run after the signed bundle is returned; their outputs are not gated by the 4 structural assertions and are tested separately.",
+    "scoring": "case PASSES if all 4 structural assertions pass against the 5 in-bundle agents; baseline target is 90% of cases. Cases with non-200 source URLs are SKIPPED at runtime (DTC catalogs churn) and excluded from the denominator.",
+    "last_updated": "2026-05-21"
   },
   "cases": [
     { "id": "EC-001", "url": "https://www.nativepet.com/products/hip-joint", "min_claims": 1, "min_audits": 1, "expects_signature": true, "expects_chain_anchor": true, "notes": "Hip+Joint Inflammatory Care — known to trigger FTC §255.1 violation_flag" },

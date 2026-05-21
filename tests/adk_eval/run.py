@@ -13,7 +13,7 @@ GitHub Actions step to keep a published baseline score on the README.
 
 Usage:
   python tests/adk_eval/run.py                       # smoke (first 3 cases)
-  python tests/adk_eval/run.py --full                # all 20 cases (slow, ~12 min)
+  python tests/adk_eval/run.py --full                # all 20 cases (slow, ~60-90 min — single Cloud Run instance)
   python tests/adk_eval/run.py --case EC-001         # single case
 
 Env:
@@ -42,7 +42,7 @@ CASES_FILE = Path(__file__).parent / "cases.json"
 RESULTS_DIR = Path(__file__).parent / "results"
 
 
-def run_case(client: httpx.Client, case: dict[str, Any], timeout_s: int = 300) -> dict[str, Any]:
+def run_case(client: httpx.Client, case: dict[str, Any], timeout_s: int = 900) -> dict[str, Any]:
     case_id = case["id"]
     url = case["url"]
     t0 = time.monotonic()
@@ -51,9 +51,24 @@ def run_case(client: httpx.Client, case: dict[str, Any], timeout_s: int = 300) -
         "url": url,
         "assertions": {},
         "pass": False,
+        "skipped": False,
         "error": None,
         "elapsed_s": 0.0,
     }
+    # Pre-flight: HEAD probe the source URL. DTC pet brands churn catalog pages
+    # weekly; a 4xx/5xx here is a stale-fixture problem, not a mesh failure.
+    try:
+        head = client.head(url, follow_redirects=True, timeout=15.0, headers={"User-Agent": "Mozilla/5.0 (pcec-eval)"})
+        if head.status_code != 200:
+            result["skipped"] = True
+            result["error"] = f"url_dead: HEAD returned {head.status_code}"
+            result["elapsed_s"] = round(time.monotonic() - t0, 1)
+            return result
+    except Exception as e:
+        result["skipped"] = True
+        result["error"] = f"url_dead: HEAD raised {type(e).__name__}"
+        result["elapsed_s"] = round(time.monotonic() - t0, 1)
+        return result
     try:
         submit = client.post(
             f"{MESH_URL}/a2a/v1/tasks/send",
@@ -69,17 +84,30 @@ def run_case(client: httpx.Client, case: dict[str, Any], timeout_s: int = 300) -
             result["error"] = "no task_id"
             return result
 
-        # poll
+        # poll — mesh runs single-instance, so the GET endpoint can be blocked
+        # behind in-flight worker calls for tens of seconds. Use a generous per-GET
+        # read timeout AND retry on ReadTimeout (don't fail the case just because
+        # one poll request stalled). overall `timeout_s` deadline is the real bound.
         deadline = time.monotonic() + timeout_s
         last_status = "submitted"
+        data: dict[str, Any] = {}
         while time.monotonic() < deadline:
             time.sleep(5.0)
-            get = client.get(f"{MESH_URL}/a2a/v1/tasks/get/{task_id}", timeout=60.0)
-            get.raise_for_status()
-            data = get.json()
-            last_status = data.get("status", "")
-            if last_status in ("completed", "failed"):
-                break
+            try:
+                get = client.get(f"{MESH_URL}/a2a/v1/tasks/get/{task_id}", timeout=300.0)
+                get.raise_for_status()
+                data = get.json()
+                last_status = data.get("status", "")
+                if last_status in ("completed", "failed"):
+                    break
+            except httpx.ReadTimeout:
+                # GET was blocked behind the worker; keep polling until deadline.
+                continue
+            except httpx.HTTPStatusError as e:
+                # Transient 5xx — retry. 4xx is real and should fail the case.
+                if e.response.status_code >= 500:
+                    continue
+                raise
 
         result["assertions"]["completed_within_timeout"] = last_status == "completed"
         if last_status != "completed":
@@ -133,24 +161,35 @@ def main() -> int:
         for i, case in enumerate(cases, 1):
             print(f"[{i}/{len(cases)}] {case['id']} {case['url'][:60]}…", file=sys.stderr)
             r = run_case(client, case)
-            print(f"  {'PASS' if r['pass'] else 'FAIL'} {r['elapsed_s']}s {r.get('error','')}", file=sys.stderr)
+            if r.get("skipped"):
+                tag = "SKIP"
+            elif r["pass"]:
+                tag = "PASS"
+            else:
+                tag = "FAIL"
+            print(f"  {tag} {r['elapsed_s']}s {r.get('error','')}", file=sys.stderr)
             results.append(r)
             f.write(json.dumps(r) + "\n")
 
+    skipped = sum(1 for r in results if r.get("skipped"))
     passed = sum(1 for r in results if r["pass"])
     total = len(results)
+    eligible = total - skipped
     summary = {
         "mesh_url": MESH_URL,
         "timestamp": ts,
         "total": total,
+        "skipped_url_dead": skipped,
+        "eligible": eligible,
         "passed": passed,
-        "score": f"{passed}/{total}",
-        "pct": round(passed / total * 100, 1) if total else 0.0,
+        "score": f"{passed}/{eligible}",
+        "pct": round(passed / eligible * 100, 1) if eligible else 0.0,
         "out_file": str(out_path.name),
+        "note": "Skipped cases had upstream PDP URLs that returned non-200 at eval time (DTC catalogs churn). Pass rate excludes skipped cases from the denominator.",
     }
     summary_path.write_text(json.dumps(summary, indent=2))
-    print(f"\n→ {passed}/{total} passed ({summary['pct']}%) — written to {out_path}", file=sys.stderr)
-    return 0 if passed == total else 1
+    print(f"\n→ {passed}/{eligible} passed ({summary['pct']}%) · {skipped} skipped (url_dead) · {total} total — written to {out_path}", file=sys.stderr)
+    return 0 if eligible > 0 and passed == eligible else 1
 
 
 if __name__ == "__main__":

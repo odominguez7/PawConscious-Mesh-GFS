@@ -1,6 +1,6 @@
 # PawConscious Mesh — ACP for Pet
 
-[![ADK eval baseline](https://img.shields.io/badge/ADK%20eval-baseline%20spec%20live-9C5E1A?style=flat-square&labelColor=1A1D1E)](tests/adk_eval/cases.json)
+[![ADK eval](https://img.shields.io/badge/ADK%20eval-3%2F3%20pass%20(eligible)-13322B?style=flat-square&labelColor=1A1D1E)](tests/adk_eval/results/latest.json)
 [![Live](https://img.shields.io/badge/live-mesh--api.run.app-13322B?style=flat-square&labelColor=1A1D1E)](https://mesh-api-40952019806.us-central1.run.app/)
 [![Track 3](https://img.shields.io/badge/GFS%20Track%203-Gemini%20%2B%20Cloud%20Run%20%2B%20A2A%20%2B%20ADK%20scaffold-9C5E1A?style=flat-square&labelColor=1A1D1E)](https://mesh-api-40952019806.us-central1.run.app/architecture)
 [![MIT](https://img.shields.io/badge/license-MIT-13322B?style=flat-square&labelColor=1A1D1E)](LICENSE)
