@@ -256,37 +256,45 @@ async def health_vertex_search() -> dict[str, Any]:
     """R1 probe — judges can verify the Vertex AI Search corpus exists and is
     indexed without needing Vertex AI console credentials.
 
-    Returns the data store path, document count, and a sample retrieval against
+    Returns the data store path, sources count, and a sample retrieval against
     a canonical claim. If the corpus is missing or empty, this endpoint surfaces
     that fact rather than silently swallowing the failure (per N3 amendment).
     """
-    from agents.compliance import (
-        VERTEX_SEARCH_PROJECT,
-        VERTEX_SEARCH_LOCATION,
-        VERTEX_SEARCH_DATA_STORE,
-    )
-    from shared.pcec_schema import Claim, ClaimKind
-    probe_claim = Claim(text="endorsement substantiation evidence", kind=ClaimKind.HEALTH_BENEFIT)
     try:
-        from agents.compliance import retrieve_grounding_sources
+        from agents.compliance import (
+            VERTEX_SEARCH_PROJECT,
+            VERTEX_SEARCH_LOCATION,
+            VERTEX_SEARCH_DATA_STORE,
+            retrieve_grounding_sources,
+        )
+        from shared.pcec_schema import Claim, ClaimKind
+        probe_claim = Claim(
+            text="endorsement substantiation evidence",
+            kind=ClaimKind.EFFICACY,
+        )
         sources = await retrieve_grounding_sources(probe_claim, max_results=3)
         sample = [
             {"source_id": s.source_id, "snippet_hash": s.snippet_hash}
             for s in sources[:3]
         ]
         status = "ok" if sources else "empty"
-    except Exception as e:
-        sources = []
-        sample = []
-        status = f"error:{type(e).__name__}"
-    return {
-        "status": status,
-        "data_store": (
+        data_store_path = (
             f"projects/{VERTEX_SEARCH_PROJECT}/locations/{VERTEX_SEARCH_LOCATION}/"
             f"collections/default_collection/dataStores/{VERTEX_SEARCH_DATA_STORE}"
-        ),
-        "probe_query": probe_claim.text,
-        "sources_returned": len(sources),
+        )
+        probe_text = probe_claim.text
+        sources_count = len(sources)
+    except Exception as e:
+        return {
+            "status": f"error:{type(e).__name__}",
+            "error_detail": str(e)[:300],
+            "note": "Live probe failed at startup. Compliance agent will run prompt-only.",
+        }
+    return {
+        "status": status,
+        "data_store": data_store_path,
+        "probe_query": probe_text,
+        "sources_returned": sources_count,
         "sample": sample,
         "note": (
             "Live probe against the FTC §255 + AAFCO PF7 + NASC corpus. "
