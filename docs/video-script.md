@@ -105,6 +105,93 @@ pcec.dev (coming soon)         — protocol spec
 
 ---
 
+## CAPTURE PLAN — v0.10.1 LIVE HERO (locked 2026-05-21 per codex A-codex-11)
+
+Move I capture against the rebuilt hero at https://mesh-api-40952019806.us-central1.run.app/. This section locks the live-shoot workflow so the video doesn't get derailed by Cloud Run cold-start or live-mesh timing variance.
+
+### Pre-shoot warm-up (T-3min before recording starts)
+
+1. Open a private terminal tab. Curl `/health` 3× with the budget below to defeat Cloud Run cold-start. The first hit blocks until cold-start completes (typically ~90-180s on `min-instances=0`); calls 2 and 3 land in <300ms each. **Capture must start ONLY after the third curl returns sub-second** — that's the proof the service is warm. Budget at least 3 minutes for the full warm-up cycle.
+
+   ```bash
+   # Run this 3+ minutes before recording. First call blocks; subsequent are fast.
+   time curl -s -o /dev/null -w "1: %{http_code} %{time_total}s\n" \
+     "https://mesh-api-40952019806.us-central1.run.app/health"
+   sleep 5
+   time curl -s -o /dev/null -w "2: %{http_code} %{time_total}s\n" \
+     "https://mesh-api-40952019806.us-central1.run.app/health"
+   sleep 5
+   time curl -s -o /dev/null -w "3: %{http_code} %{time_total}s\n" \
+     "https://mesh-api-40952019806.us-central1.run.app/health"
+   ```
+
+   Calls 2 and 3 must both return < 0.5s before you start recording. If they don't, wait 30s and retry from call 1.
+
+2. Open the live URL in a fresh Chrome window at 1440×900 (NOT 1920×1080 — the hero's max-content reads cleaner at 1440, and matches the 16:9 frame Veo defaults to). Disable scroll bars (`overflow:hidden` on `<html>` via DevTools or use a clean profile).
+
+3. Pre-click the URL input and confirm the JustFoodForDogs PDP URL is pre-filled (it is, as of v0.10.0c). DO NOT click Verify yet.
+
+4. Hover the **Verify your product** button briefly — the 7-chip preview pulses for ~800ms. This is the "first 10 seconds" cue and should appear in the video's intro.
+
+### Primary path — live JFFD audit (1:30 - 9:30 of wall-clock, ~7-9 min)
+
+The live audit takes ~547s on a warm mesh. Real run produces real findings (2018 FDA Listeria recall via Second Opinion, weak L-Tryptophan evidence). Capture this end-to-end ONCE, then edit:
+
+1. **0:00 - 0:05** — Static landing. Trust anchor visible above Verify. Hover Verify (preview chips flash) → click. Cyan perimeter starts pulsing immediately. **Stage 1 cinema card slides in from top-right.**
+
+2. **0:05 - 5:30** — Live mesh polling. Stream emits 1-2 progress messages then heartbeat every ~9s. Cyan perimeter holds during the entire reasoning phase. The on-screen elapsed timer in the coverage line ticks up. **This section will be sped up 8× in editing**; the narrator beat fills the silence ("the agents are running real PubMed retrieval, real FTC §255 grounding…").
+
+3. **5:30 - 5:45** — Backend transitions to signing. Live `progress_message` flips to "signed". **Moss-green dramatic flash on perimeter (~3s).** Stage 2 cinema card overlays centered: "SIGNING ✦ Ed25519 · canonical JSON · chain anchor → Firestore."
+
+4. **5:45 - 9:15** — Stage 3 polling for Agent 6 + Agent 7. Cert composer delivers first (~4.6KB cert HTML). Second Opinion delivers next with the 4 stress tests. **Violet perimeter pulse · Stage 3 card top-left fills in test-by-test:** COURT ✓ SURVIVES · REGULATOR ⚠ NEEDS REVIEW (2018 Listeria recall) · CONSENSUS ⚠ NEEDS REVIEW (L-Tryptophan weak) · PUBLIC ⚠ NEEDS REVIEW.
+
+5. **9:15 - 9:30** — Final state. Amber perimeter (FAIL/NEEDS REVIEW). Cert pane drops in with "JustFoodForDogs · Calming Efficacy & Ingredient Claims · FAIL" headline. Coverage line: "Verified 3 of 3 claims · NEEDS REVIEW · signed bundle below". Stage cinema cards cleared.
+
+### Fallback — cached replay (if live stalls or errors mid-recording)
+
+If the live audit stalls > 3 min without progress, OR if Cloud Run cold-start adds > 4 min to the wait:
+
+1. Press F5 to reload the page.
+2. Click **▶ Replay cached demo** (button in the coverage row). ~12s wall-clock cycle.
+3. The cached cycle replays the verbatim JustFoodForDogs audit (same URN, same FAIL verdict, same Second Opinion findings). It is **honest theater**: the mode badge clearly says `▶ CACHED` (violet) and the coverage line says "Cached cycle running · pre-recorded data".
+4. **Narrator must say**: "We're skipping the 9-minute wait with a pre-recorded replay — every byte you see here came from a real run, signed and chain-anchored, URN visible at the end."
+
+### Aspect ratios + motion timing
+
+- Desktop primary cut: **1440×900** (16:9). Captures the full hero grid + diagram + cert prominence.
+- Vertical mobile cut: **720×1280** (9:16). The mobile breakpoint at 720px stacks the experience cleanly per codex A-codex-7 — diagram + cert visible without cropping.
+- Motion: **stage cinema cards last ≥3 seconds each** so the video editor can extract clean clips. Verified in the v0.10.1c CSS (transitions @ 350ms enter/exit, dwell ~3000-4200ms per stage in cached cycle).
+
+### Narration beats (v0.10.1 vocabulary, codex-cleared)
+
+Replaces the v0.8.x narration block in this same doc above. Use these exact phrasings — they pass the honesty regression test in `tests/test_cert_honesty.py`:
+
+- ❌ "the veterinary panel" → ✅ "the AI vet-rubric simulation"
+- ❌ "vet panel runs a five-vet rubric" → ✅ "the AI vet-rubric simulation runs a five-vet rubric — Gemini role-playing five vets; v0.2 replaces this with licensed-DVM attestation"
+- ❌ "verified citations exist" → ✅ "the Falsifier auditor cleared PMID-format checks on every citation"
+- ❌ "FDA approved" → ✅ "FTC §255 substantiation check (Vertex AI Search grounded)"
+
+### Capture checklist (run through this before hitting record)
+
+- [ ] mesh-api `/health` returns < 300ms (pre-warmed)
+- [ ] Chrome at 1440×900, scroll bars hidden
+- [ ] URL input has the JFFD product URL pre-filled
+- [ ] Stage cinema cards animations confirmed working (hover Verify → preview chips flash in sequence)
+- [ ] /devex-review boomerang scorecard ≥ 7.5/10 (currently 8.0)
+- [ ] Cached replay flow verified (fallback path) — `▶ Replay cached demo` button visible in coverage row
+- [ ] Audio environment quiet (Lyria + VO mix done in post)
+- [ ] OBS / ScreenFlow recording at 60fps minimum
+- [ ] Backup browser tab on a different revision in case rollback needed mid-shoot
+
+### What NOT to do during the live shoot
+
+- Don't click anything else during the 60-180s wait — the coverage line + heartbeat is the entire visible state. Trust the visual.
+- Don't refresh the page during a live run — task_store is in-memory on Cloud Run; refresh = lose the in-flight task ID.
+- Don't try to verify a DIFFERENT URL during the shoot — JFFD is the locked demo URL because it FAILS with substantive findings (Listeria recall, weak evidence). A passing claim is a less compelling video.
+- Don't shoot before /devex-review baseline reruns at 7.5+. If the v0.10.1+ hero ever regresses below that score, fix first.
+
+---
+
 ## TECHNICAL PRODUCTION NOTES
 
 **Voiceover:**
