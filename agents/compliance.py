@@ -83,7 +83,7 @@ def _search_data_store_path() -> str:
     )
 
 
-async def retrieve_grounding_sources(claim: Claim, max_results: int = 3) -> list[GroundingSource]:
+async def retrieve_grounding_sources(claim: Claim, max_results: int = 5) -> list[GroundingSource]:
     """Direct Vertex AI Search retrieval — returns top-K passages with provenance.
 
     Manual-retrieval pattern because Gemini's vertex_ai_search Tool is incompatible

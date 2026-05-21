@@ -251,6 +251,51 @@ async def health_agent_engine() -> dict[str, Any]:
     }
 
 
+@app.get("/health/vertex-search")
+async def health_vertex_search() -> dict[str, Any]:
+    """R1 probe — judges can verify the Vertex AI Search corpus exists and is
+    indexed without needing Vertex AI console credentials.
+
+    Returns the data store path, document count, and a sample retrieval against
+    a canonical claim. If the corpus is missing or empty, this endpoint surfaces
+    that fact rather than silently swallowing the failure (per N3 amendment).
+    """
+    from agents.compliance import (
+        VERTEX_SEARCH_PROJECT,
+        VERTEX_SEARCH_LOCATION,
+        VERTEX_SEARCH_DATA_STORE,
+    )
+    from shared.pcec_schema import Claim, ClaimKind
+    probe_claim = Claim(text="endorsement substantiation evidence", kind=ClaimKind.HEALTH_BENEFIT)
+    try:
+        from agents.compliance import retrieve_grounding_sources
+        sources = await retrieve_grounding_sources(probe_claim, max_results=3)
+        sample = [
+            {"source_id": s.source_id, "snippet_hash": s.snippet_hash}
+            for s in sources[:3]
+        ]
+        status = "ok" if sources else "empty"
+    except Exception as e:
+        sources = []
+        sample = []
+        status = f"error:{type(e).__name__}"
+    return {
+        "status": status,
+        "data_store": (
+            f"projects/{VERTEX_SEARCH_PROJECT}/locations/{VERTEX_SEARCH_LOCATION}/"
+            f"collections/default_collection/dataStores/{VERTEX_SEARCH_DATA_STORE}"
+        ),
+        "probe_query": probe_claim.text,
+        "sources_returned": len(sources),
+        "sample": sample,
+        "note": (
+            "Live probe against the FTC §255 + AAFCO PF7 + NASC corpus. "
+            "If status != 'ok', the compliance agent will run prompt-only — "
+            "surfacing the failure mode instead of silently falling back."
+        ),
+    }
+
+
 @app.get("/.well-known/agent-card.json")
 async def agent_card() -> dict[str, Any]:
     """A2A v0.3 public agent card. Discoverable by any A2A-compatible client."""
@@ -312,7 +357,12 @@ class A2ATaskRequest(BaseModel):
     id: Optional[str] = None
 
     def resolve_url_and_skill(self) -> tuple[Optional[str], str, dict[str, Any]]:
-        """Extract (product_url, skill, raw_input_for_replay) from any accepted shape."""
+        """Extract (product_url_or_urn, skill, raw_input_for_replay) from any accepted shape.
+
+        For skill=verify_claim: returns the product URL.
+        For skill=fetch_substantiation_bundle: returns the PCEC URN as the
+        positional value, so a2a_send can route it to the resolver.
+        """
         # Resolve message: direct, or via JSON-RPC params wrapper
         msg = self.message
         if msg is None and self.params and isinstance(self.params, dict):
@@ -328,52 +378,74 @@ class A2ATaskRequest(BaseModel):
             skill = self.params.get("skill")
         if not skill:
             skill = "verify_claim"
-        # Resolve URL — flat input wins; fall back to parts[*] URL extraction.
-        # Real URLs beat non-URL text fallbacks (e.g., "verify this" + json{product_url}
-        # should resolve to the URL in the json part, not the text fallback).
+        # Resolve URL or URN — flat input wins; fall back to parts[*] extraction.
+        # For fetch_substantiation_bundle the "url" slot carries the URN.
+        # Codex Day 18 P1: URN-shaped values are only accepted when the resolved
+        # skill is fetch_substantiation_bundle; for verify_claim we require a real
+        # URL so a misrouted URN cannot reach the downstream fetcher.
         url = None
         text_fallback: Optional[str] = None
         replay_input: dict[str, Any] = {}
+        is_fetch_bundle = (skill == "fetch_substantiation_bundle")
+
+        def _accept_token(tok: Optional[str]) -> Optional[str]:
+            """Return the token if it matches the active skill's expected shape."""
+            if not tok:
+                return None
+            if is_fetch_bundle:
+                return tok if tok.startswith("urn:pcec:claim:") else None
+            return tok if (tok.startswith("http://") or tok.startswith("https://")) else None
+
         if self.input:
             replay_input = dict(self.input)
-            url = self.input.get("product_url") or self.input.get("sku") or self.input.get("url")
+            if is_fetch_bundle:
+                url = _accept_token(self.input.get("urn") or self.input.get("bundle_urn"))
+            else:
+                url = _accept_token(
+                    self.input.get("product_url")
+                    or self.input.get("sku")
+                    or self.input.get("url")
+                )
         if not url and msg:
             for p in msg.parts:
                 if url:
                     break
                 if p.type == "text" and p.text:
                     candidate = p.text.strip()
-                    if candidate.startswith("http://") or candidate.startswith("https://"):
-                        url = candidate
+                    accepted = _accept_token(candidate)
+                    if accepted:
+                        url = accepted
                     elif text_fallback is None:
                         text_fallback = candidate
                 elif p.type == "json" and isinstance(p.data, dict):
                     replay_input.update(p.data)
-                    url = (
-                        p.data.get("product_url")
-                        or p.data.get("url")
-                        or p.data.get("sku")
-                    )
+                    if is_fetch_bundle:
+                        url = _accept_token(p.data.get("urn") or p.data.get("bundle_urn"))
+                    else:
+                        url = _accept_token(
+                            p.data.get("product_url")
+                            or p.data.get("url")
+                            or p.data.get("sku")
+                        )
             if not url:
                 # Second pass to absorb later json parts even after a text fallback.
                 for p in msg.parts:
                     if p.type == "json" and isinstance(p.data, dict):
                         replay_input.update(p.data)
-                        url = (
-                            p.data.get("product_url")
-                            or p.data.get("url")
-                            or p.data.get("sku")
-                        )
+                        if is_fetch_bundle:
+                            url = _accept_token(p.data.get("urn") or p.data.get("bundle_urn"))
+                        else:
+                            url = _accept_token(
+                                p.data.get("product_url")
+                                or p.data.get("url")
+                                or p.data.get("sku")
+                            )
                         if url:
                             break
-            # Only accept the text fallback if it looks like a URL. Codex 2026-05-21:
-            # accepting "verify this product" as a URL would let garbage reach the
-            # downstream fetch logic (services/mesh_api/main.py:300).
-            if not url and text_fallback and (
-                text_fallback.startswith("http://") or text_fallback.startswith("https://")
-            ):
+            # Only accept the text fallback if it matches the active skill's shape.
+            if not url and text_fallback and _accept_token(text_fallback):
                 url = text_fallback
-        if url and "product_url" not in replay_input:
+        if url and not is_fetch_bundle and "product_url" not in replay_input:
             replay_input["product_url"] = url
         return url, skill, replay_input
 
@@ -557,8 +629,64 @@ async def a2a_send(
 
     product_url, skill_id, resolved_input = request.resolve_url_and_skill()
 
-    if skill_id != "verify_claim":
-        raise HTTPException(status_code=404, detail=f"Unknown skill: {skill_id}")
+    if skill_id not in ("verify_claim", "fetch_substantiation_bundle"):
+        raise HTTPException(
+            status_code=404,
+            detail=(
+                f"Unknown skill: {skill_id}. Accepted skills (per /.well-known/agent-card.json): "
+                "`verify_claim` (URL in, signed bundle out), "
+                "`fetch_substantiation_bundle` (PCEC URN in, full bundle out)."
+            ),
+        )
+
+    # N1 — fetch_substantiation_bundle: synchronous resolve from the Firestore
+    # transparency log. No background task; returns 202 with task_id that
+    # immediately polls completed (consistent with the A2A async lifecycle).
+    if skill_id == "fetch_substantiation_bundle":
+        urn = product_url  # resolver overloads the slot; for this skill it carries the URN
+        if not urn or not urn.startswith("urn:pcec:claim:"):
+            raise HTTPException(
+                status_code=400,
+                detail=(
+                    "Missing or invalid PCEC URN. Accepted shapes: "
+                    "(1) flat `{\"skill\":\"fetch_substantiation_bundle\",\"input\":{\"urn\":\"urn:pcec:claim:...\"}}` or "
+                    "(2) A2A v0.3 `{\"message\":{\"parts\":[{\"type\":\"text\",\"text\":\"urn:pcec:claim:...\"}]}}`. "
+                    "Issue a new bundle first via skill=verify_claim and reuse the returned bundle_urn."
+                ),
+            )
+        entry = await fetch_bundle_async(urn)
+        if entry is None:
+            raise HTTPException(
+                status_code=404,
+                detail=(
+                    f"URN {urn!r} not found in transparency log. Either the bundle was never "
+                    "issued by this mesh, or the URN format is incorrect. Issue a new bundle via "
+                    "skill=verify_claim and reuse the returned bundle_urn."
+                ),
+            )
+        # Synthesize a completed-task envelope so A2A clients use one polling pattern.
+        state = await task_store.create(
+            input_data={"urn": urn, "skill": "fetch_substantiation_bundle"}
+        )
+        await task_store.update(
+            state.task_id,
+            status="completed",
+            progress_message="bundle resolved from transparency log",
+            output=entry,
+            bundle_hash=(entry or {}).get("bundle_hash"),
+            bundle_signature=(entry or {}).get("bundle_signature"),
+            chain_anchor=(entry or {}).get("chain_anchor"),
+        )
+        head_anchor = await get_head_anchor_async()
+        return A2ASubmittedResponse(
+            task_id=state.task_id,
+            status="completed",
+            poll_url=f"{PUBLIC_BASE_URL}/a2a/v1/tasks/get/{state.task_id}",
+            estimated_seconds=0,
+            head_anchor_at_submit=head_anchor,
+            idempotency_key=idempotency_key,
+            idempotent_replay=False,
+        )
 
     if not product_url:
         raise HTTPException(
@@ -712,14 +840,126 @@ async def chain_head() -> dict[str, Any]:
 from fastapi.responses import HTMLResponse, FileResponse
 
 
+# ---------------------------------------------------------------------------
+# U1+U2 — Global nav + footer (one source of truth, included on every page)
+# ---------------------------------------------------------------------------
+
+_GLOBAL_CHROME_CSS = """
+<style id="pc-global-chrome">
+.pc-globalnav { position:sticky; top:0; z-index:200; background:rgba(10,11,13,0.92); backdrop-filter:saturate(140%) blur(12px); -webkit-backdrop-filter:saturate(140%) blur(12px); border-bottom:1px solid rgba(255,255,255,0.08); }
+.pc-globalnav-inner { max-width:1400px; margin:0 auto; padding:14px 24px; display:flex; align-items:center; gap:24px; font-family:'JetBrains Mono', ui-monospace, monospace; }
+.pc-globalnav-brand { color:#EDEEF1; text-decoration:none; font-weight:700; letter-spacing:-0.01em; font-size:15px; font-family:'Geist','Inter',system-ui,sans-serif; }
+.pc-globalnav-brand .pc-globalnav-mark { color:#00D4FF; font-style:italic; font-weight:500; margin-left:2px; }
+.pc-globalnav-links { display:flex; gap:2px; flex:1; margin-left:8px; }
+.pc-globalnav-links a { color:rgba(237,238,241,0.62); text-decoration:none; padding:8px 14px; font-size:11px; letter-spacing:0.18em; text-transform:uppercase; border-radius:4px; transition:color 0.15s, background 0.15s; }
+.pc-globalnav-links a:hover { color:#EDEEF1; background:rgba(255,255,255,0.04); text-decoration:none; }
+.pc-globalnav-links a.pc-active { color:#00D4FF; background:rgba(0,212,255,0.08); }
+.pc-globalnav-github { color:#00D4FF; text-decoration:none; font-size:11px; letter-spacing:0.18em; text-transform:uppercase; padding:8px 14px; border:1px solid rgba(0,212,255,0.4); border-radius:4px; font-family:'JetBrains Mono', ui-monospace, monospace; }
+.pc-globalnav-github:hover { background:rgba(0,212,255,0.08); text-decoration:none; }
+.pc-globalfooter { background:#0A0B0D; border-top:1px solid rgba(255,255,255,0.08); padding:48px 24px 24px; margin-top:80px; font-family:'Geist','Inter',system-ui,sans-serif; color:rgba(237,238,241,0.62); }
+.pc-globalfooter-inner { max-width:1400px; margin:0 auto; display:grid; grid-template-columns:repeat(5,1fr); gap:32px; }
+.pc-globalfooter-col h4 { margin:0 0 12px; font-size:11px; font-weight:700; letter-spacing:0.18em; text-transform:uppercase; color:#00D4FF; font-family:'JetBrains Mono', ui-monospace, monospace; }
+.pc-globalfooter-col a, .pc-globalfooter-col span { display:block; padding:4px 0; color:rgba(237,238,241,0.62); text-decoration:none; font-size:12.5px; line-height:1.6; }
+.pc-globalfooter-col a:hover { color:#00D4FF; text-decoration:none; }
+.pc-globalfooter-meta { max-width:1400px; margin:32px auto 0; padding-top:20px; border-top:1px solid rgba(255,255,255,0.06); font-family:'JetBrains Mono', ui-monospace, monospace; font-size:10.5px; letter-spacing:0.14em; text-transform:uppercase; color:rgba(237,238,241,0.42); }
+@media (max-width: 760px) { .pc-globalnav-inner { padding:10px 16px; gap:12px; } .pc-globalnav-links { gap:0; flex-wrap:wrap; margin-left:0; } .pc-globalnav-github { display:none; } .pc-globalfooter-inner { grid-template-columns:repeat(2,1fr); gap:24px; } }
+</style>
+"""
+
+_GLOBAL_NAV_TEMPLATE = """
+<header class="pc-globalnav">
+  <div class="pc-globalnav-inner">
+    <a class="pc-globalnav-brand" href="/">PawConscious<span class="pc-globalnav-mark">Mesh</span></a>
+    <nav class="pc-globalnav-links" aria-label="Primary">
+      <a href="/" data-page="product" {active_product}>Product</a>
+      <a href="/agents" data-page="developers" {active_developers}>Developers</a>
+      <a href="/architecture" data-page="architecture" {active_architecture}>Architecture</a>
+      <a href="/demo/shopper" data-page="demo" {active_demo}>Demo</a>
+    </nav>
+    <a class="pc-globalnav-github" href="https://github.com/odominguez7/PawConscious-Mesh-GFS" target="_blank" rel="noopener">GitHub ↗</a>
+  </div>
+</header>
+"""
+
+_GLOBAL_FOOTER_HTML = """
+<footer class="pc-globalfooter">
+  <div class="pc-globalfooter-inner">
+    <div class="pc-globalfooter-col">
+      <h4>Product</h4>
+      <a href="/">Overview</a>
+      <a href="/demo/shopper">Live demo</a>
+      <a href="/#biz">Pricing</a>
+    </div>
+    <div class="pc-globalfooter-col">
+      <h4>Developers</h4>
+      <a href="/agents">API reference</a>
+      <a href="/.well-known/agent-card.json" target="_blank" rel="noopener">Agent card</a>
+      <a href="/architecture">Architecture</a>
+    </div>
+    <div class="pc-globalfooter-col">
+      <h4>Trust</h4>
+      <a href="/.well-known/did.json" target="_blank" rel="noopener">DID document</a>
+      <a href="/pcec/v0/chain/head" target="_blank" rel="noopener">Chain head</a>
+      <a href="/health/vertex-search" target="_blank" rel="noopener">Vertex Search</a>
+      <a href="/health/agent-engine" target="_blank" rel="noopener">Agent Engine</a>
+    </div>
+    <div class="pc-globalfooter-col">
+      <h4>Company</h4>
+      <a href="https://github.com/odominguez7/PawConscious-Mesh-GFS" target="_blank" rel="noopener">GitHub</a>
+      <a href="/api-info" target="_blank" rel="noopener">API info</a>
+    </div>
+    <div class="pc-globalfooter-col">
+      <h4>Legal</h4>
+      <span>MIT License</span>
+      <span>PCEC v0.1 spec CC-BY-4.0</span>
+    </div>
+  </div>
+  <div class="pc-globalfooter-meta">
+    PawConscious Mesh · Agentic Compliance Protocol · GFS AI Agents Challenge Track 3
+  </div>
+</footer>
+"""
+
+
+def _global_nav(active: str) -> str:
+    """Render the global nav with the active page link styled.
+
+    `active` is one of: product · developers · architecture · demo.
+    """
+    flags = {
+        "active_product": "",
+        "active_developers": "",
+        "active_architecture": "",
+        "active_demo": "",
+    }
+    key = f"active_{active}"
+    if key in flags:
+        flags[key] = 'class="pc-active" aria-current="page"'
+    return _GLOBAL_NAV_TEMPLATE.format(**flags)
+
+
+def _render_page(filename: str, active: str) -> str:
+    """Read a static HTML file and inject global chrome.
+
+    Substitutes `<!--GLOBAL_NAV-->`, `<!--GLOBAL_FOOTER-->`, and
+    `<!--GLOBAL_CHROME_CSS-->` markers. If a marker is missing the
+    file is returned unchanged (defensive — pages can opt out).
+    """
+    path = Path(__file__).parent / "static" / filename
+    html = path.read_text(encoding="utf-8")
+    html = html.replace("<!--GLOBAL_CHROME_CSS-->", _GLOBAL_CHROME_CSS)
+    html = html.replace("<!--GLOBAL_NAV-->", _global_nav(active))
+    html = html.replace("<!--GLOBAL_FOOTER-->", _GLOBAL_FOOTER_HTML)
+    return html
+
+
 @app.get("/", response_class=HTMLResponse)
 async def root(v: Optional[str] = None) -> HTMLResponse:
     """Console UI. Default = v2 (deck-aligned redesign, flipped 2026-05-19 night after Stage 2A.x
     + v0.3.x codex handshakes cleared and E2E verified). v1 always available at /?v=v1 as fallback.
     """
     filename = "console.html" if v == "v1" else "console-v2.html"
-    console_path = Path(__file__).parent / "static" / filename
-    return HTMLResponse(content=console_path.read_text(encoding="utf-8"))
+    return HTMLResponse(content=_render_page(filename, active="product"))
 
 
 @app.get("/demo/shopper", response_class=HTMLResponse)
@@ -735,8 +975,7 @@ async def shopper_demo() -> HTMLResponse:
     Option C. Live page exists so judges can verify; the controlled-conditions
     recording is the primary delivery.
     """
-    path = Path(__file__).parent / "static" / "shopper-demo.html"
-    return HTMLResponse(content=path.read_text(encoding="utf-8"))
+    return HTMLResponse(content=_render_page("shopper-demo.html", active="demo"))
 
 
 @app.get("/agents", response_class=HTMLResponse)
@@ -749,8 +988,7 @@ async def agents_page() -> HTMLResponse:
     snippet, and pricing teaser. The page is also the agent-platform-developer
     pitch surface judges land on when they click `Agents` in primary nav.
     """
-    path = Path(__file__).parent / "static" / "agents.html"
-    return HTMLResponse(content=path.read_text(encoding="utf-8"))
+    return HTMLResponse(content=_render_page("agents.html", active="developers"))
 
 
 @app.get("/architecture", response_class=HTMLResponse)
@@ -762,6 +1000,7 @@ async def architecture() -> HTMLResponse:
     """
     svg_path = Path(__file__).parent / "static" / "assets" / "architecture.svg"
     svg = svg_path.read_text(encoding="utf-8")
+    nav = _global_nav(active="architecture")
     html = f"""<!doctype html>
 <html lang="en"><head><meta charset="utf-8">
 <title>PawConscious — Architecture</title>
@@ -770,6 +1009,7 @@ async def architecture() -> HTMLResponse:
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+{_GLOBAL_CHROME_CSS}
 <style>
   :root {{
     --bg: #0A0B0D;
@@ -781,12 +1021,8 @@ async def architecture() -> HTMLResponse:
     --border: rgba(255,255,255,0.08);
   }}
   * {{ box-sizing: border-box; }}
-  body {{ margin:0; padding:56px 24px 80px; background:var(--bg); color:var(--ink); font-family:'Geist', ui-sans-serif, system-ui, sans-serif; }}
-  .frame {{ max-width:1400px; margin:0 auto; }}
-  .nav {{ display:flex; gap:18px; flex-wrap:wrap; margin-bottom:36px; font-family:'JetBrains Mono', ui-monospace, monospace; font-size:11px; letter-spacing:0.18em; text-transform:uppercase; color:var(--muted); }}
-  .nav a {{ color:var(--electric); text-decoration:none; padding:8px 14px; border:1px solid var(--border); border-radius:4px; transition: border-color 0.15s ease, color 0.15s ease; }}
-  .nav a:hover {{ border-color: var(--electric); }}
-  .nav .sep {{ opacity: 0.3; }}
+  body {{ margin:0; padding:0; background:var(--bg); color:var(--ink); font-family:'Geist', ui-sans-serif, system-ui, sans-serif; }}
+  .frame {{ max-width:1400px; margin:0 auto; padding:48px 24px 0; }}
   .svg-wrap {{ background:var(--bg-elev); border:1px solid var(--border); border-radius:10px; padding:24px; overflow:hidden; }}
   svg {{ width:100%; height:auto; display:block; }}
   .caption {{ margin-top:28px; padding:20px 24px; background:var(--bg-elev); border:1px solid var(--border); border-radius:8px; }}
@@ -795,23 +1031,18 @@ async def architecture() -> HTMLResponse:
   .caption code {{ color:var(--electric); font-family:'JetBrains Mono', ui-monospace, monospace; font-size:12px; }}
 </style>
 </head><body>
+{nav}
 <div class="frame">
-  <div class="nav">
-    <a href="/">← Back to PawConscious</a>
-    <a href="/assets/architecture.svg" target="_blank" rel="noopener">Open SVG ↗</a>
-    <a href="https://github.com/odominguez7/PawConscious-Mesh-GFS" target="_blank" rel="noopener">Source ↗</a>
-    <a href="/.well-known/agent-card.json" target="_blank" rel="noopener">Agent card ↗</a>
-    <a href="/pcec/v0/chain/head" target="_blank" rel="noopener">Chain head ↗</a>
-  </div>
   <div class="svg-wrap">{svg}</div>
   <div class="caption">
     <h3>How to read this diagram</h3>
-    <p><b style="color:var(--ink)">Stage 1 — Reasoning Mesh.</b> The five-agent core. <code>claim-extractor</code> runs first (sequential), then for every claim the orchestrator fans out <code>evidence-grader</code>, <code>vet-rubric</code>, and <code>compliance</code> via <code>asyncio.gather</code>. The <code>auditor</code> (Falsifier v0) merges the evidence and runs an adversarial pre-sign pass. ADK <code>LlmAgent</code> is scaffolded on the claim-extractor; the others use <code>google.genai</code> direct for deterministic v0.1 latency.</p>
+    <p><b style="color:var(--ink)">Stage 1 — Reasoning Mesh.</b> The five-agent core. <code>claim-extractor</code> runs first (sequential), then for every claim the orchestrator fans out <code>evidence-grader</code>, <code>vet-rubric</code>, and <code>compliance</code> via <code>asyncio.gather</code>. The <code>auditor</code> merges the evidence and runs an adversarial pre-sign pass. Internal flow is a single-process multi-agent pipeline with public A2A mesh at the edge; ADK migration in progress per the Day-20/21 plan.</p>
     <p><b style="color:var(--ink)">Stage 2 — Sign.</b> The merged <code>EndorsementClaimBundle</code> is canonicalized, signed with <code>Ed25519</code> against <code>did:web:mesh-api-…</code>, and the chain anchor <code>sha256(bundle_hash + ":" + (prev_hash or "genesis"))</code> is appended to the Firestore transparency log.</p>
-    <p><b style="color:var(--ink)">Stage 3 — Adversarial.</b> After signing, two agents run in parallel: <code>cert-composer</code> renders the human-readable HTML certificate, and <code>second-opinion</code> uses <code>Gemini 2.5 Pro</code> with <b style="color:var(--ink)">Google Search grounding</b> to run four adversarial stress tests against the conclusion (court, regulator, scientific consensus, public skepticism) and try to break it.</p>
-    <p><b style="color:var(--ink)">A2A v0.3.</b> The public agent card at <code>/.well-known/agent-card.json</code> lets any A2A-compatible consumer call <code>verify_claim</code>. Our reference <code>ShopperAgent</code> is the live external consumer used end-to-end during evaluation — no third-party integrations claimed.</p>
+    <p><b style="color:var(--ink)">Stage 3 — Adversarial.</b> After signing, two agents run in parallel: <code>cert-composer</code> renders the human-readable HTML certificate, and <code>second-opinion</code> uses <code>Gemini 2.5 Pro</code> with <b style="color:var(--ink)">Google Search grounding</b> to run four adversarial stress tests against the conclusion (court, regulator, scientific consensus, public skepticism). Fails CLOSED with <code>UNAVAILABLE</code> when the adversarial pass cannot complete, never silently agreeing.</p>
+    <p><b style="color:var(--ink)">A2A v0.3.</b> The public agent card at <code>/.well-known/agent-card.json</code> declares two skills: <code>verify_claim</code> (URL in, signed bundle out) and <code>fetch_substantiation_bundle</code> (PCEC URN in, full bundle out). Our reference <code>ShopperAgent</code> is the live external consumer.</p>
   </div>
 </div>
+{_GLOBAL_FOOTER_HTML}
 </body></html>"""
     return HTMLResponse(content=html)
 
