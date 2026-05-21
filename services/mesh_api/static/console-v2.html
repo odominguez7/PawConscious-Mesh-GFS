@@ -416,20 +416,6 @@
     text-anchor: middle; text-transform: uppercase; letter-spacing: 0.14em;
   }
   .demo-svg .node.active text.label { fill: var(--electric); }
-  /* v0.10.2 Phase G: Lucide icon glyphs inside each chip.
-     14x14 path centered. Fill follows chip state (idle/active/done). */
-  .demo-svg .node .glyph {
-    fill: none;
-    stroke: var(--muted);
-    stroke-width: 1.6;
-    stroke-linecap: round;
-    stroke-linejoin: round;
-    transition: stroke 0.4s ease;
-    pointer-events: none;
-  }
-  .demo-svg .node.active .glyph { stroke: var(--bg); }
-  .demo-svg .node.done .glyph { stroke: var(--bg); }
-  .demo-svg .node.preview-on .glyph { stroke: var(--electric); }
   /* v0.10.2 Phase G: pulse-link — when a stream row is hovered, the matching
      chip briefly flashes electric to confirm "this log came from THAT agent". */
   .demo-svg .node.pulse-link circle.body {
