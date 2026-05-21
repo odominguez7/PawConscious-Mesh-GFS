@@ -771,7 +771,7 @@
           <text class="meta warn" x="258" y="302">+ Sem. Scholar</text>
         </g>
 
-        <g class="box agent" data-tip="vet-panel">
+        <g class="box agent" data-tip="vet-rubric">
           <rect x="410" y="238" width="144" height="68"/>
           <text class="label" x="424" y="258">03 · Vet Rubric</text>
           <text class="meta" x="424" y="276">Prompt-only</text>
@@ -1196,7 +1196,18 @@ const JFFD_CERT_HTML = `<div class="cert-composed">
     <div class="cert-footer">
         urn:pcec:claim:syrz7izwfbatx6go2hgn2ipy<br>
         sha256:5fb540b67785d054c1d1694c35fd9bbd87acf95b9b13d2f7a4cdef416543ed0c<br>
-        <span style="color:var(--dim);font-size:0.6rem;">Disclosure: vet rubric is Gemini 2.5 Pro simulating a 5-vet panel; v0.2 roadmap replaces with licensed-DVM attestation.</span>
+        <span class="cert-disclosure-inline" style="color:var(--dim);font-size:0.62rem;">Disclosure: AI-derived attestation · vet rubric is an LLM simulation · audit + Second Opinion are LLM agents over real evidence (PubMed, FTC §255, Google Search) · Ed25519 signed</span>
+        <details style="margin-top:6px;">
+        <summary style="cursor:pointer;color:var(--electric);font-family:'JetBrains Mono', monospace;font-size:0.62rem;letter-spacing:0.16em;text-transform:uppercase;">Show full scope of attestation</summary>
+        <ul style="margin:8px 0 0 0;padding-left:18px;font-family:'JetBrains Mono', monospace;font-size:0.62rem;color:var(--dim);line-height:1.6;list-style:none;">
+        <li>· Vet rubric: Gemini 2.5 Pro simulating a 5-vet panel. Not licensed-DVM attestation. Replaced by the attest_expert A2A skill in v0.2.</li>
+        <li>· Evidence retrieval: BioMCP → PubMed (real papers) + Semantic Scholar citation grading. Real-existence verification of PMIDs is PMID-format only at v0.1; citation_enricher extends to existence + influence.</li>
+        <li>· Compliance: Vertex AI Search over public FTC 16 CFR §255 + AAFCO PF7 + NASC public seal corpus. No licensed handbooks ingested.</li>
+        <li>· Auditor (Falsifier v0): claim-direction + PMID-format checks only.</li>
+        <li>· Second Opinion: Gemini 2.5 Pro + Google Search grounding.</li>
+        <li>· Signed: Ed25519 with mesh's own key (did:web:mesh-api-...). Not a 3rd-party accredited co-signature; partner co-signing tier (NASC / NSF / vet-school) is v0.2 roadmap.</li>
+        </ul>
+        </details>
     </div>
 </div>`;
 
@@ -1354,7 +1365,7 @@ async function cachedCycle() {
   const STEPS = [
     'claim-extractor · ADK + httpx · 3 claims extracted from PDP',
     'evidence-grader · BioMCP → PubMed · 7 papers retrieved · L-Tryptophan + chamomile evidence reviewed',
-    'vet-rubric · Gemini 2.5 Pro simulating 5-vet panel · scores 1-2 / 5 across claims',
+    'vet-rubric · Gemini 2.5 Pro simulating 5-vet rubric (LLM role-play) · scores 1-2 / 5 across claims',
     'compliance · Vertex AI Search · FTC §255.1 general flag on 2 of 3 claims',
     'auditor (Falsifier v0) · PMID + claim-direction checks · 1 FAIL surfaced',
     'Agent 6 (Cert Composer) · 4622-byte branded cert · Gemini 2.5 Pro',
@@ -1745,7 +1756,7 @@ const ARCH_TIPS = {
   'agent-engine': { name:'Orchestrator', meta:'<b>asyncio.gather</b> primitive for parallel fan-out (deterministic).<br>ADK ParallelAgent/SequentialAgent wrappers <i>planned</i> for full Agent Engine deployment per PLAN.md §2.<br>Reasoning Engine resource registered: 1255381144908595200<br>Deterministic sampling (temperature 0) across all 7 agents (Agents 1-5 = base mesh, Agent 6 = Cert Composer post-merge, Agent 7 = Second Opinion adversarial).' },
   'claim-extractor': { name:'Claim Extractor', meta:'Uses <b>ADK 2.0</b> (<code>google.adk.agents.LlmAgent</code>).<br>PDP fetch: <b>httpx + BeautifulSoup</b> primary; <b>Firecrawl API</b> fallback for anti-bot retailers.<br>Model: <b>Gemini 2.5 Pro</b> · temp 0.0<br>Returns: list[Claim{text, kind, position_on_page}]' },
   'evidence-grader': { name:'Evidence Grader', meta:'Tool: <b>BioMCP</b> → live PubMed search.<br>Model: <b>Gemini 2.5 Pro</b> · temp 0.0<br>AI2 Asta MCP (citation grading) + Vertex AI Search over PubMed-in-BigQuery: <i>roadmap (Phase 2.5 / 5)</i>, not shipped.' },
-  'vet-panel': { name:'Vet Rubric', meta:'<b>Prompt-only</b> 5-vet rubric simulation. No Vertex AI Search, no licensed handbook ingest (codex G7 P0.7).<br>Model: <b>Gemini 2.5 Pro</b> · temp 0.0<br>Score 1-5 + escalate_to_human_vet flag.<br>Roadmap: real Boston/MIT vet panel attestation.' },
+  'vet-rubric': { name:'Vet Rubric · AI simulation', meta:'<b>Prompt-only LLM simulation</b> — Gemini 2.5 Pro role-playing 5 board-certified vets. <b>Zero real DVMs in the loop today.</b><br>No Vertex AI Search, no licensed handbook ingest (codex G7 P0.7).<br>Model: <b>Gemini 2.5 Pro</b> · temp 0.0<br>Score 1-5 + escalate_to_human_vet flag.<br>v0.2 roadmap: <b>attest_expert</b> A2A skill replaces this with licensed-DVM attestation (accredited DVM partners).' },
   compliance: { name:'Compliance', meta:'Grounding: <b>Vertex AI Search</b> over PUBLIC-redistributable regulator corpus.<br>Corpora: FTC 16 CFR §255 (Endorsement Guides) · AAFCO PF7 (public summary) · NASC public-side seal program.<br>Model: <b>Gemini 2.5 Pro</b> · temp 0.0<br>NO licensed handbook ingest (codex G7 P0.7).' },
   auditor: { name:'Auditor · Falsifier v0', meta:'Adversarial pre-sign pass · <b>Gemini 2.5 Flash</b> · temp 0.0<br>2 checks: <b>citation_existence</b> (PMID format) + <b>claim_direction_match</b><br>Custom prompt-only. NOT ADK Eval (which requires datasets not built in 18 days, per PLAN.md §2).<br>Roadmap: cherry-pick detection · sample-size adequacy · stat-significance.' },
   'cert-composer': { name:'Cert Composer · post-sign', meta:'Composes the branded human-readable certificate from the already-signed bundle.<br>Model: <b>Gemini 2.5 Pro</b> · temp 0.0<br>Stage 3 · runs in parallel with Second Opinion after Ed25519 signing.<br>Output: standalone HTML cert at <b>/pcec/v0/claim/&#123;urn&#125;/cert</b>.<br>Signing itself happens in the mesh-api layer, not here — Cert Composer never signs.' },

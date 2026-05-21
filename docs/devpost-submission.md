@@ -40,7 +40,7 @@ The final result is callable from any external AI agent via our public A2A v0.3 
 
 1. **claim-extractor** (Gemini 2.5 Pro via `google.genai`; ADK `LlmAgent` + `FunctionTool` scaffolded for Phase 4 Agent Engine deployment) — pulls every health claim from the PDP via httpx + BeautifulSoup, with Firecrawl fallback for retailer pages
 2. **evidence-grader** (google.genai + Gemini 2.5 Pro) — queries PubMed live via BioMCP, then enriches every paper with real citation and influential-citation counts from Semantic Scholar Graph API
-3. **vet-panel** (google.genai + Gemini 2.5 Pro) — runs a 5-vet rubric simulation per claim and flags any that need human-vet escalation
+3. **vet-rubric** (google.genai + Gemini 2.5 Pro) — runs a 5-vet rubric **simulation** per claim (Gemini role-plays 5 board-certified vets; **no real DVMs in the loop today**) and flags any claim that should escalate to the v0.2 `attest_expert` skill (real licensed-DVM attestation, on the roadmap)
 4. **compliance** (google.genai + Gemini 2.5 Pro + Vertex AI Search) — maps each claim to FTC 16 CFR §255, AAFCO public definitions, and NASC seal-program standards, grounded against an indexed regulatory corpus with snippet provenance hashes
 5. **auditor** (google.genai + Gemini 2.5 Flash) — adversarial Falsifier v0: validates that every cited PMID matches the BioMCP PubMed format and that the paper's direction supports the claim (real-existence verification is a v0.2 follow-up via the Semantic Scholar enrichment hook we just shipped)
 6. **report-writer / cert-composer** (google.genai + Gemini 2.5 Pro) — composes the human-readable certificate report from the already-signed bundle (Ed25519 signing happens in the mesh-api signing layer, not in this agent)
@@ -101,7 +101,7 @@ The mesh exposes a public A2A v0.3 agent card at `/.well-known/agent-card.json` 
 
 ## What we learned
 
-1. **Structural independence is the moat.** Trust infrastructure that's captured by the parties being verified (Trustpilot, Yelp, in-house retailer trust marks) erodes credibility over time. ACP is third-party: brands pay per claim, retailers pay platform fees, neither side can alter the rubric, the audit trail is public, the vet panel is academic. See `docs/INDEPENDENCE.md`. This is the answer to Series A capture risk and to regulator evidence-grade questions.
+1. **Structural independence is the moat.** Trust infrastructure that's captured by the parties being verified (Trustpilot, Yelp, in-house retailer trust marks) erodes credibility over time. ACP is third-party: brands pay per claim, retailers pay platform fees, neither side can alter the rubric, the audit trail is public, and the v0.2 vet attestation (`attest_expert` A2A skill — accredited DVM partners) is academic-independent. **At v0.1 the vet rubric is an LLM simulation**; the move to real DVM attestation is a roadmap commitment, not a current claim. See `docs/INDEPENDENCE.md`. This is the answer to Series A capture risk and to regulator evidence-grade questions.
 
 2. **Scraping is the bridge, not the destination.** httpx + Firecrawl together cover ~95% of US pet supplement BRAND PDPs directly. Major retailers (Chewy, Amazon, Petco) actively block all scraping at the Akamai/PerimeterX layer — even Firecrawl stealth proxies. The Y2 enterprise path: retailers PUSH catalog to us via authenticated API as part of $500k-2M/yr platform contracts, motivated by competitive pressure once 20%+ of their supplement category is ACP-verified at the brand source.
 

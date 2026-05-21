@@ -41,13 +41,13 @@
 
 - `claim-extractor` → "7 claims extracted from PDP"
 - `evidence-grader` → "12 PubMed citations · top: 247 total / 18 influential (Semantic Scholar)"
-- `vet-panel` → "5-vet rubric: 4 of 5 claims pass at 4+/5; 1 claim flagged for escalation"
+- `vet-rubric` → "AI 5-vet rubric simulation: 4 of 5 claims pass at 4+/5; 1 claim flagged for escalation to v0.2 licensed-DVM attestation"
 - `compliance` → "FTC §255 mapping: 2 violations flagged"
 - `auditor` → "Adversarial pass: 1 PMID format mismatch flagged"
 - `report-writer` → "Cert composed: signed Ed25519, chain-anchored"
 - `second-opinion` → "Google Search grounded: FDA warning letter to Natural Native LLC + Cosequin $11.5M precedent — verdict flipped PASS → NEEDS REVIEW"
 
-**VO:** "Claim extractor pulls every health claim from the PDP. Evidence grader queries PubMed live via BioMCP and grades citations by influence using Semantic Scholar. Vet panel runs a five-vet rubric. Compliance maps each claim to FTC two-five-five with snippet provenance. Auditor catches format mismatches. Then the second opinion — our adversarial agent — searches the live web for evidence that contradicts the brand's own conclusion. It finds an FDA warning letter and the Cosequin precedent, and flips the verdict to NEEDS REVIEW."
+**VO:** "Claim extractor pulls every health claim from the PDP. Evidence grader queries PubMed live via BioMCP and grades citations by influence using Semantic Scholar. The AI vet-rubric simulation runs a five-vet rubric — Gemini role-playing five vets; the v0.2 release replaces this with licensed-DVM attestation. Compliance maps each claim to FTC two-five-five with snippet provenance. Auditor catches format mismatches. Then the second opinion — our adversarial agent — searches the live web for evidence that contradicts the brand's own conclusion. It finds an FDA warning letter and the Cosequin precedent, and flips the verdict to NEEDS REVIEW."
 
 **MUSIC:** Lyria builds, drums enter.
 

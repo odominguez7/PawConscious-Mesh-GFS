@@ -26,7 +26,7 @@ Paste a product PDP URL. Seven specialized agents run on Google Cloud across a t
 |---|---|---|---|---|
 | `claim-extractor` | google.genai (ADK LlmAgent scaffolded) | Gemini 2.5 Pro | httpx + BeautifulSoup primary, Firecrawl fallback | Pull every health/efficacy claim from PDP copy |
 | `evidence-grader` | google.genai | Gemini 2.5 Pro | BioMCP (PubMed) + Semantic Scholar Graph API batch (citation influence) | Search PubMed/Europe PMC, grade citations + influential-citation counts |
-| `vet-panel` | google.genai | Gemini 2.5 Pro | Prompt-only 5-vet rubric simulation | Per-claim 1-5 rubric score + human-vet escalation flag |
+| `vet-rubric` | google.genai | Gemini 2.5 Pro | Prompt-only 5-vet rubric **simulation** (LLM role-play; **no real DVMs in loop today**; `attest_expert` A2A skill replaces this with licensed-DVM attestation in v0.2) | Per-claim 1-5 rubric score + human-vet escalation flag |
 | `compliance` | google.genai | Gemini 2.5 Pro | Vertex AI Search (FTC §255 + NASC + AAFCO corpus) | Map every claim to regulator language with snippet provenance |
 | `auditor` (Falsifier) | google.genai | Gemini 2.5 Flash | PMID format + claim-direction check | Adversarial pass on the merged bundle |
 | `report-writer` (Cert Composer) | google.genai | Gemini 2.5 Pro | Bundle composition | Compose the human-readable certificate from the already-signed bundle |

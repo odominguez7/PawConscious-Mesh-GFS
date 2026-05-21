@@ -1,0 +1,56 @@
+{
+  "_meta": "Fixture bundle modeled on the JFFD live audit (urn:pcec:claim:syrz7izwfbatx6go2hgn2ipy). 3 claims, vet rubric 1-2/5, 2 of 3 FTC flagged, 1 audit FAIL. Used by tests/test_cert_prompt_fixture.py to verify Agent 6's prompt produces honest output without running the full 9-minute mesh.",
+  "sku": "JustFoodForDogs Calming Chews",
+  "product_url": "https://www.justfoodfordogs.com/product/calming-chews-for-dogs/50020180.html",
+  "bundle_urn": "urn:pcec:claim:test-fixture-jffd-001",
+  "issued_at": "2026-05-21T01:00:00Z",
+  "claims": [
+    {"text": "Calming", "kind": "efficacy"},
+    {"text": "Work together to help your dog handle daily stressors", "kind": "efficacy"},
+    {"text": "Clean ingredients", "kind": "ingredient"}
+  ],
+  "vet_scores": [
+    {
+      "score": 2,
+      "rationale": "The claim 'calming' is non-specific, and evidence for common ingredients is sparse with mixed results in small studies. Mechanism of action is plausible but not well-proven in dogs.",
+      "escalate_to_human_vet": true
+    },
+    {
+      "score": 1,
+      "rationale": "Specific efficacy claim ('handle stressors') requires RCT evidence in target species. The bundle contains zero peer-reviewed clinical trials supporting this direction.",
+      "escalate_to_human_vet": true
+    },
+    {
+      "score": 2,
+      "rationale": "'Clean ingredients' is a marketing term without scientific definition. Cannot be substantiated as written.",
+      "escalate_to_human_vet": true
+    }
+  ],
+  "compliance": [
+    {
+      "ftc_section": "16 CFR §255.1 General",
+      "violation_flag": true,
+      "rationale": "Specific efficacy language requires competent and reliable scientific evidence which is not present in the bundle."
+    },
+    {
+      "ftc_section": null,
+      "violation_flag": false,
+      "rationale": "Claim is non-specific positioning; FTC §255 substantiation threshold not triggered."
+    },
+    {
+      "ftc_section": "16 CFR §255.1 General",
+      "violation_flag": true,
+      "rationale": "'Clean ingredients' is unsubstantiated marketing language; could be flagged in FTC review."
+    }
+  ],
+  "audit": [
+    {"verdict": "PASS", "findings": []},
+    {"verdict": "FAIL", "findings": ["claim_direction_match: cited PMID supports general supplementation discussion, not the specific 'handle stressors' claim direction"]},
+    {"verdict": "PASS", "findings": []}
+  ],
+  "evidence": [
+    {"papers": [{"pmid": "12345678", "title": "L-Tryptophan supplementation in companion animals (review)"}]},
+    {"papers": [{"pmid": "23456789"}, {"pmid": "34567890"}]},
+    {"papers": [{"pmid": "45678901"}]}
+  ]
+}

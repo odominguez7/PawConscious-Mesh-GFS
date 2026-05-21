@@ -26,7 +26,7 @@ from agents.auditor import audit_bundle
 from agents.claim_extractor import extract_claims
 from agents.compliance import map_claim as compliance_map
 from agents.evidence_grader import grade_claim
-from agents.vet_panel import score_claim as vet_score
+from agents.vet_rubric import score_claim as vet_score  # renamed from vet_panel in v0.10.1a (honesty audit — Agent 3 is a rubric simulation, not a panel)
 from shared.pcec_schema import (  # noqa: E402
     AuditVerdict, Claim, ComplianceMapping, EndorsementClaimBundle,
     EvidenceBundle, VetRubricScore,

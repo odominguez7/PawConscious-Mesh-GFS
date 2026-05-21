@@ -3,7 +3,7 @@
     "spec_version": "0.1",
     "description": "ADK eval baseline for PawConscious Mesh — the verify_claim multi-agent flow. Each case is a real DTC pet supplement PDP URL. Pass criteria are structural: the mesh must return a signed PCEC bundle with the expected agent outputs populated. Run via tests/adk_eval/run.py against a live mesh-api revision.",
     "agent_under_test": "verify_claim",
-    "agents_in_mesh": ["claim_extractor", "evidence_grader", "vet_panel", "compliance", "auditor"],
+    "agents_in_mesh": ["claim_extractor", "evidence_grader", "vet_rubric", "compliance", "auditor"],
     "scoring": "case PASSES if all 4 structural assertions pass; baseline target is 27/30 (90%) — anything lower indicates a regression in one of the 5 specialized agents",
     "last_updated": "2026-05-19"
   },
