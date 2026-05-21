@@ -55,16 +55,14 @@
     max-width: 1280px; margin: 0 auto; padding: 16px 32px;
     display: flex; justify-content: space-between; align-items: center;
   }
-  .wordmark { font: 600 18px/1 var(--sans); letter-spacing: -0.02em; color: var(--ink); }
+  .wordmark { font: 600 18px/1 var(--sans); letter-spacing: -0.02em; color: var(--ink); text-decoration: none; }
   .wordmark .dot { color: var(--electric); }
-  .masthead-nav { display: flex; gap: 22px; align-items: center; font: 500 12px/1 var(--mono); letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); }
-  .masthead-nav .live { display: inline-flex; align-items: center; gap: 8px; color: var(--moss-glow); }
-  .masthead-nav .live::before {
-    content: ""; width: 7px; height: 7px; border-radius: 50%; background: var(--moss-glow);
-    box-shadow: 0 0 8px var(--moss-glow); animation: livePulse 2.2s ease-in-out infinite;
-  }
-  @keyframes livePulse { 0%,100% { opacity:1 } 50% { opacity:0.4 } }
+  /* v0.10.0b: real nav links (replaces status pills). 5 sticky section anchors. */
+  .masthead-nav { display: flex; gap: 18px; align-items: center; font: 500 11.5px/1 var(--mono); letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); }
+  .masthead-nav a { color: var(--muted); text-decoration: none; transition: color 0.15s ease; }
+  .masthead-nav a:hover { color: var(--electric); }
   .masthead-nav .sep { color: var(--dim); }
+  @keyframes livePulse { 0%,100% { opacity:1 } 50% { opacity:0.4 } }
 
   /* ===================== HERO ===================== */
   .hero {
@@ -99,32 +97,59 @@
     outline: none; border-color: var(--electric);
     box-shadow: 0 0 0 3px var(--electric-dim);
   }
-  .hero-cta select {
-    padding: 14px 12px; background: var(--surface); border: 1px solid var(--border-strong);
-    border-radius: 6px; color: var(--ink); font: 500 11px/1.2 var(--mono);
-    text-transform: uppercase; letter-spacing: 0.1em; cursor: pointer;
-  }
   .hero-cta button {
     padding: 14px 24px; background: var(--electric); color: var(--bg);
     border: 0; border-radius: 6px; cursor: pointer;
     font: 600 12px/1 var(--mono); text-transform: uppercase; letter-spacing: 0.14em;
-    transition: filter 0.15s ease, transform 0.06s ease;
+    transition: filter 0.15s ease, transform 0.06s ease, box-shadow 0.4s ease;
+    position: relative;
   }
   .hero-cta button:hover:not(:disabled) { filter: brightness(1.1); }
   .hero-cta button:active:not(:disabled) { transform: translateY(1px); }
   .hero-cta button:disabled { background: var(--surface-2); color: var(--dim); cursor: not-allowed; }
-  .hero-secondary {
-    margin-top: 14px; display: flex; gap: 22px; flex-wrap: wrap;
-    font: 500 11px/1 var(--mono); letter-spacing: 0.14em; text-transform: uppercase;
+  /* v0.10.0b / codex A6: soft pulse on the Verify button — telegraphs "click me"
+     without the autoplay distraction. Animation halts after first click. */
+  .hero-cta button.pulse:not(:disabled) {
+    animation: ctaPulse 2.4s ease-in-out infinite;
   }
-  .hero-secondary a { color: var(--electric); text-decoration: none; }
-  .hero-secondary a:hover { color: var(--ink); }
-  .hero-secondary .pill {
+  .hero-cta button.pulse-stop, .hero-cta button:disabled { animation: none; }
+  @keyframes ctaPulse {
+    0%, 100% { box-shadow: 0 0 0 0 rgba(0,212,255,0.55); }
+    50%      { box-shadow: 0 0 0 8px rgba(0,212,255,0); }
+  }
+
+  /* v0.10.0b / codex A8: inline three-tier error element under URL input. */
+  .hero-error {
+    margin-top: 12px; padding: 12px 14px;
+    background: rgba(255,92,53,0.08); border: 1px solid var(--warning);
+    border-radius: 6px; max-width: 540px;
+    font: 500 12px/1.55 var(--mono);
+  }
+  .hero-error[hidden] { display: none; }
+  .hero-error .err-problem { color: var(--warning); font-weight: 700; letter-spacing: 0.06em; margin-bottom: 4px; }
+  .hero-error .err-cause   { color: var(--muted); margin-bottom: 4px; }
+  .hero-error .err-fix     { color: var(--ink); }
+  .hero-error .err-fix::before { content: "→ "; color: var(--electric); font-weight: 700; }
+
+  /* v0.10.0b / codex A7: honest footnote below CTA. "Top-risk" copy scrubbed. */
+  .hero-footnote {
+    margin-top: 14px; max-width: 540px;
+    font: 500 11px/1.55 var(--mono); color: var(--dim);
+    letter-spacing: 0.04em;
+  }
+  .hero-footnote .ft-key { color: var(--electric); font-weight: 700; letter-spacing: 0.08em; }
+  .hero-footnote a { color: var(--electric); text-decoration: underline; text-underline-offset: 3px; }
+
+  .hero-pills {
+    margin-top: 18px; display: flex; gap: 10px; flex-wrap: wrap;
+    font: 500 10.5px/1 var(--mono); letter-spacing: 0.14em; text-transform: uppercase;
+  }
+  .hero-pills .pill {
     display: inline-flex; align-items: center; gap: 6px;
-    color: var(--muted); padding: 4px 8px;
+    color: var(--muted); padding: 5px 9px;
     background: var(--surface); border: 1px solid var(--border); border-radius: 4px;
   }
-  .hero-secondary .pill::before { content: "✓"; color: var(--moss-glow); font-weight: 700; }
+  .hero-pills .pill::before { content: "✓"; color: var(--moss-glow); font-weight: 700; }
 
   /* ===================== DEMO CONTAINER (unified — cached/live/replay) =====================
      v0.10.0a (commit 1 of hero rebuild) — FIXED-HEIGHT 520px container.
@@ -140,9 +165,11 @@
     transition: border-color 0.3s ease;
   }
   /* A4: outer border colour swaps with mode — peripherally visible even if badge below fold */
+  .demo[data-mode="ready"]   { border-color: var(--border-strong); }
+  .demo[data-mode="auto"]    { border-color: rgba(0,212,255,0.35); }
   .demo[data-mode="live"]    { border-color: var(--warning); }
   .demo[data-mode="replay"]  { border-color: #B9AEFF; }
-  .demo[data-mode="auto"]    { border-color: rgba(0,212,255,0.35); }
+  .demo[data-mode="done"]    { border-color: var(--moss-glow); }
 
   .demo-chrome {
     display: grid; grid-template-columns: auto 1fr auto; gap: 14px; align-items: center;
@@ -175,21 +202,44 @@
   .demo-chrome .mode-text { color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
   .demo-chrome .right { color: var(--dim); white-space: nowrap; }
 
-  /* A3: coverage line — second row inside chrome, post-run summary. Pre-run shows readiness. */
+  /* A3: coverage line — second row inside chrome. Two columns:
+       left = state (dot + text), right = "Replay cached demo" button.
+       Pre-run shows readiness; live mode swaps to poll status;
+       post-run shows claim coverage. Wired by setCoverage() in JS. */
   .demo-coverage {
-    padding: 8px 16px; border-bottom: 1px solid var(--border);
+    padding: 7px 12px 7px 16px; border-bottom: 1px solid var(--border);
     background: var(--bg);
     font: 500 10.5px/1 var(--mono); letter-spacing: 0.14em; text-transform: uppercase;
     color: var(--muted); flex-shrink: 0;
-    display: flex; align-items: center; gap: 8px;
+    display: grid; grid-template-columns: 1fr auto; gap: 12px; align-items: center;
+  }
+  /* v0.10.0b codex review fix: ellipsis must live on the inline span, not
+     the flex container — flex children render text-overflow correctly only
+     when the SPAN itself sets white-space/overflow/text-overflow AND has a
+     bounded width (parent min-width:0 enables shrinking below content size). */
+  .demo-coverage .cov-left { display: flex; align-items: center; gap: 8px; min-width: 0; }
+  .demo-coverage .cov-left #demoCoverageText {
+    min-width: 0; flex: 1;
+    overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
   }
   .demo-coverage .dot-marker {
-    display: inline-block; width: 6px; height: 6px; border-radius: 50%;
+    display: inline-block; width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0;
     background: var(--electric); box-shadow: 0 0 6px var(--electric);
     animation: livePulse 2.2s ease-in-out infinite;
   }
+  .demo-coverage.live .dot-marker { background: var(--warning); box-shadow: 0 0 6px var(--warning); }
   .demo-coverage.completed .dot-marker { background: var(--moss-glow); box-shadow: 0 0 6px var(--moss-glow); animation: none; }
   .demo-coverage.error .dot-marker { background: var(--warning); box-shadow: 0 0 6px var(--warning); animation: none; }
+  /* Replay button — secondary CTA visually scoped to the cached cycle. */
+  .demo-coverage .cov-replay {
+    padding: 6px 12px; background: transparent; color: #B9AEFF;
+    border: 1px solid rgba(123,108,255,0.4); border-radius: 4px;
+    font: 600 9.5px/1 var(--mono); text-transform: uppercase; letter-spacing: 0.16em;
+    cursor: pointer; flex-shrink: 0;
+    transition: background 0.15s ease, color 0.15s ease, border-color 0.15s ease;
+  }
+  .demo-coverage .cov-replay:hover:not(:disabled) { background: rgba(123,108,255,0.12); border-color: #B9AEFF; }
+  .demo-coverage .cov-replay:disabled { opacity: 0.4; cursor: not-allowed; }
 
   .demo-body { padding: 16px 22px 20px; flex: 1; min-height: 0; display: flex; flex-direction: column; gap: 10px; overflow: hidden; }
   .demo-stage { flex-shrink: 0; height: 220px; position: relative; }
@@ -223,6 +273,10 @@
   }
   .demo-svg .node.active circle.body { fill: var(--electric); stroke: var(--electric); filter: drop-shadow(0 0 10px var(--electric)); }
   .demo-svg .node.done circle.body { fill: var(--moss-glow); stroke: var(--moss-glow); }
+  /* v0.10.0b / codex A6: hover-preview — Verify button hover flashes chips in sequence
+     as a 0.8s "this is what's about to happen" cue, without committing to autoplay. */
+  .demo-svg .node.preview-on circle.body { fill: var(--electric-dim); stroke: var(--electric); }
+  .demo-svg .node.preview-on circle.halo { stroke-width: 1.5; opacity: 0.5; }
   .demo-svg .node circle.halo {
     fill: none; stroke: var(--electric); stroke-width: 0; opacity: 0;
     transition: opacity 0.3s ease;
@@ -470,19 +524,22 @@
 </head>
 <body>
 
+<!-- ================================================================
+     v0.10.0b: real nav bar (5 sticky links to page sections + repo).
+     Replaced the status pills (LIVE · 7-AGENT MESH · ...) — those were
+     status, not navigation. Section anchors target ids declared below.
+     ================================================================= -->
 <header class="masthead">
   <div class="masthead-inner">
-    <div class="wordmark">PawConscious<span class="dot">.</span></div>
+    <a href="#top" class="wordmark">PawConscious<span class="dot">.</span></a>
     <nav class="masthead-nav">
-      <span class="live">Live</span>
+      <a href="#how">How it works</a>
       <span class="sep">·</span>
-      <span>7-agent mesh</span>
+      <a href="#architecture">Architecture</a>
       <span class="sep">·</span>
-      <span>Gemini 2.5 Pro + Flash</span>
+      <a href="#proof">Proof</a>
       <span class="sep">·</span>
-      <span>A2A v0.3</span>
-      <span class="sep">·</span>
-      <span>Vertex AI Search</span>
+      <a href="#biz">Business case</a>
       <span class="sep">·</span>
       <a href="https://github.com/odominguez7/PawConscious-Mesh-GFS" target="_blank" rel="noopener">Repo ↗</a>
     </nav>
@@ -490,24 +547,32 @@
 </header>
 
 <!-- ===================== HERO ===================== -->
-<section class="hero">
+<section class="hero" id="top">
   <div class="container hero-grid">
     <div class="hero-left">
       <div class="eyebrow">PawConscious · Agentic Compliance Protocol</div>
       <h1>The <span class="grad">trust layer</span> AI agents call before recommending a consumer product.</h1>
-      <p class="hero-sub">Paste any pet supplement product page. Seven specialized agents on Google Cloud (one ADK, six <code style="color:var(--electric);font-family:var(--mono);">google.genai</code> direct) grade every health claim against PubMed and the FTC §255.3 substantiation rule, sign the evidence bundle with Ed25519 and anchor it to a public Firestore transparency log, compose a branded executive cert, then run an adversarial Second Opinion via Google Search grounding.</p>
+      <!-- v0.10.0b: buyer-framed hero sub. Tech-stack name-drops moved to the
+           Architecture section legend below. Speaks to the brand owner's
+           three concerns: plaintiff exposure, retailer trust, AI-shopper trust. -->
+      <p class="hero-sub">Paste your product page URL. Seven specialized agents extract every health claim, check it against PubMed and the FTC endorsement guide, sign the evidence with cryptographic provenance, and adversarially double-check the conclusion. In 60-180 seconds you get a signed bundle that plaintiffs, retailers, and AI shopping agents can verify on their own.</p>
       <div class="hero-cta">
         <input type="text" id="urlInput" placeholder="https://www.nativepet.com/products/hip-joint"
-               value="https://www.nativepet.com/products/hip-joint" autocomplete="off">
-        <select id="maxClaims" aria-label="Claims to verify">
-          <option value="1">1 claim</option>
-          <option value="2" selected>2 claims</option>
-          <option value="3">3 claims</option>
-        </select>
-        <button id="runBtn" onclick="runMesh()">Verify</button>
+               value="https://www.nativepet.com/products/hip-joint" autocomplete="off"
+               aria-describedby="urlError">
+        <button id="runBtn" onclick="runMesh()" class="pulse" aria-label="Verify your product">Verify your product</button>
       </div>
-      <div class="hero-secondary">
-        <a href="#" onclick="return replayCached(event)">↻ Replay cached validation (~12s)</a>
+      <!-- v0.10.0b / codex A8: inline three-tier error (problem · cause · fix).
+           Shows under the input on validation errors instead of buried in the stream. -->
+      <div class="hero-error" id="urlError" hidden>
+        <div class="err-problem"></div>
+        <div class="err-cause"></div>
+        <div class="err-fix"></div>
+      </div>
+      <!-- v0.10.0b / codex A7: honest footnote. "Top-risk" copy scrubbed entirely
+           — ranking isn't built. Demo verifies the first 3 claims extracted. -->
+      <p class="hero-footnote"><span class="ft-key">Demo</span> verifies the first 3 claims extracted from your URL · <span class="ft-key">Production</span> verifies all claims (see <a href="#biz">tiers</a>).</p>
+      <div class="hero-pills">
         <span class="pill">7 specialized agents</span>
         <span class="pill">Ed25519 signed</span>
         <span class="pill">Open MIT</span>
@@ -530,19 +595,23 @@
            7. docs/video-script.md (narration beats per stage)
          Codex sweep on diagram-touching commits enforces drift detection.
          ================================================================= -->
-    <div class="demo" id="demo" data-mode="auto" aria-label="Agent mesh visualization. Mirrors the canonical 3-stage architecture: Stage 1 Reasoning Mesh (5 agents) → Stage 2 Sign → Stage 3 Adversarial (2 agents). Cached loop runs on landing; live mesh runs when you click Verify.">
+    <div class="demo" id="demo" data-mode="ready" aria-label="Agent mesh visualization. Mirrors the canonical 3-stage architecture: Stage 1 Reasoning Mesh (5 agents) → Stage 2 Sign → Stage 3 Adversarial (2 agents). Click Verify to run live mesh against your URL; click Replay below to play a cached run.">
       <div class="demo-chrome">
         <div class="dots"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span></div>
         <div class="mode">
-          <span id="demoModeBadge" class="badge">Auto · cached</span>
-          <span class="mode-text" id="demoModeText">7-agent mesh · pre-recorded cycle</span>
+          <span id="demoModeBadge" class="badge">Ready</span>
+          <span class="mode-text" id="demoModeText">click Verify to run · or Replay for a cached preview</span>
         </div>
         <div class="right" id="demoRight">PCEC v0.1</div>
       </div>
-      <!-- A3: coverage line — shows readiness pre-run, claim coverage post-run. -->
+      <!-- A3: coverage line — pre-run readiness, live poll status, post-run claim coverage.
+           A6: replay button lives here so it visually associates with the cached cycle. -->
       <div class="demo-coverage" id="demoCoverage">
-        <span class="dot-marker"></span>
-        <span id="demoCoverageText">Ready · click Verify to run the live mesh</span>
+        <div class="cov-left">
+          <span class="dot-marker"></span>
+          <span id="demoCoverageText">Ready · paste a URL above and click Verify</span>
+        </div>
+        <button class="cov-replay" id="replayBtn" onclick="return runCached(event)" aria-label="Replay cached demo cycle">▶ Replay cached demo</button>
       </div>
       <div class="demo-body">
         <div class="demo-stage">
@@ -820,7 +889,7 @@
 </section>
 
 <!-- ===================== HOW ===================== -->
-<section class="how">
+<section class="how" id="how">
   <div class="container">
     <div class="how-head">
       <div class="eyebrow">How it works</div>
@@ -858,7 +927,7 @@ for claim in claims:
 </section>
 
 <!-- ===================== PROOF ===================== -->
-<section class="proof">
+<section class="proof" id="proof">
   <div class="container proof-grid">
     <div class="proof-text">
       <div class="eyebrow">The artifact</div>
@@ -891,7 +960,7 @@ for claim in claims:
 </section>
 
 <!-- ===================== BUSINESS CASE ===================== -->
-<section class="biz">
+<section class="biz" id="biz">
   <div class="container">
     <div class="biz-head">
       <div class="eyebrow">Business case</div>
@@ -1088,7 +1157,7 @@ const DEMO_RIGHT  = document.getElementById('demoRight');
 const DEMO_ANCHOR = document.querySelector('#demoAnchor .anchor-body');
 
 const URL_INPUT   = document.getElementById('urlInput');
-const MAX_CLAIMS  = document.getElementById('maxClaims');
+// v0.10.0b: maxClaims dropdown removed from markup; max_claims=3 hardcoded in runMesh().
 const RUN_BTN     = document.getElementById('runBtn');
 
 let demoMode = 'auto'; // 'auto' | 'live' | 'replay'
@@ -1257,32 +1326,62 @@ async function cachedCycle() {
   await sleep(4200);
 }
 
-async function autoLoop() {
-  while (true) {
-    if (interrupt) { await sleep(300); continue; }
-    await cachedCycle();
-    if (demoMode !== 'auto') return;
-  }
+/* ============================================================
+ * v0.10.0b: PAGE LANDS STATIC (no autoLoop). Codex amendment A6:
+ * static state + soft Verify-button pulse + on-hover preview is the
+ * "ready" affordance. Cached cycle runs ONLY when user clicks Replay.
+ * ============================================================ */
+const COVERAGE = document.getElementById('demoCoverage');
+const COVERAGE_TXT = document.getElementById('demoCoverageText');
+const URL_ERROR = document.getElementById('urlError');
+const REPLAY_BTN = document.getElementById('replayBtn');
+
+function setCoverage(state, text) {
+  COVERAGE.className = 'demo-coverage' + (state ? ` ${state}` : '');
+  if (text !== undefined) COVERAGE_TXT.textContent = text;
 }
 
-(async function startAuto() {
-  setMode('auto', 'Auto loop', '7-agent mesh · cached cycle', 'PCEC v0.1');
-  await sleep(400);
-  autoLoop();
+/* v0.10.0b / codex A8: three-tier inline error. */
+function setError(problem, cause, fix) {
+  if (!problem) { URL_ERROR.hidden = true; return; }
+  URL_ERROR.querySelector('.err-problem').textContent = problem;
+  URL_ERROR.querySelector('.err-cause').textContent = cause || '';
+  URL_ERROR.querySelector('.err-fix').textContent = fix || '';
+  URL_ERROR.hidden = false;
+}
+
+function setReady() {
+  setMode('ready', 'Ready', 'click Verify to run · or Replay for a cached preview', 'PCEC v0.1');
+  setCoverage('', 'Ready · paste a URL above and click Verify');
+}
+
+/* Initial state — no animation. Static chips, static Sign anchor. */
+(function init() {
+  setReady();
 })();
 
-// "Replay cached" — interrupts current cycle, plays one clean cycle, then resumes auto-loop
-async function replayCached(e) {
+/* "Replay cached demo" — runs one cached cycle, then returns to ready.
+ * No auto-loop reentry. Distinct from runMesh() so the user always knows
+ * which mode is which. */
+async function runCached(e) {
   if (e) e.preventDefault();
-  if (demoMode === 'live') return false;
-  interrupt = true;
-  setMode('replay', 'Replay', 'deterministic · single cycle', 'CACHED');
-  document.getElementById('demo').scrollIntoView({ behavior:'smooth', block:'start' });
-  await sleep(200);
+  if (demoMode === 'live' || demoMode === 'replay') return false;
+  // Stop any pulse on Verify — the user has chosen a cached preview.
+  RUN_BTN.classList.add('pulse-stop');
+  REPLAY_BTN.disabled = true;
+  interrupt = true; cycleGen++;
+  await sleep(50);
   interrupt = false;
+  setMode('replay', '▶ CACHED', 'pre-recorded demo · ~12s', 'CACHED');
+  setCoverage('', 'Cached cycle running · pre-recorded data');
+  setError();
   await cachedCycle();
-  setMode('auto', 'Auto loop', '7-agent mesh · cached cycle', 'PCEC v0.1');
-  autoLoop();
+  // After cycle: show coverage summary (cached uses fixed 3 claims).
+  setMode('done', '✓ DONE', 'cached cycle complete · click Verify to run live', 'COMPLETED');
+  setCoverage('completed', 'Verified 3 of 3 demo claims · cached bundle visible below');
+  REPLAY_BTN.disabled = false;
+  // Re-enable Verify pulse for the next run.
+  RUN_BTN.classList.remove('pulse-stop');
   return false;
 }
 
@@ -1291,19 +1390,36 @@ async function replayCached(e) {
  * ============================================================ */
 async function runMesh() {
   const url = URL_INPUT.value.trim();
-  if (!url || !url.startsWith('http')) {
-    streamAdd('Enter a valid product URL above.', 'err');
+  // v0.10.0b / codex A8: three-tier inline errors (problem · cause · fix).
+  if (!url) {
+    setError('Enter your product URL',
+             'We need an HTTPS link to fetch the label.',
+             'Try https://www.nativepet.com/products/hip-joint');
     URL_INPUT.focus();
     return;
   }
+  if (!url.startsWith('http')) {
+    setError("That doesn't look like a URL",
+             'Expected https://example.com/path',
+             'Paste the product page from your DTC site or retailer (Chewy, Petco, etc.)');
+    URL_INPUT.focus();
+    return;
+  }
+  setError(); // clear
+
   // Kill any in-flight cached cycle — bump generation, set interrupt, wait one frame for the
   // async cachedCycle to observe the abort, then reset DOM cleanly.
   cycleGen++;
   interrupt = true;
   await sleep(50);
+  interrupt = false;
   resetDemo();
   streamClear();
-  setMode('live', 'Live · your URL', `mesh-api-…run.app · ${url.replace(/^https?:\/\//,'').slice(0,40)}…`, 'POST /a2a/v1/tasks/send');
+  // Stop the Verify-button pulse — the user has clicked it.
+  RUN_BTN.classList.add('pulse-stop');
+  REPLAY_BTN.disabled = true;
+  setMode('live', '● LIVE · YOUR URL', `${url.replace(/^https?:\/\//,'').slice(0,40)}…`, 'POST /a2a/v1/tasks/send');
+  setCoverage('live', 'Live mesh running · ~60-180s typical · please wait');
   RUN_BTN.disabled = true;
   document.getElementById('demo').scrollIntoView({ behavior:'smooth', block:'start' });
   streamAdd(`POST /a2a/v1/tasks/send → ${url}`);
@@ -1312,7 +1428,9 @@ async function runMesh() {
     const submit = await fetch('/a2a/v1/tasks/send', {
       method:'POST',
       headers:{ 'Content-Type':'application/json', 'X-API-Key':'demo-key-2026-06' },
-      body: JSON.stringify({ skill:'verify_claim', input:{ product_url:url, max_claims: parseInt(MAX_CLAIMS.value,10) } }),
+      // v0.10.0b / codex A7: max_claims hardcoded to 3 (was user-selected from dropdown,
+      // which was confusing buyer UX). Backend ranking isn't built; honest cap = first 3.
+      body: JSON.stringify({ skill:'verify_claim', input:{ product_url:url, max_claims: 3 } }),
     });
     if (!submit.ok) throw new Error(`submit ${submit.status}`);
     const sub = await submit.json();
@@ -1338,21 +1456,48 @@ async function runMesh() {
         if (data.progress_message && data.progress_message !== lastMsg) {
           lastMsg = data.progress_message;
           streamAdd(`mesh [${elapsed}s] · ${data.status} · ${lastMsg}`, 'ok');
+          setCoverage('live', `Live mesh · ${elapsed}s · ${lastMsg}`);
         } else {
           streamAdd(`mesh [${elapsed}s] · ${data.status}`);
         }
       } else if (attempts % 3 === 0) {
         // heartbeat every 9s so the user knows polling is alive
         streamAdd(`[${elapsed}s] still ${data.status}… (poll ${attempts})`, 'dim');
+        setCoverage('live', `Live mesh · ${elapsed}s elapsed · still ${data.status}`);
       }
-      if (data.status === 'completed') { renderLive(data); RUN_BTN.disabled = false; return; }
-      if (data.status === 'failed') { streamAdd(`task failed: ${data.error || '—'}`, 'err'); RUN_BTN.disabled=false; return; }
+      if (data.status === 'completed') { renderLive(data); RUN_BTN.disabled = false; REPLAY_BTN.disabled = false; return; }
+      if (data.status === 'failed') {
+        streamAdd(`task failed: ${data.error || '—'}`, 'err');
+        setError('Live mesh task failed',
+                 data.error || 'The orchestrator returned a failure status.',
+                 'Click Verify again to retry, or click ▶ Replay cached demo to preview a working run.');
+        // v0.10.0b codex review fix: reset demoMode so Replay isn't gated as 'live'.
+        setMode('ready', 'Error', 'live mesh failed · retry or run cached', 'PCEC v0.1');
+        setCoverage('error', 'Live mesh task failed');
+        RUN_BTN.disabled=false; REPLAY_BTN.disabled = false;
+        return;
+      }
     }
     streamAdd('polling timed out after 4min', 'err');
+    // v0.10.0b / codex A8: timeout error with concrete fix path.
+    setError('Verification ran longer than 4 minutes',
+             'The mesh may be cold-starting (first Cloud Run hit takes ~120s).',
+             'Click Verify again to retry, or click ▶ Replay cached demo to preview a pre-recorded run.');
+    setMode('ready', 'Timeout', 'live mesh ran >4min · retry or run cached', 'PCEC v0.1');
+    setCoverage('error', 'Live mesh timed out · retry or run cached demo');
   } catch (err) {
     streamAdd(`error: ${err.message}`, 'err');
+    setError('Live mesh hit an error',
+             err.message || 'Unknown failure mode.',
+             'Retry or click ▶ Replay cached demo to confirm the agent flow works.');
+    setMode('ready', 'Error', 'live mesh error · retry or run cached', 'PCEC v0.1');
+    setCoverage('error', `Live mesh error · ${err.message || 'unknown'}`);
   } finally {
     RUN_BTN.disabled = false;
+    REPLAY_BTN.disabled = false;
+    // v0.10.0b codex review fix: restore Verify pulse so the user knows
+    // the button is clickable again after error or completion.
+    RUN_BTN.classList.remove('pulse-stop');
   }
 }
 
@@ -1384,13 +1529,15 @@ function renderLive(data) {
   document.getElementById('dcSig').textContent = data.bundle_signature || '—';
   document.getElementById('dcVerdict').textContent = passing ? 'PASS · live' : 'NEEDS REVIEW · live';
   DEMO_CERT.classList.add('visible');
-  setMode('live', 'Live · done', `signed bundle issued`, 'COMPLETED');
+  setMode('done', '✓ DONE · LIVE', `signed bundle issued`, 'COMPLETED');
+  // v0.10.0b: coverage line shows honest verified-count vs total claims found.
+  const totalClaims = (bundle.claims && bundle.claims.length) ? bundle.claims.length : audits.length;
+  setCoverage('completed', `Verified ${audits.length} of ${totalClaims} claims · ${passing ? 'PASS' : 'NEEDS REVIEW'} · signed bundle below`);
 
   // v0.8.0: continue polling for Agent 6 (cert_html) + Agent 7 (second_opinion)
   // since they attach AFTER status=completed. Show them as they arrive.
-  // v0.8.4: update status line + insert a visible "composing" placeholder so user
-  // knows Agents 6 + 7 are still cooking in the background.
-  STATUS.textContent = 'Bundle signed · Agent 6 composing branded cert · Agent 7 running adversarial Second Opinion…';
+  // v0.10.0b: STATUS.textContent calls removed — never defined, threw ReferenceError
+  // silently since v0.8.4. Coverage-line updates replace them via setCoverage().
   streamAdd('waiting for Agent 6 (Cert Composer)…', 'dim');
   streamAdd('waiting for Agent 7 (Second Opinion) · ~15-20s w/ Google Search grounding', 'dim');
   // Insert a visible composing banner inside the cert pane
@@ -1420,7 +1567,7 @@ async function pollForAgent6and7(taskId) {
         renderCertHtml(d.cert_html);
         renderedCert = true;
         streamAdd(`✓ Agent 6 (Cert Composer) delivered · ${d.cert_html.length} bytes of branded cert (Gemini 2.5 Pro)`, 'ok');
-        STATUS.textContent = `Cert composed · Agent 7 running adversarial Second Opinion…`;
+        setCoverage('completed', `Cert composed · Agent 7 running adversarial Second Opinion…`);
       }
       if (!renderedSO && d.second_opinion) {
         renderSecondOpinion(d.second_opinion);
@@ -1429,7 +1576,7 @@ async function pollForAgent6and7(taskId) {
         const tests = d.second_opinion.tests || [];
         const survived = tests.filter(t=>(t.verdict||'').toUpperCase()==='SURVIVES').length;
         streamAdd(`✓ Agent 7 (Second Opinion) delivered · ${overall} · ${survived}/${tests.length} stress tests survived`, overall==='CONFIRMS' ? 'ok' : 'err');
-        STATUS.textContent = `All 7 agents complete · Second Opinion: ${overall}`;
+        setCoverage('completed', `All 7 agents complete · Second Opinion: ${overall}`);
       }
     } catch (_) { break; }
   }
@@ -1487,6 +1634,34 @@ function renderSecondOpinion(so) {
 function escapeHtml(s) {
   return String(s||'').replace(/[&<>"']/g, c => ({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 }
+
+/* ============================================================
+ * v0.10.0b / codex A6: Verify-button hover preview.
+ * Mouse-enter on Verify flashes the 7 agent chips in stage order
+ * over ~700ms — gives buyers/judges a 1-sec peek at what's about
+ * to happen without committing to autoplay.
+ * ============================================================ */
+let _previewActive = false;
+RUN_BTN.addEventListener('mouseenter', () => {
+  if (demoMode === 'live' || demoMode === 'replay' || _previewActive) return;
+  // Don't preview if a cycle is currently in progress / completed (state would clash).
+  const nodes = Array.from(DEMO_NODES.querySelectorAll('.node'));
+  if (nodes.some(n => n.classList.contains('active') || n.classList.contains('done'))) return;
+  _previewActive = true;
+  let i = 0;
+  const tick = () => {
+    if (i > 0) nodes[i-1].classList.remove('preview-on');
+    if (i >= nodes.length) {
+      nodes.forEach(n => n.classList.remove('preview-on'));
+      _previewActive = false;
+      return;
+    }
+    nodes[i].classList.add('preview-on');
+    i++;
+    setTimeout(tick, 95);
+  };
+  tick();
+});
 
 /* ============================================================
  * ARCHITECTURE — interactive tooltip on hover/focus
