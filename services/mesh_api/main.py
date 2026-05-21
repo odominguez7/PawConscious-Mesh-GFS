@@ -133,8 +133,31 @@ A2A_AGENT_CARD = {
         "schemes": ["api-key"],
         "note": (
             "Hackathon period: demo API key required (header: X-API-Key). "
-            "Public open access ships post-hackathon once abuse controls validated. "
-            "Issued by: PawConscious (sole operator, single trust root in v0.1)."
+            "GFS JUDGES — demo key: `demo-key-2026-06`. Add header "
+            "`X-API-Key: demo-key-2026-06` to any /a2a/v1/* request. "
+            "Public open access ships post-hackathon once abuse controls validated."
+        ),
+    },
+    "envelopes": {
+        "accepted": ["a2a-v0.3", "pawconscious-flat-v0.1"],
+        "examples": {
+            "a2a-v0.3": {
+                "message": {
+                    "role": "user",
+                    "parts": [{"type": "text", "text": "https://www.nativepet.com/products/hip-joint"}],
+                },
+                "skill": "verify_claim",
+            },
+            "pawconscious-flat-v0.1": {
+                "skill": "verify_claim",
+                "input": {"product_url": "https://www.nativepet.com/products/hip-joint"},
+            },
+        },
+        "note": (
+            "POST /a2a/v1/tasks/send accepts BOTH the Linux Foundation A2A v0.3 standard "
+            "envelope (message.parts[].text containing the product URL) AND a flat "
+            "{skill, input} shape. Standards-compliant A2A clients can call this endpoint "
+            "without translation. JSON-RPC 2.0 wrapping (params.message) is also accepted."
         ),
     },
     "defaultInputModes": ["text", "application/json"],
@@ -244,11 +267,110 @@ async def did_doc() -> dict[str, Any]:
 # A2A v0.3 task endpoint
 # ---------------------------------------------------------------------------
 
+class A2APart(BaseModel):
+    """A2A v0.3 message part — one element of a multi-modal message."""
+    type: str = Field("text", description="Part type: text | json | binary")
+    text: Optional[str] = None
+    data: Optional[dict[str, Any]] = None
+
+
+class A2AMessage(BaseModel):
+    """A2A v0.3 message — role + parts list, multi-modal."""
+    role: str = Field("user", description="Message role: user | agent")
+    parts: list[A2APart] = Field(default_factory=list)
+
+
 class A2ATaskRequest(BaseModel):
-    """A2A v0.3 task envelope per Linux Foundation spec (April 2026 GA)."""
-    skill: str = Field(..., description="Skill ID per agent card")
-    input: dict[str, Any] = Field(..., description="Skill input arguments")
+    """A2A v0.3 task envelope — dual-shape acceptance (B4 amendment 2026-05-21).
+
+    Accepts BOTH:
+    - Flat shape (PawConscious proprietary, also documented in agent card):
+        {"skill": "verify_claim", "input": {"product_url": "..."}}
+    - A2A v0.3 standard envelope (Linux Foundation spec, April 2026 GA):
+        {"message": {"role":"user", "parts":[{"type":"text", "text":"<url>"}]},
+         "skill": "verify_claim"  // optional; defaults to verify_claim
+        }
+      The standard envelope can wrap in JSON-RPC 2.0 (`params: {message: ...}`) too.
+
+    Field resolution order for the product URL:
+      1. input.product_url / input.sku / input.url   (flat shape)
+      2. params.message.parts[*].text                (JSON-RPC wrap of A2A v0.3)
+      3. message.parts[*].text                       (bare A2A v0.3)
+
+    The agent card declares dual support; judges running standards-compliant A2A
+    clients can call this endpoint without translation.
+    """
+    skill: Optional[str] = Field(None, description="Skill ID per agent card (default: verify_claim)")
+    input: Optional[dict[str, Any]] = Field(None, description="Flat skill input arguments")
+    message: Optional[A2AMessage] = Field(None, description="A2A v0.3 standard message envelope")
+    params: Optional[dict[str, Any]] = Field(None, description="JSON-RPC 2.0 params (wraps `message`)")
     task_id: Optional[str] = None
+    # JSON-RPC envelope fields — accepted and ignored. Present so strict A2A clients
+    # don't see unexpected-field warnings.
+    jsonrpc: Optional[str] = None
+    method: Optional[str] = None
+    id: Optional[str] = None
+
+    def resolve_url_and_skill(self) -> tuple[Optional[str], str, dict[str, Any]]:
+        """Extract (product_url, skill, raw_input_for_replay) from any accepted shape."""
+        # Resolve message: direct, or via JSON-RPC params wrapper
+        msg = self.message
+        if msg is None and self.params and isinstance(self.params, dict):
+            params_msg = self.params.get("message")
+            if isinstance(params_msg, dict):
+                try:
+                    msg = A2AMessage(**params_msg)
+                except Exception:
+                    msg = None
+        # Resolve skill: explicit, then params.skill, then default
+        skill = self.skill
+        if not skill and self.params and isinstance(self.params, dict):
+            skill = self.params.get("skill")
+        if not skill:
+            skill = "verify_claim"
+        # Resolve URL — flat input wins; fall back to parts[*] URL extraction.
+        # Real URLs beat non-URL text fallbacks (e.g., "verify this" + json{product_url}
+        # should resolve to the URL in the json part, not the text fallback).
+        url = None
+        text_fallback: Optional[str] = None
+        replay_input: dict[str, Any] = {}
+        if self.input:
+            replay_input = dict(self.input)
+            url = self.input.get("product_url") or self.input.get("sku") or self.input.get("url")
+        if not url and msg:
+            for p in msg.parts:
+                if url:
+                    break
+                if p.type == "text" and p.text:
+                    candidate = p.text.strip()
+                    if candidate.startswith("http://") or candidate.startswith("https://"):
+                        url = candidate
+                    elif text_fallback is None:
+                        text_fallback = candidate
+                elif p.type == "json" and isinstance(p.data, dict):
+                    replay_input.update(p.data)
+                    url = (
+                        p.data.get("product_url")
+                        or p.data.get("url")
+                        or p.data.get("sku")
+                    )
+            if not url:
+                # Second pass to absorb later json parts even after a text fallback.
+                for p in msg.parts:
+                    if p.type == "json" and isinstance(p.data, dict):
+                        replay_input.update(p.data)
+                        url = (
+                            p.data.get("product_url")
+                            or p.data.get("url")
+                            or p.data.get("sku")
+                        )
+                        if url:
+                            break
+            if not url:
+                url = text_fallback
+        if url and "product_url" not in replay_input:
+            replay_input["product_url"] = url
+        return url, skill, replay_input
 
 
 class A2ASubmittedResponse(BaseModel):
@@ -282,6 +404,16 @@ class A2ATaskStatusResponse(BaseModel):
     second_opinion: Optional[dict[str, Any]] = None
     created_at: float
     completed_at: Optional[float] = None
+
+
+# Pydantic v2 forward-ref resolution. `from __future__ import annotations`
+# stringifies every annotation, so nested model refs (A2AMessage, A2APart)
+# must be rebuilt with the local namespace once all referenced classes exist.
+A2APart.model_rebuild()
+A2AMessage.model_rebuild()
+A2ATaskRequest.model_rebuild()
+A2ASubmittedResponse.model_rebuild()
+A2ATaskStatusResponse.model_rebuild()
 
 
 def compute_bundle_hash(bundle: EndorsementClaimBundle) -> str:
@@ -410,15 +542,29 @@ async def a2a_send(
       bundle issued by this request links to the chain it expected.
     """
     if x_api_key != DEMO_API_KEY:
-        raise HTTPException(status_code=401, detail="X-API-Key required. Request via GitHub issue.")
+        raise HTTPException(
+            status_code=401,
+            detail=(
+                "X-API-Key required. Demo key for GFS judges: `demo-key-2026-06`. "
+                "Add header `X-API-Key: demo-key-2026-06` and retry."
+            ),
+        )
 
-    if request.skill != "verify_claim":
-        raise HTTPException(status_code=404, detail=f"Unknown skill: {request.skill}")
+    product_url, skill_id, resolved_input = request.resolve_url_and_skill()
 
-    product_url = request.input.get("product_url") or request.input.get("sku") or request.input.get("url")
+    if skill_id != "verify_claim":
+        raise HTTPException(status_code=404, detail=f"Unknown skill: {skill_id}")
+
     if not product_url:
-        raise HTTPException(status_code=400, detail="Missing product_url / sku / url in input")
-    max_claims = int(request.input.get("max_claims", DEFAULT_MAX_CLAIMS))
+        raise HTTPException(
+            status_code=400,
+            detail=(
+                "Missing product URL. Accepted shapes: "
+                "(1) flat `{\"skill\":\"verify_claim\",\"input\":{\"product_url\":\"https://...\"}}` or "
+                "(2) A2A v0.3 `{\"message\":{\"role\":\"user\",\"parts\":[{\"type\":\"text\",\"text\":\"https://...\"}]}}`."
+            ),
+        )
+    max_claims = int(resolved_input.get("max_claims", DEFAULT_MAX_CLAIMS))
 
     # G19 #6: idempotency replay — same Idempotency-Key returns the same task.
     if idempotency_key:
