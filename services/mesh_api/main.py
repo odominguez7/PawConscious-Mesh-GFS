@@ -22,6 +22,8 @@ import hashlib
 import json
 import os
 import sys
+import time
+from collections import deque
 from datetime import datetime, timezone
 from functools import lru_cache
 from pathlib import Path
@@ -98,6 +100,138 @@ AGENT_ENGINE_RESOURCE = os.environ.get(
     "ACP_AGENT_ENGINE_RESOURCE",
     "projects/40952019806/locations/us-central1/reasoningEngines/1255381144908595200",
 )
+
+# ---------------------------------------------------------------------------
+# R2 — Agent Engine routing with feature flag + p95 auto-fallback
+# ---------------------------------------------------------------------------
+# Inline asyncio fan-out stays primary. Agent Engine is the documented Track 3
+# path (managed Reasoning Engine). When ACP_USE_AGENT_ENGINE=true, verify_claim
+# is routed through the deployed Reasoning Engine. If Agent Engine p95 exceeds
+# `gate multiplier` * inline p95 over a rolling window, the gate auto-closes and
+# subsequent requests fall back to inline. Three consecutive Agent Engine
+# failures also close the gate. State is observable via /health/agent-engine-traffic.
+
+_ACP_USE_AGENT_ENGINE_DEFAULT = os.environ.get("ACP_USE_AGENT_ENGINE", "false").lower() == "true"
+_ACP_AGENT_ENGINE_P95_GATE = float(os.environ.get("ACP_AGENT_ENGINE_P95_GATE", "2.0"))
+_ACP_AGENT_ENGINE_MIN_SAMPLES = int(os.environ.get("ACP_AGENT_ENGINE_MIN_SAMPLES", "5"))
+_ACP_LATENCY_WINDOW_SIZE = int(os.environ.get("ACP_LATENCY_WINDOW_SIZE", "20"))
+_AGENT_ENGINE_CONSEC_FAIL_LIMIT = 3
+# Codex Day-19 P2 amendment: when flag starts ON, no inline samples ever accrue
+# so the p95 gate can only close via consecutive failures. Set a documented
+# baseline (ms) and the gate falls back to it when the live inline window is empty.
+# Default 90000ms (90s) matches observed inline p95 from L1 eval; override per env.
+_ACP_INLINE_P95_BASELINE_MS = float(os.environ.get("ACP_INLINE_P95_BASELINE_MS", "90000"))
+# Codex Day-19 amend pass: hung engine.query() leaves the task stuck in `working`,
+# no latency sample lands, and the p95 gate can never close → no fallback to inline.
+# Hard upper bound per request. Default 180s = 3x typical p95 observed in L1 eval.
+# Treat asyncio.TimeoutError as a failure: records latency = timeout value, falls
+# through to inline path, increments consec_failures so 3 hangs in a row close the gate.
+_ACP_AGENT_ENGINE_QUERY_TIMEOUT_S = float(os.environ.get("ACP_AGENT_ENGINE_QUERY_TIMEOUT_S", "180"))
+
+_latency_inline_ms: deque[float] = deque(maxlen=_ACP_LATENCY_WINDOW_SIZE)
+_latency_agent_engine_ms: deque[float] = deque(maxlen=_ACP_LATENCY_WINDOW_SIZE)
+_traffic_gate_open: bool = _ACP_USE_AGENT_ENGINE_DEFAULT
+_traffic_gate_reason: str = (
+    "initial: feature flag ON" if _ACP_USE_AGENT_ENGINE_DEFAULT
+    else "initial: feature flag OFF (inline asyncio is the only path)"
+)
+_agent_engine_consec_failures: int = 0
+_traffic_gate_lock = asyncio.Lock()
+_agent_engine_client_cache: Any = None
+
+
+def _percentile(samples: list[float], pct: float) -> Optional[float]:
+    if not samples:
+        return None
+    ordered = sorted(samples)
+    idx = int(len(ordered) * pct)
+    return ordered[max(0, min(idx, len(ordered) - 1))]
+
+
+def _agent_engine_region() -> tuple[str, str]:
+    # projects/<num>/locations/<loc>/reasoningEngines/<id>
+    parts = AGENT_ENGINE_RESOURCE.split("/")
+    return parts[1], parts[3]
+
+
+def _get_agent_engine_client():
+    """Lazy + cached Reasoning Engine client. First call pays vertexai.init().
+    Subsequent calls return the cached engine handle."""
+    global _agent_engine_client_cache
+    if _agent_engine_client_cache is None:
+        import vertexai  # type: ignore
+        from vertexai import agent_engines  # type: ignore
+        project_id, location = _agent_engine_region()
+        vertexai.init(project=project_id, location=location)
+        _agent_engine_client_cache = agent_engines.get(AGENT_ENGINE_RESOURCE)
+    return _agent_engine_client_cache
+
+
+async def _route_verify_path() -> str:
+    """Returns 'agent_engine' or 'inline'. Single read under the gate lock so
+    routing is consistent with whatever the gate just decided."""
+    async with _traffic_gate_lock:
+        return "agent_engine" if _traffic_gate_open else "inline"
+
+
+async def _record_latency(path: str, latency_ms: float, succeeded: bool) -> None:
+    """Update the per-path latency window and re-evaluate the gate."""
+    global _traffic_gate_open, _traffic_gate_reason, _agent_engine_consec_failures
+    async with _traffic_gate_lock:
+        if path == "agent_engine":
+            if succeeded:
+                _latency_agent_engine_ms.append(latency_ms)
+                _agent_engine_consec_failures = 0
+            else:
+                _agent_engine_consec_failures += 1
+                if (
+                    _agent_engine_consec_failures >= _AGENT_ENGINE_CONSEC_FAIL_LIMIT
+                    and _traffic_gate_open
+                ):
+                    _traffic_gate_open = False
+                    _traffic_gate_reason = (
+                        f"agent-engine failed {_AGENT_ENGINE_CONSEC_FAIL_LIMIT} consecutive "
+                        f"times; flipped to inline"
+                    )
+                return
+        elif path == "inline" and succeeded:
+            _latency_inline_ms.append(latency_ms)
+
+        if not _traffic_gate_open:
+            return
+        if len(_latency_agent_engine_ms) >= _ACP_AGENT_ENGINE_MIN_SAMPLES:
+            p95_ae = _percentile(list(_latency_agent_engine_ms), 0.95)
+            if len(_latency_inline_ms) >= _ACP_AGENT_ENGINE_MIN_SAMPLES:
+                p95_inline = _percentile(list(_latency_inline_ms), 0.95)
+                inline_source = "live"
+            else:
+                p95_inline = _ACP_INLINE_P95_BASELINE_MS
+                inline_source = "baseline"
+            if p95_ae and p95_inline and p95_ae > _ACP_AGENT_ENGINE_P95_GATE * p95_inline:
+                _traffic_gate_open = False
+                _traffic_gate_reason = (
+                    f"agent-engine p95={p95_ae:.0f}ms > "
+                    f"{_ACP_AGENT_ENGINE_P95_GATE}x inline p95={p95_inline:.0f}ms "
+                    f"({inline_source}); flipped to inline"
+                )
+
+
+async def _run_mesh_via_agent_engine(product_url: str, max_claims: int) -> EndorsementClaimBundle:
+    """Invoke deployed Reasoning Engine.query() in a worker thread (sync API),
+    rebuild EndorsementClaimBundle from the returned JSON so the caller can
+    hash + sign + log identically to the inline path.
+
+    Codex Day-19 amend pass: wrap the query in asyncio.wait_for so a stalled
+    Vertex AI backend can't strand the background task in `working` indefinitely.
+    On timeout, asyncio.TimeoutError raises out and the caller's existing
+    `except Exception` records the failure + falls through to inline.
+    """
+    engine = await asyncio.to_thread(_get_agent_engine_client)
+    bundle_json = await asyncio.wait_for(
+        asyncio.to_thread(engine.query, product_url, max_claims),
+        timeout=_ACP_AGENT_ENGINE_QUERY_TIMEOUT_S,
+    )
+    return EndorsementClaimBundle(**bundle_json)
 
 
 A2A_AGENT_CARD = {
@@ -235,7 +369,14 @@ async def health() -> dict[str, Any]:
 @app.get("/health/agent-engine")
 async def health_agent_engine() -> dict[str, Any]:
     """Codex G18 amendment — judges can verify Agent Engine deployment exists
-    without needing Vertex AI console credentials."""
+    without needing Vertex AI console credentials.
+
+    R2 update: also surfaces traffic gate state so judges can see whether the
+    Reasoning Engine is in the live verify_claim path or shadow-only.
+    """
+    async with _traffic_gate_lock:
+        gate_open = _traffic_gate_open
+        gate_reason = _traffic_gate_reason
     return {
         "status": "ok",
         "agent_engine_resource": AGENT_ENGINE_RESOURCE,
@@ -243,10 +384,63 @@ async def health_agent_engine() -> dict[str, Any]:
             f"https://console.cloud.google.com/vertex-ai/agents/agent-engines/"
             f"detail/{AGENT_ENGINE_RESOURCE.rsplit('/', 1)[-1]}?project=pawconscious-mesh-2026"
         ),
+        "feature_flag_use_agent_engine": _ACP_USE_AGENT_ENGINE_DEFAULT,
+        "traffic_gate_open": gate_open,
+        "traffic_gate_reason": gate_reason,
+        "traffic_detail_url": f"{PUBLIC_BASE_URL}/health/agent-engine-traffic",
         "note": (
             "The orchestrator is deployed as a managed Reasoning Engine. The Cloud Run "
             "A2A endpoint is the public ingress; this endpoint is the proof of Track 3 "
-            "Key Consideration #5 (multi-agent system on Agent Engine)."
+            "Key Consideration #5 (multi-agent system on Agent Engine). When the feature "
+            "flag is ON and the p95 gate is OPEN, verify_claim is routed through the "
+            "Reasoning Engine; otherwise it runs inline."
+        ),
+    }
+
+
+@app.get("/health/agent-engine-traffic")
+async def health_agent_engine_traffic() -> dict[str, Any]:
+    """R2 — observable traffic gate state. Judges + operators can see whether the
+    Agent Engine path is currently carrying traffic and why."""
+    async with _traffic_gate_lock:
+        gate_open = _traffic_gate_open
+        gate_reason = _traffic_gate_reason
+        consec_failures = _agent_engine_consec_failures
+        inline_samples = list(_latency_inline_ms)
+        ae_samples = list(_latency_agent_engine_ms)
+    p95_inline = _percentile(inline_samples, 0.95)
+    p95_ae = _percentile(ae_samples, 0.95)
+    inline_p95_source = "live" if len(inline_samples) >= _ACP_AGENT_ENGINE_MIN_SAMPLES else "baseline"
+    inline_p95_for_gate = (
+        p95_inline if inline_p95_source == "live" else _ACP_INLINE_P95_BASELINE_MS
+    )
+    return {
+        "feature_flag_use_agent_engine": _ACP_USE_AGENT_ENGINE_DEFAULT,
+        "traffic_gate_open": gate_open,
+        "traffic_gate_reason": gate_reason,
+        "gate_multiplier": _ACP_AGENT_ENGINE_P95_GATE,
+        "min_samples_to_gate": _ACP_AGENT_ENGINE_MIN_SAMPLES,
+        "window_size": _ACP_LATENCY_WINDOW_SIZE,
+        "agent_engine_p95_ms": p95_ae,
+        "inline_p95_ms": p95_inline,
+        "inline_p95_baseline_ms": _ACP_INLINE_P95_BASELINE_MS,
+        "inline_p95_source_for_gate": inline_p95_source,
+        "inline_p95_used_for_gate_ms": inline_p95_for_gate,
+        "agent_engine_samples": len(ae_samples),
+        "inline_samples": len(inline_samples),
+        "agent_engine_consecutive_failures": consec_failures,
+        "consecutive_failure_limit": _AGENT_ENGINE_CONSEC_FAIL_LIMIT,
+        "query_timeout_s": _ACP_AGENT_ENGINE_QUERY_TIMEOUT_S,
+        "note": (
+            "R2: traffic to Agent Engine is feature-flagged + p95-gated. Inline asyncio "
+            "stays primary; Agent Engine is the documented Track 3 path. If Agent Engine "
+            "p95 exceeds the gate multiplier × inline p95 over the rolling window, the "
+            "gate auto-closes and subsequent requests fall back to inline. Three consecutive "
+            "Agent Engine failures also close the gate. Each engine.query() call has a "
+            "hard timeout (ACP_AGENT_ENGINE_QUERY_TIMEOUT_S, default 180s); a timeout is "
+            "treated as a failure so the gate logic + fallback path still fire. Codex "
+            "Day-19 P2: when the flag starts ON and no live inline samples exist, the "
+            "gate compares against ACP_INLINE_P95_BASELINE_MS instead so the latency gate still fires."
         ),
     }
 
@@ -549,10 +743,37 @@ async def _run_verify_claim_background(task_id: str, product_url: str, max_claim
 
     On success, appends the signed bundle to the Firestore transparency log (Phase 11)
     so /pcec/v0/claim/{urn} can resolve it.
+
+    R2: when ACP_USE_AGENT_ENGINE=true AND the p95 gate is open, the mesh runs via
+    the deployed Vertex AI Reasoning Engine. Otherwise it runs inline (asyncio fan-out).
+    Latency per path is recorded; if Agent Engine p95 > N x inline p95, gate auto-closes.
     """
     try:
-        await task_store.update(task_id, status="working", progress_message="claim extraction")
-        bundle = await run_mesh(product_url, max_claims=max_claims)
+        path = await _route_verify_path()
+        await task_store.update(
+            task_id,
+            status="working",
+            progress_message=f"claim extraction (path={path})",
+        )
+        t0 = time.perf_counter()
+        if path == "agent_engine":
+            try:
+                bundle = await _run_mesh_via_agent_engine(product_url, max_claims=max_claims)
+            except Exception as ae_err:
+                latency_ms = (time.perf_counter() - t0) * 1000.0
+                await _record_latency("agent_engine", latency_ms, succeeded=False)
+                print(f"[mesh_api] WARN: agent-engine path failed: {ae_err}; falling back to inline")
+                await task_store.update(
+                    task_id,
+                    progress_message=f"agent-engine path failed ({type(ae_err).__name__}); falling back to inline",
+                )
+                t0 = time.perf_counter()
+                path = "inline"
+                bundle = await run_mesh(product_url, max_claims=max_claims)
+        else:
+            bundle = await run_mesh(product_url, max_claims=max_claims)
+        latency_ms = (time.perf_counter() - t0) * 1000.0
+        await _record_latency(path, latency_ms, succeeded=True)
         bundle_hash = compute_bundle_hash(bundle)
         bundle.signature = sign_bundle(bundle)
         bundle.bundle_urn = urn_for_hash(bundle_hash)
