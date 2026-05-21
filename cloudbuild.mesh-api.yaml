@@ -9,6 +9,11 @@ steps:
       - '-f'
       - 'services/mesh_api/Dockerfile'
       - '.'
+  - name: 'gcr.io/cloud-builders/docker'
+    args:
+      - 'push'
+      - '--all-tags'
+      - 'us-central1-docker.pkg.dev/pawconscious-mesh-2026/acp-images/mesh-api'
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
     entrypoint: 'gcloud'
     args:
