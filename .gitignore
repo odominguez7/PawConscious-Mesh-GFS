@@ -38,3 +38,4 @@ research/raw/
 .gemini-cache/
 .cloud-run-temp/
 .gstack/
+.gbrain-source
