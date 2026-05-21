@@ -184,6 +184,36 @@
   }
   .endpoint a:hover { color: var(--electric); }
 
+  /* U5 (Day 22) — reference tables for Errors + Rate limits */
+  .ref-tbl {
+    width: 100%; border-collapse: collapse; margin: 18px 0 40px;
+    font: 500 13px var(--sans); color: var(--ink);
+  }
+  .ref-tbl thead th {
+    text-align: left;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    padding: 10px 14px;
+    font: 600 12px var(--mono);
+    color: var(--electric);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
+  .ref-tbl tbody td {
+    border: 1px solid var(--border);
+    padding: 12px 14px;
+    vertical-align: top;
+    line-height: 1.55;
+    color: var(--ink);
+  }
+  .ref-tbl tbody tr:nth-child(odd) td {
+    background: rgba(255, 255, 255, 0.02);
+  }
+  .ref-tbl tbody td:first-child {
+    white-space: nowrap;
+    font: 600 12px var(--mono);
+  }
+
   /* Tracking-3 strip */
   .mandates {
     display: flex; flex-wrap: wrap; gap: 12px;
@@ -437,13 +467,50 @@ pub.verify(base64.b64decode(bundle[<span class="tok-str">"signature"</span>]), c
 <span class="tok-cmt"># Raises InvalidSignature if tampered. Else: trust the bundle.</span></code></pre>
 
 
-  <h2>Pricing for agent calls</h2>
-  <p><strong>Hackathon window (now → 2026-06-30):</strong> free. Use the demo key. No rate limit beyond Cloud Run defaults.</p>
-  <p><strong>Post-hackathon:</strong> per-claim pricing tiered by mesh stage. Estimated $0.10–$0.40 per verified claim. Brands pay; calling agents inherit the trust at no cost. Reach out if you're a shopping-agent platform.</p>
+  <h2>Errors</h2>
+  <p>HTTP responses currently emitted by <code class="inline">/a2a/v1/*</code>.
+  The mesh's internal failure modes surface through the task envelope, not the
+  transport — a 200 with <code class="inline">status: "failed"</code> in the
+  task is the common shape for agent-stage errors.</p>
+  <table class="ref-tbl">
+    <thead>
+      <tr><th>HTTP</th><th>Meaning</th><th>Recover</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><code class="inline">200</code></td><td>Task fetched (GET) — including replay of an idempotent submission.</td><td>Read <code class="inline">output</code>; check <code class="inline">status</code> for agent-stage failures.</td></tr>
+      <tr><td><code class="inline">202</code></td><td>Task accepted async. Body has <code class="inline">task_id</code>. Idempotent re-submit of the same key also returns 202 with the original id.</td><td>Poll <code class="inline">GET /a2a/v1/tasks/get/{task_id}</code>.</td></tr>
+      <tr><td><code class="inline">400</code></td><td>Semantic error — e.g. missing <code class="inline">product_url</code> on a <code class="inline">verify_claim</code> envelope, or skill+input shape mismatch.</td><td>Check shape against the A2A v0.3 example above.</td></tr>
+      <tr><td><code class="inline">401</code></td><td>Missing or invalid <code class="inline">X-API-Key</code>.</td><td>Add the demo key <code class="inline">demo-key-2026-06</code> for hackathon access.</td></tr>
+      <tr><td><code class="inline">404</code></td><td>Unknown <code class="inline">skill</code>, unknown <code class="inline">task_id</code>, or expired task.</td><td>Re-submit the verify_claim task with a known skill.</td></tr>
+      <tr><td><code class="inline">409</code></td><td>Returned by <code class="inline">/a2a/v1/tasks/cancel/{task_id}</code> when the task is already in a terminal state (completed / failed / canceled).</td><td>Don't retry — the task is already done. Fetch it via <code class="inline">/a2a/v1/tasks/get/{task_id}</code>.</td></tr>
+      <tr><td><code class="inline">422</code></td><td>FastAPI validation — malformed JSON body, missing required field, or wrong type. Distinct from <code class="inline">400</code> (semantic) and <code class="inline">404</code> (unknown skill).</td><td>Response body has the specific field path. Fix the payload and re-submit.</td></tr>
+      <tr><td><code class="inline">5xx</code></td><td>Cloud Run / upstream Vertex AI / Firestore unavailability.</td><td>Retry with exponential backoff.</td></tr>
+    </tbody>
+  </table>
+  <p style="font-size:12px;color:var(--dim);margin-top:-24px;">Per-skill
+  <code class="inline">403</code> and rate-limit <code class="inline">429 / Retry-After</code>
+  are on the v0.2 roadmap once a real rate-limiter and per-key authorization land.</p>
 
 
-  <h2>We grade. We don't decide.</h2>
-  <p>PawConscious does not recommend products. We extract claims, ground them in PubMed + Semantic Scholar, map them against FTC §255 + AAFCO + NASC corpora via Vertex AI Search, and sign the result. Your agent makes the recommendation. The cert is your evidence trail, not our verdict on commerce.</p>
+  <h2>Rate limits (recommended pacing)</h2>
+  <p>The hackathon mesh runs without a per-key rate limiter. The numbers below
+  are <em>recommended pacing</em> for integrators — not enforced quotas. The
+  only enforced backpressure today is the platform layer (Cloud Run instance
+  concurrency); exceed it and you'll see latency, not <code class="inline">429</code>s.</p>
+  <table class="ref-tbl">
+    <thead>
+      <tr><th>Endpoint</th><th>Recommended sustained</th><th>OK burst</th><th>Why</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>Hackathon window<br><span style="font:500 11px var(--mono);color:var(--dim);">now → 2026-06-30</span></td><td>No explicit per-key cap</td><td>Cloud Run default concurrency</td><td>Each <code class="inline">verify_claim</code> is 30-60s of model latency; one concurrent task per integrator recommended.</td></tr>
+      <tr><td>Discovery (well-knowns + resolver GETs)</td><td>~5 req/s</td><td>10 req/s for 3s</td><td>Static + Firestore reads. Cached at the platform layer.</td></tr>
+      <tr><td><code class="inline">verify_claim</code> async POST</td><td>1 req/s sustained</td><td>3 req/s for 10s</td><td>Mesh fan-out dominates; faster than this risks Cloud Run cold starts.</td></tr>
+      <tr><td><code class="inline">fetch_substantiation_bundle</code></td><td>10 req/s</td><td>30 req/s for 5s</td><td>Read-only resolver path; idempotent against the transparency log.</td></tr>
+    </tbody>
+  </table>
+  <p style="font-size:12px;color:var(--dim);margin-top:-24px;">Real per-key
+  quotas + <code class="inline">429 / Retry-After</code> ship on the v0.2
+  roadmap alongside post-hackathon per-claim pricing.</p>
 
 
   <div class="foot">

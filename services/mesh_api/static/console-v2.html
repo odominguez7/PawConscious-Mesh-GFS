@@ -785,6 +785,34 @@
   .biz-tier ul { list-style: none; padding: 0; margin: 0; font-size: 12.5px; line-height: 1.75; color: var(--muted); }
   .biz-tier ul li::before { content: "→"; color: var(--electric); margin-right: 8px; font-weight: 700; }
 
+  /* U5 (Day 22) — positioning block: We grade + Agent call pricing */
+  .biz-positioning {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 18px;
+    margin-top: 32px;
+  }
+  .biz-positioning > div {
+    padding: 24px;
+    background: var(--bg-elevated);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+  }
+  .biz-positioning .eyebrow {
+    font: 600 10px/1 var(--mono);
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--electric);
+    margin-bottom: 14px;
+  }
+  .biz-positioning p {
+    font-size: 13px;
+    line-height: 1.65;
+    color: var(--muted);
+    margin: 0;
+  }
+  @media (max-width: 760px) {
+    .biz-positioning { grid-template-columns: 1fr; }
+  }
+
   /* ===================== MOATS ===================== */
   .moats { padding: 88px 0; background: var(--bg-elevated); border-bottom: 1px solid var(--border); }
   .moats-head { max-width: 720px; margin: 0 0 48px; }
@@ -1398,6 +1426,28 @@ for claim in claims:
           <li>Co-issued cert program</li>
           <li>Bulk catalog verification API</li>
         </ul>
+      </div>
+    </div>
+
+    <!-- v0.17.0 U5: positioning + agent-call pricing moved here from /agents.
+         Brands subscribe; calling AI agents pay per claim post-hackathon. -->
+    <div class="biz-positioning">
+      <div class="biz-positioning-claim">
+        <div class="eyebrow">We grade. We don't decide.</div>
+        <p>PawConscious does not recommend products. We extract claims, ground
+        them in PubMed + Semantic Scholar, map them against FTC §255 + AAFCO +
+        NASC corpora via Vertex AI Search, and sign the result. Your agent
+        (or your buyer) decides. The signed bundle is your evidence trail,
+        not our verdict on commerce.</p>
+      </div>
+      <div class="biz-positioning-agents">
+        <div class="eyebrow">For AI agents calling the mesh</div>
+        <p><strong>Hackathon window (now → 2026-06-30):</strong> free, demo
+        key. <strong>Post-hackathon:</strong> per-claim, ~$0.10-$0.40 per
+        verified claim. Brands pay the subscription above; agents inherit
+        the trust at no cost.
+        <a href="/agents" style="color:var(--electric);">See <code style="font-family:var(--mono);">/agents</code></a>
+        for the A2A v0.3 reference.</p>
       </div>
     </div>
   </div>

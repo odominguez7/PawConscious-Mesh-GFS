@@ -50,6 +50,8 @@ In one to three minutes the brand gets back:
 - A signed evidence bundle in machine-readable PCEC v0.1 format (the draft open spec we're proposing)
 - A cryptographic chain anchor — every signing event is appended to a public Firestore transparency log, so a brand can prove its evidence chain was issued at a specific time and has not been silently replaced
 
+**On the word "mesh."** Internally, the orchestrator is a single-process multi-agent pipeline (asyncio.gather fan-out across per-claim graders, sequential into the auditor), not an inter-service A2A topology. We call the system "Mesh" because the *public A2A v0.3 agent card at the edge* is the discoverable, callable mesh — any external A2A v0.3 client (our ShopperAgent reference, Amazon Rufus, Perplexity Shopping, an agent you build) becomes a node in the broader trust mesh by calling our two skills (`verify_claim`, `fetch_substantiation_bundle`). The internal pipeline serves the public mesh. The `/health/mesh-shape` endpoint introspects the ADK SequentialAgent + ParallelAgent topology (4/7 agents declared on ADK per the locked Day-19 scope; runtime stays asyncio for determinism + judge-visible debug). Day 21 wired evidence-grader + compliance + auditor + claim-extractor as real ADK `LlmAgent`s with `FunctionTool` wrappers around BioMCP search and Vertex AI Search retrieval.
+
 The mesh exposes a public A2A v0.3 agent card at `/.well-known/agent-card.json` with callable skills any AI agent can invoke (`verify_claim`, `fetch_substantiation_bundle`). We ship a separate ShopperAgent service (open source MIT alongside the mesh) that demonstrates the external A2A call against a real DTC pet SKU — not a fabricated "powered by Rufus" integration.
 
 ## How we built it

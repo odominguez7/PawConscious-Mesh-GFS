@@ -1280,14 +1280,54 @@ async def architecture() -> HTMLResponse:
   .caption h3 {{ margin:0 0 10px; font-size:13px; font-weight:700; letter-spacing:0.18em; text-transform:uppercase; color:var(--electric); font-family:'JetBrains Mono', ui-monospace, monospace; }}
   .caption p {{ margin:6px 0; font-size:13.5px; line-height:1.6; color:var(--muted); max-width:1100px; }}
   .caption code {{ color:var(--electric); font-family:'JetBrains Mono', ui-monospace, monospace; font-size:12px; }}
+  /* U6 (Day 22) — single primary CTA on /architecture: view a signed bundle */
+  .arch-cta {{
+    margin-top: 28px;
+    padding: 20px 24px;
+    background: var(--bg-elev);
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--electric);
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 24px;
+  }}
+  .arch-cta .lede {{ font-size: 14px; color: var(--ink); }}
+  .arch-cta .lede strong {{ color: var(--electric); }}
+  .arch-cta .lede p {{ margin: 0; font-size: 13px; color: var(--muted); line-height: 1.55; }}
+  .arch-cta a.btn {{
+    display: inline-block;
+    padding: 10px 18px;
+    background: var(--electric);
+    color: #0A0B0D;
+    border-radius: 6px;
+    font: 600 13px 'JetBrains Mono', ui-monospace, monospace;
+    text-decoration: none;
+    white-space: nowrap;
+  }}
+  .arch-cta a.btn:hover {{ filter: brightness(1.1); }}
 </style>
 </head><body>
 {nav}
 <div class="frame">
   <div class="svg-wrap">{svg}</div>
+  <!-- U6 (Day 22) — one primary CTA per page: Architecture = view a signed bundle.
+       Links to /demo/shopper which runs the ShopperAgent against the live mesh and
+       displays a real signed bundle (chain anchor + Ed25519 signature visible),
+       so the diagram you just read is shown ACTUALLY running. /pcec/v0/chain/head
+       was the previous target (codex Day-22 P2) — it only returns the chain anchor,
+       not a bundle, so the copy + link were mismatched. -->
+  <div class="arch-cta">
+    <div class="lede">
+      <strong>This diagram is live code.</strong>
+      <p>Watch the ShopperAgent call the public A2A mesh against a real DTC PDP. The signed bundle returned shows the chain anchor + Ed25519 signature drawn in Stage 2 — the diagram, actually running.</p>
+    </div>
+    <a class="btn" href="/demo/shopper">View a signed bundle in action ↗</a>
+  </div>
   <div class="caption">
     <h3>How to read this diagram</h3>
-    <p><b style="color:var(--ink)">Stage 1 — Reasoning Mesh.</b> The five-agent core. <code>claim-extractor</code> runs first (sequential), then for every claim the orchestrator fans out <code>evidence-grader</code>, <code>vet-rubric</code>, and <code>compliance</code> via <code>asyncio.gather</code>. The <code>auditor</code> merges the evidence and runs an adversarial pre-sign pass. Internal flow is a single-process multi-agent pipeline with public A2A mesh at the edge; ADK migration in progress per the Day-20/21 plan.</p>
+    <p><b style="color:var(--ink)">Stage 1 — Reasoning Mesh.</b> The five-agent core. <code>claim-extractor</code> runs first (sequential), then for every claim the orchestrator fans out <code>evidence-grader</code>, <code>vet-rubric</code>, and <code>compliance</code> via <code>asyncio.gather</code>. The <code>auditor</code> merges the evidence and runs an adversarial pre-sign pass. Internal flow is a single-process multi-agent pipeline with a public A2A mesh at the edge; ADK migration in progress per the Day-20/21 plan.</p>
     <p><b style="color:var(--ink)">Stage 2 — Sign.</b> The merged <code>EndorsementClaimBundle</code> is canonicalized, signed with <code>Ed25519</code> against <code>did:web:mesh-api-…</code>, and the chain anchor <code>sha256(bundle_hash + ":" + (prev_hash or "genesis"))</code> is appended to the Firestore transparency log.</p>
     <p><b style="color:var(--ink)">Stage 3 — Adversarial.</b> After signing, two agents run in parallel: <code>cert-composer</code> renders the human-readable HTML certificate, and <code>second-opinion</code> uses <code>Gemini 2.5 Pro</code> with <b style="color:var(--ink)">Google Search grounding</b> to run four adversarial stress tests against the conclusion (court, regulator, scientific consensus, public skepticism). Fails CLOSED with <code>UNAVAILABLE</code> when the adversarial pass cannot complete, never silently agreeing.</p>
     <p><b style="color:var(--ink)">A2A v0.3.</b> The public agent card at <code>/.well-known/agent-card.json</code> declares two skills: <code>verify_claim</code> (URL in, signed bundle out) and <code>fetch_substantiation_bundle</code> (PCEC URN in, full bundle out). Our reference <code>ShopperAgent</code> is the live external consumer.</p>
