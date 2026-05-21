@@ -119,6 +119,8 @@ def summarize(bundle: EndorsementClaimBundle) -> str:
 from google.adk.agents import SequentialAgent, ParallelAgent  # noqa: E402
 
 from agents.auditor import auditor_adk  # noqa: E402
+from agents.claim_extractor import build_claim_extractor_agent  # noqa: E402
+from agents.compliance import compliance_adk  # noqa: E402
 from agents.evidence_grader import evidence_grader_adk  # noqa: E402
 
 
@@ -128,33 +130,44 @@ _ORCHESTRATOR_ADK_TOPOLOGY: Optional[SequentialAgent] = None
 def build_orchestrator_adk_topology() -> SequentialAgent:
     """Construct (or return the cached) ADK SequentialAgent representing the mesh.
 
-    Day 20 scope (this file): evidence_grader + auditor are real LlmAgents.
-    Day 21 will add claim_extractor + compliance.
+    Day 21 scope: 4/7 agents on ADK — claim_extractor, evidence_grader,
+    compliance, and auditor. vet_rubric + report_writer + second_opinion stay
+    direct genai per locked Day-19 decision.
 
-    Returns a SequentialAgent whose first child is a ParallelAgent over the
-    per-claim graders (currently just evidence_grader; vet_rubric + compliance
-    follow on Day 21), and whose second child is the auditor.
+    Topology shape:
+      acp_orchestrator (SequentialAgent)
+        ├─ acp_claim_extractor (LlmAgent + fetch_pdp_html FunctionTool)
+        ├─ acp_claim_fan_out (ParallelAgent, per claim)
+        │    ├─ acp_evidence_grader (LlmAgent + BioMCP search tool)
+        │    └─ acp_compliance     (LlmAgent + Vertex AI Search tool)
+        └─ acp_auditor (LlmAgent)
 
     Cached because ADK enforces single-parent on agent instances — re-building
     would try to re-parent the LlmAgent singletons and fail. Build once at
-    module load, introspect many times.
+    module load, introspect many times. claim_extractor's builder returns a
+    fresh instance each call; we capture it once into the cached topology so
+    its parent assignment is stable.
     """
     global _ORCHESTRATOR_ADK_TOPOLOGY
     if _ORCHESTRATOR_ADK_TOPOLOGY is None:
+        claim_extractor_adk = build_claim_extractor_agent()
         _ORCHESTRATOR_ADK_TOPOLOGY = SequentialAgent(
             name="acp_orchestrator",
             description=(
-                "Mesh orchestrator: per-claim ParallelAgent fan-out (evidence + "
-                "vet + compliance) followed by SequentialAgent auditor pass."
+                "Mesh orchestrator: claim extraction → per-claim ParallelAgent "
+                "fan-out (evidence + compliance) → SequentialAgent auditor pass. "
+                "4/7 agents on ADK per locked Day-19 decision."
             ),
             sub_agents=[
+                claim_extractor_adk,
                 ParallelAgent(
                     name="acp_claim_fan_out",
                     description=(
                         "Parallel fan-out across grader agents for one claim. "
-                        "Day 20: evidence_grader on ADK. Day 21 adds compliance."
+                        "evidence_grader (PubMed via BioMCP) + compliance "
+                        "(FTC §255 + AAFCO + NASC via Vertex AI Search)."
                     ),
-                    sub_agents=[evidence_grader_adk],
+                    sub_agents=[evidence_grader_adk, compliance_adk],
                 ),
                 auditor_adk,
             ],
@@ -195,15 +208,20 @@ def describe_mesh_shape() -> dict:
     return {
         "root": _node(topology),
         "adk_version": _adk_version(),
-        "agents_on_adk": ["acp_evidence_grader", "acp_auditor"],
-        "agents_on_adk_planned_day_21": ["acp_claim_extractor", "acp_compliance"],
+        "agents_on_adk": [
+            "acp_claim_extractor",
+            "acp_evidence_grader",
+            "acp_compliance",
+            "acp_auditor",
+        ],
         "agents_off_adk_by_design": ["vet_rubric", "report_writer", "second_opinion"],
-        "runtime_path": "asyncio.gather (Day 20 shape-only; runtime parity preserved)",
+        "ratio_on_adk": "4/7",
+        "runtime_path": "asyncio.gather (shape-only; runtime parity preserved)",
         "note": (
             "ADK shape declaration. The mesh runtime currently executes via asyncio "
             "fan-out for determinism + judge-visible debug. The ADK objects are real "
-            "and introspectable; Day 21 may add an ADK Runner runtime path behind a "
-            "feature flag, same pattern as R2's ACP_USE_AGENT_ENGINE."
+            "and introspectable; runtime may move to ADK Runner behind a feature "
+            "flag, same pattern as R2's ACP_USE_AGENT_ENGINE."
         ),
     }
 

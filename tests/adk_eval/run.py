@@ -56,14 +56,29 @@ def run_case(client: httpx.Client, case: dict[str, Any], timeout_s: int = 900) -
         "elapsed_s": 0.0,
     }
     # Pre-flight: HEAD probe the source URL. DTC pet brands churn catalog pages
-    # weekly; a 4xx/5xx here is a stale-fixture problem, not a mesh failure.
+    # weekly; a true 4xx/5xx here is a stale-fixture problem.
+    #
+    # Codex Day-21 amend pass: anti-bot status codes (403/406/429) and 5xx
+    # indicate the page EXISTS but the server is blocking naive HEAD probes.
+    # The mesh's Firecrawl fallback path is built exactly for these — so do
+    # NOT skip them. Skip only on hard dead-URL signals (404, 410, network
+    # errors, redirect loops).
+    ANTI_BOT_CODES = {401, 403, 405, 406, 429, 500, 502, 503, 504}
+    HARD_DEAD_CODES = {404, 410}
     try:
         head = client.head(url, follow_redirects=True, timeout=15.0, headers={"User-Agent": "Mozilla/5.0 (pcec-eval)"})
-        if head.status_code != 200:
+        code = head.status_code
+        if code == 200 or code in ANTI_BOT_CODES:
+            pass  # eligible — let the mesh's Firecrawl fallback do the work
+        elif code in HARD_DEAD_CODES:
             result["skipped"] = True
-            result["error"] = f"url_dead: HEAD returned {head.status_code}"
+            result["error"] = f"url_dead: HEAD returned {code}"
             result["elapsed_s"] = round(time.monotonic() - t0, 1)
             return result
+        else:
+            # Unknown response — be conservative; treat as eligible and let
+            # the mesh report the real failure mode through its task_store.
+            result["preflight_warning"] = f"HEAD returned unexpected {code} — proceeding"
     except Exception as e:
         result["skipped"] = True
         result["error"] = f"url_dead: HEAD raised {type(e).__name__}"
