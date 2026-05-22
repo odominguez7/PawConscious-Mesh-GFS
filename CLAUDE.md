@@ -1,7 +1,10 @@
-# CLAUDE.md — PawConscious Mesh
+# CLAUDE.md: PawConscious Mesh
 
 ## Project context
 PawConscious Mesh is the GFS AI Agents Challenge submission (deadline 2026-06-05). Port of GUARDIAN's agentic A2A architecture onto the PawConscious commercial wedge. Read `PLAN.md` first for the validated strategy and 19-day roadmap.
+
+## Taste rule-book (read first every session)
+See [`docs/TASTE.md`](docs/TASTE.md) for twelve rules earned in shipped commits, sourced from Sarah Tavel's "Taste" essay. Every code, copy, visual, or surface decision tests against these rules in the application order at the bottom of that doc. The taste rule-book takes precedence over inferred best-practice when they disagree.
 
 ## Hard rules (from Omar's repo + user-level instructions)
 
@@ -12,7 +15,7 @@ PawConscious Mesh is the GFS AI Agents Challenge submission (deadline 2026-06-05
 5. **Writing style.** No em dashes. No "thrilled". MIT founder language. (`feedback_writing_style`)
 6. **Codex handshake per Move.** Every Move clears codex before the next Move starts. P0 findings block. Amendments absorbed. (`feedback_codex_handshake_per_move`, `feedback_codex_velocity`)
 7. **Save memory per Move.** After codex CLEAR. Browser-disconnects + session resets are why. (`feedback_save_memory_per_move`)
-8. **Env files are sacred.** Never `cat > .env.local <<EOF` for a single key — Read first, Edit one key. Nukes other secrets. (`feedback_env_local_overwrites`)
+8. **Env files are sacred.** Never `cat > .env.local <<EOF` for a single key. Read first, Edit one key. Nukes other secrets. (`feedback_env_local_overwrites`)
 9. **gcloud configs are per-project.** Run project's runbook before any gcloud cmd. Never `gcloud config set project` on shared config. (`feedback_gcloud_per_project_configs`)
 10. **Autonomous execution.** When Omar says "do all you can autonomously," ship code/files/commits not plans. (`feedback_autonomous_execution`)
 11. **Plain human language.** No clinical/medical jargon in user-facing copy. (`feedback_no_clinical_jargon`)
@@ -73,8 +76,8 @@ identifier yet.
 **This worktree is pinned to a worktree-scoped code source** via the
 `.gbrain-source` file in the repo root (kubectl-style context). Any
 `gbrain code-def`, `code-refs`, `code-callers`, `code-callees`, or `query`
-call from anywhere under this worktree routes to that source by default —
-no `--source` flag needed. Conductor sibling worktrees of the same repo
+call from anywhere under this worktree routes to that source by default
+(no `--source` flag needed). Conductor sibling worktrees of the same repo
 each have their own pin and their own indexed pages, so semantic results
 match the actual code on disk in this worktree.
 
@@ -96,6 +99,6 @@ Prefer gbrain when:
 Grep is still right for known exact strings, regex, multiline patterns, and
 file globs. Run `/sync-gbrain` after meaningful code changes; for ongoing
 auto-sync across all worktrees, run `gbrain autopilot --install` once per
-machine — gbrain's daemon handles incremental refresh on a schedule.
+machine. gbrain's daemon handles incremental refresh on a schedule.
 
 <!-- gstack-gbrain-search-guidance:end -->
