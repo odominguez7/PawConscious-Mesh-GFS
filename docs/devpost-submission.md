@@ -72,6 +72,8 @@ Adversarial reviews compound. Every commit went through an independent codex rev
 
 Honest framing beats hype. The 4-of-7 ADK split and the `asyncio.gather` runtime path are surfaced explicitly in the README, the `/architecture` page, and this Devpost. Judges can verify every claim by clicking a URL.
 
+NIST AI RMF gave us a vocabulary. We mapped 22 of 72 NIST AI Risk Management Framework Playbook actions to shipped code (Govern · Map · Measure · Manage). Transparency surfaces (`/health/mesh-shape`, `/health/agent-engine-traffic`, `chain_anchor_status`) expose those requirements at the HTTP layer. See [`docs/NIST_AI_RMF_ASSESSMENT.md`](https://github.com/odominguez7/PawConscious-Mesh-GFS/blob/main/docs/NIST_AI_RMF_ASSESSMENT.md).
+
 ## What's next for PawConscious Mesh
 
 ADK Runner runtime path behind the same feature-flag pattern as the Reasoning Engine routing. `attest_expert` A2A skill for real licensed-DVM attestation. HSM-backed signing. Per-key rate-limiter + `429 / Retry-After`. PCEC v0.2 with a second issuer signing into the chain to prove the spec is multi-implementer.

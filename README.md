@@ -168,6 +168,10 @@ docs/                    # Architecture, PCEC v0.1 spec, devpost draft, video sc
 deck/                    # Investor deck (separate from GFS submission)
 ```
 
+## Innovation posture — NIST AI Risk Management Framework
+
+We mapped 22 of 72 NIST AI Risk Management Framework Playbook actions to shipped code (Govern · Map · Measure · Manage). Transparency and accountability surfaces (`/health/mesh-shape`, `/health/agent-engine-traffic`, `chain_anchor_status` on every signed bundle) expose those Playbook requirements at the HTTP layer so a B2B buyer or insurance underwriter can verify our risk posture without an internal audit. See [`docs/NIST_AI_RMF_ASSESSMENT.md`](docs/NIST_AI_RMF_ASSESSMENT.md) for the full mapping + honest gaps + roadmap.
+
 ## License
 
 MIT. OSI-approved per GFS hackathon submission rules (license file at repo root, detectable by standard scanners).
