@@ -963,7 +963,165 @@ html, body {
   50%      { opacity: 1;    transform: scale(1.0); }
 }
 
-/* Cinematic verdict moment when scene 2 completes */
+/* ============================================================
+   Inline tool-use card (scene 2 hybrid - light theme, lives in
+   the Gemini chat thread). Replaces the previous dark-world bento.
+   ============================================================ */
+.tool-use-card {
+  background: var(--g-bg);
+  border: 1px solid var(--g-line);
+  border-radius: 16px;
+  padding: 16px;
+  margin: 14px 0 10px;
+  box-shadow: 0 4px 18px rgba(0,0,0,0.04);
+  transition: box-shadow 480ms, transform 480ms cubic-bezier(.34,1.56,.64,1);
+  position: relative;
+}
+.scene-2.complete .tool-use-card {
+  /* Micro-expand on VERIFIED. Brief scale+glow, then settles. */
+  animation: tool-use-pop 720ms cubic-bezier(.34,1.56,.64,1);
+  box-shadow: 0 12px 36px rgba(155,114,203,0.12), 0 0 0 1px rgba(111,174,122,0.28);
+}
+@keyframes tool-use-pop {
+  0%   { transform: scale(1);    box-shadow: 0 0 0 0 rgba(111,174,122,0.4),  0 8px 28px rgba(155,114,203,0.18); }
+  40%  { transform: scale(1.012); box-shadow: 0 0 0 14px rgba(111,174,122,0), 0 14px 40px rgba(155,114,203,0.22); }
+  100% { transform: scale(1);    box-shadow: 0 0 0 1px rgba(111,174,122,0.28), 0 12px 36px rgba(155,114,203,0.12); }
+}
+.tool-use-header {
+  display: flex; align-items: flex-start; gap: 12px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--g-line);
+  margin-bottom: 12px;
+}
+.tool-use-icon {
+  width: 28px; height: 28px; flex-shrink: 0;
+}
+.tool-use-icon svg { width: 100%; height: 100%; }
+.tool-use-title { flex: 1; min-width: 0; }
+.tool-use-title .t-line {
+  font: 500 14px/1.4 var(--sans); color: var(--g-text);
+}
+.tool-use-title .t-line b { font-weight: 700; }
+.tool-use-title .t-sub {
+  font: 500 11px/1.4 var(--mono); color: var(--g-muted);
+  margin-top: 3px;
+  letter-spacing: 0.04em;
+}
+.tool-use-status {
+  font: 700 10px/1 var(--mono); letter-spacing: 0.14em; text-transform: uppercase;
+  padding: 6px 10px; border-radius: 6px;
+  background: var(--llm-accent-soft); color: var(--llm-accent);
+  border: 1px solid rgba(107,91,210,0.30);
+  transition: all 320ms;
+  flex-shrink: 0;
+}
+.scene-2.complete .tool-use-status {
+  background: rgba(111,174,122,0.10); color: var(--pc-moss);
+  border-color: rgba(111,174,122,0.30);
+}
+
+/* Light-theme bento (the `.bento.light` modifier) */
+.bento.light .b-card {
+  background: var(--g-bg);
+  border: 1px solid var(--g-line);
+  border-radius: 12px;
+}
+.bento.light .b-card.active {
+  background: var(--llm-accent-soft);
+  border-color: rgba(107,91,210,0.30);
+  box-shadow: 0 4px 18px rgba(107,91,210,0.10);
+}
+.bento.light .b-card.done {
+  background: var(--g-bg);
+  border-color: rgba(111,174,122,0.28);
+}
+.bento.light .b-card .head .label { color: var(--g-muted); }
+.bento.light .b-card .head .badge { background: var(--g-bg-soft); color: var(--g-dim); }
+.bento.light .b-card.active .head .badge {
+  background: var(--llm-accent-soft); color: var(--llm-accent);
+}
+.bento.light .b-card.done .head .badge {
+  background: rgba(111,174,122,0.12); color: var(--pc-moss);
+}
+.bento.light .b-card .latency { color: var(--g-muted); }
+.bento.light .b-card.active .latency::before { background: var(--llm-accent); }
+.bento.light .b-card.done .latency { color: var(--pc-moss); }
+.bento.light .b-claim .claim-line,
+.bento.light .b-claim .claim-count { color: var(--g-text); }
+.bento.light .b-claim .claim-sub { color: var(--g-dim); }
+.bento.light .b-evidence .ev-item { color: var(--g-text); }
+.bento.light .b-evidence .ev-item .pmid { color: var(--llm-accent); }
+.bento.light .b-evidence .ev-item .quote { color: var(--g-dim); }
+.bento.light .b-evidence .ev-item .tag {
+  background: rgba(111,174,122,0.12); color: var(--pc-moss);
+}
+.bento.light .b-vet .vet-score { color: #C8920E; }
+.bento.light .b-vet .vet-score small { color: var(--g-muted); }
+.bento.light .b-vet .vet-note { color: var(--g-dim); }
+.bento.light .b-ftc .ftc-result { color: var(--pc-moss); }
+.bento.light .b-ftc .ftc-rule { color: var(--g-muted); }
+.bento.light .b-sign .sign-key { color: var(--llm-accent); }
+.bento.light .b-sign .sign-hash { color: var(--pc-moss); }
+
+/* Trust Report — compact summary that surfaces post-VERIFIED */
+.trust-report {
+  background: rgba(111,174,122,0.06);
+  border: 1px solid rgba(111,174,122,0.22);
+  border-radius: 10px;
+  padding: 12px 14px;
+  margin-top: 12px;
+  opacity: 0;
+  max-height: 0;
+  overflow: hidden;
+  transform: translateY(6px);
+  transition: opacity 380ms 220ms, max-height 480ms ease, transform 380ms 220ms, padding 380ms;
+}
+.scene-2.complete .trust-report {
+  opacity: 1; max-height: 140px; transform: translateY(0);
+}
+.trust-report .tr-row {
+  display: flex; align-items: flex-start; gap: 10px;
+}
+.trust-report .tr-seal {
+  width: 22px; height: 22px; border-radius: 50%; flex-shrink: 0;
+  background: var(--pc-moss); color: #FFF;
+  display: flex; align-items: center; justify-content: center;
+  font: 700 12px var(--sans);
+  margin-top: 1px;
+}
+.trust-report .tr-main { flex: 1; min-width: 0; }
+.trust-report .tr-title {
+  font: 500 13px/1.5 var(--sans); color: var(--g-text);
+}
+.trust-report .tr-title b { color: var(--pc-moss); font-weight: 700; }
+.trust-report .tr-anchor {
+  font: 500 10.5px/1.4 var(--mono); color: var(--g-muted);
+  margin-top: 3px; word-break: break-all;
+}
+
+/* Post-tool-card advance CTA row */
+.post-tool-row {
+  display: flex; justify-content: flex-start;
+  margin-top: 4px;
+  opacity: 0; transform: translateY(6px);
+  transition: opacity 420ms 380ms, transform 420ms 380ms;
+}
+.scene-2.complete .post-tool-row { opacity: 1; transform: translateY(0); }
+.post-tool-row .advance-cta {
+  display: inline-flex; align-items: center; gap: 10px;
+  background: var(--g-grad); color: #FFF;
+  font: 600 14px var(--sans);
+  padding: 12px 22px; border-radius: 100px;
+  border: 0; cursor: pointer;
+  box-shadow: 0 10px 28px rgba(155,114,203,0.30);
+  animation: cta-breathe 2.4s ease-in-out infinite;
+  transition: transform 200ms, box-shadow 200ms;
+}
+.post-tool-row .advance-cta:hover { transform: translateY(-2px); }
+.post-tool-row .advance-cta .arrow { transition: transform 200ms; }
+.post-tool-row .advance-cta:hover .arrow { transform: translateX(3px); }
+
+/* Cinematic verdict moment when scene 2 completes (kept for compat) */
 .scene-2.complete .pc-verdict {
   animation: verdict-seal 700ms cubic-bezier(.34,1.56,.64,1);
   box-shadow: 0 0 0 0 rgba(111,174,122,0.5), 0 8px 32px rgba(111,174,122,0.18);
@@ -1605,72 +1763,109 @@ html, body {
        SCENE 3 — PawConscious bento grid
        ========================================================= -->
   <section class="scene scene-2" data-scene="2">
-    <div class="pc-wrap">
-      <div class="pc-header">
-        <div class="brand">
-          <div class="seal">P</div>
-          <div>
-            <div class="label">PawConscious</div>
-            <small>Trust mesh · A2A v0.3</small>
+    <div class="gem-app">
+      <aside class="gem-sidebar">
+        <div class="top"><button class="menu">≡</button><div class="wordmark">Gemini</div></div>
+        <button class="new-chat">+ &nbsp;New chat</button>
+        <div class="section-label">Recent</div>
+        <div class="convo current">Hip and joint chews…</div>
+        <div class="convo">Morning routine ideas</div>
+        <div class="convo">Boston Marathon split…</div>
+        <div class="convo">Q3 OKR draft</div>
+      </aside>
+      <main class="gem-main">
+        <div class="gem-topbar">
+          <div class="model-picker">
+            <svg class="star" viewBox="0 0 24 24" fill="url(#gstarGrad)"><path d="M12 2 L14 10 L22 12 L14 14 L12 22 L10 14 L2 12 L10 10 Z"/></svg>
+            <span>Gemini 2.5 Pro</span>
+            <span class="chev">▾</span>
           </div>
+          <div class="actions"><div class="av">O</div></div>
         </div>
-        <div class="status" id="s3-status">VERIFYING</div>
-      </div>
+        <div class="gem-thread">
+          <div class="gem-thread-inner">
+            <div class="user-msg">What are the best hip and joint soft chews for an older dog with inflammation?</div>
+            <div class="assistant-msg">
+              <svg class="av" viewBox="0 0 24 24" fill="url(#gstarGrad)"><path d="M12 2 L14 10 L22 12 L14 14 L12 22 L10 14 L2 12 L10 10 Z"/></svg>
+              <div class="body">
+                <!-- Inline tool-use card. PawConscious is the trust layer
+                     Gemini just called. Renders in the chat thread, light
+                     theme, like a real LLM tool call. -->
+                <div class="tool-use-card" id="toolUseCard">
+                  <div class="tool-use-header">
+                    <div class="tool-use-icon">
+                      <svg viewBox="0 0 24 24"><path d="M12 2 L14 10 L22 12 L14 14 L12 22 L10 14 L2 12 L10 10 Z" fill="url(#gstarGrad)"/></svg>
+                    </div>
+                    <div class="tool-use-title">
+                      <div class="t-line"><b>PawConscious Trust Layer</b> · verifying claims before recommendation</div>
+                      <div class="t-sub">A2A v0.3 · 5 agents · live evidence</div>
+                    </div>
+                    <div class="tool-use-status" id="s3-status">VERIFYING</div>
+                  </div>
 
-      <div class="bento" id="s3-bento">
-        <div class="b-card b-claim" data-stage="claim">
-          <div class="head"><div class="label">Claim extraction</div><div class="badge">Gemini 2.5</div><span class="latency" data-ms="184">184ms</span></div>
-          <div class="body stream">
-            <div><span class="claim-count">3</span> claims on PDP</div>
-            <div class="claim-sub">"Inflammatory Care" · "Supports senior mobility" · "Reduces inflammation in 14 days"</div>
-          </div>
-        </div>
+                  <div class="bento light" id="s3-bento">
+                    <div class="b-card b-claim" data-stage="claim">
+                      <div class="head"><div class="label">Claim extraction</div><div class="badge">Gemini 2.5</div><span class="latency" data-ms="184">184ms</span></div>
+                      <div class="body stream">
+                        <div><span class="claim-count">3</span> claims on PDP</div>
+                        <div class="claim-sub">"Inflammatory Care" · "Supports senior mobility" · "Reduces inflammation in 14 days"</div>
+                      </div>
+                    </div>
+                    <div class="b-card b-evidence" data-stage="evidence">
+                      <div class="head"><div class="label">Evidence match</div><div class="badge">BioMCP · PubMed</div><span class="latency" data-ms="412">412ms</span></div>
+                      <div class="body stream">
+                        <div class="ev-list">
+                          <div class="ev-item"><span class="pmid">PMID 32316397</span><span class="quote">Glucosamine + chondroitin in canine osteoarthritis</span><span class="tag">supports</span></div>
+                          <div class="ev-item"><span class="pmid">PMID 40685570</span><span class="quote">Omega-3 inflammatory pathway review (feline OA)</span><span class="tag">partial</span></div>
+                          <div class="ev-item"><span class="pmid">PMID 28845362</span><span class="quote">UC-II vs glucosamine comparison trial</span><span class="tag">supports</span></div>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="b-card b-vet" data-stage="vet">
+                      <div class="head"><div class="label">Vet rubric</div><div class="badge">5-vet simulation</div><span class="latency" data-ms="246">246ms</span></div>
+                      <div class="body stream">
+                        <div class="vet-score">3<small>/ 5</small></div>
+                        <div class="vet-note">Strong on UC-II + glucosamine. Weak on "14-day" timeline claim.</div>
+                      </div>
+                    </div>
+                    <div class="b-card b-ftc" data-stage="ftc">
+                      <div class="head"><div class="label">FTC §255 compliance</div><div class="badge">Vertex AI Search</div><span class="latency" data-ms="328">328ms</span></div>
+                      <div class="body stream">
+                        <div class="ftc-result">No violation flags</div>
+                        <div class="ftc-rule">§255.1(a) truthful and non-misleading · §255.2 typical results disclosed</div>
+                      </div>
+                    </div>
+                    <div class="b-card b-sign" data-stage="sign">
+                      <div class="head"><div class="label">Signed bundle</div><div class="badge">Ed25519</div><span class="latency" data-ms="62">62ms</span></div>
+                      <div class="body stream">
+                        <div class="sign-key">Firestore chain anchor</div>
+                        <div class="sign-hash">sha256:26ca807353b3e8242370f7843eace8e58a6781f2f...</div>
+                      </div>
+                    </div>
+                  </div>
 
-        <div class="b-card b-evidence" data-stage="evidence">
-          <div class="head"><div class="label">Evidence match</div><div class="badge">BioMCP · PubMed</div><span class="latency" data-ms="412">412ms</span></div>
-          <div class="body stream">
-            <div class="ev-list">
-              <div class="ev-item"><span class="pmid">PMID 32316397</span><span class="quote">Glucosamine + chondroitin in canine osteoarthritis</span><span class="tag">supports</span></div>
-              <div class="ev-item"><span class="pmid">PMID 40685570</span><span class="quote">Omega-3 inflammatory pathway review (feline OA)</span><span class="tag">partial</span></div>
-              <div class="ev-item"><span class="pmid">PMID 28845362</span><span class="quote">UC-II vs glucosamine comparison trial</span><span class="tag">supports</span></div>
+                  <!-- When the verification completes, the bento collapses
+                       to this compact "Trust Report" summary. Keeps the
+                       chain anchor on-screen, hides the per-card detail. -->
+                  <div class="trust-report" id="trustReport">
+                    <div class="tr-row">
+                      <div class="tr-seal">✓</div>
+                      <div class="tr-main">
+                        <div class="tr-title"><b>Verified.</b> Substantiated evidence · 0 FTC §255 flags</div>
+                        <div class="tr-anchor">sha256:26ca807353b3e8242370f7843eace8e58a6781f2fc0131009a563c1d6ace9455</div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="post-tool-row">
+                  <button class="advance-cta" id="goToRecommend">Click to see Gemini's answer <span class="arrow">→</span></button>
+                </div>
+              </div>
             </div>
           </div>
         </div>
-
-        <div class="b-card b-vet" data-stage="vet">
-          <div class="head"><div class="label">Vet rubric</div><div class="badge">5-vet simulation</div><span class="latency" data-ms="246">246ms</span></div>
-          <div class="body stream">
-            <div class="vet-score">3<small>/ 5</small></div>
-            <div class="vet-note">Strong on UC-II + glucosamine. Weak on "14-day" timeline claim.</div>
-          </div>
-        </div>
-
-        <div class="b-card b-ftc" data-stage="ftc">
-          <div class="head"><div class="label">FTC §255 compliance</div><div class="badge">Vertex AI Search</div><span class="latency" data-ms="328">328ms</span></div>
-          <div class="body stream">
-            <div class="ftc-result">No violation flags</div>
-            <div class="ftc-rule">§255.1(a) truthful and non-misleading · §255.2 typical results disclosed</div>
-          </div>
-        </div>
-
-        <div class="b-card b-sign" data-stage="sign">
-          <div class="head"><div class="label">Signed bundle</div><div class="badge">Ed25519</div><span class="latency" data-ms="62">62ms</span></div>
-          <div class="body stream">
-            <div class="sign-key">Firestore chain anchor</div>
-            <div class="sign-hash">sha256:26ca807353b3e8242370f7843eace8e58a6781f2f...</div>
-          </div>
-        </div>
-      </div>
-
-      <div class="pc-verdict">
-        <div class="verdict-text">
-          <b>Verified.</b> Substantiated evidence · 0 FTC §255 flags · signed at the time of recommendation.
-          <span class="anchor">sha256:26ca807353b3e8242370f7843eace8e58a6781f2fc0131009a563c1d6ace9455</span>
-        </div>
-        <button class="advance-btn" id="goToRecommend">Click to see Gemini's answer <span class="arrow">→</span></button>
-      </div>
-
-      <div class="pc-thesis"><b>PawConscious</b> · the trust layer AI agents call before recommending</div>
+      </main>
     </div>
   </section>
 
@@ -1877,7 +2072,7 @@ const scenes = {
   4: document.querySelector('.scene-4'),
 };
 const dots = Array.from(document.querySelectorAll('[data-jump]'));
-const SCENE_WORLD = { 0:'llm', 1:'llm', 2:'pc', 3:'llm', 4:'vendor' };
+const SCENE_WORLD = { 0:'llm', 1:'llm', 2:'llm', 3:'llm', 4:'vendor' };
 
 let currentScene = 0;
 let runToken = 0;
