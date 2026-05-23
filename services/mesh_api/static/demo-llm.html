@@ -1,0 +1,2233 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PawConscious · the trust layer Gemini calls before recommending</title>
+<link rel="preload" href="/assets/native-pet-hip-joint-alt-warm.png" as="image">
+<link rel="preload" href="/assets/wellpaw-hip-joint.png" as="image">
+<link rel="preload" href="/assets/goldenpaw-hip-joint.png" as="image">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600;700;800&family=Google+Sans+Text:wght@400;500;700&display=swap">
+<style>
+/* ============================================================
+   THREE WORLDS
+   ============================================================ */
+:root {
+  --mono: ui-monospace, "SF Mono", "JetBrains Mono", Menlo, Consolas, monospace;
+  --sans: "Inter", "Google Sans Text", ui-sans-serif, -apple-system, system-ui, sans-serif;
+  --serif: "Fraunces", "Iowan Old Style", Georgia, serif;
+
+  /* Gemini-style LLM world */
+  --g-bg: #FFFFFF;
+  --g-bg-soft: #F0F4F9;
+  --g-bg-rail: #F8FAFD;
+  --g-bg-chip: #E9EEF6;
+  --g-line: #DDE3EA;
+  --g-text: #1F1F1F;
+  --g-dim: #5F6368;
+  --g-muted: #80868B;
+  --g-blue: #1A73E8;
+  --g-purple: #A142F4;
+  --g-grad: linear-gradient(135deg, #4285F4 0%, #9B72CB 50%, #D96570 100%);
+
+  /* PawConscious dark world */
+  --pc-bg: #07090C;
+  --pc-bg-grad: radial-gradient(ellipse at 50% 30%, #0E1422 0%, #07090C 60%);
+  --pc-bg-card: #0E1218;
+  --pc-bg-card-lit: #131A24;
+  --pc-line: rgba(255,255,255,0.08);
+  --pc-line-strong: rgba(255,255,255,0.16);
+  --pc-text: #E8ECEF;
+  --pc-dim: rgba(232,236,239,0.62);
+  --pc-muted: rgba(232,236,239,0.38);
+  --pc-electric: #00B5DC;
+  --pc-electric-soft: rgba(0,181,220,0.14);
+  --pc-moss: #6FAE7A;
+  --pc-moss-soft: rgba(111,174,122,0.18);
+  --pc-amber: #F5B544;
+  --pc-violet: #9B7CE5;
+
+  /* Vendor world */
+  --v-bg: #FAF6EE;
+  --v-bg-elev: #FFFFFF;
+  --v-bg-card: #F2EBDD;
+  --v-line: rgba(74,53,33,0.12);
+  --v-line-strong: rgba(74,53,33,0.22);
+  --v-text: #2B1F12;
+  --v-dim: rgba(43,31,18,0.62);
+  --v-muted: rgba(43,31,18,0.42);
+  --v-primary: #C44A4A;
+  --v-sage: #7BA98D;
+  --v-cream: #FBF7EE;
+}
+
+* { box-sizing: border-box; }
+html, body {
+  margin: 0; padding: 0; height: 100%;
+  background: #000;
+  font-family: var(--sans);
+  overflow: hidden;
+  -webkit-font-smoothing: antialiased;
+}
+
+.stage {
+  position: fixed; inset: 0;
+  transition: background 500ms ease;
+}
+.stage[data-world="llm"]    { background: var(--g-bg); }
+.stage[data-world="pc"]     { background: var(--pc-bg); }
+.stage[data-world="pc"]::before {
+  content: ""; position: absolute; inset: 0;
+  background: var(--pc-bg-grad);
+  pointer-events: none;
+}
+.stage[data-world="vendor"] { background: var(--v-bg); }
+
+.scene {
+  position: absolute; inset: 0;
+  opacity: 0; visibility: hidden;
+  transition: opacity 400ms cubic-bezier(.16,.84,.44,1), visibility 0ms 400ms;
+}
+.scene.active { opacity: 1; visibility: visible; transition-delay: 0ms; }
+
+/* ============================================================
+   GEMINI APP CHROME (used by scenes 0, 1, 2, 4)
+   ============================================================ */
+.gem-app {
+  position: absolute; inset: 0;
+  display: grid; grid-template-columns: 260px 1fr;
+  background: var(--g-bg);
+}
+.gem-sidebar {
+  background: var(--g-bg-rail);
+  padding: 14px 12px;
+  border-right: 1px solid var(--g-line);
+  display: flex; flex-direction: column; gap: 14px;
+  overflow: hidden;
+}
+.gem-sidebar .top {
+  display: flex; align-items: center; gap: 10px;
+  padding: 8px 6px;
+}
+.gem-sidebar .top .menu {
+  width: 36px; height: 36px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  color: var(--g-dim); font-size: 16px;
+  background: transparent; border: 0;
+}
+.gem-sidebar .top .menu:hover { background: var(--g-bg-chip); }
+.gem-sidebar .top .wordmark {
+  font: 500 18px var(--sans); color: var(--g-text);
+  letter-spacing: -0.01em;
+}
+.gem-sidebar .new-chat {
+  display: inline-flex; align-items: center; gap: 10px;
+  font: 500 14px var(--sans); color: var(--g-text);
+  background: var(--g-bg-chip);
+  border: 0; padding: 10px 16px; border-radius: 100px;
+  width: max-content; cursor: pointer;
+}
+.gem-sidebar .section-label {
+  font: 500 11px var(--sans); color: var(--g-muted);
+  letter-spacing: 0.04em;
+  padding: 8px 12px 4px;
+}
+.gem-sidebar .convo {
+  padding: 10px 12px;
+  font: 400 13px var(--sans); color: var(--g-dim);
+  border-radius: 100px;
+  cursor: pointer;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.gem-sidebar .convo:hover { background: var(--g-bg-chip); }
+.gem-sidebar .convo.current { background: rgba(26,115,232,0.10); color: var(--g-text); font-weight: 500; }
+
+.gem-main {
+  display: flex; flex-direction: column;
+  overflow: hidden;
+  position: relative;
+  padding-bottom: 90px; /* room for the floating controls bar */
+}
+.gem-topbar {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 14px 28px;
+  border-bottom: 1px solid transparent;
+}
+.gem-topbar .model-picker {
+  display: inline-flex; align-items: center; gap: 8px;
+  font: 500 14px var(--sans); color: var(--g-text);
+  padding: 6px 12px; border-radius: 100px;
+  cursor: pointer;
+}
+.gem-topbar .model-picker:hover { background: var(--g-bg-chip); }
+.gem-topbar .model-picker .star { width: 16px; height: 16px; }
+.gem-topbar .model-picker .chev { color: var(--g-muted); font-size: 11px; }
+.gem-topbar .actions {
+  display: flex; align-items: center; gap: 8px;
+  font: 500 13px var(--sans); color: var(--g-dim);
+}
+.gem-topbar .actions .av {
+  width: 30px; height: 30px; border-radius: 50%;
+  background: linear-gradient(135deg, #F5B544, #C44A4A);
+  color: #FFF; font: 700 12px var(--sans);
+  display: flex; align-items: center; justify-content: center;
+}
+
+.gem-thread {
+  flex: 1; overflow: hidden;
+  padding: 28px 32px 24px;
+  display: flex; flex-direction: column; align-items: center;
+  gap: 24px;
+}
+.gem-thread-inner {
+  width: 100%; max-width: 760px;
+  display: flex; flex-direction: column; gap: 22px;
+}
+
+/* The Gemini four-point star, SVG-friendly */
+.gstar-grad {
+  position: absolute; width: 0; height: 0;
+}
+
+/* Empty-state hero for scene 1 */
+.gem-hero {
+  flex: 1; display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  gap: 26px;
+}
+.gem-hero .greeting {
+  font: 500 44px/1.15 var(--sans);
+  background: var(--g-grad);
+  -webkit-background-clip: text; background-clip: text;
+  color: transparent;
+  letter-spacing: -0.02em;
+}
+.gem-hero .sub {
+  font: 400 14px var(--sans); color: var(--g-muted);
+  margin-top: -16px;
+}
+
+/* Gemini input bar */
+.gem-input {
+  width: 100%; max-width: 760px;
+  background: var(--g-bg-soft);
+  border: 1px solid transparent;
+  border-radius: 28px;
+  padding: 14px 18px;
+  display: flex; align-items: flex-end; gap: 12px;
+  transition: border-color 240ms, box-shadow 240ms;
+  margin: 0 auto;
+}
+.gem-input.typing {
+  border-color: rgba(26,115,232,0.4);
+  box-shadow: 0 4px 24px rgba(26,115,232,0.12);
+}
+.gem-input .left-icons {
+  display: flex; align-items: center; gap: 4px;
+}
+.gem-input .icon-btn {
+  width: 36px; height: 36px; border-radius: 50%;
+  background: transparent; border: 0; cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  color: var(--g-dim); font-size: 18px;
+  transition: background 160ms;
+}
+.gem-input .icon-btn:hover { background: var(--g-bg-chip); }
+.gem-input .query-area {
+  flex: 1; min-width: 0; padding: 8px 4px;
+}
+.gem-input .query {
+  font: 400 16px/1.5 var(--sans); color: var(--g-text);
+  min-height: 24px; word-wrap: break-word;
+}
+.gem-input .query.placeholder { color: var(--g-muted); }
+.gem-input .query .cursor {
+  display: inline-block; width: 2px; height: 18px;
+  background: var(--g-blue); vertical-align: text-bottom;
+  animation: cursor-blink 700ms infinite;
+  margin-left: 1px;
+}
+.gem-input .right-icons {
+  display: flex; align-items: center; gap: 4px;
+}
+.gem-input .submit-btn {
+  width: 36px; height: 36px; border-radius: 50%;
+  background: var(--g-bg-chip); color: var(--g-muted);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 18px;
+  border: 0; cursor: pointer;
+  transition: all 200ms;
+  position: relative;
+}
+.gem-input.armed .submit-btn {
+  /* Once the query is fully typed, the submit becomes the obvious advance CTA. */
+  background: var(--g-grad); color: #FFF;
+  box-shadow: 0 8px 22px rgba(155,114,203,0.36);
+  animation: cta-breathe 2.4s ease-in-out infinite;
+}
+.gem-input.clicked .submit-btn {
+  transform: scale(0.92);
+  background: var(--g-blue);
+}
+
+/* (click-to-ask styles now live with the scene-0 block above) */
+
+/* ============================================================
+   Demo pointer — animated cursor that simulates user clicks
+   during autonomous sections (mainly scene 5 checkout). Lives
+   at the top level so it can move across any scene's surface.
+   ============================================================ */
+.demo-pointer {
+  position: fixed;
+  width: 26px; height: 32px;
+  pointer-events: none;
+  z-index: 250;
+  opacity: 0;
+  filter: drop-shadow(0 4px 10px rgba(0,0,0,0.32));
+  /* Default transition for both fade and move so we can drive both via JS */
+  transition: opacity 240ms ease, left 720ms cubic-bezier(.22,.65,.32,1), top 720ms cubic-bezier(.22,.65,.32,1);
+}
+.demo-pointer.show { opacity: 1; }
+.demo-pointer.click { transform: scale(0.88); transition: opacity 240ms, transform 120ms ease-out; }
+.demo-pointer svg { width: 100%; height: 100%; }
+
+.demo-click-ripple {
+  position: fixed; width: 44px; height: 44px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(155,114,203,0.5) 0%, rgba(155,114,203,0) 70%);
+  border: 2px solid rgba(155,114,203,0.7);
+  pointer-events: none; z-index: 249;
+  opacity: 0;
+}
+.demo-click-ripple.fire { animation: demo-ripple 600ms ease-out; }
+@keyframes demo-ripple {
+  0%   { opacity: 0.85; transform: scale(0.5); }
+  100% { opacity: 0;    transform: scale(2.4); }
+}
+@keyframes cursor-blink { 0%,49%{opacity:1} 50%,100%{opacity:0} }
+
+/* ============================================================
+   SCENE 0 — combined cinematic intro:
+   macOS desktop → cursor clicks Chrome → Chrome window
+   opens → types gemini.google.com → Gemini app loads →
+   query types itself → submit armed + "Click to ask Gemini"
+   tooltip appears.
+   ============================================================ */
+.scene-0 {
+  background: linear-gradient(180deg, #2A4A7A 0%, #C8825D 60%, #E8B289 100%);
+  overflow: hidden;
+  position: absolute; inset: 0;
+}
+/* macOS menu bar */
+.mac-menubar {
+  position: absolute; top: 0; left: 0; right: 0; height: 28px;
+  background: rgba(255,255,255,0.10);
+  backdrop-filter: blur(14px);
+  display: flex; align-items: center; padding: 0 16px;
+  font: 500 13px var(--sans); color: rgba(255,255,255,0.92);
+  z-index: 6;
+}
+.mac-menubar .apple { font-size: 14px; margin-right: 16px; }
+.mac-menubar .menu-item { margin-right: 16px; }
+.mac-menubar .right-cluster {
+  margin-left: auto;
+  display: flex; align-items: center; gap: 14px;
+  font: 500 13px var(--sans);
+}
+.mac-menubar .clock { font-variant-numeric: tabular-nums; }
+
+/* Desktop wallpaper area + dock */
+.mac-desktop {
+  position: absolute; inset: 28px 0 0 0;
+  display: flex; align-items: flex-end; justify-content: center;
+  padding-bottom: 26px;
+  transition: opacity 480ms ease, transform 600ms ease;
+}
+.scene-0.phase-browser .mac-desktop,
+.scene-0.phase-gemini .mac-desktop {
+  opacity: 0; pointer-events: none;
+  transform: scale(1.05);
+}
+
+.mac-dock {
+  display: inline-flex; align-items: end; gap: 12px;
+  padding: 8px 14px;
+  background: rgba(255,255,255,0.18);
+  backdrop-filter: blur(28px) saturate(160%);
+  border: 1px solid rgba(255,255,255,0.28);
+  border-radius: 22px;
+  box-shadow: 0 18px 50px rgba(0,0,0,0.22);
+}
+.mac-dock .app {
+  width: 56px; height: 56px;
+  border-radius: 14px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 30px;
+  cursor: pointer;
+  transition: transform 240ms cubic-bezier(.34,1.56,.64,1);
+  background: #FFF;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.18);
+  position: relative;
+}
+.mac-dock .app:hover { transform: translateY(-12px) scale(1.18); }
+.mac-dock .app.finder { background: linear-gradient(135deg, #60A0FF, #2F6AD4); color: #FFF; }
+.mac-dock .app.mail   { background: linear-gradient(135deg, #5EC4FF, #2A8FE0); color: #FFF; }
+.mac-dock .app.safari { background: radial-gradient(circle at 30% 30%, #E8F4FF, #5EA8FF 60%, #2A6FC0); color: #FFF; }
+.mac-dock .app.notes  { background: linear-gradient(180deg, #FFE38C, #F5C24B); color: #B0760A; }
+.mac-dock .app.spotify{ background: #1DB954; color: #FFF; }
+.mac-dock .app.slack  { background: #FFF; color: #4A154B; }
+.mac-dock .app.chrome {
+  background: conic-gradient(from 90deg at 50% 50%,
+    #EA4335 0deg, #EA4335 120deg,
+    #FBBC04 120deg, #FBBC04 240deg,
+    #34A853 240deg, #34A853 360deg);
+  position: relative;
+}
+.mac-dock .app.chrome::after {
+  content: ""; position: absolute; inset: 38%;
+  background: #4285F4; border-radius: 50%;
+  border: 4px solid #FFF;
+}
+.mac-dock .app.trash {
+  background: #FFF; color: #888;
+  background-image: linear-gradient(135deg, #B0B0B0 0%, #888 100%);
+}
+
+.mac-dock .app.hi-lite {
+  transform: translateY(-12px) scale(1.18);
+  box-shadow: 0 14px 30px rgba(0,0,0,0.32);
+}
+
+.mac-desktop-icons {
+  position: absolute; top: 56px; left: 32px;
+  display: flex; flex-direction: column; gap: 24px;
+}
+.mac-desktop-icons .desk-icon {
+  display: flex; flex-direction: column; align-items: center; gap: 4px;
+  font: 500 11px var(--sans); color: #FFF;
+  text-shadow: 0 1px 2px rgba(0,0,0,0.4);
+  width: 72px;
+}
+.mac-desktop-icons .desk-icon .glyph {
+  font-size: 32px;
+  filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3));
+}
+
+/* Chrome window */
+.chrome-window {
+  position: absolute; top: 60px; left: 50%; transform: translateX(-50%) scale(0.6);
+  width: 88%; max-width: 1100px;
+  height: calc(100% - 90px);
+  background: #FFF;
+  border-radius: 12px 12px 8px 8px;
+  box-shadow: 0 30px 80px rgba(0,0,0,0.30), 0 0 0 1px rgba(0,0,0,0.06);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 420ms ease, transform 580ms cubic-bezier(.16,.84,.44,1),
+              width 700ms cubic-bezier(.22,.65,.32,1), height 700ms cubic-bezier(.22,.65,.32,1),
+              top 700ms cubic-bezier(.22,.65,.32,1),
+              border-radius 500ms ease, box-shadow 500ms ease;
+  overflow: hidden;
+  z-index: 5;
+  display: flex; flex-direction: column;
+}
+.scene-0.phase-browser .chrome-window,
+.scene-0.phase-gemini  .chrome-window {
+  opacity: 1; transform: translateX(-50%) scale(1);
+}
+/* When zooming-in (transition out of scene 0), the Chrome window scales to
+   fill the viewport while the macOS chrome and Chrome window frame fade out,
+   so what we land on (scene 1's Gemini answer) feels like the same surface
+   we just dove into. */
+.scene-0.phase-zooming .chrome-window {
+  width: 100%;
+  height: 100%;
+  top: 0;
+  border-radius: 0;
+  box-shadow: 0 0 0 0 transparent;
+  z-index: 50;
+}
+.scene-0.phase-zooming .chrome-bar,
+.scene-0.phase-zooming .chrome-urlbar {
+  opacity: 0;
+  transform: translateY(-12px);
+  transition: opacity 320ms ease, transform 420ms ease;
+}
+.scene-0.phase-zooming .mac-menubar {
+  opacity: 0;
+  transition: opacity 320ms ease;
+}
+.chrome-bar, .chrome-urlbar { transition: opacity 320ms ease, transform 320ms ease; }
+.mac-menubar { transition: opacity 320ms ease; }
+.chrome-window .chrome-bar {
+  background: #E6E9EE;
+  padding: 10px 14px 0;
+  border-bottom: 1px solid #D0D5DB;
+}
+.chrome-window .chrome-traffic {
+  display: flex; gap: 8px; margin-bottom: 10px;
+}
+.chrome-window .chrome-traffic .tl {
+  width: 12px; height: 12px; border-radius: 50%;
+}
+.chrome-window .chrome-traffic .tl.red    { background: #FF5F57; }
+.chrome-window .chrome-traffic .tl.yellow { background: #FEBC2E; }
+.chrome-window .chrome-traffic .tl.green  { background: #28C840; }
+.chrome-window .chrome-tabs {
+  display: flex; align-items: center; gap: 4px;
+}
+.chrome-window .chrome-tab {
+  background: #FFF;
+  border-radius: 8px 8px 0 0;
+  padding: 8px 14px;
+  font: 500 13px var(--sans); color: var(--g-text);
+  display: flex; align-items: center; gap: 8px;
+  border: 1px solid #D0D5DB;
+  border-bottom: 0;
+  max-width: 240px;
+}
+.chrome-window .chrome-tab .favicon {
+  width: 14px; height: 14px;
+}
+.chrome-window .chrome-tab .x {
+  color: var(--g-muted); font-size: 14px;
+}
+.chrome-window .chrome-urlbar {
+  display: flex; align-items: center; gap: 10px;
+  background: #FFF;
+  padding: 8px 14px;
+  border-bottom: 1px solid #E6E9EE;
+}
+.chrome-window .chrome-urlbar .nav-btn {
+  width: 28px; height: 28px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  color: var(--g-dim); font-size: 14px;
+  background: transparent;
+}
+.chrome-window .chrome-urlbar .url-pill {
+  flex: 1;
+  background: var(--g-bg-soft);
+  border-radius: 100px;
+  padding: 8px 16px;
+  font: 400 13px var(--sans); color: var(--g-text);
+  display: flex; align-items: center; gap: 8px;
+  min-height: 30px;
+}
+.chrome-window .chrome-urlbar .url-pill .lock { color: var(--g-muted); font-size: 12px; }
+.chrome-window .chrome-urlbar .url-pill .url-text { font-variant-numeric: tabular-nums; }
+.chrome-window .chrome-urlbar .url-pill .url-cursor {
+  display: inline-block; width: 1.5px; height: 14px;
+  background: var(--g-blue); vertical-align: text-bottom;
+  animation: cursor-blink 700ms infinite;
+  margin-left: 1px;
+}
+.chrome-window .chrome-urlbar .right-icons {
+  display: flex; align-items: center; gap: 6px;
+  color: var(--g-dim);
+}
+
+.chrome-window .chrome-page {
+  flex: 1;
+  background: #FFF;
+  position: relative;
+  overflow: hidden;
+}
+.chrome-window .chrome-page .gem-app {
+  opacity: 0;
+  transition: opacity 380ms ease;
+}
+.scene-0.phase-gemini .chrome-window .chrome-page .gem-app {
+  opacity: 1;
+}
+.chrome-window .chrome-page .loading-bar {
+  position: absolute; top: 0; left: 0; height: 2px;
+  background: var(--g-grad);
+  width: 0;
+  transition: width 600ms ease;
+  z-index: 4;
+}
+.scene-0.phase-loading .chrome-window .chrome-page .loading-bar { width: 100%; }
+
+/* Floating "Click to ask Gemini" tooltip near the submit button */
+.click-to-ask {
+  position: absolute;
+  display: inline-flex; align-items: center; gap: 6px;
+  background: rgba(26,26,26,0.92); color: #FFF;
+  font: 600 12px var(--sans);
+  padding: 8px 14px; border-radius: 100px;
+  pointer-events: none;
+  opacity: 0; transform: translateY(8px);
+  transition: opacity 320ms, transform 320ms;
+  z-index: 25;
+  white-space: nowrap;
+  box-shadow: 0 8px 22px rgba(0,0,0,0.20);
+}
+.click-to-ask.show { opacity: 1; transform: translateY(0); }
+.click-to-ask::after {
+  content: ""; position: absolute; bottom: -5px; right: 18px;
+  width: 10px; height: 10px;
+  background: rgba(26,26,26,0.92);
+  transform: rotate(45deg);
+}
+
+/* Pulse used by all advance CTAs */
+@keyframes cta-breathe {
+  0%, 100% { box-shadow: 0 10px 28px rgba(155,114,203,0.30); }
+  50%      { box-shadow: 0 14px 36px rgba(155,114,203,0.50); }
+}
+
+/* Skip-intro: small label top-right in scene 0 */
+.skip-intro {
+  position: absolute;
+  top: 44px; right: 24px;
+  display: inline-flex; align-items: center; gap: 6px;
+  background: rgba(0,0,0,0.45); color: #FFF;
+  font: 500 12px var(--sans);
+  padding: 7px 14px; border-radius: 100px;
+  border: 1px solid rgba(255,255,255,0.18);
+  cursor: pointer;
+  z-index: 30;
+  transition: all 200ms;
+  backdrop-filter: blur(12px);
+}
+.skip-intro:hover { background: rgba(0,0,0,0.65); transform: translateY(-1px); }
+
+/* Scene 2 thesis caption under the verdict */
+.scene-2 .pc-thesis {
+  margin-top: 14px;
+  text-align: center;
+  font: 500 12px/1.5 var(--mono);
+  letter-spacing: 0.10em; text-transform: uppercase;
+  color: var(--pc-dim);
+  opacity: 0; transform: translateY(4px);
+  transition: all 480ms 320ms;
+}
+.scene-2.complete .pc-thesis { opacity: 1; transform: translateY(0); }
+.scene-2 .pc-thesis b { color: var(--pc-electric); font-weight: 700; }
+
+/* Scene 3 trust-check banner above the recommendation */
+.scene-3 .trust-banner {
+  display: inline-flex; align-items: center; gap: 8px;
+  background: rgba(111,174,122,0.10);
+  border: 1px solid rgba(111,174,122,0.32);
+  color: var(--pc-moss);
+  padding: 7px 14px; border-radius: 100px;
+  font: 600 11px/1 var(--mono); letter-spacing: 0.10em; text-transform: uppercase;
+  margin-bottom: 6px;
+  width: max-content;
+}
+.scene-3 .trust-banner .seal {
+  width: 14px; height: 14px; border-radius: 50%;
+  background: var(--pc-moss); color: #FFF;
+  display: flex; align-items: center; justify-content: center;
+  font: 700 9px var(--mono);
+}
+
+/* Scene 4 replay-scene button (after confirmation) */
+.scene-4 .replay-scene {
+  position: absolute; bottom: 84px; left: 50%; transform: translateX(-50%);
+  display: inline-flex; align-items: center; gap: 8px;
+  background: rgba(43,31,18,0.86);
+  color: #FFF;
+  font: 600 12px var(--sans);
+  padding: 10px 18px; border-radius: 100px;
+  border: 0; cursor: pointer;
+  opacity: 0; pointer-events: none;
+  transition: opacity 320ms;
+  z-index: 110;
+}
+.scene-4.confirmed .replay-scene { opacity: 1; pointer-events: auto; }
+.scene-4 .replay-scene:hover { background: #000; }
+
+/* Keyboard hint near controls */
+.kbd-hint {
+  position: fixed; bottom: 70px; left: 50%; transform: translateX(-50%);
+  font: 500 11px var(--mono); letter-spacing: 0.08em;
+  color: rgba(255,255,255,0.5);
+  opacity: 0;
+  transition: opacity 400ms;
+  pointer-events: none;
+  z-index: 50;
+  white-space: nowrap;
+}
+.stage[data-world="pc"] .kbd-hint { color: rgba(255,255,255,0.6); }
+.kbd-hint.show { opacity: 1; }
+.kbd-hint kbd {
+  display: inline-block;
+  padding: 1px 6px; border-radius: 4px;
+  background: rgba(255,255,255,0.14);
+  border: 1px solid rgba(255,255,255,0.22);
+  color: #FFF;
+  font: 600 10px var(--mono);
+}
+
+/* Mobile / small-viewport responsive */
+@media (max-width: 1024px) {
+  .gem-app { grid-template-columns: 0 1fr; }
+  .gem-sidebar { display: none; }
+  .scene-1 .products { grid-template-columns: 1fr; }
+  .bento {
+    grid-template-columns: 1fr;
+  }
+  .bento .b-card.b-claim,
+  .bento .b-card.b-evidence,
+  .bento .b-card.b-vet,
+  .bento .b-card.b-ftc,
+  .bento .b-card.b-sign { grid-column: 1; grid-row: auto; }
+  .scene-4 .product-detail { grid-template-columns: 1fr; }
+  .chrome-window { width: 96%; }
+  .mac-dock .app { width: 44px; height: 44px; font-size: 22px; }
+}
+.scene-0 .opener-caption em {
+  font-style: normal;
+  background: var(--g-grad);
+  -webkit-background-clip: text; background-clip: text;
+  color: transparent; font-weight: 600;
+}
+
+/* ============================================================
+   SCENE 1 — empty Gemini conversation
+   ============================================================ */
+/* (the former empty-Gemini scene-1 is now folded into scene-0) */
+
+/* ============================================================
+   SCENE 2 — Gemini answering with 3 product candidates
+   ============================================================ */
+.scene-1 .gem-thread { padding-top: 18px; gap: 18px; }
+
+.user-msg {
+  align-self: flex-end;
+  max-width: 80%;
+  background: var(--g-bg-soft);
+  border-radius: 18px;
+  padding: 12px 16px;
+  font: 400 15px/1.5 var(--sans); color: var(--g-text);
+}
+
+.assistant-msg {
+  display: flex; gap: 14px;
+  width: 100%;
+}
+.assistant-msg .av {
+  width: 32px; height: 32px; flex-shrink: 0;
+}
+.assistant-msg .body { flex: 1; min-width: 0; }
+.assistant-msg .text {
+  font: 400 15px/1.55 var(--sans); color: var(--g-text);
+}
+.assistant-msg .text b { font-weight: 600; }
+
+.thinking-row {
+  display: inline-flex; align-items: center; gap: 10px;
+  font: 500 13px var(--sans); color: var(--g-muted);
+  margin-bottom: 12px;
+}
+.thinking-row .dots span {
+  display: inline-block; width: 5px; height: 5px; border-radius: 50%;
+  background: var(--g-blue); margin: 0 2px;
+  animation: pulse-dot 1.2s infinite ease-in-out;
+}
+.thinking-row .dots span:nth-child(2) { animation-delay: 0.2s; }
+.thinking-row .dots span:nth-child(3) { animation-delay: 0.4s; }
+@keyframes pulse-dot {
+  0%, 80%, 100% { opacity: 0.3; transform: scale(0.8); }
+  40% { opacity: 1; transform: scale(1.1); }
+}
+
+.products {
+  display: grid; grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+  margin-top: 14px;
+}
+.product-card {
+  background: var(--g-bg);
+  border: 1px solid var(--g-line);
+  border-radius: 14px;
+  padding: 12px;
+  display: flex; flex-direction: column; gap: 10px;
+  opacity: 0; transform: translateY(10px);
+  transition: opacity 380ms, transform 380ms, border-color 280ms, box-shadow 280ms;
+  position: relative;
+  overflow: hidden;
+}
+.scene-1.show-products .product-card { opacity: 1; transform: translateY(0); }
+.scene-1.show-products .product-card:nth-child(1) { transition-delay: 60ms; }
+.scene-1.show-products .product-card:nth-child(2) { transition-delay: 180ms; }
+.scene-1.show-products .product-card:nth-child(3) { transition-delay: 300ms; }
+.scene-1.pinging .product-card {
+  border-color: rgba(0,181,220,0.4);
+  box-shadow: 0 4px 18px rgba(0,181,220,0.10);
+}
+.product-card .img-wrap {
+  height: 120px;
+  border-radius: 10px;
+  display: flex; align-items: center; justify-content: center;
+  overflow: hidden;
+  background: linear-gradient(135deg, #FBF7EE 0%, #F2EBDD 100%);
+}
+.product-card .img-wrap img {
+  max-height: 100%; max-width: 100%; object-fit: contain;
+}
+.product-card .meta .name {
+  font: 600 13px/1.3 var(--sans); color: var(--g-text);
+}
+.product-card .meta .brand {
+  font: 400 12px/1.4 var(--sans); color: var(--g-dim); margin-top: 2px;
+}
+.product-card .row-bottom {
+  display: flex; justify-content: space-between; align-items: center;
+}
+.product-card .price { font: 700 15px var(--sans); color: var(--g-text); }
+.product-card .badge {
+  font: 600 9px/1 var(--mono); letter-spacing: 0.08em;
+  padding: 4px 8px; border-radius: 100px;
+  background: var(--g-bg-soft); color: var(--g-muted);
+  opacity: 0; transition: opacity 240ms;
+}
+.scene-1.pinging .product-card .badge {
+  opacity: 1;
+  background: var(--pc-electric-soft); color: var(--pc-electric);
+}
+
+.ping-banner {
+  margin-top: 14px;
+  background: var(--g-bg-soft);
+  border: 1px solid var(--g-line);
+  border-radius: 12px;
+  padding: 12px 14px;
+  font: 500 13px/1.4 var(--sans); color: var(--g-text);
+  display: flex; align-items: center; gap: 10px;
+  opacity: 0; transform: translateY(6px);
+  transition: all 400ms;
+}
+.scene-1.pinging .ping-banner { opacity: 1; transform: translateY(0); }
+.ping-banner .pulse-dot {
+  width: 8px; height: 8px; border-radius: 50%;
+  background: var(--pc-electric); flex-shrink: 0;
+  animation: pulse-mark 1.4s infinite ease-in-out;
+}
+@keyframes pulse-mark { 50% { opacity: 0.45; } }
+.ping-banner b { color: var(--pc-electric); font-weight: 600; }
+/* Unified advance-CTA style: same pill across all scenes so users learn
+   "dark pill with arrow = advance". Used in scene 2 ping banner, scene 3
+   verdict, scene 4 recommendation. */
+.advance-cta {
+  display: inline-flex; align-items: center; gap: 8px;
+  background: #1A1A1A; color: #FFF;
+  font: 600 14px var(--sans);
+  padding: 12px 22px; border-radius: 100px;
+  border: 0; cursor: pointer;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.18);
+  transition: all 200ms;
+  white-space: nowrap;
+  text-decoration: none;
+}
+.advance-cta:hover { background: #000; transform: translateY(-1px); box-shadow: 0 10px 24px rgba(0,0,0,0.24); }
+.advance-cta .arrow { transition: transform 200ms; }
+.advance-cta:hover .arrow { transform: translateX(3px); }
+
+.ping-banner .advance-btn {
+  margin-left: auto;
+  background: var(--g-grad); color: #FFF;
+  font: 600 13px var(--sans);
+  padding: 11px 20px; border-radius: 100px;
+  border: 0; cursor: pointer;
+  display: inline-flex; align-items: center; gap: 8px;
+  box-shadow: 0 8px 22px rgba(155,114,203,0.28);
+  transition: all 200ms;
+  animation: cta-breathe 2.4s ease-in-out infinite;
+}
+.ping-banner .advance-btn:hover { transform: translateY(-2px); box-shadow: 0 14px 32px rgba(155,114,203,0.42); }
+.ping-banner .advance-btn .arrow { transition: transform 200ms; }
+.ping-banner .advance-btn:hover .arrow { transform: translateX(3px); }
+
+/* ============================================================
+   SCENE 3 — PawConscious bento grid with live evidence
+   ============================================================ */
+.scene-2 {
+  display: flex; align-items: center; justify-content: center;
+  padding: 60px 32px;
+}
+.scene-2 .pc-wrap {
+  width: 100%; max-width: 940px; color: var(--pc-text);
+  position: relative; z-index: 2;
+}
+.scene-2 .pc-header {
+  display: flex; align-items: center; justify-content: space-between;
+  margin-bottom: 22px;
+}
+.scene-2 .pc-header .brand {
+  display: flex; align-items: center; gap: 12px;
+}
+.scene-2 .pc-header .brand .seal {
+  width: 36px; height: 36px; border-radius: 50%;
+  background: linear-gradient(135deg, var(--pc-electric) 0%, var(--pc-moss) 100%);
+  display: flex; align-items: center; justify-content: center;
+  font: 700 16px var(--mono); color: var(--pc-bg);
+}
+.scene-2 .pc-header .brand .label {
+  font: 700 18px var(--sans); color: var(--pc-text);
+}
+.scene-2 .pc-header .brand small {
+  display: block; font: 500 11px/1.4 var(--mono); letter-spacing: 0.12em;
+  text-transform: uppercase; color: var(--pc-muted); margin-top: 3px;
+}
+.scene-2 .pc-header .status {
+  font: 700 11px/1 var(--mono); letter-spacing: 0.18em; text-transform: uppercase;
+  padding: 9px 14px; border-radius: 8px;
+  background: var(--pc-electric-soft); color: var(--pc-electric);
+  border: 1px solid rgba(0,181,220,0.3);
+  transition: all 320ms;
+}
+.scene-2.complete .pc-header .status {
+  background: var(--pc-moss-soft); color: var(--pc-moss);
+  border-color: rgba(111,174,122,0.3);
+}
+
+.bento {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  grid-template-rows: repeat(2, auto);
+  gap: 12px;
+}
+.bento .b-card {
+  background: var(--pc-bg-card);
+  border: 1px solid var(--pc-line);
+  border-radius: 14px;
+  padding: 16px 18px;
+  position: relative;
+  overflow: hidden;
+  transition: background 320ms, border-color 320ms, box-shadow 320ms;
+}
+.bento .b-card.b-claim    { grid-column: span 2; grid-row: 1; min-height: 124px; }
+.bento .b-card.b-evidence { grid-column: span 4; grid-row: 1; min-height: 124px; }
+.bento .b-card.b-vet      { grid-column: span 2; grid-row: 2; min-height: 124px; }
+.bento .b-card.b-ftc      { grid-column: span 2; grid-row: 2; min-height: 124px; }
+.bento .b-card.b-sign     { grid-column: span 2; grid-row: 2; min-height: 124px; }
+
+.bento .b-card.active {
+  background: var(--pc-bg-card-lit);
+  border-color: rgba(0,181,220,0.4);
+  box-shadow: 0 0 0 1px rgba(0,181,220,0.18) inset, 0 4px 24px rgba(0,181,220,0.10);
+}
+.bento .b-card.done {
+  border-color: rgba(111,174,122,0.32);
+  background: var(--pc-bg-card);
+}
+.bento .b-card.done .head .badge {
+  background: var(--pc-moss-soft); color: var(--pc-moss);
+}
+
+.bento .b-card .head {
+  display: flex; align-items: center; justify-content: space-between;
+  margin-bottom: 10px;
+}
+.bento .b-card .head .label {
+  font: 600 11px/1 var(--mono); letter-spacing: 0.14em;
+  text-transform: uppercase; color: var(--pc-dim);
+}
+.bento .b-card .head .badge {
+  font: 600 9px/1 var(--mono); letter-spacing: 0.10em;
+  padding: 4px 8px; border-radius: 100px;
+  background: rgba(255,255,255,0.05); color: var(--pc-muted);
+  transition: all 280ms;
+}
+.bento .b-card.active .head .badge {
+  background: var(--pc-electric-soft); color: var(--pc-electric);
+}
+/* Latency indicator that lives next to the badge */
+.bento .b-card .latency {
+  font: 500 9px/1 var(--mono); letter-spacing: 0.06em;
+  color: var(--pc-muted);
+  margin-left: 8px;
+  opacity: 0;
+  transition: opacity 220ms, color 220ms;
+}
+.bento .b-card.active .latency,
+.bento .b-card.done .latency { opacity: 1; }
+.bento .b-card.active .latency::before {
+  content: ""; display: inline-block; width: 6px; height: 6px;
+  border-radius: 50%; background: var(--pc-electric);
+  margin-right: 5px; vertical-align: middle;
+  animation: latency-pulse 0.6s ease-in-out infinite;
+}
+.bento .b-card.done .latency { color: var(--pc-moss); }
+.bento .b-card.done .latency::before {
+  content: "✓"; color: var(--pc-moss); margin-right: 4px;
+}
+@keyframes latency-pulse {
+  0%, 100% { opacity: 0.35; transform: scale(0.85); }
+  50%      { opacity: 1;    transform: scale(1.0); }
+}
+
+/* Cinematic verdict moment when scene 2 completes */
+.scene-2.complete .pc-verdict {
+  animation: verdict-seal 700ms cubic-bezier(.34,1.56,.64,1);
+  box-shadow: 0 0 0 0 rgba(111,174,122,0.5), 0 8px 32px rgba(111,174,122,0.18);
+}
+@keyframes verdict-seal {
+  0%   { transform: translateY(8px) scale(0.96); box-shadow: 0 0 0 0 rgba(111,174,122,0.5); }
+  60%  { transform: translateY(-2px) scale(1.01); box-shadow: 0 0 0 16px rgba(111,174,122,0.0); }
+  100% { transform: translateY(0) scale(1); }
+}
+.scene-2 .pc-verdict .verdict-text .anchor {
+  display: block; margin-top: 4px;
+  opacity: 0; transform: translateY(4px);
+  transition: opacity 420ms 200ms, transform 420ms 200ms;
+}
+.scene-2.complete .pc-verdict .verdict-text .anchor {
+  opacity: 1; transform: translateY(0);
+}
+
+.bento .b-card .body { font-size: 13px; line-height: 1.5; }
+.bento .b-card .stream {
+  opacity: 0; transform: translateY(4px);
+  transition: opacity 360ms, transform 360ms;
+}
+.bento .b-card.active .stream,
+.bento .b-card.done .stream {
+  opacity: 1; transform: translateY(0);
+}
+
+/* Per-card stream styling */
+.bento .b-claim .claim-line {
+  font: 500 13px/1.45 var(--sans); color: var(--pc-text);
+  margin-bottom: 4px;
+}
+.bento .b-claim .claim-count {
+  font: 700 28px/1 var(--sans); color: var(--pc-text);
+  display: inline-block; margin-right: 8px; vertical-align: -3px;
+}
+.bento .b-claim .claim-sub {
+  font: 400 11px var(--mono); color: var(--pc-muted);
+  letter-spacing: 0.02em;
+}
+
+.bento .b-evidence .ev-list {
+  display: flex; flex-direction: column; gap: 6px;
+}
+.bento .b-evidence .ev-item {
+  font: 500 12px var(--mono); color: var(--pc-dim);
+  display: flex; align-items: center; gap: 8px;
+}
+.bento .b-evidence .ev-item .pmid {
+  color: var(--pc-electric); flex-shrink: 0; min-width: 80px;
+}
+.bento .b-evidence .ev-item .quote {
+  color: var(--pc-text); font: 400 12px/1.4 var(--sans);
+}
+.bento .b-evidence .ev-item .tag {
+  display: inline-flex; align-items: center;
+  font: 600 9px/1 var(--mono); letter-spacing: 0.08em;
+  padding: 3px 7px; border-radius: 100px;
+  background: var(--pc-moss-soft); color: var(--pc-moss);
+  margin-left: auto; flex-shrink: 0;
+}
+
+.bento .b-vet .vet-score {
+  font: 700 32px/1 var(--sans); color: var(--pc-amber);
+  margin-bottom: 6px;
+}
+.bento .b-vet .vet-score small {
+  font: 500 13px var(--sans); color: var(--pc-muted); margin-left: 4px;
+}
+.bento .b-vet .vet-note {
+  font: 400 11px/1.4 var(--sans); color: var(--pc-dim);
+}
+
+.bento .b-ftc .ftc-result {
+  font: 700 13px var(--sans); color: var(--pc-moss);
+  margin-bottom: 6px;
+}
+.bento .b-ftc .ftc-rule {
+  font: 400 11px/1.4 var(--mono); color: var(--pc-dim);
+}
+
+.bento .b-sign .sign-key {
+  font: 600 11px var(--mono); color: var(--pc-electric); margin-bottom: 4px;
+}
+.bento .b-sign .sign-hash {
+  font: 500 10px/1.3 var(--mono); color: var(--pc-moss);
+  word-break: break-all;
+}
+
+.scene-2 .pc-verdict {
+  margin-top: 18px;
+  background: var(--pc-bg-card);
+  border: 1px solid rgba(111,174,122,0.32);
+  border-radius: 14px;
+  padding: 18px 20px;
+  display: flex; align-items: center; justify-content: space-between; gap: 18px;
+  opacity: 0; transform: translateY(6px);
+  transition: all 420ms;
+}
+.scene-2.complete .pc-verdict { opacity: 1; transform: translateY(0); }
+.scene-2 .pc-verdict .verdict-text {
+  font: 500 13px/1.5 var(--sans); color: var(--pc-text);
+}
+.scene-2 .pc-verdict .verdict-text b { color: var(--pc-moss); font-weight: 700; }
+.scene-2 .pc-verdict .verdict-text .anchor {
+  display: block; font: 500 11px/1.4 var(--mono); color: var(--pc-muted);
+  margin-top: 4px; word-break: break-all;
+}
+.scene-2 .pc-verdict .advance-btn {
+  background: var(--g-grad); color: #FFF;
+  font: 600 14px var(--sans);
+  padding: 13px 24px; border-radius: 100px;
+  border: 0; cursor: pointer;
+  display: inline-flex; align-items: center; gap: 10px;
+  flex-shrink: 0;
+  box-shadow: 0 10px 28px rgba(155,114,203,0.35);
+  transition: all 200ms;
+  animation: cta-breathe 2.4s ease-in-out infinite;
+}
+.scene-2 .pc-verdict .advance-btn:hover { transform: translateY(-2px); box-shadow: 0 16px 36px rgba(155,114,203,0.50); }
+.scene-2 .pc-verdict .advance-btn .arrow { transition: transform 200ms; }
+.scene-2 .pc-verdict .advance-btn:hover .arrow { transform: translateX(4px); }
+
+/* ============================================================
+   SCENE 4 — Gemini recommendation, warm
+   ============================================================ */
+.scene-3 .gem-thread { padding-top: 18px; gap: 18px; }
+
+.reco-card {
+  background: var(--g-bg);
+  border: 1px solid var(--g-line);
+  border-radius: 18px;
+  padding: 18px;
+  display: flex; gap: 18px; align-items: center;
+  opacity: 0; transform: translateY(10px);
+  transition: all 480ms;
+  box-shadow: 0 4px 18px rgba(0,0,0,0.04);
+  margin-top: 6px;
+}
+.scene-3.show-reco .reco-card { opacity: 1; transform: translateY(0); }
+.reco-card .thumb {
+  width: 96px; height: 96px; flex-shrink: 0;
+  background: linear-gradient(135deg, #FBF7EE 0%, #F2EBDD 100%);
+  border-radius: 12px; overflow: hidden;
+  display: flex; align-items: center; justify-content: center;
+}
+.reco-card .thumb img { width: 100%; height: 100%; object-fit: contain; padding: 4%; }
+.reco-card .body { flex: 1; }
+.reco-card .verified-row {
+  display: inline-flex; align-items: center; gap: 6px;
+  margin-bottom: 6px;
+  font: 600 10px/1 var(--mono); letter-spacing: 0.10em; text-transform: uppercase;
+  color: var(--pc-moss);
+  background: rgba(111,174,122,0.10);
+  padding: 5px 9px; border-radius: 100px;
+}
+.reco-card .verified-row .seal {
+  width: 12px; height: 12px; border-radius: 50%;
+  background: var(--pc-moss); color: #FFF;
+  display: flex; align-items: center; justify-content: center;
+  font: 700 8px var(--mono);
+}
+.reco-card .name { font: 600 17px/1.3 var(--sans); color: var(--g-text); margin-bottom: 4px; }
+.reco-card .meta { font: 400 12px/1.4 var(--mono); color: var(--g-dim); }
+.reco-card .meta span + span::before { content: " · "; color: var(--g-muted); }
+
+.cta-row {
+  display: flex; gap: 12px; margin-top: 4px;
+  opacity: 0; transform: translateY(6px);
+  transition: all 420ms 160ms;
+}
+.scene-3.show-reco .cta-row { opacity: 1; transform: translateY(0); }
+/* Scene 4 primary CTA uses Gemini brand gradient (matches all advance CTAs). */
+.cta-primary {
+  display: inline-flex; align-items: center; gap: 10px;
+  background: var(--g-grad);
+  color: #FFF;
+  font: 600 15px/1 var(--sans);
+  padding: 15px 26px; border-radius: 100px;
+  border: 0; cursor: pointer;
+  text-decoration: none;
+  box-shadow: 0 12px 32px rgba(155,114,203,0.34);
+  transition: all 200ms;
+  animation: cta-breathe 2.4s ease-in-out infinite;
+}
+.cta-primary:hover { transform: translateY(-2px); box-shadow: 0 18px 42px rgba(155,114,203,0.48); }
+.cta-primary .arrow { transition: transform 200ms; }
+.cta-primary:hover .arrow { transform: translateX(4px); }
+.cta-secondary {
+  display: inline-flex; align-items: center;
+  font: 500 14px/1 var(--sans); color: var(--g-dim);
+  background: transparent; border: 0; cursor: pointer; padding: 14px 8px;
+}
+.cta-secondary:hover { color: var(--g-text); }
+
+/* ============================================================
+   SCENE 5 — Vendor
+   ============================================================ */
+.scene-4 { padding: 0; }
+.scene-4-inner {
+  position: absolute; inset: 0; overflow: hidden;
+  display: flex; flex-direction: column;
+}
+.scene-4 .vendor-frame {
+  flex: 1;
+  width: 100%; max-width: 1080px;
+  margin: 0 auto;
+  padding: 32px;
+}
+.scene-4 .vendor-nav {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 0 0 20px 0;
+  border-bottom: 1px solid var(--v-line);
+  margin-bottom: 28px;
+}
+.scene-4 .vendor-nav .vendor-mark {
+  display: flex; align-items: center; gap: 10px;
+  font: 700 20px var(--serif); color: var(--v-text);
+}
+.scene-4 .vendor-nav .vendor-mark .icon {
+  width: 28px; height: 28px; border-radius: 50%;
+  background: var(--v-text); color: var(--v-cream);
+  display: flex; align-items: center; justify-content: center;
+  font: 700 13px var(--serif);
+}
+.scene-4 .vendor-nav .nav-links {
+  display: flex; gap: 24px;
+  font: 500 13px var(--sans); color: var(--v-dim);
+}
+.scene-4 .vendor-nav .cart {
+  font: 500 13px var(--sans); color: var(--v-text);
+  display: inline-flex; align-items: center; gap: 6px;
+}
+.scene-4 .vendor-nav .cart .cart-num {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 18px; height: 18px; border-radius: 50%;
+  background: var(--v-primary); color: #FFF;
+  font: 700 10px var(--mono);
+}
+.scene-4 .product-detail {
+  display: grid; grid-template-columns: 1.05fr 1fr;
+  gap: 40px; align-items: start;
+}
+.scene-4 .product-hero {
+  background: linear-gradient(135deg, var(--v-cream) 0%, var(--v-bg-card) 100%);
+  border-radius: 16px;
+  height: 460px;
+  display: flex; align-items: center; justify-content: center;
+  position: relative; overflow: hidden;
+}
+.scene-4 .product-hero img { max-height: 86%; max-width: 86%; object-fit: contain; }
+.scene-4 .product-hero .verified-stamp {
+  position: absolute; top: 16px; right: 16px;
+  display: inline-flex; align-items: center; gap: 6px;
+  background: rgba(255,255,255,0.94);
+  backdrop-filter: blur(8px);
+  border: 1px solid var(--v-line);
+  padding: 7px 12px; border-radius: 100px;
+  font: 600 10px var(--mono); letter-spacing: 0.10em;
+  text-transform: uppercase; color: var(--pc-moss);
+}
+.scene-4 .product-hero .verified-stamp .seal {
+  width: 14px; height: 14px; border-radius: 50%;
+  background: var(--pc-moss); color: #FFF;
+  display: flex; align-items: center; justify-content: center;
+  font: 700 9px var(--mono);
+}
+.scene-4 .product-info .crumb { font: 500 11px var(--mono); letter-spacing: 0.14em; text-transform: uppercase; color: var(--v-muted); margin-bottom: 14px; }
+.scene-4 .product-info .title { font: 600 34px/1.15 var(--serif); color: var(--v-text); margin-bottom: 6px; }
+.scene-4 .product-info .brand-line { font: 500 14px var(--sans); color: var(--v-primary); margin-bottom: 18px; }
+.scene-4 .product-info .price-row { display: flex; align-items: baseline; gap: 12px; margin-bottom: 22px; }
+.scene-4 .product-info .price { font: 700 30px var(--sans); color: var(--v-text); }
+.scene-4 .product-info .strike { font: 500 16px var(--sans); color: var(--v-muted); text-decoration: line-through; }
+.scene-4 .product-info .rating { font: 500 13px var(--sans); color: var(--v-dim); display: flex; align-items: center; gap: 8px; margin-bottom: 24px; }
+.scene-4 .product-info .rating .stars { color: #E8A92F; letter-spacing: 1px; }
+.scene-4 .product-info .claims { background: var(--v-bg-card); border-radius: 12px; padding: 16px; margin-bottom: 24px; }
+.scene-4 .product-info .claims-head { font: 600 10px var(--mono); letter-spacing: 0.14em; text-transform: uppercase; color: var(--v-muted); margin-bottom: 10px; }
+.scene-4 .product-info .claims ul { list-style: none; padding: 0; margin: 0; font: 400 13px/1.7 var(--sans); color: var(--v-text); }
+.scene-4 .product-info .claims li::before { content: "✓ "; color: var(--v-sage); font-weight: 700; }
+.scene-4 .product-info .buy-row { display: flex; gap: 12px; }
+.scene-4 .buy-btn {
+  flex: 1;
+  background: var(--v-primary); color: #FFF;
+  font: 600 15px var(--sans);
+  padding: 18px 24px; border-radius: 12px;
+  border: 0; cursor: pointer;
+  display: inline-flex; align-items: center; justify-content: center; gap: 10px;
+  box-shadow: 0 8px 20px rgba(196,74,74,0.22);
+}
+.scene-4 .heart-btn { width: 56px; height: 56px; background: transparent; border: 1px solid var(--v-line-strong); border-radius: 12px; font-size: 18px; cursor: pointer; }
+
+/* Checkout overlay */
+.checkout-overlay {
+  position: fixed; inset: 0;
+  background: rgba(43,31,18,0.45);
+  display: flex; align-items: center; justify-content: center;
+  opacity: 0; visibility: hidden;
+  transition: opacity 280ms, visibility 0ms 280ms;
+  z-index: 100;
+}
+.scene-4.checkout .checkout-overlay { opacity: 1; visibility: visible; transition-delay: 0ms; }
+.checkout-card {
+  width: 100%; max-width: 440px;
+  background: var(--v-bg-elev);
+  border-radius: 18px;
+  padding: 28px;
+  box-shadow: 0 30px 80px rgba(43,31,18,0.30);
+  transform: translateY(20px); opacity: 0;
+  transition: all 320ms cubic-bezier(.16,.84,.44,1);
+}
+.scene-4.checkout .checkout-card { transform: translateY(0); opacity: 1; }
+.checkout-card .co-head { font: 600 12px var(--mono); letter-spacing: 0.14em; text-transform: uppercase; color: var(--v-muted); margin-bottom: 8px; }
+.checkout-card .co-title { font: 600 22px var(--serif); color: var(--v-text); margin-bottom: 6px; }
+.checkout-card .co-sub { font: 400 13px var(--sans); color: var(--v-dim); margin-bottom: 18px; }
+.checkout-card .co-line { display: flex; justify-content: space-between; font: 500 13px var(--sans); color: var(--v-text); padding: 8px 0; }
+.checkout-card .co-line.total { border-top: 1px solid var(--v-line); margin-top: 6px; padding-top: 12px; font-weight: 700; }
+.checkout-card .pay-options { display: flex; flex-direction: column; gap: 8px; margin-top: 18px; }
+.pay-btn {
+  width: 100%;
+  font: 600 14px var(--sans);
+  padding: 14px;
+  border-radius: 10px;
+  border: 1px solid var(--v-line-strong);
+  background: var(--v-bg-elev); color: var(--v-text);
+  cursor: pointer;
+  display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+}
+.pay-btn:hover { background: var(--v-bg-card); }
+.pay-btn.primary { background: #1A1A1A; color: #FFF; border-color: #1A1A1A; }
+.pay-btn.primary:hover { background: #000; }
+.pay-btn.processing { background: var(--v-bg-card); color: var(--v-muted); cursor: wait; }
+.pay-btn .spin { width: 14px; height: 14px; border-radius: 50%; border: 2px solid rgba(255,255,255,0.3); border-top-color: #FFF; animation: spin 600ms linear infinite; }
+@keyframes spin { to { transform: rotate(360deg); } }
+
+.scene-4.confirmed .checkout-card .co-pay { display: none; }
+.confirm-block { display: none; text-align: center; }
+.scene-4.confirmed .confirm-block { display: block; }
+.confirm-block .check {
+  width: 56px; height: 56px; border-radius: 50%;
+  background: var(--v-sage); color: #FFF;
+  display: flex; align-items: center; justify-content: center;
+  margin: 0 auto 16px; font: 700 26px var(--sans);
+  animation: pop-in 400ms cubic-bezier(.16,.84,.44,1);
+}
+@keyframes pop-in {
+  0% { transform: scale(0.4); opacity: 0; }
+  60% { transform: scale(1.1); }
+  100% { transform: scale(1); opacity: 1; }
+}
+.confirm-block .confirm-title { font: 600 22px var(--serif); color: var(--v-text); margin-bottom: 6px; }
+.confirm-block .confirm-sub { font: 400 14px/1.5 var(--sans); color: var(--v-dim); margin-bottom: 18px; }
+.confirm-block .pc-footer {
+  background: rgba(111,174,122,0.08);
+  border: 1px solid rgba(111,174,122,0.20);
+  border-radius: 10px;
+  padding: 12px 14px;
+  font: 500 12px/1.5 var(--sans);
+  color: var(--v-text);
+  text-align: left;
+  display: flex; align-items: flex-start; gap: 10px;
+}
+.confirm-block .pc-footer .seal {
+  width: 18px; height: 18px; border-radius: 50%;
+  background: var(--pc-moss); color: #FFF;
+  flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center;
+  font: 700 10px var(--mono);
+  margin-top: 1px;
+}
+.confirm-block .pc-footer b { color: var(--pc-moss); }
+.confirm-block .pc-footer .anchor {
+  display: block; margin-top: 4px;
+  font: 500 10px/1.4 var(--mono); color: var(--v-dim);
+  word-break: break-all;
+}
+
+/* ============================================================
+   CONTROLS — manual click-through bar
+   ============================================================ */
+.controls {
+  position: fixed; bottom: 22px; left: 50%; transform: translateX(-50%);
+  display: flex; align-items: center; gap: 14px;
+  padding: 9px 16px;
+  background: rgba(20,20,20,0.86);
+  backdrop-filter: blur(20px) saturate(140%);
+  border: 1px solid rgba(255,255,255,0.10);
+  border-radius: 100px;
+  z-index: 200;
+  box-shadow: 0 12px 40px rgba(0,0,0,0.4);
+}
+.controls .btn {
+  background: transparent; border: 0; color: rgba(255,255,255,0.7);
+  font: 500 12px var(--mono); padding: 6px 10px; cursor: pointer;
+  border-radius: 100px; min-width: 28px; justify-content: center;
+  display: inline-flex; align-items: center; gap: 6px;
+  transition: all 200ms;
+}
+.controls .btn:hover { background: rgba(255,255,255,0.10); color: #FFF; }
+/* Next button gets the Gemini brand treatment so it visually matches the
+   in-scene "Click to ..." CTAs. Users learn one pattern: gradient = advance. */
+.controls .btn#nextBtn {
+  background: var(--g-grad); color: #FFF; font-weight: 600;
+  padding: 7px 14px;
+}
+.controls .btn#nextBtn:hover { background: var(--g-grad); filter: brightness(1.1); }
+.controls .dots { display: flex; gap: 6px; padding: 0 6px; border-left: 1px solid rgba(255,255,255,0.12); border-right: 1px solid rgba(255,255,255,0.12); }
+.controls .dot { width: 22px; height: 3px; border-radius: 2px; background: rgba(255,255,255,0.18); cursor: pointer; transition: background 220ms; }
+.controls .dot.active { background: var(--pc-electric); }
+.controls .dot.done { background: var(--pc-moss); }
+
+@media (max-width: 1100px) {
+  .gem-app { grid-template-columns: 0 1fr; }
+  .gem-sidebar { display: none; }
+}
+</style>
+</head>
+<body>
+
+<svg class="gstar-grad" aria-hidden="true">
+  <defs>
+    <linearGradient id="gstarGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#4285F4"/>
+      <stop offset="50%" stop-color="#9B72CB"/>
+      <stop offset="100%" stop-color="#D96570"/>
+    </linearGradient>
+  </defs>
+</svg>
+
+<div class="stage" id="stage" data-world="llm">
+
+  <!-- =========================================================
+       SCENE 0 — combined cinematic intro
+       macOS desktop → click Chrome → URL types → Gemini loads →
+       query types → "Click to ask Gemini" tooltip
+       ========================================================= -->
+  <section class="scene scene-0" data-scene="0">
+
+    <!-- Skip intro: top-right corner CTA, jumps straight to query-armed state -->
+    <button class="skip-intro" id="skipIntroBtn">Skip intro <span class="arrow">→</span></button>
+
+    <!-- macOS menu bar -->
+    <div class="mac-menubar">
+      <span class="apple"></span>
+      <span class="menu-item">Finder</span>
+      <span class="menu-item">File</span>
+      <span class="menu-item">Edit</span>
+      <span class="menu-item">View</span>
+      <span class="menu-item">Window</span>
+      <span class="menu-item">Help</span>
+      <div class="right-cluster">
+        <span>🔋</span><span>🔆</span><span>🔍</span>
+        <span class="clock">Fri 22 May 6:24 PM</span>
+      </div>
+    </div>
+
+    <!-- Desktop wallpaper + dock -->
+    <div class="mac-desktop">
+      <div class="mac-desktop-icons">
+        <div class="desk-icon"><div class="glyph">📁</div><div>Projects</div></div>
+        <div class="desk-icon"><div class="glyph">📸</div><div>Screenshots</div></div>
+      </div>
+      <div class="mac-dock">
+        <div class="app finder" title="Finder">🗂</div>
+        <div class="app mail" title="Mail">✉</div>
+        <div class="app safari" title="Safari">🧭</div>
+        <div class="app notes" title="Notes">📝</div>
+        <div class="app spotify" title="Spotify">♫</div>
+        <div class="app slack" title="Slack">⌗</div>
+        <div class="app chrome" id="dock-chrome" title="Google Chrome"></div>
+        <div class="app trash" title="Trash">🗑</div>
+      </div>
+    </div>
+
+    <!-- Chrome window (appears after click) -->
+    <div class="chrome-window" id="chromeWindow">
+      <div class="chrome-bar">
+        <div class="chrome-traffic">
+          <div class="tl red"></div>
+          <div class="tl yellow"></div>
+          <div class="tl green"></div>
+        </div>
+        <div class="chrome-tabs">
+          <div class="chrome-tab">
+            <svg class="favicon" viewBox="0 0 24 24" fill="url(#gstarGrad)"><path d="M12 2 L14 10 L22 12 L14 14 L12 22 L10 14 L2 12 L10 10 Z"/></svg>
+            <span>Gemini</span>
+            <span class="x">×</span>
+          </div>
+        </div>
+      </div>
+      <div class="chrome-urlbar">
+        <div class="nav-btn">‹</div>
+        <div class="nav-btn">›</div>
+        <div class="nav-btn">↻</div>
+        <div class="url-pill" id="urlPill">
+          <span class="lock">🔒</span>
+          <span class="url-text" id="urlText"></span>
+          <span class="url-cursor" id="urlCursor"></span>
+        </div>
+        <div class="right-icons"><span>⋮</span></div>
+      </div>
+      <div class="chrome-page">
+        <div class="loading-bar"></div>
+        <!-- Gemini app appears inside the Chrome page once URL types out -->
+        <div class="gem-app">
+          <aside class="gem-sidebar">
+            <div class="top">
+              <button class="menu">≡</button>
+              <div class="wordmark">Gemini</div>
+            </div>
+            <button class="new-chat">+ &nbsp;New chat</button>
+            <div class="section-label">Recent</div>
+            <div class="convo current">Hip and joint chews…</div>
+            <div class="convo">Morning routine ideas</div>
+            <div class="convo">Boston Marathon split…</div>
+            <div class="convo">Q3 OKR draft</div>
+            <div class="convo">Trip to Cape Cod</div>
+          </aside>
+          <main class="gem-main">
+            <div class="gem-topbar">
+              <div class="model-picker">
+                <svg class="star" viewBox="0 0 24 24" fill="url(#gstarGrad)"><path d="M12 2 L14 10 L22 12 L14 14 L12 22 L10 14 L2 12 L10 10 Z"/></svg>
+                <span>Gemini 2.5 Pro</span>
+                <span class="chev">▾</span>
+              </div>
+              <div class="actions"><div class="av">O</div></div>
+            </div>
+            <div class="gem-hero">
+              <div class="greeting">Hello, Omar</div>
+            </div>
+            <div style="padding: 0 32px 28px; width: 100%; display: flex; justify-content: center; position: relative;">
+              <div class="gem-input" id="s0-input">
+                <div class="left-icons">
+                  <button class="icon-btn">+</button>
+                  <button class="icon-btn">⊞</button>
+                </div>
+                <div class="query-area">
+                  <div class="query" id="s0-query"><span class="cursor"></span></div>
+                </div>
+                <div class="right-icons">
+                  <button class="icon-btn">🎤</button>
+                  <button class="icon-btn submit-btn" id="s0-submit">↑</button>
+                </div>
+              </div>
+              <div class="click-to-ask" id="s0-cta-tip">Click to ask Gemini <span>→</span></div>
+            </div>
+          </main>
+        </div>
+      </div>
+    </div>
+
+  </section>
+
+  <!-- =========================================================
+       SCENE 2 — Gemini answering with 3 product candidates
+       ========================================================= -->
+  <section class="scene scene-1" data-scene="1">
+    <div class="gem-app">
+      <aside class="gem-sidebar">
+        <div class="top"><button class="menu">≡</button><div class="wordmark">Gemini</div></div>
+        <button class="new-chat">+ &nbsp;New chat</button>
+        <div class="section-label">Recent</div>
+        <div class="convo current">Hip and joint chews…</div>
+        <div class="convo">Morning routine ideas</div>
+        <div class="convo">Boston Marathon split…</div>
+        <div class="convo">Q3 OKR draft</div>
+      </aside>
+      <main class="gem-main">
+        <div class="gem-topbar">
+          <div class="model-picker">
+            <svg class="star" viewBox="0 0 24 24" fill="url(#gstarGrad)"><path d="M12 2 L14 10 L22 12 L14 14 L12 22 L10 14 L2 12 L10 10 Z"/></svg>
+            <span>Gemini 2.5 Pro</span>
+            <span class="chev">▾</span>
+          </div>
+          <div class="actions"><div class="av">O</div></div>
+        </div>
+        <div class="gem-thread">
+          <div class="gem-thread-inner">
+            <div class="user-msg">What are the best hip and joint soft chews for an older dog with inflammation?</div>
+            <div class="assistant-msg">
+              <svg class="av" viewBox="0 0 24 24" fill="url(#gstarGrad)"><path d="M12 2 L14 10 L22 12 L14 14 L12 22 L10 14 L2 12 L10 10 Z"/></svg>
+              <div class="body">
+                <div class="thinking-row">
+                  Searching pet supplements
+                  <span class="dots"><span></span><span></span><span></span></span>
+                </div>
+                <div class="text">
+                  I found three soft-chew options for older dogs with joint inflammation. Before I recommend one, I'll call <b>PawConscious</b> to verify the evidence and FTC §255 compliance on each.
+                </div>
+                <div class="products">
+                  <div class="product-card">
+                    <div class="img-wrap"><img src="/assets/native-pet-hip-joint-alt-warm.png" alt="Native Pet" onerror="this.style.display='none'"></div>
+                    <div class="meta">
+                      <div class="name">Hip+Joint Inflammatory Care</div>
+                      <div class="brand">Native Pet · 120 soft chews</div>
+                    </div>
+                    <div class="row-bottom">
+                      <div class="price">$32.99</div>
+                      <div class="badge">Checking…</div>
+                    </div>
+                  </div>
+                  <div class="product-card">
+                    <div class="img-wrap"><img src="/assets/wellpaw-hip-joint.png" alt="Wellpaw" onerror="this.parentElement.innerHTML='<div style=&quot;color:#80868B;font:600 12px monospace&quot;>Wellpaw</div>'"></div>
+                    <div class="meta">
+                      <div class="name">Hip + Joint Mobility</div>
+                      <div class="brand">Wellpaw · 90 soft chews</div>
+                    </div>
+                    <div class="row-bottom">
+                      <div class="price">$28.99</div>
+                      <div class="badge">Checking…</div>
+                    </div>
+                  </div>
+                  <div class="product-card">
+                    <div class="img-wrap"><img src="/assets/goldenpaw-hip-joint.png" alt="Goldenpaw" onerror="this.parentElement.innerHTML='<div style=&quot;color:#80868B;font:600 12px monospace&quot;>Goldenpaw</div>'"></div>
+                    <div class="meta">
+                      <div class="name">Joint Care Complex</div>
+                      <div class="brand">Goldenpaw · 120 soft chews</div>
+                    </div>
+                    <div class="row-bottom">
+                      <div class="price">$36.50</div>
+                      <div class="badge">Checking…</div>
+                    </div>
+                  </div>
+                </div>
+                <div class="ping-banner">
+                  <span class="pulse-dot"></span>
+                  <div>Calling <b>PawConscious</b> trust mesh to verify substantiated evidence...</div>
+                  <button class="advance-btn" id="goToPawConscious">Click to check trust layer <span class="arrow">→</span></button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </main>
+    </div>
+  </section>
+
+  <!-- =========================================================
+       SCENE 3 — PawConscious bento grid
+       ========================================================= -->
+  <section class="scene scene-2" data-scene="2">
+    <div class="pc-wrap">
+      <div class="pc-header">
+        <div class="brand">
+          <div class="seal">P</div>
+          <div>
+            <div class="label">PawConscious</div>
+            <small>Trust mesh · A2A v0.3</small>
+          </div>
+        </div>
+        <div class="status" id="s3-status">VERIFYING</div>
+      </div>
+
+      <div class="bento" id="s3-bento">
+        <div class="b-card b-claim" data-stage="claim">
+          <div class="head"><div class="label">Claim extraction</div><div class="badge">Gemini 2.5</div><span class="latency" data-ms="184">184ms</span></div>
+          <div class="body stream">
+            <div><span class="claim-count">3</span> claims on PDP</div>
+            <div class="claim-sub">"Inflammatory Care" · "Supports senior mobility" · "Reduces inflammation in 14 days"</div>
+          </div>
+        </div>
+
+        <div class="b-card b-evidence" data-stage="evidence">
+          <div class="head"><div class="label">Evidence match</div><div class="badge">BioMCP · PubMed</div><span class="latency" data-ms="412">412ms</span></div>
+          <div class="body stream">
+            <div class="ev-list">
+              <div class="ev-item"><span class="pmid">PMID 32316397</span><span class="quote">Glucosamine + chondroitin in canine osteoarthritis</span><span class="tag">supports</span></div>
+              <div class="ev-item"><span class="pmid">PMID 40685570</span><span class="quote">Omega-3 inflammatory pathway review (feline OA)</span><span class="tag">partial</span></div>
+              <div class="ev-item"><span class="pmid">PMID 28845362</span><span class="quote">UC-II vs glucosamine comparison trial</span><span class="tag">supports</span></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="b-card b-vet" data-stage="vet">
+          <div class="head"><div class="label">Vet rubric</div><div class="badge">5-vet simulation</div><span class="latency" data-ms="246">246ms</span></div>
+          <div class="body stream">
+            <div class="vet-score">3<small>/ 5</small></div>
+            <div class="vet-note">Strong on UC-II + glucosamine. Weak on "14-day" timeline claim.</div>
+          </div>
+        </div>
+
+        <div class="b-card b-ftc" data-stage="ftc">
+          <div class="head"><div class="label">FTC §255 compliance</div><div class="badge">Vertex AI Search</div><span class="latency" data-ms="328">328ms</span></div>
+          <div class="body stream">
+            <div class="ftc-result">No violation flags</div>
+            <div class="ftc-rule">§255.1(a) truthful and non-misleading · §255.2 typical results disclosed</div>
+          </div>
+        </div>
+
+        <div class="b-card b-sign" data-stage="sign">
+          <div class="head"><div class="label">Signed bundle</div><div class="badge">Ed25519</div><span class="latency" data-ms="62">62ms</span></div>
+          <div class="body stream">
+            <div class="sign-key">Firestore chain anchor</div>
+            <div class="sign-hash">sha256:26ca807353b3e8242370f7843eace8e58a6781f2f...</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="pc-verdict">
+        <div class="verdict-text">
+          <b>Verified.</b> Substantiated evidence · 0 FTC §255 flags · signed at the time of recommendation.
+          <span class="anchor">sha256:26ca807353b3e8242370f7843eace8e58a6781f2fc0131009a563c1d6ace9455</span>
+        </div>
+        <button class="advance-btn" id="goToRecommend">Click to see Gemini's answer <span class="arrow">→</span></button>
+      </div>
+
+      <div class="pc-thesis"><b>PawConscious</b> · the trust layer AI agents call before recommending</div>
+    </div>
+  </section>
+
+  <!-- =========================================================
+       SCENE 4 — Gemini recommendation
+       ========================================================= -->
+  <section class="scene scene-3" data-scene="3">
+    <div class="gem-app">
+      <aside class="gem-sidebar">
+        <div class="top"><button class="menu">≡</button><div class="wordmark">Gemini</div></div>
+        <button class="new-chat">+ &nbsp;New chat</button>
+        <div class="section-label">Recent</div>
+        <div class="convo current">Hip and joint chews…</div>
+        <div class="convo">Morning routine ideas</div>
+        <div class="convo">Boston Marathon split…</div>
+      </aside>
+      <main class="gem-main">
+        <div class="gem-topbar">
+          <div class="model-picker">
+            <svg class="star" viewBox="0 0 24 24" fill="url(#gstarGrad)"><path d="M12 2 L14 10 L22 12 L14 14 L12 22 L10 14 L2 12 L10 10 Z"/></svg>
+            <span>Gemini 2.5 Pro</span>
+            <span class="chev">▾</span>
+          </div>
+          <div class="actions"><div class="av">O</div></div>
+        </div>
+        <div class="gem-thread">
+          <div class="gem-thread-inner">
+            <div class="user-msg">What are the best hip and joint soft chews for an older dog with inflammation?</div>
+            <div class="assistant-msg">
+              <svg class="av" viewBox="0 0 24 24" fill="url(#gstarGrad)"><path d="M12 2 L14 10 L22 12 L14 14 L12 22 L10 14 L2 12 L10 10 Z"/></svg>
+              <div class="body">
+                <div class="trust-banner"><span class="seal">✓</span> Trust check complete</div>
+                <div class="text">
+                  Of the three options, I'd recommend <b>Native Pet Hip+Joint Inflammatory Care</b>. It's the one that passed PawConscious with substantiated evidence and no FTC §255 concern flags. Wellpaw had softer evidence on the 14-day timeline. Goldenpaw was missing PubMed support for two of its claims. Want me to open the verified product page?
+                </div>
+                <div class="reco-card">
+                  <div class="thumb"><img src="/assets/native-pet-hip-joint-alt-warm.png" alt="Native Pet"></div>
+                  <div class="body">
+                    <div class="verified-row"><span class="seal">✓</span> Verified by PawConscious</div>
+                    <div class="name">Native Pet · Hip+Joint Inflammatory Care</div>
+                    <div class="meta">
+                      <span>3 claims audited</span><span>8 PubMed citations</span><span>Ed25519 signed</span>
+                    </div>
+                  </div>
+                </div>
+                <div class="cta-row">
+                  <button class="cta-primary" id="goToVendor">Click to open the verified product <span class="arrow">→</span></button>
+                  <button class="cta-secondary">Show me the evidence</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </main>
+    </div>
+  </section>
+
+  <!-- =========================================================
+       SCENE 5 — Vendor + purchase
+       ========================================================= -->
+  <section class="scene scene-4" data-scene="4">
+    <div class="scene-5-inner">
+      <div class="vendor-frame">
+        <nav class="vendor-nav">
+          <div class="vendor-mark"><div class="icon">N</div><div>Native Pet</div></div>
+          <div class="nav-links"><span>Shop</span><span>Why us</span><span>Reviews</span><span>Help</span></div>
+          <div class="cart">Cart <span class="cart-num">0</span></div>
+        </nav>
+        <div class="product-detail">
+          <div class="product-hero">
+            <img src="/assets/native-pet-hip-joint-alt-warm.png" alt="Native Pet Hip+Joint">
+            <div class="verified-stamp"><span class="seal">✓</span> Verified by PawConscious</div>
+          </div>
+          <div class="product-info">
+            <div class="crumb">Joint health · Soft chews</div>
+            <div class="title">Hip+Joint Inflammatory Care</div>
+            <div class="brand-line">by Native Pet</div>
+            <div class="price-row"><div class="price">$32.99</div><div class="strike">$48.00</div></div>
+            <div class="rating"><span class="stars">★★★★☆</span> 4.4 · 2,847 reviews</div>
+            <div class="claims">
+              <div class="claims-head">What the label says</div>
+              <ul>
+                <li>Clinically supported for senior dog mobility</li>
+                <li>Reduces joint inflammation in 14 days</li>
+                <li>Made with veterinarian-trusted ingredients</li>
+              </ul>
+            </div>
+            <div class="buy-row">
+              <button class="buy-btn" id="buyBtn">Add to cart · $32.99</button>
+              <button class="heart-btn">♡</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <button class="replay-scene" id="replaySceneBtn">↻ Replay this scene</button>
+
+    <div class="checkout-overlay">
+      <div class="checkout-card">
+        <div class="co-pay">
+          <div class="co-head">Checkout</div>
+          <div class="co-title">Confirm your order</div>
+          <div class="co-sub">One bag of Native Pet Hip+Joint, shipped from Boulder.</div>
+          <div class="co-line"><span>Hip+Joint soft chews · 120ct</span><span>$32.99</span></div>
+          <div class="co-line"><span>Shipping (3 to 5 days)</span><span>Free</span></div>
+          <div class="co-line total"><span>Total</span><span>$32.99</span></div>
+          <div class="pay-options">
+            <button class="pay-btn primary" id="payBtn"><span id="payLabel"> Pay with Apple Pay</span></button>
+            <button class="pay-btn">Use card ending •••• 4242</button>
+          </div>
+        </div>
+        <div class="confirm-block">
+          <div class="check">✓</div>
+          <div class="confirm-title">You're all set.</div>
+          <div class="confirm-sub">Your dog's hip and joint chews are on the way.</div>
+          <div class="pc-footer">
+            <span class="seal">✓</span>
+            <div>
+              This purchase was <b>verified by PawConscious</b> for substantiated evidence and no FTC §255 concern flags at the time the AI recommended it.
+              <span class="anchor">sha256:26ca807353b3e8242370f7843eace8e58a6781f2fc0131009a563c1d6ace9455</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+</div>
+
+<!-- Global animated pointer + click ripple used during autonomous segments -->
+<div class="demo-pointer" id="demoPointer">
+  <svg viewBox="0 0 28 36">
+    <path d="M3 2 L3 26 L10 19 L13 28 L17 26.5 L14 18 L23 17 Z"
+          fill="#FFFFFF" stroke="#1A1A1A" stroke-width="2" stroke-linejoin="round"/>
+  </svg>
+</div>
+<div class="demo-click-ripple" id="demoRipple"></div>
+
+<!-- Keyboard hint shown briefly on the first scene -->
+<div class="kbd-hint" id="kbdHint">Tip: press <kbd>→</kbd> to advance, <kbd>R</kbd> to restart</div>
+
+<div class="controls">
+  <button class="btn" id="prevBtn" title="Previous (←)">‹ Prev</button>
+  <div class="dots" id="dots">
+    <div class="dot" data-jump="0"></div>
+    <div class="dot" data-jump="1"></div>
+    <div class="dot" data-jump="2"></div>
+    <div class="dot" data-jump="3"></div>
+    <div class="dot" data-jump="4"></div>
+  </div>
+  <button class="btn" id="nextBtn" title="Next (→ or space)">Next ›</button>
+  <button class="btn" id="replayBtn" title="Replay full demo (R)">↻</button>
+</div>
+
+<script>
+const QUERY = "What are the best hip and joint soft chews for an older dog with inflammation?";
+
+// ---------- Sound design (Web Audio API, no asset deps) ----------
+// Tasteful, subtle. Browsers gate audio behind a user-gesture, so we lazy-init
+// the AudioContext on the first user interaction.
+let _audio = null;
+let _muted = false;
+function ensureAudio() {
+  if (_audio) return _audio;
+  try {
+    _audio = new (window.AudioContext || window.webkitAudioContext)();
+  } catch (_) { _audio = null; }
+  return _audio;
+}
+function playTone(opts) {
+  if (_muted) return;
+  const ac = ensureAudio(); if (!ac) return;
+  const { freq = 440, dur = 0.12, type = 'sine', vol = 0.06, glideTo = null } = opts || {};
+  const o = ac.createOscillator();
+  const g = ac.createGain();
+  o.type = type;
+  o.frequency.setValueAtTime(freq, ac.currentTime);
+  if (glideTo) o.frequency.exponentialRampToValueAtTime(glideTo, ac.currentTime + dur * 0.9);
+  g.gain.setValueAtTime(0, ac.currentTime);
+  g.gain.linearRampToValueAtTime(vol, ac.currentTime + 0.012);
+  g.gain.exponentialRampToValueAtTime(0.0001, ac.currentTime + dur);
+  o.connect(g).connect(ac.destination);
+  o.start();
+  o.stop(ac.currentTime + dur + 0.02);
+}
+const sfx = {
+  click()      { playTone({ freq: 1400, dur: 0.06, type: 'square', vol: 0.04 }); },
+  type()       { playTone({ freq: 720, dur: 0.03, type: 'square', vol: 0.012 }); },
+  load()       { playTone({ freq: 580, dur: 0.22, type: 'sine', vol: 0.05, glideTo: 880 }); },
+  verified()   { playTone({ freq: 660, dur: 0.18, type: 'sine', vol: 0.07, glideTo: 990 });
+                 setTimeout(() => playTone({ freq: 1320, dur: 0.20, type: 'sine', vol: 0.06 }), 110); },
+  purchased()  { playTone({ freq: 880, dur: 0.16, type: 'sine', vol: 0.08, glideTo: 1320 });
+                 setTimeout(() => playTone({ freq: 1760, dur: 0.32, type: 'sine', vol: 0.06 }), 130); },
+};
+// Init audio context on first click/key anywhere (user-gesture requirement).
+['click', 'keydown'].forEach(ev => document.addEventListener(ev, ensureAudio, { once: true }));
+
+const stage = document.getElementById('stage');
+const scenes = {
+  0: document.querySelector('.scene-0'),
+  1: document.querySelector('.scene-1'),
+  2: document.querySelector('.scene-2'),
+  3: document.querySelector('.scene-3'),
+  4: document.querySelector('.scene-4'),
+};
+const dots = Array.from(document.querySelectorAll('[data-jump]'));
+const SCENE_WORLD = { 0:'llm', 1:'llm', 2:'pc', 3:'llm', 4:'vendor' };
+
+let currentScene = 0;
+let runToken = 0;
+
+function setWorld(scene) { stage.setAttribute('data-world', SCENE_WORLD[scene] || 'llm'); }
+
+function showScene(n) {
+  currentScene = n;
+  Object.entries(scenes).forEach(([k, el]) => { el.classList.toggle('active', Number(k) === n); });
+  setWorld(n);
+  dots.forEach((d, i) => {
+    d.classList.remove('active', 'done');
+    if (i < n) d.classList.add('done');
+    else if (i === n) d.classList.add('active');
+  });
+}
+
+function wait(ms, token) {
+  return new Promise(resolve => {
+    setTimeout(() => { if (token !== runToken) resolve('aborted'); else resolve(); }, ms);
+  });
+}
+
+// ---- per-scene animators ----
+
+// Scene 0: macOS desktop → Chrome opens → URL types → Gemini loads →
+// query types → submit armed + "Click to ask Gemini" tooltip.
+// Auto-plays the whole sequence. Ends waiting for user submit click.
+const URL_TEXT = "gemini.google.com";
+
+async function runScene0(token) {
+  showScene(0);
+  const s = scenes[0];
+  // Reset all phases.
+  s.classList.remove('phase-browser', 'phase-loading', 'phase-gemini');
+  const chromeIcon = document.getElementById('dock-chrome');
+  const urlText = document.getElementById('urlText');
+  const urlCursor = document.getElementById('urlCursor');
+  const input = document.getElementById('s0-input');
+  const queryEl = document.getElementById('s0-query');
+  const ctaTip = document.getElementById('s0-cta-tip');
+  urlText.textContent = '';
+  urlCursor.style.display = '';
+  queryEl.innerHTML = '<span class="cursor"></span>';
+  input.classList.remove('typing', 'armed', 'clicked');
+  ctaTip.classList.remove('show');
+  pointerHide();
+
+  // -- Phase: desktop. Hold for a beat so the user reads the dock.
+  await wait(900, token); if (token !== runToken) return;
+
+  // -- Cursor enters from bottom-right, lands on Chrome dock icon.
+  await pointerMoveTo(chromeIcon, { fromOffscreen: true });
+  if (token !== runToken) return;
+  chromeIcon.classList.add('hi-lite');
+  await wait(180, token); if (token !== runToken) return;
+  await pointerClick(chromeIcon);
+  sfx.click();
+  if (token !== runToken) return;
+  chromeIcon.classList.remove('hi-lite');
+
+  // -- Phase: browser opens with empty URL bar.
+  s.classList.add('phase-browser');
+  pointerHide();
+  await wait(620, token); if (token !== runToken) return;
+
+  // -- Type the URL character by character (~1.2s).
+  for (let i = 0; i < URL_TEXT.length; i++) {
+    if (token !== runToken) return;
+    urlText.textContent = URL_TEXT.slice(0, i + 1);
+    if (i % 3 === 0) sfx.type();
+    await wait(60, token);
+  }
+  urlCursor.style.display = 'none';
+  await wait(280, token); if (token !== runToken) return;
+
+  // -- Loading bar fills, then Gemini app fades in.
+  s.classList.add('phase-loading');
+  await wait(580, token); if (token !== runToken) return;
+  s.classList.add('phase-gemini');
+  sfx.load();
+  await wait(700, token); if (token !== runToken) return;
+
+  // -- Phase: query types into Gemini input.
+  input.classList.add('typing');
+  for (let i = 0; i < QUERY.length; i++) {
+    if (token !== runToken) return;
+    queryEl.innerHTML = QUERY.slice(0, i + 1) + '<span class="cursor"></span>';
+    await wait(26, token);
+  }
+  await wait(320, token); if (token !== runToken) return;
+
+  // -- Arm the submit button + show tooltip.
+  input.classList.add('armed');
+  const submitBtn = document.getElementById('s0-submit');
+  const btnRect = submitBtn.getBoundingClientRect();
+  const inputContainer = input.parentElement;
+  const containerRect = inputContainer.getBoundingClientRect();
+  ctaTip.style.left = (btnRect.left - containerRect.left - 130) + 'px';
+  ctaTip.style.top = (btnRect.top - containerRect.top - 42) + 'px';
+  await wait(60, token);
+  ctaTip.classList.add('show');
+
+  // -- Hint: briefly fly the cursor over the submit button so a cold judge
+  // knows exactly where to click. Pointer fades out after 1.5s.
+  await wait(280, token); if (token !== runToken) return;
+  await pointerMoveTo(submitBtn, { fromOffscreen: true });
+  if (token !== runToken) return;
+  await wait(1500, token); if (token !== runToken) return;
+  pointerHide();
+  // Waits for user to click submit (or Next).
+}
+
+// Scene 1: Gemini answer with 3 product candidates.
+async function runScene1(token) {
+  showScene(1);
+  scenes[1].classList.remove('show-products', 'pinging');
+  await wait(500, token); if (token !== runToken) return;
+  scenes[1].classList.add('show-products');
+  await wait(800, token); if (token !== runToken) return;
+  scenes[1].classList.add('pinging');
+  // Wait for user click on "Click to check trust layer →"
+}
+
+// Scene 2: PawConscious bento grid (the trust layer in action).
+async function runScene2(token) {
+  showScene(2);
+  scenes[2].classList.remove('complete');
+  document.getElementById('s3-status').textContent = 'VERIFYING';
+  const cards = scenes[2].querySelectorAll('#s3-bento .b-card');
+  cards.forEach(c => c.classList.remove('active', 'done'));
+  await wait(360, token); if (token !== runToken) return;
+  for (const c of cards) {
+    if (token !== runToken) return;
+    c.classList.add('active');
+    await wait(520, token);
+    c.classList.remove('active');
+    c.classList.add('done');
+  }
+  await wait(180, token); if (token !== runToken) return;
+  scenes[2].classList.add('complete');
+  document.getElementById('s3-status').textContent = 'VERIFIED';
+  sfx.verified();
+  // Wait for user click on "Click to see Gemini's answer →"
+}
+
+// Scene 3: Gemini's warm recommendation.
+async function runScene3(token) {
+  showScene(3);
+  scenes[3].classList.remove('show-reco');
+  await wait(420, token); if (token !== runToken) return;
+  scenes[3].classList.add('show-reco');
+  // Wait for user click on "Click to open the verified product →"
+}
+
+// Scene 4: vendor + autonomous checkout with animated cursor.
+async function runScene4(token) {
+  showScene(4);
+  scenes[4].classList.remove('checkout', 'confirmed');
+  const cn = scenes[4].querySelector('.cart-num');
+  if (cn) cn.textContent = '0';
+  const payBtn = document.getElementById('payBtn');
+  const payLbl = document.getElementById('payLabel');
+  if (payBtn) payBtn.classList.remove('processing');
+  if (payLbl) payLbl.textContent = ' Pay with Apple Pay';
+  pointerHide();
+
+  await wait(900, token); if (token !== runToken) return;
+  const buyBtn = document.getElementById('buyBtn');
+  await pointerMoveTo(buyBtn, { fromOffscreen: true });
+  if (token !== runToken) return;
+  await pointerClick(buyBtn);
+  sfx.click();
+  if (token !== runToken) return;
+
+  scenes[4].classList.add('checkout');
+  if (cn) cn.textContent = '1';
+  await wait(800, token); if (token !== runToken) return;
+
+  const payBtnEl = document.getElementById('payBtn');
+  await pointerMoveTo(payBtnEl, {});
+  if (token !== runToken) return;
+  await pointerClick(payBtnEl);
+  sfx.click();
+  if (token !== runToken) return;
+
+  if (payBtn) payBtn.classList.add('processing');
+  if (payLbl) payLbl.innerHTML = '<span class="spin"></span>&nbsp; Processing';
+  pointerHide();
+  await wait(1100, token); if (token !== runToken) return;
+  scenes[4].classList.add('confirmed');
+  sfx.purchased();
+}
+
+// ---------- Pointer helpers ----------
+const pointerEl = document.getElementById('demoPointer');
+const rippleEl = document.getElementById('demoRipple');
+
+function pointerHide() {
+  if (!pointerEl) return;
+  pointerEl.classList.remove('show', 'click');
+}
+
+function pointerMoveTo(target, opts) {
+  return new Promise(resolve => {
+    if (!pointerEl || !target) { resolve(); return; }
+    const r = target.getBoundingClientRect();
+    // Point the cursor's tip at the center-left-ish of the button (where a
+    // hand would naturally land) so the click ripple aligns visually.
+    const targetX = r.left + r.width * 0.5 - 4;
+    const targetY = r.top + r.height * 0.5 - 4;
+
+    if (opts && opts.fromOffscreen) {
+      // Start from below-right of the target so the entry feels natural.
+      pointerEl.style.transition = 'none';
+      pointerEl.style.left = (window.innerWidth - 80) + 'px';
+      pointerEl.style.top  = (window.innerHeight - 60) + 'px';
+      pointerEl.classList.remove('show', 'click');
+      // Force reflow before re-enabling transition.
+      void pointerEl.offsetWidth;
+      pointerEl.style.transition = '';
+      pointerEl.classList.add('show');
+    } else if (!pointerEl.classList.contains('show')) {
+      pointerEl.classList.add('show');
+    }
+
+    pointerEl.style.left = targetX + 'px';
+    pointerEl.style.top  = targetY + 'px';
+    // Wait for the CSS movement transition (matches .demo-pointer transition).
+    setTimeout(resolve, 760);
+  });
+}
+
+function pointerClick(target) {
+  return new Promise(resolve => {
+    if (!pointerEl || !target) { resolve(); return; }
+    const r = target.getBoundingClientRect();
+    // Position the ripple over the button center.
+    rippleEl.style.left = (r.left + r.width / 2 - 22) + 'px';
+    rippleEl.style.top  = (r.top + r.height / 2 - 22) + 'px';
+    rippleEl.classList.remove('fire');
+    // Force reflow so the animation restarts.
+    void rippleEl.offsetWidth;
+    rippleEl.classList.add('fire');
+    pointerEl.classList.add('click');
+    setTimeout(() => {
+      pointerEl.classList.remove('click');
+      setTimeout(resolve, 200);
+    }, 280);
+  });
+}
+
+const runners = [runScene0, runScene1, runScene2, runScene3, runScene4];
+
+function playScene(n) {
+  runToken += 1;
+  const myToken = runToken;
+  runners[n](myToken);
+}
+
+// ---- Manual click-through ----
+
+function next() {
+  if (currentScene < 4) playScene(currentScene + 1);
+}
+function prev() {
+  if (currentScene > 0) playScene(currentScene - 1);
+}
+function restart() { playScene(0); }
+
+document.getElementById('prevBtn').addEventListener('click', prev);
+document.getElementById('nextBtn').addEventListener('click', next);
+document.getElementById('replayBtn').addEventListener('click', restart);
+dots.forEach((d, i) => d.addEventListener('click', () => playScene(i)));
+
+// Submit button inside scene 0 (Gemini input) advances to scene 1.
+// First plays the dive-in zoom (Chrome window fills the viewport, macOS +
+// browser chrome fade out) so scene 1 feels like a continuation, not a cut.
+document.getElementById('s0-submit').addEventListener('click', () => {
+  if (currentScene !== 0) return;
+  const s0 = scenes[0];
+  // Kill the breathing pulse + tooltip; user has acted.
+  document.getElementById('s0-cta-tip').classList.remove('show');
+  document.getElementById('s0-input').classList.add('clicked');
+  // Play the dive.
+  s0.classList.add('phase-zooming');
+  setTimeout(() => playScene(1), 720);
+});
+
+// Scene-specific advance buttons
+document.getElementById('goToPawConscious').addEventListener('click', () => playScene(2));
+document.getElementById('goToRecommend').addEventListener('click', () => playScene(3));
+document.getElementById('goToVendor').addEventListener('click', () => playScene(4));
+
+// Skip intro: jump to the query-armed state inside scene 0.
+document.getElementById('skipIntroBtn').addEventListener('click', () => {
+  runToken += 1;
+  const s = scenes[0];
+  s.classList.add('phase-browser', 'phase-loading', 'phase-gemini');
+  s.classList.remove('phase-zooming');
+  document.getElementById('urlText').textContent = URL_TEXT;
+  document.getElementById('urlCursor').style.display = 'none';
+  const input = document.getElementById('s0-input');
+  const queryEl = document.getElementById('s0-query');
+  const ctaTip = document.getElementById('s0-cta-tip');
+  queryEl.innerHTML = QUERY + '<span class="cursor"></span>';
+  input.classList.add('typing', 'armed');
+  // Position tooltip after the next paint.
+  requestAnimationFrame(() => {
+    const submitBtn = document.getElementById('s0-submit');
+    const btnRect = submitBtn.getBoundingClientRect();
+    const containerRect = input.parentElement.getBoundingClientRect();
+    ctaTip.style.left = (btnRect.left - containerRect.left - 130) + 'px';
+    ctaTip.style.top = (btnRect.top - containerRect.top - 42) + 'px';
+    ctaTip.classList.add('show');
+  });
+  pointerHide();
+});
+
+// Replay scene 4 (vendor + checkout) without restarting the whole demo.
+document.getElementById('replaySceneBtn').addEventListener('click', () => playScene(4));
+
+// Buy + pay (manual fallbacks; the cursor in runScene4 normally fires them)
+document.getElementById('buyBtn').addEventListener('click', () => {
+  scenes[4].classList.add('checkout');
+  const cn = scenes[4].querySelector('.cart-num');
+  if (cn) cn.textContent = '1';
+});
+document.getElementById('payBtn').addEventListener('click', () => {
+  const btn = document.getElementById('payBtn');
+  const lbl = document.getElementById('payLabel');
+  btn.classList.add('processing');
+  lbl.innerHTML = '<span class="spin"></span>&nbsp; Processing';
+  setTimeout(() => { scenes[4].classList.add('confirmed'); }, 1100);
+});
+
+// Keyboard
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'ArrowRight' || e.key === ' ') { e.preventDefault(); next(); }
+  else if (e.key === 'ArrowLeft') prev();
+  else if (e.key === 'r' || e.key === 'R') restart();
+});
+
+// Boot
+window.addEventListener('DOMContentLoaded', () => {
+  setTimeout(() => playScene(0), 200);
+  // Keyboard hint surfaces briefly during the first scene.
+  const hint = document.getElementById('kbdHint');
+  setTimeout(() => hint.classList.add('show'), 1800);
+  setTimeout(() => hint.classList.remove('show'), 8800);
+});
+</script>
+</body>
+</html>
