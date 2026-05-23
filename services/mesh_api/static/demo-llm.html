@@ -436,6 +436,7 @@ html, body {
 .scene-0.phase-browser .chrome-window,
 .scene-0.phase-gemini  .chrome-window {
   opacity: 1; transform: translateX(-50%) scale(1);
+  pointer-events: auto;
 }
 /* When zooming-in (transition out of scene 0), the Chrome window scales to
    fill the viewport while the macOS chrome and Chrome window frame fade out,
@@ -1590,7 +1591,7 @@ html, body {
                 <div class="ping-banner">
                   <span class="pulse-dot"></span>
                   <div>Calling <b>PawConscious</b> trust mesh to verify substantiated evidence...</div>
-                  <button class="advance-btn" id="goToPawConscious">Click to check trust layer <span class="arrow">→</span></button>
+                  <button class="advance-btn" id="goToPawConscious">Click to verify with PawConscious <span class="arrow">→</span></button>
                 </div>
               </div>
             </div>
@@ -1994,11 +1995,20 @@ async function runScene0(token) {
 async function runScene1(token) {
   showScene(1);
   scenes[1].classList.remove('show-products', 'pinging');
+  pointerHide();
   await wait(500, token); if (token !== runToken) return;
   scenes[1].classList.add('show-products');
   await wait(800, token); if (token !== runToken) return;
   scenes[1].classList.add('pinging');
-  // Wait for user click on "Click to check trust layer →"
+  await wait(450, token); if (token !== runToken) return;
+  // Hint: fly the pointer over the advance CTA so the user sees the next step.
+  const ctaBtn = document.getElementById('goToPawConscious');
+  if (ctaBtn) {
+    await pointerMoveTo(ctaBtn, { fromOffscreen: true });
+    if (token !== runToken) return;
+    await wait(1400, token); if (token !== runToken) return;
+    pointerHide();
+  }
 }
 
 // Scene 2: PawConscious bento grid (the trust layer in action).
@@ -2020,16 +2030,33 @@ async function runScene2(token) {
   scenes[2].classList.add('complete');
   document.getElementById('s3-status').textContent = 'VERIFIED';
   sfx.verified();
-  // Wait for user click on "Click to see Gemini's answer →"
+  // Hint: fly the pointer over the verdict CTA.
+  await wait(600, token); if (token !== runToken) return;
+  const ctaBtn = document.getElementById('goToRecommend');
+  if (ctaBtn) {
+    await pointerMoveTo(ctaBtn, { fromOffscreen: true });
+    if (token !== runToken) return;
+    await wait(1400, token); if (token !== runToken) return;
+    pointerHide();
+  }
 }
 
 // Scene 3: Gemini's warm recommendation.
 async function runScene3(token) {
   showScene(3);
   scenes[3].classList.remove('show-reco');
+  pointerHide();
   await wait(420, token); if (token !== runToken) return;
   scenes[3].classList.add('show-reco');
-  // Wait for user click on "Click to open the verified product →"
+  await wait(900, token); if (token !== runToken) return;
+  // Hint: fly the pointer over the "Open the verified product" CTA.
+  const ctaBtn = document.getElementById('goToVendor');
+  if (ctaBtn) {
+    await pointerMoveTo(ctaBtn, { fromOffscreen: true });
+    if (token !== runToken) return;
+    await wait(1400, token); if (token !== runToken) return;
+    pointerHide();
+  }
 }
 
 // Scene 4: vendor + autonomous checkout with animated cursor.
