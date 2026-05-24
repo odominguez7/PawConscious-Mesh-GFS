@@ -1537,6 +1537,240 @@ html, body {
   .gem-app { grid-template-columns: 0 1fr; }
   .gem-sidebar { display: none; }
 }
+
+/* ===========================================================
+ * SECTION 4 — scene-2b "block" scene. Mirrors scene-2's bento
+ * layout but every card flips to BLOCKED state for the Native
+ * Pet 60% anxiety claim. Codex-approved design 2026-05-23.
+ * =========================================================== */
+.scene-2b { display: none; }
+.scene-2b.active { display: block; }
+
+/* Header status pill for BLOCKED */
+.scene-2b .tool-use-card .tool-use-status {
+  background: rgba(229, 80, 80, 0.12);
+  color: #E55050;
+  border-color: rgba(229, 80, 80, 0.28);
+}
+.scene-2b .tool-use-title b { color: #B83434; }
+
+/* Block card styling — red borders + warning palette */
+.scene-2b .bento.light .b-card.block.done {
+  background: #FFF6F6;
+  border-color: rgba(229, 80, 80, 0.32);
+  box-shadow: 0 4px 18px rgba(229, 80, 80, 0.08);
+}
+.scene-2b .bento.light .b-card.block.done .head .badge {
+  background: rgba(229, 80, 80, 0.10); color: #B83434;
+}
+.scene-2b .bento.light .b-card.block.done .latency { color: #B83434; }
+.scene-2b .bento.light .b-card.block.done .latency::before { background: #E55050; }
+
+/* Block-specific card contents */
+.scene-2b .ev-item.mismatch .tag {
+  background: rgba(229, 80, 80, 0.12); color: #B83434;
+}
+.scene-2b .vet-score.fail { color: #B83434; }
+.scene-2b .ftc-result.fail { color: #B83434; font-weight: 600; }
+.scene-2b .sign-key.fail { color: #B83434; }
+.scene-2b .sign-hash.fail { color: #B83434; opacity: 0.85; }
+
+/* Placeholder tag — small, low-key, honest. Lowercase per spec. */
+.scene-2b .placeholder-tag {
+  display: inline-block;
+  margin-left: 6px;
+  padding: 1px 6px;
+  border-radius: 4px;
+  background: rgba(0, 0, 0, 0.06);
+  color: var(--g-dim);
+  font: 500 9px/1 var(--mono);
+  letter-spacing: 0.08em;
+  vertical-align: middle;
+}
+
+/* Block banner — the "Single-agent claim. Mesh blocks it." card */
+.scene-2b .block-banner {
+  margin-top: 16px;
+  padding: 16px 18px;
+  background: linear-gradient(180deg, #FFF8F8 0%, #FFF 100%);
+  border: 1px solid rgba(229, 80, 80, 0.22);
+  border-left: 3px solid #E55050;
+  border-radius: 10px;
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 14px;
+  align-items: center;
+}
+.scene-2b .block-banner .seal {
+  width: 36px; height: 36px; border-radius: 18px;
+  background: #E55050; color: #fff;
+  display: flex; align-items: center; justify-content: center;
+  font: 700 18px/1 var(--sans);
+}
+.scene-2b .block-banner .copy {
+  font: 500 14px/1.5 var(--sans); color: var(--g-text);
+}
+.scene-2b .block-banner .headline {
+  font: 700 15px/1.4 var(--sans); color: #B83434;
+  margin-bottom: 4px;
+}
+.scene-2b .block-banner .replacement {
+  margin-top: 6px;
+  padding-top: 8px;
+  border-top: 1px dashed rgba(0,0,0,0.08);
+  font: 500 13px/1.5 var(--sans); color: var(--g-text);
+}
+.scene-2b .block-banner .replacement code {
+  background: rgba(0,0,0,0.04);
+  padding: 1px 6px;
+  border-radius: 4px;
+  font: 500 12px/1.4 var(--mono);
+  color: var(--g-text);
+}
+
+/* CTA pair on scene-2b */
+.scene-2b .post-tool-row {
+  display: flex; gap: 12px; align-items: center;
+  margin-top: 14px;
+}
+.scene-2b .advance-cta.secondary {
+  background: transparent;
+  color: var(--g-muted);
+  border: 1px solid var(--g-line);
+}
+.scene-2b .advance-cta.secondary:hover {
+  background: var(--g-bg-soft);
+  color: var(--g-text);
+}
+
+/* ===========================================================
+ * SECTION 5 — Judge Mode overlay. Adds a per-card strip naming
+ * the framework / tool each agent uses. Default OFF on the live
+ * URL. Activates via body.judge-mode (set by ?judge=1 query param,
+ * the bottom-right toggle, or localStorage). Sync-fades with the
+ * card .active animation so labels light up as agents fire.
+ * =========================================================== */
+.judge-label {
+  display: none;
+  font: 600 10px/1 var(--mono);
+  letter-spacing: 0.10em;
+  padding: 5px 8px;
+  margin-bottom: 8px;
+  border-radius: 5px;
+  border-left: 2px solid var(--g-muted);
+  background: rgba(0, 0, 0, 0.04);
+  color: var(--g-muted);
+  opacity: 0.35;
+  transition: opacity 320ms, color 320ms, border-color 320ms;
+}
+body.judge-mode .bento .b-card .judge-label { display: block; }
+body.judge-mode .bento .b-card.active .judge-label,
+body.judge-mode .bento .b-card.done .judge-label {
+  opacity: 1; color: var(--g-text);
+}
+/* Per-stage accent colors on the active state */
+body.judge-mode .bento .b-card.b-claim.active .judge-label,
+body.judge-mode .bento .b-card.b-claim.done .judge-label {
+  border-color: #6B5BD2; color: #4A3FB0;
+}
+body.judge-mode .bento .b-card.b-evidence.active .judge-label,
+body.judge-mode .bento .b-card.b-evidence.done .judge-label {
+  border-color: #00B5DC; color: #007A95;
+}
+body.judge-mode .bento .b-card.b-vet.active .judge-label,
+body.judge-mode .bento .b-card.b-vet.done .judge-label {
+  border-color: #C8920E; color: #7A5A09;
+}
+body.judge-mode .bento .b-card.b-ftc.active .judge-label,
+body.judge-mode .bento .b-card.b-ftc.done .judge-label {
+  border-color: #4185F4; color: #1A5DD0;
+}
+body.judge-mode .bento .b-card.b-sign.active .judge-label,
+body.judge-mode .bento .b-card.b-sign.done .judge-label {
+  border-color: #6FAE7A; color: #467850;
+}
+/* Block-state judge labels: keep red palette consistent with the BLOCK scene */
+body.judge-mode .scene-2b .bento.light .b-card.block.done .judge-label {
+  border-color: #E55050; color: #B83434;
+}
+
+/* Judge Mode toggle button — bottom-right corner of /demo */
+.judge-toggle {
+  position: fixed;
+  bottom: 18px;
+  right: 18px;
+  z-index: 30;
+  padding: 8px 14px 8px 12px;
+  background: var(--g-bg);
+  border: 1px solid var(--g-line);
+  border-radius: 8px;
+  font: 600 11px/1 var(--mono);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--g-muted);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  box-shadow: 0 4px 14px rgba(0,0,0,0.08);
+  transition: transform 160ms, box-shadow 160ms, color 220ms, border-color 220ms;
+}
+.judge-toggle:hover { transform: translateY(-1px); box-shadow: 0 6px 18px rgba(0,0,0,0.12); }
+.judge-toggle .dot {
+  width: 8px; height: 8px; border-radius: 4px;
+  background: var(--g-line);
+  transition: background 220ms, box-shadow 220ms;
+}
+body.judge-mode .judge-toggle {
+  color: #1A5DD0;
+  border-color: rgba(65, 133, 244, 0.34);
+}
+body.judge-mode .judge-toggle .dot {
+  background: #4185F4;
+  box-shadow: 0 0 0 3px rgba(65, 133, 244, 0.18);
+}
+
+/* Judge Mode footer strip — sticky band below the cinematic explaining the
+ * overlay. Off by default; surfaces only when judge mode is on. */
+.judge-footer {
+  display: none;
+}
+body.judge-mode .judge-footer {
+  display: block;
+  position: fixed;
+  bottom: 0; left: 0; right: 0;
+  z-index: 25;
+  padding: 8px 18px;
+  background: rgba(13, 18, 28, 0.92);
+  color: rgba(255,255,255,0.85);
+  font: 500 11px/1.5 var(--mono);
+  letter-spacing: 0.06em;
+  text-align: center;
+  border-top: 1px solid rgba(65, 133, 244, 0.40);
+  backdrop-filter: blur(6px);
+}
+body.judge-mode .judge-footer b { color: #5AB0FF; }
+
+/* Scene-2 secondary CTA — "Show me a claim we BLOCK" */
+.scene-2 .show-block-link {
+  margin-left: 14px;
+  padding: 8px 14px;
+  background: transparent;
+  border: 1px dashed rgba(229, 80, 80, 0.40);
+  color: #B83434;
+  border-radius: 8px;
+  font: 600 12px/1 var(--mono);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: background 200ms, transform 180ms;
+}
+.scene-2 .show-block-link:hover {
+  background: rgba(229, 80, 80, 0.06);
+  transform: translateY(-1px);
+}
+.scene-2:not(.complete) .show-block-link { opacity: 0; pointer-events: none; }
+.scene-2.complete .show-block-link { opacity: 1; pointer-events: auto; transition: opacity 400ms 300ms; }
 </style>
 </head>
 <body>
@@ -1805,6 +2039,7 @@ html, body {
 
                   <div class="bento light" id="s3-bento">
                     <div class="b-card b-claim" data-stage="claim">
+                      <div class="judge-label">ADK LlmAgent</div>
                       <div class="head"><div class="label">Claim extraction</div><div class="badge">Gemini 2.5</div><span class="latency" data-ms="184">184ms</span></div>
                       <div class="body stream">
                         <div><span class="claim-count">3</span> claims on PDP</div>
@@ -1812,6 +2047,7 @@ html, body {
                       </div>
                     </div>
                     <div class="b-card b-evidence" data-stage="evidence">
+                      <div class="judge-label">BioMCP · PubMed</div>
                       <div class="head"><div class="label">Evidence match</div><div class="badge">BioMCP · PubMed</div><span class="latency" data-ms="412">412ms</span></div>
                       <div class="body stream">
                         <div class="ev-list">
@@ -1822,6 +2058,7 @@ html, body {
                       </div>
                     </div>
                     <div class="b-card b-vet" data-stage="vet">
+                      <div class="judge-label">Gemini 2.5 Pro · prompt-only</div>
                       <div class="head"><div class="label">Vet rubric</div><div class="badge">5-vet simulation</div><span class="latency" data-ms="246">246ms</span></div>
                       <div class="body stream">
                         <div class="vet-score">3<small>/ 5</small></div>
@@ -1829,6 +2066,7 @@ html, body {
                       </div>
                     </div>
                     <div class="b-card b-ftc" data-stage="ftc">
+                      <div class="judge-label">Vertex AI Search</div>
                       <div class="head"><div class="label">FTC §255 compliance</div><div class="badge">Vertex AI Search</div><span class="latency" data-ms="328">328ms</span></div>
                       <div class="body stream">
                         <div class="ftc-result">No violation flags</div>
@@ -1836,6 +2074,7 @@ html, body {
                       </div>
                     </div>
                     <div class="b-card b-sign" data-stage="sign">
+                      <div class="judge-label">Ed25519 + Firestore log</div>
                       <div class="head"><div class="label">Signed bundle</div><div class="badge">Ed25519</div><span class="latency" data-ms="62">62ms</span></div>
                       <div class="body stream">
                         <div class="sign-key">Firestore chain anchor</div>
@@ -1860,6 +2099,120 @@ html, body {
 
                 <div class="post-tool-row">
                   <button class="advance-cta" id="goToRecommend">Click to see Gemini's answer <span class="arrow">→</span></button>
+                  <button class="show-block-link" id="goToBlock">Show me a claim we BLOCK</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </main>
+    </div>
+  </section>
+
+  <!-- =========================================================
+       SECTION 4 — scene-2b "block" sibling. Same Gemini chat shell
+       as scene-2 but every bento card flips to BLOCKED state for
+       a fabricated 60% anxiety claim. PMIDs + FTC precedents are
+       honest placeholders labeled as such. Codex CLEAR 2026-05-23.
+       ========================================================= -->
+  <section class="scene scene-2b" data-scene="2b">
+    <div class="gem-app">
+      <aside class="gem-sidebar">
+        <div class="top"><button class="menu">≡</button><div class="wordmark">Gemini</div></div>
+        <button class="new-chat">+ &nbsp;New chat</button>
+        <div class="section-label">Recent</div>
+        <div class="convo current">Calming chews for an anxious dog…</div>
+        <div class="convo">Hip and joint chews…</div>
+        <div class="convo">Morning routine ideas</div>
+      </aside>
+      <main class="gem-main">
+        <div class="gem-topbar">
+          <div class="model-picker">
+            <svg class="star" viewBox="0 0 24 24" fill="url(#gstarGrad)"><path d="M12 2 L14 10 L22 12 L14 14 L12 22 L10 14 L2 12 L10 10 Z"/></svg>
+            <span>Gemini 2.5 Pro</span>
+            <span class="chev">▾</span>
+          </div>
+          <div class="actions"><div class="av">O</div></div>
+        </div>
+        <div class="gem-thread">
+          <div class="gem-thread-inner">
+            <div class="user-msg">My dog is anxious during thunderstorms. Are these calming chews any good?</div>
+            <div class="assistant-msg">
+              <svg class="av" viewBox="0 0 24 24" fill="url(#gstarGrad)"><path d="M12 2 L14 10 L22 12 L14 14 L12 22 L10 14 L2 12 L10 10 Z"/></svg>
+              <div class="body">
+                <div class="tool-use-card">
+                  <div class="tool-use-header">
+                    <div class="tool-use-icon">
+                      <svg viewBox="0 0 24 24"><path d="M12 2 L14 10 L22 12 L14 14 L12 22 L10 14 L2 12 L10 10 Z" fill="url(#gstarGrad)"/></svg>
+                    </div>
+                    <div class="tool-use-title">
+                      <div class="t-line"><b>PawConscious Trust Layer</b> · BLOCKED before recommendation</div>
+                      <div class="t-sub">A2A v0.3 · 5 agents · adversarial pre-sign pass</div>
+                    </div>
+                    <div class="tool-use-status" id="s2b-status">BLOCKED</div>
+                  </div>
+
+                  <div class="bento light" id="s2b-bento">
+                    <div class="b-card b-claim block" data-stage="claim">
+                      <div class="judge-label">ADK LlmAgent</div>
+                      <div class="head"><div class="label">Claim extraction</div><div class="badge">Gemini 2.5</div><span class="latency" data-ms="184">184ms</span></div>
+                      <div class="body stream">
+                        <div><span class="claim-count">3</span> claims on PDP · Native Pet Calming Chews</div>
+                        <div class="claim-sub">"Vet-formulated" · "Clinically proven" · "Reduces anxiety by 60%"</div>
+                      </div>
+                    </div>
+                    <div class="b-card b-evidence block" data-stage="evidence">
+                      <div class="judge-label">BioMCP · PubMed</div>
+                      <div class="head"><div class="label">Evidence match</div><div class="badge">BioMCP · PubMed</div><span class="latency" data-ms="612">612ms</span></div>
+                      <div class="body stream">
+                        <div class="ev-list">
+                          <div class="ev-item mismatch"><span class="pmid">PMID example<span class="placeholder-tag">placeholder</span></span><span class="quote">Calming ingredient in feline stress (different species, different ingredient)</span><span class="tag">MISMATCH</span></div>
+                          <div class="ev-item mismatch"><span class="pmid">no match</span><span class="quote">No canine RCT supports the "60% anxiety reduction" figure</span><span class="tag">MISMATCH</span></div>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="b-card b-vet block" data-stage="vet">
+                      <div class="judge-label">Gemini 2.5 Pro · prompt-only</div>
+                      <div class="head"><div class="label">Vet rubric</div><div class="badge">5-vet simulation</div><span class="latency" data-ms="246">246ms</span></div>
+                      <div class="body stream">
+                        <div class="vet-score fail">1<small>/ 5</small></div>
+                        <div class="vet-note">"Vet-formulated" needs a DVM signature on file. "Clinically proven" requires placebo-controlled dog data.</div>
+                      </div>
+                    </div>
+                    <div class="b-card b-ftc block" data-stage="ftc">
+                      <div class="judge-label">Vertex AI Search</div>
+                      <div class="head"><div class="label">FTC §255 compliance</div><div class="badge">Vertex AI Search</div><span class="latency" data-ms="328">328ms</span></div>
+                      <div class="body stream">
+                        <div class="ftc-result fail">VIOLATION on 2 of 3 claims</div>
+                        <div class="ftc-rule">§255.1(a) substantiation gap on "60%" · §255.3 endorsement framing on "vet-formulated"<span class="placeholder-tag">example precedent</span></div>
+                      </div>
+                    </div>
+                    <div class="b-card b-sign block" data-stage="sign">
+                      <div class="judge-label">Ed25519 + Firestore log</div>
+                      <div class="head"><div class="label">Signed verdict</div><div class="badge">Ed25519</div><span class="latency" data-ms="62">62ms</span></div>
+                      <div class="body stream">
+                        <div class="sign-key fail">REJECT · not substantiated</div>
+                        <div class="sign-hash fail">sha256:c2f991cf… (placeholder bundle)</div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="block-banner">
+                    <div class="seal">!</div>
+                    <div class="copy">
+                      <div class="headline">Single-agent claim. Mesh blocks it.</div>
+                      A standalone Gemini call would have shipped this recommendation. The mesh catches the substantiation gap and the FTC framing violations before any agent forwards the product.
+                      <div class="replacement">
+                        Suggested replacement copy the brand can ship today:
+                        <code>"Formulated with calming ingredients. Evidence: limited canine data."</code>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="post-tool-row">
+                  <button class="advance-cta" id="goToRecommendFromBlock">Continue to the verified recommendation <span class="arrow">→</span></button>
+                  <button class="advance-cta secondary" id="backToVerified">← Back to the verified scene</button>
                 </div>
               </div>
             </div>
@@ -2020,7 +2373,51 @@ html, body {
   <button class="btn" id="replayBtn" title="Replay full demo (R)">↻</button>
 </div>
 
+<!-- SECTION 5 — Judge Mode toggle (bottom-right). Off by default. Activates
+     via ?judge=1, click, or persisted localStorage. -->
+<button class="judge-toggle" id="judgeToggle" title="Show the framework + tool behind each agent" aria-pressed="false">
+  <span class="dot"></span>
+  <span class="label">Judge Mode</span>
+</button>
+
+<!-- SECTION 5 — Judge Mode footer band. Only renders when body.judge-mode is set. -->
+<div class="judge-footer" id="judgeFooter">
+  Judge Mode · showing <b>ADK</b> + <b>Gemini 2.5 Pro</b> + <b>BioMCP</b> + <b>Vertex AI Search</b> + <b>Ed25519</b> + <b>Google Search grounding</b> as each agent fires.
+</div>
+
 <script>
+// ===========================================================
+// SECTION 5 — Judge Mode bootstrap. Reads ?judge=1, falls back to
+// localStorage. Persists once user clicks the toggle. body.judge-mode
+// drives all per-card .judge-label visibility + the footer band.
+// ===========================================================
+(function bootstrapJudgeMode() {
+  const params = new URLSearchParams(window.location.search);
+  const fromQuery = params.get('judge');
+  let on;
+  if (fromQuery === '1' || fromQuery === 'true') on = true;
+  else if (fromQuery === '0' || fromQuery === 'false') on = false;
+  else on = localStorage.getItem('pcJudgeMode') === '1';
+  if (on) document.body.classList.add('judge-mode');
+})();
+
+window.addEventListener('DOMContentLoaded', () => {
+  const btn = document.getElementById('judgeToggle');
+  if (!btn) return;
+  const sync = () => {
+    const on = document.body.classList.contains('judge-mode');
+    btn.setAttribute('aria-pressed', on ? 'true' : 'false');
+    btn.querySelector('.label').textContent = 'Judge Mode' + (on ? ' · ON' : '');
+  };
+  sync();
+  btn.addEventListener('click', () => {
+    const next = !document.body.classList.contains('judge-mode');
+    document.body.classList.toggle('judge-mode', next);
+    localStorage.setItem('pcJudgeMode', next ? '1' : '0');
+    sync();
+  });
+});
+
 const QUERY = "What are the best hip and joint soft chews for an older dog with inflammation?";
 
 // ---------- Sound design (Web Audio API, no asset deps) ----------
@@ -2071,6 +2468,8 @@ const scenes = {
   3: document.querySelector('.scene-3'),
   4: document.querySelector('.scene-4'),
 };
+// Section 4 — scene-2b sibling. Not in the dots/runners array; sub-state of scene 2.
+const scene2b = document.querySelector('.scene-2b');
 const dots = Array.from(document.querySelectorAll('[data-jump]'));
 const SCENE_WORLD = { 0:'llm', 1:'llm', 2:'llm', 3:'llm', 4:'vendor' };
 
@@ -2082,12 +2481,24 @@ function setWorld(scene) { stage.setAttribute('data-world', SCENE_WORLD[scene] |
 function showScene(n) {
   currentScene = n;
   Object.entries(scenes).forEach(([k, el]) => { el.classList.toggle('active', Number(k) === n); });
+  // Section 4: any showScene call clears the scene-2b sub-state.
+  if (scene2b) scene2b.classList.remove('active');
   setWorld(n);
   dots.forEach((d, i) => {
     d.classList.remove('active', 'done');
     if (i < n) d.classList.add('done');
     else if (i === n) d.classList.add('active');
   });
+}
+
+// Section 4 — sub-state activator. Hides scene-2's main card, shows scene-2b.
+// Keeps currentScene=2 so left/right arrow navigation stays intuitive.
+function showScene2b() {
+  if (!scene2b) return;
+  scenes[2].classList.remove('active');
+  scene2b.classList.add('active');
+  setWorld(2);
+  // Dot 2 stays "active" — scene-2b is sub-state, no dedicated dot.
 }
 
 function wait(ms, token) {
@@ -2225,9 +2636,33 @@ async function runScene2(token) {
   scenes[2].classList.add('complete');
   document.getElementById('s3-status').textContent = 'VERIFIED';
   sfx.verified();
-  // Hint: fly the pointer over the verdict CTA.
-  await wait(600, token); if (token !== runToken) return;
-  const ctaBtn = document.getElementById('goToRecommend');
+  // Section 4 (codex P2): no pointer hint on the verdict CTA in the auto-
+  // record path. The CTA exists for live demo flow, but the auto-advance
+  // into scene-2b makes the pointer feel like a fake affordance. Short
+  // dwell on the VERIFIED state, then chain into the BLOCK scene.
+  await wait(1600, token); if (token !== runToken) return;
+  runScene2b(token);
+}
+
+// Section 4 — scene-2b BLOCK animation. Same per-card cadence as scene 2.
+async function runScene2b(token) {
+  showScene2b();
+  document.getElementById('s2b-status').textContent = 'VERIFYING';
+  const cards = scene2b.querySelectorAll('#s2b-bento .b-card');
+  cards.forEach(c => c.classList.remove('active', 'done'));
+  await wait(360, token); if (token !== runToken) return;
+  for (const c of cards) {
+    if (token !== runToken) return;
+    c.classList.add('active');
+    await wait(520, token);
+    c.classList.remove('active');
+    c.classList.add('done');
+  }
+  await wait(220, token); if (token !== runToken) return;
+  document.getElementById('s2b-status').textContent = 'BLOCKED';
+  // Pointer hint over the "Continue to verified recommendation" CTA.
+  await wait(900, token); if (token !== runToken) return;
+  const ctaBtn = document.getElementById('goToRecommendFromBlock');
   if (ctaBtn) {
     await pointerMoveTo(ctaBtn, { fromOffscreen: true });
     if (token !== runToken) return;
@@ -2392,6 +2827,20 @@ document.getElementById('s0-submit').addEventListener('click', () => {
 document.getElementById('goToPawConscious').addEventListener('click', () => playScene(2));
 document.getElementById('goToRecommend').addEventListener('click', () => playScene(3));
 document.getElementById('goToVendor').addEventListener('click', () => playScene(4));
+
+// Section 4 — scene-2b sub-state navigation.
+document.getElementById('goToBlock').addEventListener('click', () => {
+  runToken += 1;
+  runScene2b(runToken);
+});
+document.getElementById('goToRecommendFromBlock').addEventListener('click', () => playScene(3));
+document.getElementById('backToVerified').addEventListener('click', () => {
+  // Return to scene-2 in its completed/verified state without rerunning the
+  // bento animation. Keeps the trust-report visible.
+  runToken += 1;
+  showScene(2);
+  scenes[2].classList.add('complete');
+});
 
 // Skip intro: jump to the query-armed state inside scene 0.
 document.getElementById('skipIntroBtn').addEventListener('click', () => {

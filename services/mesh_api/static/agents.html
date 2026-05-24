@@ -299,7 +299,7 @@
   <section class="hero">
     <div class="eyebrow">PawConscious for Agents · A2A v0.3 reference</div>
     <h1>The <span class="accent">trust layer</span> AI agents call before recommending a consumer product.</h1>
-    <p class="lede">One curl call. ~30 seconds per claim. A2A v0.3 + JSON-RPC 2.0 envelopes, Ed25519-signed PCEC v0.1 bundles, idempotency keys, discoverable agent card. Drop-in for any A2A v0.3 client. Demo key for GFS judges below.</p>
+    <p class="lede">One curl call. 60-90 seconds per claim (typical product = 2 to 4 minutes total). A2A v0.3 + JSON-RPC 2.0 envelopes, Ed25519-signed PCEC v0.1 bundles, idempotency keys, discoverable agent card. Drop-in for any A2A v0.3 client. Demo key for GFS judges below.</p>
   </section>
 
   <div class="mandates">
@@ -308,12 +308,13 @@
     <span class="mandate">JSON-RPC 2.0 wrapping</span>
     <span class="mandate">Ed25519 signed bundles</span>
     <span class="mandate">Async tasks with idempotency</span>
+    <span class="mandate">Marketplace-ready discovery · public A2A agent card</span>
   </div>
 
   <section class="quickstart">
     <span class="badge">connect in 30 seconds</span>
-    <h3>One curl. Two minutes. Real signed bundle.</h3>
-    <p style="margin:0 0 16px;">Demo key for GFS judges: <code class="inline">demo-key-2026-06</code>. Add as <code class="inline">X-API-Key</code> header.</p>
+    <h3>One curl. 2 to 4 minutes. Real signed bundle.</h3>
+    <p style="margin:0 0 16px;">Demo key for GFS judges: <code class="inline">demo-key-2026-06</code>. Add as <code class="inline">X-API-Key</code> header. Live latency reference: a 3-claim product runs in 4 to 5 minutes today (Cloud Run cold-start adds 20-40 seconds on the first call).</p>
 
     <div class="tabs">
       <button class="tab active" data-tab="curl">curl</button>
@@ -337,7 +338,7 @@ curl -X POST <span class="tok-str">"<!--PUBLIC_BASE_URL-->/a2a/v1/tasks/send"</s
   }'</span>
 
 <span class="tok-cmt"># → HTTP 202 { task_id, poll_url, head_anchor_at_submit }
-# Poll until status=completed (~30-45s per claim)</span>
+# Poll until status=completed (~60-90s per claim, 2-4 min typical)</span>
 
 curl <span class="tok-str">"<!--PUBLIC_BASE_URL-->/a2a/v1/tasks/get/&lt;task_id&gt;"</span> \
   -H <span class="tok-str">"X-API-Key: demo-key-2026-06"</span></code></pre>
@@ -395,6 +396,33 @@ task_id = r.json()[<span class="tok-str">"task_id"</span>]
     </div>
   </section>
 
+
+  <h2>Wire into Vertex AI Agent Engine (ADK)</h2>
+  <p>The documented ADK path for consuming a remote A2A peer is <code class="inline">RemoteA2aAgent</code>. PawConscious publishes a standard A2A v0.3 agent card, so any ADK 2.0 host can wrap it and call <code class="inline">verify_claim</code> as a sub-agent.</p>
+  <pre class="with-copy" data-copy><button class="copy-btn">copy</button><code><span class="tok-cmt"># 1. PawConscious publishes its agent card at:</span>
+<span class="tok-cmt">#    <!--PUBLIC_BASE_URL-->/.well-known/agent-card.json</span>
+
+<span class="tok-cmt"># 2. Wrap it as a remote A2A sub-agent in your ADK host</span>
+<span class="tok-key">from</span> google.adk.agents <span class="tok-key">import</span> LlmAgent
+<span class="tok-key">from</span> google.adk.agents.remote_a2a_agent <span class="tok-key">import</span> RemoteA2aAgent
+
+pawconscious = RemoteA2aAgent(
+    name=<span class="tok-str">"pawconscious"</span>,
+    agent_card=<span class="tok-str">"<!--PUBLIC_BASE_URL-->/.well-known/agent-card.json"</span>,
+)
+
+shopper = LlmAgent(
+    name=<span class="tok-str">"shopper"</span>,
+    model=<span class="tok-str">"gemini-2.5-pro"</span>,
+    sub_agents=[pawconscious],
+    instruction=<span class="tok-str">"Before recommending any pet supplement, call pawconscious with the product URL and gate on a PASS verdict."</span>,
+)
+
+<span class="tok-cmt"># 3. Pass demo-key-2026-06 via the X-API-Key header on the underlying</span>
+<span class="tok-cmt">#    A2A transport during the hackathon window.</span>
+<span class="tok-cmt"># 4. Deploy to Vertex AI Agent Engine:</span>
+<span class="tok-cmt">#    gcloud beta ai reasoning-engines deploy ...</span></code></pre>
+  <p style="font: 500 12px/1.6 var(--mono); color: var(--dim); margin-top: 12px;">Agent card declares the <code class="inline">verify_claim</code> skill, the public Ed25519 verification key, and the async task lifecycle. Bundle signatures verify offline against <code class="inline">/.well-known/did.json</code>. Reference: <a href="https://google.github.io/adk-docs/agents/a2a/" style="color:var(--electric);" target="_blank">ADK A2A docs</a>.</p>
 
   <h2>Try it from the browser</h2>
   <p>Paste any pet-supplement product URL. Your demo key is pre-loaded. The call goes to our live Cloud Run mesh.</p>

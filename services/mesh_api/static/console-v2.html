@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<title>PawConscious — Agentic Compliance Protocol</title>
+<title>PawConscious · Trust layer for AI shopping agents</title>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="description" content="The trust layer AI agents can call before recommending a consumer product. Seven specialized agents on Cloud Run verify, sign, and adversarially double-check every health claim with cryptographic evidence.">
 <meta name="theme-color" content="#0A0B0D">
@@ -904,21 +904,18 @@
 <section class="hero" id="top">
   <div class="container hero-grid">
     <div class="hero-left">
-      <div class="eyebrow">PawConscious · Agentic Compliance Protocol</div>
+      <div class="eyebrow">PawConscious · How AI shopping agents check a product claim</div>
       <h1>The <span class="grad">trust layer</span> AI agents call before recommending a consumer product.</h1>
-      <!-- v0.10.0b: buyer-framed hero sub. Tech-stack name-drops moved to the
-           Architecture section legend below. Speaks to the brand owner's
-           three concerns: plaintiff exposure, retailer trust, AI-shopper trust. -->
-      <p class="hero-sub">Paste a product page URL. In 60 to 180 seconds, seven AI agents return a signed evidence bundle plaintiffs, retailers, and AI shoppers can independently verify. Built on FTC §255, PubMed, and cryptographic provenance.</p>
+      <p class="hero-sub">Paste a product page URL. Seven AI agents return a signed verdict in 60 to 180 seconds, grounded in PubMed and FTC §255. Built for the shopping agents that will recommend your product next.</p>
       <!-- v0.10.1c / codex A-codex-8: first-10-seconds trust anchor.
            Tells the buyer WHY this matters before they paste anything. -->
       <div class="hero-trust">
-        <span class="icon">✦</span> <strong>Signed evidence</strong> brands can show plaintiffs, retailers, and AI shopping agents.
-        Ed25519 + Firestore chain anchor + adversarial Second Opinion.
+        <span class="icon">✦</span> Gemini 2.5 Pro · ADK · A2A v0.3 · Ed25519 + public chain anchor.
+        <strong>Signed evidence</strong> any A2A agent can verify in one HTTP call.
       </div>
       <div class="hero-cta">
         <input type="text" id="urlInput" placeholder="https://www.justfoodfordogs.com/product/calming-chews-for-dogs/50020180.html"
-               value="https://www.justfoodfordogs.com/product/calming-chews-for-dogs/50020180.html?gclsrc=aw.ds&amp;gad_source=1&amp;gad_campaignid=21670453374&amp;gbraid=0AAAAADrJDwQ9nOM0CT4IkGF7qtnkpYkQb&amp;gclid=CjwKCAjwt7XQBhBkEiwAtStppykhJ7PLw6bBUjqLuFIj_leMIeQmJfWwQteZEc-mkc0CHL1f99bD1BoCIDwQAvD_BwE" autocomplete="off"
+               value="https://www.justfoodfordogs.com/product/calming-chews-for-dogs/50020180.html" autocomplete="off"
                aria-describedby="urlError">
         <button id="runBtn" onclick="runMesh()" class="pulse" aria-label="Verify your product">Verify your product</button>
       </div>
@@ -1096,7 +1093,7 @@
        <div class="arch" id="architecture"> and <div class="how" id="how">
        keep their anchor IDs so /architecture and /#how links still scroll
        to the right place. -->
-<div class="arch" id="architecture">
+<div class="arch" id="architecture" hidden>
   <div class="container">
     <div class="arch-head">
       <div class="eyebrow">Architecture · Google Cloud native</div>
@@ -1335,12 +1332,8 @@
       <div class="how-step">
         <div class="n">02 · Mesh</div>
         <div class="title">Seven agents · three stages</div>
-        <div class="desc"><b>Stage 1 — reasoning mesh:</b> <code style="color:var(--electric);font-family:var(--mono);">claim-extractor</code> (ADK + httpx) runs first, then for every claim the orchestrator fans out <code style="color:var(--electric);font-family:var(--mono);">evidence-grader</code> (BioMCP → PubMed + Semantic Scholar) · <code style="color:var(--electric);font-family:var(--mono);">vet-rubric</code> (prompt-only) · <code style="color:var(--electric);font-family:var(--mono);">compliance</code> (Vertex AI Search) in parallel, then <code style="color:var(--electric);font-family:var(--mono);">auditor</code> (Gemini 2.5 Flash) merges. <b>Stage 3 — adversarial:</b> after signing, <code style="color:var(--electric);font-family:var(--mono);">cert-composer</code> renders the branded HTML and <code style="color:var(--electric);font-family:var(--mono);">second-opinion</code> (Gemini + Google Search grounding) runs 4 stress tests against the conclusion.</div>
-        <div class="code">claims = await extract_claims(url)
-for claim in claims:
-  e, v, c = await asyncio.gather(
-    grade(claim), vet(claim), comply(claim))
-  audit = await audit_bundle(e)</div>
+        <div class="desc">Per claim, evidence-grader (BioMCP / PubMed), vet-rubric, and compliance (Vertex AI Search · FTC §255) run in parallel via A2A. Auditor merges. Adversarial cert-composer plus second-opinion (Gemini + Google Search grounding) stress-test the verdict.</div>
+        <div class="code"><a href="/architecture" style="color:var(--electric);text-decoration:none;">See full 7-agent architecture →</a></div>
       </div>
       <div class="how-step">
         <div class="n">03 · Sign</div>
@@ -1363,7 +1356,7 @@ for claim in claims:
     <div class="biz-head">
       <div class="eyebrow">Business case</div>
       <h2>Who pays, why now, what it costs.</h2>
-      <p>PawConscious is sold to the General Counsel or Head of Compliance at a DTC pet supplement brand. The buy is triggered by an active plaintiff demand letter, a retailer substantiation ask, or an AI-shopping-agent recommendation gap. Budget comes from existing legal/compliance lines — no new procurement category.</p>
+      <p>Sold to the General Counsel or Head of Compliance at a DTC pet supplement brand. Bought from existing legal and compliance budget when a plaintiff demand letter lands, a retailer asks for substantiation, or an AI shopping agent skips the SKU for lack of evidence.</p>
     </div>
 
     <div class="biz-grid">
@@ -1429,120 +1422,17 @@ for claim in claims:
       </div>
     </div>
 
-    <!-- v0.17.0 U5: positioning + agent-call pricing moved here from /agents.
-         Brands subscribe; calling AI agents pay per claim post-hackathon. -->
     <div class="biz-positioning">
-      <div class="biz-positioning-claim">
-        <div class="eyebrow">We grade. We don't decide.</div>
-        <p>PawConscious does not recommend products. We extract claims, ground
-        them in PubMed + Semantic Scholar, map them against FTC §255 + AAFCO +
-        NASC corpora via Vertex AI Search, and sign the result. Your agent
-        (or your buyer) decides. The signed bundle is your evidence trail,
-        not our verdict on commerce.</p>
-      </div>
       <div class="biz-positioning-agents">
         <div class="eyebrow">For AI agents calling the mesh</div>
-        <p><strong>Hackathon window (now → 2026-06-30):</strong> free, demo
-        key. <strong>Post-hackathon:</strong> per-claim, ~$0.10-$0.40 per
-        verified claim. Brands pay the subscription above; agents inherit
-        the trust at no cost.
-        <a href="/agents" style="color:var(--electric);">See <code style="font-family:var(--mono);">/agents</code></a>
-        for the A2A v0.3 reference.</p>
+        <p>Free during the hackathon with demo key <code style="font-family:var(--mono);color:var(--electric);">demo-key-2026-06</code>. Post-hackathon: per-claim, ~$0.10 to $0.40 per verified claim. Brands pay the subscription above; agents inherit the trust at no cost. See <a href="/agents" style="color:var(--electric);"><code style="font-family:var(--mono);">/agents</code></a> for the A2A v0.3 reference.</p>
       </div>
     </div>
   </div>
 </section>
 
-<!-- ===================== WHY TRUST THIS (U4: proof + moats + founder + track3 merged) ===================== -->
+<!-- ===================== TRACK 3 MANDATE BAND ===================== -->
 <section id="why-trust-this" class="why-trust-this-group">
-  <!-- v0.15.0 U4: proof + moats + founder + track3 merged into one
-       "Why trust this" group. Inner divs keep their anchors so /#proof
-       and the moats/founder visual anchors still work. -->
-
-<div class="proof" id="proof">
-  <div class="container proof-grid">
-    <div class="proof-text">
-      <div class="eyebrow">The artifact</div>
-      <h2>Not a badge. A signed document the agentic shelf can verify.</h2>
-      <p>Every claim on the label is mapped to citations, scored by a rubric, checked against the FTC endorsement guide, and cryptographically signed. The bundle is machine-readable Pydantic JSON over A2A v0.3 (JSON-LD evolution on the PCEC v0.2 roadmap), with a SHA256 chain anchor anyone can audit.</p>
-      <p>Any A2A v0.3-compatible agent (e.g. our reference ShopperAgent in the repo) can fetch the bundle, verify the signature, and use it to surface the product as evidence-backed. No third-party integrations claimed — Amazon Rufus, Perplexity Shopping, etc. are the <em>use case</em>, not <em>current integrations</em>.</p>
-      <div class="chips">
-        <span class="chip">Ed25519</span>
-        <span class="chip">PCEC v0.1</span>
-        <span class="chip">A2A v0.3</span>
-        <span class="chip">Firestore log</span>
-        <span class="chip">PubMed grounding</span>
-      </div>
-    </div>
-    <pre class="proof-cert" style="margin:0;">
-<div class="body">{
-  <span class="json-k">"product"</span>: <span class="json-s">"native-pet/hip-joint"</span>,
-  <span class="json-k">"claim"</span>: <span class="json-s">"supports joint mobility"</span>,
-  <span class="json-k">"citations"</span>: [
-    <span class="json-s">"PMID:31234567"</span>,
-    <span class="json-s">"PMID:32345678"</span>
-  ],
-  <span class="json-k">"vet_score"</span>: <span class="json-s">4.2</span>,
-  <span class="json-k">"ftc_255"</span>: <span class="json-p">"PASS"</span>,
-  <span class="json-k">"signature"</span>: <span class="json-s">"ed25519:4a2f…b9e1"</span>,
-  <span class="json-k">"chain_anchor"</span>: <span class="json-s">"sha256:c2f991cf…"</span>
-}</div>
-    </pre>
-  </div>
-</div><!-- /.proof (id=proof) -->
-
-<div class="moats">
-  <div class="container">
-    <div class="moats-head">
-      <div class="eyebrow">Why PawConscious — the moat</div>
-      <h2>Four reasons this is the layer AI agents will call.</h2>
-    </div>
-    <div class="moats-grid">
-      <div class="moat">
-        <div class="n">01</div>
-        <div>
-          <div class="title">We authored an open spec.</div>
-          <div class="desc">PCEC v0.1 is MIT-licensed. <span class="roadmap">Donation path to the Linux Foundation — same route Adobe used for C2PA.</span></div>
-        </div>
-      </div>
-      <div class="moat">
-        <div class="n">02</div>
-        <div>
-          <div class="title">We run a structured rubric.</div>
-          <div class="desc">Five-criterion vet-style rubric grades every claim against PubMed (BioMCP) and the FTC §255.3 rule. <span class="roadmap">Roadmap: stipend-funded panel from accredited veterinary nutrition programs.</span></div>
-        </div>
-      </div>
-      <div class="moat">
-        <div class="n">03</div>
-        <div>
-          <div class="title">We ship the signed bundle.</div>
-          <div class="desc">Ed25519 signature, Firestore transparency log, public A2A v0.3 agent card. Any A2A-compatible agent fetches + verifies in one HTTP request.</div>
-        </div>
-      </div>
-      <div class="moat">
-        <div class="n">04</div>
-        <div>
-          <div class="title">Operator depth at the cap table.</div>
-          <div class="desc">CEO Omar Dominguez (MIT Sloan MBA 2026) authored the protocol. COO Jennifer Fremont Smith (MIT Sloan Lecturer) brings two prior venture-backed exits — Smarterer (Google Ventures, acquired by Pluralsight 2014) and WECO (Bessemer, acquired by Feast &amp; Fettle 2025).</div>
-        </div>
-      </div>
-    </div>
-  </div>
-</div><!-- /.moats -->
-
-<div class="founder">
-  <div class="founder-inner">
-    <div class="founder-portrait">
-      <img src="/assets/founder-omar.jpg" alt="Founder Omar Dominguez">
-    </div>
-    <div class="founder-quote">
-      <div class="eyebrow">Why we built this</div>
-      <blockquote>Every time we shop for a supplement for our dogs Trufa and Corcho, we ask the same question: did a real veterinarian actually read the studies behind this, or is it just influencer marketing in a lab coat? The only way to win over a skeptical buyer is to actually be right.</blockquote>
-      <div class="attr"><strong>Omar Dominguez</strong> · Founder, MIT Sloan MBA 2026</div>
-    </div>
-  </div>
-</div><!-- /.founder -->
-
 <div class="track3">
   <div class="container track3-inner">
     <span class="label">Track 3 mandates · met</span>
@@ -1553,13 +1443,12 @@ for claim in claims:
     <a class="badge" href="/health/agent-engine">Agent Engine</a>
     <a class="badge" href="/architecture">Architecture ↗</a>
   </div>
-</div><!-- /.track3 -->
-
-</section><!-- /#why-trust-this -->
+</div>
+</section>
 
 <footer class="footer">
   <div class="container footer-inner">
-    <div>did:web:mesh-api-…run.app · MIT License · Built on Google Cloud</div>
+    <div>Built by Omar Dominguez, MIT Sloan MBA 2026, with COO Jennifer Fremont Smith. did:web:mesh-api-…run.app · MIT License · Google Cloud.</div>
     <div>
       <a href="/.well-known/agent-card.json">Agent Card</a>
       &nbsp;·&nbsp;
@@ -1641,13 +1530,13 @@ const JFFD_CERT_HTML = `<div class="cert-composed">
         .status-flag { color: var(--signal); }
     </style>
     <div class="cert-header">JustFoodForDogs · Calming Efficacy &amp; Ingredient Claims · <span class="status-fail">FAIL</span></div>
-    <div class="cert-narrative">PawConscious has completed its verification of three marketing claims for JustFoodForDogs' "Calming Chews for Dogs," based on the evidence bundle signed on May 21, 2026. The review assessed claims related to calming efficacy and ingredient composition, analyzing a total of 7 scientific papers. The AI vet-rubric simulation assigned low confidence scores, ranging from <strong>1 to 2 out of 5</strong>, citing a lack of robust, peer-reviewed clinical trials in dogs to substantiate the product's effects. The rubric noted that while the mechanisms of action for the ingredients are plausible, the supporting evidence is sparse and relies on vague marketing terms like "clean ingredients." Crucially, the compliance audit flagged two of the three claims for potential violation of <span class="status-flag">FTC §255.1</span>. The specific efficacy claims "Calming" and "help your dog handle...stressors" require "competent and reliable scientific evidence," which was not present in the provided bundle. This lack of substantiation resulted in an audit failure for a central claim, posing a significant compliance risk.</div>
+    <div class="cert-narrative">The mesh checked three claims on JustFoodForDogs' "Calming Chews for Dogs" against the evidence bundle signed on May 21, 2026. The vet-rubric simulation scored each claim <strong>1 to 2 out of 5</strong>: the dog studies for these ingredients are thin and the page leans on phrases like "clean ingredients" that the page itself never defines. Two of the three claims also tripped <span class="status-flag">FTC §255.1</span>. The wording "Calming" and "help your dog handle...stressors" promises a specific result, and the FTC asks brands to back that kind of promise with solid evidence. The bundle did not include that evidence, so the claim fails the audit.</div>
     <div class="cert-fixes">
         <h3>Ship-before-launch fixes</h3>
         <ol>
-            <li><strong>Revise Efficacy Claims:</strong> The claims "Calming" and "work together to help your dog handle...stressors" are specific efficacy claims that failed substantiation. Rephrase them to general wellness claims (e.g., "supports a calm disposition") or remove them to mitigate FTC compliance risk.</li>
-            <li><strong>Define "Clean Ingredients":</strong> The term "clean ingredients" was flagged by the rubric as vague and undefined. Substantiate this claim by defining specific, verifiable attributes on the product page (e.g., "No artificial preservatives, colors, or flavors") or remove the term.</li>
-            <li><strong>Strengthen Evidence Dossier:</strong> The current evidence is insufficient for the claims being made. To support stronger efficacy claims in the future, the brand must invest in robust, placebo-controlled, peer-reviewed clinical trials conducted on dogs to demonstrate a statistically significant calming effect.</li>
+            <li><strong>Soften the calming language.</strong> Replace "Calming" and "help your dog handle stressors" with general wellness wording such as "supports a calm disposition," or take the line down until the supporting evidence is in the bundle.</li>
+            <li><strong>Define "clean ingredients."</strong> The page uses the phrase without saying what it means. Spell out the attributes on the product page ("no artificial preservatives, colors, or flavors") or remove the phrase.</li>
+            <li><strong>Add the evidence the FTC asks for.</strong> Run dog studies that compare the product to a placebo and publish the results, then attach them to the bundle so the claim has something to point at next time.</li>
         </ol>
     </div>
     <div class="cert-footer">

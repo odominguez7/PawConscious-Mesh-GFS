@@ -79,9 +79,9 @@ SIGNING_SECRET_RESOURCE = (
 
 
 app = FastAPI(
-    title="PawConscious Mesh — ACP v0.1",
+    title="PawConscious Mesh · ACP v0.1",
     version=SERVICE_VERSION,
-    description="Agentic Compliance Protocol reference deployment for pet supplements. "
+    description="Trust layer for AI shopping agents · pet supplement reference deployment. "
                 "Public A2A v0.3 mesh endpoint. Submit pet product URLs for evidence verification.",
 )
 
@@ -1185,7 +1185,7 @@ _GLOBAL_FOOTER_HTML = """
     </div>
   </div>
   <div class="pc-globalfooter-meta">
-    PawConscious Mesh · Agentic Compliance Protocol · GFS AI Agents Challenge Track 3
+    PawConscious Mesh · Trust layer for AI shopping agents · GFS AI Agents Challenge Track 3
   </div>
 </footer>
 """
@@ -1329,11 +1329,161 @@ async def architecture() -> HTMLResponse:
     white-space: nowrap;
   }}
   .arch-cta a.btn:hover {{ filter: brightness(1.1); }}
+
+  /* Section 3 — Mandate Map. Track 3 mandate -> component -> live proof. */
+  .mandate-map {{
+    margin-top: 28px;
+    background: var(--bg-elev);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    overflow: hidden;
+  }}
+  .mandate-map-head {{
+    padding: 18px 24px 6px;
+  }}
+  .mandate-map-head .eyebrow {{
+    font: 600 11px 'JetBrains Mono', ui-monospace, monospace;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--electric);
+  }}
+  .mandate-map-head h3 {{
+    margin: 6px 0 4px;
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--ink);
+  }}
+  .mandate-map-head p {{
+    margin: 0 0 14px;
+    font-size: 13px;
+    color: var(--muted);
+    max-width: 800px;
+    line-height: 1.55;
+  }}
+  table.mandate-map-table {{
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+  }}
+  table.mandate-map-table th {{
+    text-align: left;
+    padding: 12px 18px;
+    font: 600 11px 'JetBrains Mono', ui-monospace, monospace;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--dim);
+    border-bottom: 1px solid var(--border);
+    background: rgba(0,0,0,0.18);
+  }}
+  table.mandate-map-table td {{
+    padding: 12px 18px;
+    border-bottom: 1px solid var(--border);
+    vertical-align: top;
+    color: var(--muted);
+    line-height: 1.55;
+  }}
+  table.mandate-map-table td:first-child {{
+    color: var(--ink);
+    font-weight: 600;
+    white-space: nowrap;
+    width: 200px;
+  }}
+  table.mandate-map-table td:nth-child(2) {{
+    width: auto;
+  }}
+  table.mandate-map-table td a {{
+    color: var(--electric);
+    text-decoration: none;
+    font-family: 'JetBrains Mono', ui-monospace, monospace;
+    font-size: 12px;
+    word-break: break-all;
+  }}
+  table.mandate-map-table td a:hover {{ text-decoration: underline; }}
+  table.mandate-map-table tr:last-child td {{ border-bottom: 0; }}
+  .mandate-map .badge {{
+    display: inline-block;
+    margin-right: 6px;
+    padding: 2px 8px;
+    border-radius: 4px;
+    font: 600 10px 'JetBrains Mono', ui-monospace, monospace;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    background: rgba(0, 212, 255, 0.12);
+    color: var(--electric);
+  }}
+  .mandate-map .badge.bonus {{
+    background: rgba(255, 255, 255, 0.06);
+    color: var(--muted);
+  }}
 </style>
 </head><body>
 {nav}
 <div class="frame">
   <div class="svg-wrap">{svg}</div>
+
+  <!-- Section 3 (codex 2026-05-22) — Track 3 Mandate Map. Every required
+       mandate plus the bonus signals the rubric emphasizes, mapped to the
+       component that ships it and the live URL a judge can click. -->
+  <section class="mandate-map" id="mandate-map">
+    <div class="mandate-map-head">
+      <div class="eyebrow">Track 3 mandate map</div>
+      <h3>Each mandate. The component that ships it. A live URL to verify it.</h3>
+      <p>Built for the Google judge who has 60 seconds and one tab. Click any proof URL to verify the claim against the running deployment.</p>
+    </div>
+    <table class="mandate-map-table">
+      <thead>
+        <tr><th>Mandate</th><th>What we built</th><th>Live proof</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><span class="badge">Required</span> B2B focus</td>
+          <td>B2B compliance verification for DTC pet supplement brands. Subscription tiers for brands, per-claim pricing for AI shopping platforms.</td>
+          <td><a href="/#biz">/#biz</a></td>
+        </tr>
+        <tr>
+          <td><span class="badge">Required</span> Cloud Run runtime</td>
+          <td>Mesh API + ShopperAgent each run as independent Cloud Run services, scale-to-zero, Artifact Registry images.</td>
+          <td><a href="/health">/health</a></td>
+        </tr>
+        <tr>
+          <td><span class="badge">Required</span> Gemini</td>
+          <td>Six agents on Gemini 2.5 Pro (extract, evidence, vet, compliance, cert composer, second opinion). One on 2.5 Flash (auditor).</td>
+          <td><a href="https://github.com/odominguez7/PawConscious-Mesh-GFS/blob/main/agents/orchestrator.py" target="_blank">orchestrator.py ↗</a></td>
+        </tr>
+        <tr>
+          <td><span class="badge">Required</span> A2A protocol · Marketplace-ready</td>
+          <td>A2A v0.3 public agent card, async tasks/send + tasks/get lifecycle, idempotency keys, MIT-license open-source repo. Discoverable by any A2A v0.3 client.</td>
+          <td><a href="/.well-known/agent-card.json">/.well-known/agent-card.json</a></td>
+        </tr>
+        <tr>
+          <td><span class="badge bonus">Bonus</span> Multi-agent collaboration</td>
+          <td>7 agents, 3 stages. Per-claim fan-out via asyncio.gather. Adversarial Second Opinion blocks errors a single Gemini call would ship.</td>
+          <td><a href="/demo">/demo</a></td>
+        </tr>
+        <tr>
+          <td><span class="badge bonus">Bonus</span> Vertex AI Search grounding</td>
+          <td>The compliance agent grounds against a public-redistributable corpus: FTC 16 CFR §255 + AAFCO PF7 + NASC public seals.</td>
+          <td><a href="https://github.com/odominguez7/PawConscious-Mesh-GFS/blob/main/agents/compliance.py" target="_blank">compliance.py ↗</a></td>
+        </tr>
+        <tr>
+          <td><span class="badge bonus">Bonus</span> Google Search grounding</td>
+          <td>The Second Opinion agent runs four stress tests (court, regulator, scientific consensus, public skepticism) with Google Search grounding via google.genai.</td>
+          <td><a href="https://github.com/odominguez7/PawConscious-Mesh-GFS/blob/main/agents/second_opinion.py" target="_blank">second_opinion.py ↗</a></td>
+        </tr>
+        <tr>
+          <td><span class="badge bonus">Bonus</span> Cryptographic agent identity</td>
+          <td>Ed25519 keypair, did:web on the Cloud Run host, signed PCEC v0.1 bundles, Firestore transparency log with chain anchor.</td>
+          <td><a href="/.well-known/did.json">/.well-known/did.json</a></td>
+        </tr>
+        <tr>
+          <td><span class="badge bonus">Bonus</span> Vertex AI Agent Engine</td>
+          <td>The mesh orchestrator is also deployed as a managed Reasoning Engine. Routed in via feature flag with p95 + consecutive-failure auto-fallback to the inline path.</td>
+          <td><a href="/health/agent-engine">/health/agent-engine</a></td>
+        </tr>
+      </tbody>
+    </table>
+  </section>
+
   <!-- Architecture page CTA: links to /demo (the 5-scene cinematic), which
        walks through the same agentic pipeline this diagram describes -
        claim extraction, evidence match, vet rubric, FTC compliance, signed
