@@ -1645,10 +1645,15 @@ html, body {
   color: var(--g-text);
 }
 
-/* CTA pair on scene-2b */
+/* CTA pair on scene-2b. 2026-05-24 fix: base .post-tool-row sets
+ * opacity:0 and only .scene-2.complete activates it. Scene-2b had no
+ * equivalent activator so the BLOCK CTAs stayed invisible. Explicitly
+ * unhide here, the bento animation already provides the "now click this"
+ * moment via the pointer hint. */
 .scene-2b .post-tool-row {
   display: flex; gap: 12px; align-items: center;
   margin-top: 14px;
+  opacity: 1; transform: translateY(0);
 }
 .scene-2b .advance-cta.secondary {
   background: transparent;
