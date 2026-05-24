@@ -674,6 +674,7 @@ html, body {
   }
   .bento .b-card.b-claim,
   .bento .b-card.b-evidence,
+  .bento .b-card.b-lab,
   .bento .b-card.b-vet,
   .bento .b-card.b-ftc,
   .bento .b-card.b-sign { grid-column: 1; grid-row: auto; }
@@ -902,11 +903,16 @@ html, body {
   overflow: hidden;
   transition: background 320ms, border-color 320ms, box-shadow 320ms;
 }
+/* 2026-05-24: bento expanded to 3 rows to accommodate the new b-lab card
+   (Document AI third-party lab certificate ingest). Visual rhythm now reads
+   as input -> analysis -> output: claim+evidence on row 1, lab+vet+ftc on
+   row 2, signed bundle as full-width finale on row 3. */
 .bento .b-card.b-claim    { grid-column: span 2; grid-row: 1; min-height: 124px; }
 .bento .b-card.b-evidence { grid-column: span 4; grid-row: 1; min-height: 124px; }
+.bento .b-card.b-lab      { grid-column: span 2; grid-row: 2; min-height: 124px; }
 .bento .b-card.b-vet      { grid-column: span 2; grid-row: 2; min-height: 124px; }
 .bento .b-card.b-ftc      { grid-column: span 2; grid-row: 2; min-height: 124px; }
-.bento .b-card.b-sign     { grid-column: span 2; grid-row: 2; min-height: 124px; }
+.bento .b-card.b-sign     { grid-column: span 6; grid-row: 3; min-height: 96px; }
 
 .bento .b-card.active {
   background: var(--pc-bg-card-lit);
@@ -1060,6 +1066,10 @@ html, body {
 .bento.light .b-vet .vet-note { color: var(--g-dim); }
 .bento.light .b-ftc .ftc-result { color: var(--pc-moss); }
 .bento.light .b-ftc .ftc-rule { color: var(--g-muted); }
+.bento.light .b-lab .lab-finding { color: var(--g-text); font-weight: 600; }
+.bento.light .b-lab .lab-amount { color: var(--llm-accent); font-weight: 600; }
+.bento.light .b-lab .lab-source { color: var(--g-dim); font-size: 0.78rem; }
+.bento.light .b-lab.block .lab-amount { color: var(--g-text); }
 .bento.light .b-sign .sign-key { color: var(--llm-accent); }
 .bento.light .b-sign .sign-hash { color: var(--pc-moss); }
 
@@ -1685,6 +1695,10 @@ body.judge-mode .bento .b-card.b-ftc.active .judge-label,
 body.judge-mode .bento .b-card.b-ftc.done .judge-label {
   border-color: #4185F4; color: #1A5DD0;
 }
+body.judge-mode .bento .b-card.b-lab.active .judge-label,
+body.judge-mode .bento .b-card.b-lab.done .judge-label {
+  border-color: #34A853; color: #1E6B33;
+}
 body.judge-mode .bento .b-card.b-sign.active .judge-label,
 body.judge-mode .bento .b-card.b-sign.done .judge-label {
   border-color: #6FAE7A; color: #467850;
@@ -2057,6 +2071,14 @@ body.judge-mode .judge-footer b { color: #5AB0FF; }
                         </div>
                       </div>
                     </div>
+                    <div class="b-card b-lab" data-stage="lab">
+                      <div class="judge-label">Document AI · OCR</div>
+                      <div class="head"><div class="label">Lab certificate</div><div class="badge">Document AI</div><span class="latency" data-ms="412">412ms</span></div>
+                      <div class="body stream">
+                        <div class="lab-finding"><span class="lab-amount">CBD 553 mg</span> per chew, lab confirmed</div>
+                        <div class="lab-source">Sample COA · Green Gruff EASE · public lot · Document AI extraction</div>
+                      </div>
+                    </div>
                     <div class="b-card b-vet" data-stage="vet">
                       <div class="judge-label">Gemini 2.5 Pro · prompt-only</div>
                       <div class="head"><div class="label">Vet rubric</div><div class="badge">5-vet simulation</div><span class="latency" data-ms="246">246ms</span></div>
@@ -2169,6 +2191,14 @@ body.judge-mode .judge-footer b { color: #5AB0FF; }
                           <div class="ev-item mismatch"><span class="pmid">PMID example<span class="placeholder-tag">placeholder</span></span><span class="quote">Calming ingredient in feline stress (different species, different ingredient)</span><span class="tag">MISMATCH</span></div>
                           <div class="ev-item mismatch"><span class="pmid">no match</span><span class="quote">No canine RCT supports the "60% anxiety reduction" figure</span><span class="tag">MISMATCH</span></div>
                         </div>
+                      </div>
+                    </div>
+                    <div class="b-card b-lab block" data-stage="lab">
+                      <div class="judge-label">Document AI · OCR</div>
+                      <div class="head"><div class="label">Lab certificate</div><div class="badge">Document AI</div><span class="latency" data-ms="412">412ms</span></div>
+                      <div class="body stream">
+                        <div class="lab-finding"><span class="lab-amount">CBD 146 mg</span> per chew, lab confirmed</div>
+                        <div class="lab-source">Sample COA · Green Gruff RELAX · public lot. No peer-reviewed study supports "60% anxiety reduction" at this dose</div>
                       </div>
                     </div>
                     <div class="b-card b-vet block" data-stage="vet">

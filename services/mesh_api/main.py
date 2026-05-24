@@ -1491,7 +1491,7 @@ async def architecture() -> HTMLResponse:
         </tr>
         <tr>
           <td><span class="badge bonus">Bonus</span> Multi-agent collaboration</td>
-          <td>7 agents, 3 stages. Per-claim fan-out via asyncio.gather. Adversarial Second Opinion blocks errors a single Gemini call would ship.</td>
+          <td>8 agents, 3 stages. Per-claim fan-out via asyncio.gather. Adversarial Second Opinion blocks errors a single Gemini call would ship. COA Ingester adds real third-party lab evidence.</td>
           <td><a href="/demo">/demo</a></td>
         </tr>
         <tr>
@@ -1503,6 +1503,11 @@ async def architecture() -> HTMLResponse:
           <td><span class="badge bonus">Bonus</span> Google Search grounding</td>
           <td>The Second Opinion agent runs four stress tests (court, regulator, scientific consensus, public skepticism) with Google Search grounding via google.genai.</td>
           <td><a href="https://github.com/odominguez7/PawConscious-Mesh-GFS/blob/main/agents/second_opinion.py" target="_blank">second_opinion.py ↗</a></td>
+        </tr>
+        <tr>
+          <td><span class="badge bonus">Bonus</span> Document AI · multimodal evidence</td>
+          <td>The COA Ingester reads a brand's lab Certificate of Analysis (PDF), pulls ingredient findings via Document AI OCR + Gemini 2.5 Flash field parsing, and attaches the structured result to the signed bundle. Real third-party document evidence inside the signed artifact, not only LLM reasoning.</td>
+          <td><a href="https://github.com/odominguez7/PawConscious-Mesh-GFS/blob/main/agents/coa_ingester.py" target="_blank">coa_ingester.py ↗</a></td>
         </tr>
         <tr>
           <td><span class="badge bonus">Bonus</span> Cryptographic agent identity</td>

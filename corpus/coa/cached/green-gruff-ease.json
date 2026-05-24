@@ -1,0 +1,234 @@
+{
+  "type": "coa",
+  "source_pdf_sha256": "73e83432e3369b9c4ad29900e4c989c093e0f5c8f09264adef3b22d119512281",
+  "source_pdf_bytes": 842653,
+  "page_count": 15,
+  "document_ai_processor": "projects/40952019806/locations/us/processors/41c510c3067b6d6d",
+  "findings": [
+    {
+      "ingredient": "Total THC",
+      "amount": "6.4440",
+      "unit": "mg/unit",
+      "raw_context": "Total THC: 6.4440 mg/unit"
+    },
+    {
+      "ingredient": "Total CBD",
+      "amount": "553.320",
+      "unit": "mg/unit",
+      "raw_context": "Total CBD: 553.320 mg/unit"
+    },
+    {
+      "ingredient": "Sum of Cannabinoids",
+      "amount": "596.700",
+      "unit": "mg/unit",
+      "raw_context": "Sum of Cannabinoids: 596.700 mg/unit"
+    },
+    {
+      "ingredient": "Total Cannabinoids",
+      "amount": "596.700",
+      "unit": "mg/unit",
+      "raw_context": "Total Cannabinoids: 596.700 mg/unit"
+    },
+    {
+      "ingredient": "Moisture",
+      "amount": "7.9",
+      "unit": "%",
+      "raw_context": "Moisture: 7.9%"
+    },
+    {
+      "ingredient": "CBD",
+      "amount": "3.074",
+      "unit": "mg/g",
+      "raw_context": "CBD\n0.004/0.011\n\u00b10.1147\n3.074\n0.3074"
+    },
+    {
+      "ingredient": "CBD",
+      "amount": "0.3074",
+      "unit": "%",
+      "raw_context": "CBD\n0.004/0.011\n\u00b10.1147\n3.074\n0.3074"
+    },
+    {
+      "ingredient": "CBC",
+      "amount": "0.127",
+      "unit": "mg/g",
+      "raw_context": "CBC\n0.003/0.010\n\u00b10.0041\n0.127\n0.0127"
+    },
+    {
+      "ingredient": "CBC",
+      "amount": "0.0127",
+      "unit": "%",
+      "raw_context": "CBC\n0.003/0.010\n\u00b10.0041\n0.127\n0.0127"
+    },
+    {
+      "ingredient": "\u0394\u2079-THC",
+      "amount": "0.0358",
+      "unit": "mg/g",
+      "raw_context": "\u0394\u2079-THC\n0.0006/0.0053\n\u00b10.00197\n0.0358\n0.00358"
+    },
+    {
+      "ingredient": "\u0394\u2079-THC",
+      "amount": "0.00358",
+      "unit": "%",
+      "raw_context": "\u0394\u2079-THC\n0.0006/0.0053\n\u00b10.00197\n0.0358\n0.00358"
+    },
+    {
+      "ingredient": "CBN",
+      "amount": "0.029",
+      "unit": "mg/g",
+      "raw_context": "CBN\n0.001/0.007\n\u00b10.0008\n0.029\n0.0029"
+    },
+    {
+      "ingredient": "CBN",
+      "amount": "0.0029",
+      "unit": "%",
+      "raw_context": "CBN\n0.001/0.007\n\u00b10.0008\n0.029\n0.0029"
+    },
+    {
+      "ingredient": "CBG",
+      "amount": "0.028",
+      "unit": "mg/g",
+      "raw_context": "CBG\n0.002/0.006\n\u00b10.0014\n0.028\n0.0028"
+    },
+    {
+      "ingredient": "CBG",
+      "amount": "0.0028",
+      "unit": "%",
+      "raw_context": "CBG\n0.002/0.006\n\u00b10.0014\n0.028\n0.0028"
+    },
+    {
+      "ingredient": "CBDV",
+      "amount": "0.021",
+      "unit": "mg/g",
+      "raw_context": "CBDV\n0.002/0.012\n\u00b10.0009\n0.021\n0.0021"
+    },
+    {
+      "ingredient": "CBDV",
+      "amount": "0.0021",
+      "unit": "%",
+      "raw_context": "CBDV\n0.002/0.012\n\u00b10.0009\n0.021\n0.0021"
+    },
+    {
+      "ingredient": "TOTAL THC",
+      "amount": "6.4440",
+      "unit": "mg/unit",
+      "raw_context": "TOTAL THC: 6.4440 mg/unit"
+    },
+    {
+      "ingredient": "TOTAL CBD",
+      "amount": "553.320",
+      "unit": "mg/unit",
+      "raw_context": "TOTAL CBD: 553.320 mg/unit"
+    },
+    {
+      "ingredient": "TOTAL CANNABINOIDS",
+      "amount": "596.700",
+      "unit": "mg/unit",
+      "raw_context": "TOTAL CANNABINOIDS: 596.700 mg/unit"
+    },
+    {
+      "ingredient": "SUM OF CANNABINOIDS",
+      "amount": "3.315",
+      "unit": "mg/g",
+      "raw_context": "SUM OF CANNABINOIDS\n3.315 mg/g\n0.3315%"
+    },
+    {
+      "ingredient": "SUM OF CANNABINOIDS",
+      "amount": "0.3315",
+      "unit": "%",
+      "raw_context": "SUM OF CANNABINOIDS\n3.315 mg/g\n0.3315%"
+    },
+    {
+      "ingredient": "TOTAL CBG",
+      "amount": "5.040",
+      "unit": "mg/unit",
+      "raw_context": "TOTAL CBG: 5.040 mg/unit"
+    },
+    {
+      "ingredient": "TOTAL CBC",
+      "amount": "22.860",
+      "unit": "mg/unit",
+      "raw_context": "TOTAL CBC: 22.860 mg/unit"
+    },
+    {
+      "ingredient": "TOTAL CBDV",
+      "amount": "3.780",
+      "unit": "mg/unit",
+      "raw_context": "TOTAL CBDV: 3.780 mg/unit"
+    },
+    {
+      "ingredient": "\u25b39-THC",
+      "amount": "6.4440",
+      "unit": "mg/unit",
+      "raw_context": "\u25b39-THC per Unit\n6.4440 mg/unit"
+    },
+    {
+      "ingredient": "\u25b29-THC",
+      "amount": "0.0716",
+      "unit": "mg/serving",
+      "raw_context": "\u25b29-THC per Serving\n0.0716 mg/serving"
+    },
+    {
+      "ingredient": "Total THC",
+      "amount": "6.4440",
+      "unit": "mg/unit",
+      "raw_context": "Total THC per Unit\n6.4440 mg/unit"
+    },
+    {
+      "ingredient": "Total THC",
+      "amount": "0.0716",
+      "unit": "mg/serving",
+      "raw_context": "Total THC per Serving\n0.0716 mg/serving"
+    },
+    {
+      "ingredient": "CBD",
+      "amount": "553.320",
+      "unit": "mg/unit",
+      "raw_context": "CBD per Unit\n553.320 mg/unit"
+    },
+    {
+      "ingredient": "CBD",
+      "amount": "6.148",
+      "unit": "mg/serving",
+      "raw_context": "CBD per Serving\n6.148 mg/serving"
+    },
+    {
+      "ingredient": "Total CBD",
+      "amount": "553.320",
+      "unit": "mg/unit",
+      "raw_context": "Total CBD per Unit\n553.320 mg/unit"
+    },
+    {
+      "ingredient": "Total CBD",
+      "amount": "6.148",
+      "unit": "mg/serving",
+      "raw_context": "Total CBD per Serving\n6.148 mg/serving"
+    },
+    {
+      "ingredient": "Sum of Cannabinoids",
+      "amount": "596.700",
+      "unit": "mg/unit",
+      "raw_context": "Sum of Cannabinoids per Unit\n596.700 mg/unit"
+    },
+    {
+      "ingredient": "Sum of Cannabinoids",
+      "amount": "6.630",
+      "unit": "mg/serving",
+      "raw_context": "Sum of Cannabinoids per Serving\n6.630 mg/serving"
+    },
+    {
+      "ingredient": "Total Cannabinoids",
+      "amount": "596.700",
+      "unit": "mg/unit",
+      "raw_context": "Total Cannabinoids per Unit\n596.700 mg/unit"
+    },
+    {
+      "ingredient": "Total Cannabinoids",
+      "amount": "6.630",
+      "unit": "mg/serving",
+      "raw_context": "Total Cannabinoids per Serving\n6.630 mg/serving"
+    }
+  ],
+  "extracted_at": "2026-05-24T22:58:03.472368+00:00",
+  "note": "Document AI OCR + Gemini 2.5 Flash field parsing \u00b7 Green Gruff EASE \u00b7 Joint & Hip \u00b7 public COA",
+  "raw_text_preview": "SC Labs\u00ae\nHemp Quality Assurance Testing\nCERTIFICATE OF ANALYSIS\nDATE ISSUED 01/17/2024\nSAMPLE NAME: GREEN GRUFF EASE Joint & Hip Plus CBD - Jar | 90 Soft Chews\nInfused, Hemp\nCULTIVATOR / MANUFACTURER\nBusiness Name:\nLicense Number:\nAddress:\nDISTRIBUTOR / TESTED FOR\nBusiness Name: GREEN GRUFF USA\nINC\nLicense Number:\nAddress:\nSAMPLE DETAIL\nBatch Number: 3255887\nSample ID: 240109N029\nDate Collected: 01/09/2024\nDate Received: 01/09/2024\nBatch Size:\nSample Size: 1.0 units\nUnit Mass: 180 grams per Unit\nServing Size: 2 grams per Serving\nCANNABINOID ANALYSIS - SUMMARY\nTotal THC: 6.4440 mg/unit\nTotal CBD: 553.320 mg/unit\nTotal THC/CBD is calculated using the following formulas to take into\naccount the loss of a carboxyl group during the decarboxylation step:\nTotal THC = A-THC + (THCa (0.877))\nTotal CBD = CBD + (CBDa (0.877))\nSum of Cannabinoids = A-THC + THCa + CBD + CBDa + CBG + CBGa +\nSum of Cannabinoids: 596.700 mg/unit THCV + THCVa + CBC + CBCa + CBDV + CBDVa + A8-THC + CBL + CBN +\nexo-THC + A8-THCV + A8-iso-THC + 9S-HHC + 9R-HHC + A10-THC +\nA-THC Acetate\nTotal Cannabinoids: 596.700 mg/unit\nTotal Cannabinoids = (A-THC+0.877*THCa) + (CBD+0.877*CBDa) +\n(CBG+0.877*CBGa) + (THCV+0.877*THCVa)\u2026"
+}
