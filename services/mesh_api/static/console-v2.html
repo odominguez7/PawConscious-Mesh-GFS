@@ -849,6 +849,26 @@
   .track3 .badge:hover { border-color: var(--electric); color: var(--electric); }
   .track3 .badge::before { content: "✓"; color: var(--moss-glow); font-weight: 700; }
 
+  /* ===================== "WHAT THIS BECOMES" band (2026-05-24) ===================== */
+  .becomes { padding: 88px 0 96px; border-bottom: 1px solid var(--border); }
+  .becomes-head { max-width: 760px; margin: 0 0 36px; }
+  .becomes-head .eyebrow { color: var(--grad-2); }
+  .becomes-head h2 { font-family: var(--sans); font-weight: 600; font-size: 36px; line-height: 1.08; letter-spacing: -0.022em; margin: 14px 0 14px; color: var(--ink); }
+  .becomes-head p { font-size: 15.5px; line-height: 1.6; color: var(--muted); margin: 0; }
+  .becomes-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; margin-top: 8px; }
+  .becomes-card { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 22px 22px 24px; position: relative; }
+  .becomes-card .badge { position: absolute; top: 18px; right: 18px; font: 600 10px/1 var(--mono); letter-spacing: 0.16em; text-transform: uppercase; color: var(--signal); }
+  .becomes-card .badge.now { color: var(--moss-glow); }
+  .becomes-card .num { font: 500 11px/1 var(--mono); letter-spacing: 0.22em; text-transform: uppercase; color: var(--electric); margin-bottom: 10px; }
+  .becomes-card h3 { font-family: var(--sans); font-weight: 600; font-size: 18px; line-height: 1.25; letter-spacing: -0.012em; color: var(--ink); margin: 0 0 10px; }
+  .becomes-card p { font-size: 13.5px; line-height: 1.55; color: var(--muted); margin: 0 0 12px; }
+  .becomes-card ul { margin: 0; padding-left: 16px; font-size: 12.5px; line-height: 1.6; color: var(--muted); }
+  .becomes-card ul li::marker { color: var(--electric); }
+  .becomes-vert { margin-top: 32px; padding: 18px 20px; background: var(--bg-elevated); border: 1px solid var(--border); border-left: 3px solid var(--grad-2); border-radius: 8px; }
+  .becomes-vert .label { font: 600 10px/1 var(--mono); letter-spacing: 0.22em; text-transform: uppercase; color: var(--grad-2); margin-right: 12px; }
+  .becomes-vert .text { font-size: 13.5px; line-height: 1.55; color: var(--muted); display: inline; }
+  .becomes-vert .text b { color: var(--ink); font-weight: 600; }
+
   /* ===================== FOOTER ===================== */
   .footer { padding: 36px 0 48px; }
   .footer-inner { display: flex; justify-content: space-between; gap: 16px; flex-wrap: wrap; font: 500 10.5px/1 var(--mono); letter-spacing: 0.14em; text-transform: uppercase; color: var(--dim); }
@@ -862,7 +882,7 @@
      LATER base rules clobbered them and mobile layout never activated. */
   @media (max-width: 1024px) {
     .hero { padding: 56px 0; }
-    .hero-grid, .proof-grid, .moats-grid, .biz-grid, .biz-tiers, .biz-roi, .how-grid, .founder-inner { grid-template-columns: 1fr; gap: 28px; }
+    .hero-grid, .proof-grid, .moats-grid, .biz-grid, .biz-tiers, .biz-roi, .how-grid, .founder-inner, .becomes-grid { grid-template-columns: 1fr; gap: 28px; }
     .hero h1 { font-size: 38px; }
     .container { padding: 0 22px; }
     .arch, .how, .proof, .biz, .moats, .founder { padding: 56px 0; }
@@ -958,11 +978,11 @@
 <section class="hero" id="top">
   <div class="container hero-grid">
     <div class="hero-left">
-      <div class="eyebrow">PawConscious · trust layer for AI shopping agents</div>
-      <h1>The <span class="grad">trust layer</span> AI agents call before recommending a consumer product.</h1>
-      <p class="hero-sub">Paste a product URL. Seven agents return a signed verdict in 60-180 seconds, grounded in PubMed and FTC §255.</p>
+      <div class="eyebrow">PawConscious · agentic-commerce trust platform</div>
+      <h1>Be ready for the agents <span class="grad">recommending your product</span>.</h1>
+      <p class="hero-sub">If AI shopping agents can't verify your claims, they skip your SKU. Paste a product URL. Seven agents return a signed verdict in 60-180 seconds, grounded in PubMed and FTC §255.</p>
       <div class="hero-trust">
-        <span class="icon">✦</span> Gemini 2.5 Pro · ADK · A2A v0.3 · Ed25519. <strong>Signed evidence</strong> any A2A agent verifies in one HTTP call.
+        <span class="icon">✦</span> Gemini 2.5 Pro · ADK · A2A v0.3 · Vertex AI Search · Ed25519. <strong>Marketplace-ready</strong> signed evidence any A2A agent verifies in one HTTP call.
       </div>
       <div class="hero-cta">
         <input type="text" id="urlInput" placeholder="https://www.justfoodfordogs.com/product/calming-chews-for-dogs/50020180.html"
@@ -981,6 +1001,7 @@
       <div class="hero-pills">
         <span class="pill">7 agents</span>
         <span class="pill">Ed25519 signed</span>
+        <span class="pill">AEO-ready</span>
         <span class="pill">Open MIT</span>
       </div>
     </div>
@@ -1488,9 +1509,19 @@ curl <span class="tok-str">"<!--PUBLIC_BASE_URL-->/a2a/v1/tasks/get/&lt;task_id&
 
     <div class="biz-tiers">
       <div class="biz-tier">
-        <div class="tn">Starter</div>
+        <div class="tn">Visible <em style="font-style:normal;color:var(--signal);font-size:10px;">(roadmap)</em></div>
+        <div class="tp">$0<span class="u"> / forever</span></div>
+        <div class="tb">Any Shopify / Wix / Webflow store</div>
+        <ul>
+          <li>Public agent card</li>
+          <li>JSON-LD PDP markup</li>
+          <li>AEO scan, monthly</li>
+        </ul>
+      </div>
+      <div class="biz-tier">
+        <div class="tn">Verified</div>
         <div class="tp">$99<span class="u"> / mo</span></div>
-        <div class="tb">1-5 SKUs</div>
+        <div class="tb">1-5 SKUs · live today</div>
         <ul>
           <li>5 SKUs</li>
           <li>Signed PCEC bundle per claim</li>
@@ -1498,9 +1529,9 @@ curl <span class="tok-str">"<!--PUBLIC_BASE_URL-->/a2a/v1/tasks/get/&lt;task_id&
         </ul>
       </div>
       <div class="biz-tier featured">
-        <div class="tn">Pro · recommended</div>
+        <div class="tn">Trusted · recommended</div>
         <div class="tp">$499<span class="u"> / mo</span></div>
-        <div class="tb">6-25 SKUs</div>
+        <div class="tb">6-25 SKUs · live today</div>
         <ul>
           <li>25 SKUs</li>
           <li>Priority re-verification</li>
@@ -1511,10 +1542,10 @@ curl <span class="tok-str">"<!--PUBLIC_BASE_URL-->/a2a/v1/tasks/get/&lt;task_id&
       <div class="biz-tier">
         <div class="tn">Enterprise</div>
         <div class="tp">Custom<span class="u"> · annual</span></div>
-        <div class="tb">&gt;50 SKUs</div>
+        <div class="tb">Retailer · insurer · LLM platform</div>
         <ul>
           <li>Unlimited catalog</li>
-          <li>SLA · dedicated review</li>
+          <li>White-label · SLA</li>
           <li>Bulk verification API</li>
         </ul>
       </div>
@@ -1524,6 +1555,60 @@ curl <span class="tok-str">"<!--PUBLIC_BASE_URL-->/a2a/v1/tasks/get/&lt;task_id&
       <div class="biz-positioning-agents">
         <p>For agents calling the mesh: free with key <code style="font-family:var(--mono);color:var(--electric);">demo-key-2026-06</code>. A2A reference at <a href="/agents" style="color:var(--electric);"><code style="font-family:var(--mono);">/agents</code></a>.</p>
       </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== "WHAT THIS BECOMES" band (2026-05-24) =====================
+     Honest roadmap framing. PawConscious is the pet-vertical reference deployment
+     of the agentic-commerce trust platform we are building. Three columns: today,
+     next 12 months, the long game. Vertical roadmap callout below.
+     ============================================================================== -->
+<section class="becomes" id="becomes">
+  <div class="container">
+    <div class="becomes-head">
+      <div class="eyebrow">Roadmap · honest framing</div>
+      <h2>PawConscious is the pet-vertical reference. The platform is bigger.</h2>
+      <p>What ships today is the trust mesh for one vertical. What we are building is the layer every D2C brand plugs into to be ready for agentic commerce. Same code, broader frame, honest about what is shipped versus what is roadmap.</p>
+    </div>
+    <div class="becomes-grid">
+      <div class="becomes-card">
+        <span class="badge now">Live today</span>
+        <div class="num">01 · Shipped</div>
+        <h3>PawConscious Mesh, pet vertical</h3>
+        <p>Live A2A v0.3 mesh. Seven agents on Google Cloud. Signed PCEC v0.1 bundles. Real pet-supplement PDPs verified end to end.</p>
+        <ul>
+          <li>$99 and $499/mo tiers, live</li>
+          <li>Enterprise: Chewy, Petsmart catalog conversations</li>
+          <li>JustFoodForDogs, Native Pet design partners</li>
+        </ul>
+      </div>
+      <div class="becomes-card">
+        <span class="badge">Next 12 months</span>
+        <div class="num">02 · Roadmap</div>
+        <h3>AgentReady, Stripe-for-agents</h3>
+        <p>Brand plugs in Shopify or Webflow. Five minutes later: public agent card, AEO-optimized PDP, signed claim corpus per SKU, agent monitoring dashboard.</p>
+        <ul>
+          <li>Free tier: agent card + JSON-LD</li>
+          <li>Browser extension trust badge</li>
+          <li>Insurance partner premium discount pilot</li>
+        </ul>
+      </div>
+      <div class="becomes-card">
+        <span class="badge">Long game</span>
+        <div class="num">03 · Standards</div>
+        <h3>Verifiable Commerce Foundation</h3>
+        <p>PCEC v1 donated to Linux Foundation. Retailers and AI commerce platforms adopt the spec as the canonical substantiation layer for agentic recommendation.</p>
+        <ul>
+          <li>Founding board: Google, Anthropic, Shopify observers</li>
+          <li>W3C Verifiable Credentials binding</li>
+          <li>Catalog-side API for retailers and insurers</li>
+        </ul>
+      </div>
+    </div>
+    <div class="becomes-vert">
+      <span class="label">Vertical expansion</span>
+      <span class="text">Pets is the wedge because we have real relationships. <b>Cosmetics</b> ($60B+ US, bigger claim density, faster sales cycle) is the volume play. Then <b>functional food</b>, <b>personal care</b>, <b>apparel</b>. The mesh is vertical-agnostic; the corpora are vertical-specific.</span>
     </div>
   </div>
 </section>
