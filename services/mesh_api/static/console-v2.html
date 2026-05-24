@@ -774,17 +774,16 @@
   .biz-roi-lede { font: 500 18px/1.4 var(--sans); color: var(--ink); max-width: 320px; }
   .biz-roi-stat .num { font: 600 32px/1 var(--mono); color: var(--electric); margin-bottom: 8px; font-variant-numeric: tabular-nums; letter-spacing: -0.02em; }
   .biz-roi-stat .lbl { font: 500 10px/1 var(--mono); letter-spacing: 0.18em; text-transform: uppercase; color: var(--muted); }
-  /* ===================== PRICING TIERS (2026-05-24 v2: research-led redesign) ===================== */
-  .tiers-head { max-width: 760px; margin: 40px 0 28px; display: grid; grid-template-columns: 1fr auto; align-items: end; gap: 24px; }
+  /* ===================== PRICING (2026-05-24 v3: taste pass · Stripe-grade discipline) =====================
+     Cuts from v2: status chips, per-card overage, inline roadmap tags, translateY lift,
+     glow shadow, band logos, band h4+p, sub-paragraph under tiers-head. */
+  .tiers-head { max-width: 880px; margin: 48px 0 32px; display: grid; grid-template-columns: 1fr auto; align-items: end; gap: 24px; }
   .tiers-head-text .eyebrow { color: var(--electric); }
-  .tiers-head-text h3 { font-family: var(--sans); font-weight: 600; font-size: 24px; line-height: 1.2; letter-spacing: -0.018em; color: var(--ink); margin: 10px 0 8px; }
-  .tiers-head-text p { font-size: 13.5px; line-height: 1.55; color: var(--muted); margin: 0; max-width: 600px; }
+  .tiers-head-text h3 { font-family: var(--sans); font-weight: 600; font-size: 26px; line-height: 1.18; letter-spacing: -0.02em; color: var(--ink); margin: 10px 0 0; }
 
-  /* Monthly / Annual toggle */
   .billing-toggle {
-    display: inline-flex; align-items: center; gap: 0;
-    background: var(--surface); border: 1px solid var(--border);
-    border-radius: 8px; padding: 4px;
+    display: inline-flex; background: var(--surface);
+    border: 1px solid var(--border); border-radius: 8px; padding: 4px;
     font: 500 11.5px/1 var(--mono); letter-spacing: 0.04em;
   }
   .billing-toggle button {
@@ -796,23 +795,15 @@
   .billing-toggle button:hover:not(.active) { color: var(--ink); }
   .billing-toggle .save { font-size: 9.5px; color: var(--moss-glow); margin-left: 5px; letter-spacing: 0.1em; }
 
-  .biz-tiers { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-top: 8px; padding-top: 12px; max-width: 1080px; }
+  .biz-tiers { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; margin-top: 8px; padding-top: 12px; max-width: 1080px; }
   .biz-tier {
-    position: relative;
-    display: flex; flex-direction: column;
-    background: var(--bg-elevated);
-    border: 1px solid var(--border);
-    border-radius: 12px;
-    padding: 28px 22px 24px;
-    transition: border-color 0.18s ease, transform 0.18s ease;
+    position: relative; display: flex; flex-direction: column;
+    background: var(--bg-elevated); border: 1px solid var(--border);
+    border-radius: 12px; padding: 32px 26px 26px;
+    transition: border-color 0.18s ease;
   }
   .biz-tier:hover { border-color: var(--border-strong); }
-  .biz-tier.featured {
-    background: linear-gradient(180deg, rgba(0,212,255,0.05), transparent 70%), var(--bg-elevated);
-    border-color: rgba(0,212,255,0.32);
-    transform: translateY(-6px);
-    box-shadow: 0 12px 40px rgba(0,212,255,0.08);
-  }
+  .biz-tier.featured { border-color: rgba(0,212,255,0.36); }
   .biz-tier.featured::before {
     content: "Most popular"; position: absolute;
     top: -11px; left: 50%; transform: translateX(-50%);
@@ -820,32 +811,22 @@
     color: var(--bg); background: var(--electric);
     padding: 5px 10px; border-radius: 4px; white-space: nowrap;
   }
-  .tier-status {
-    position: absolute; top: 16px; right: 16px;
-    font: 600 9px/1 var(--mono); letter-spacing: 0.16em; text-transform: uppercase;
-    padding: 4px 7px; border-radius: 3px; border: 1px solid;
-  }
-  .tier-status.live { color: var(--moss-glow); border-color: rgba(0,212,155,0.32); background: rgba(0,212,155,0.06); }
-  .tier-status.roadmap { color: var(--signal); border-color: rgba(255,180,70,0.32); background: rgba(255,180,70,0.06); }
-  .biz-tier .tn { font: 600 14px/1.2 var(--sans); letter-spacing: -0.005em; text-transform: none; color: var(--ink); margin: 0 0 6px; }
-  .biz-tier.featured .tn { color: var(--ink); }
-  .tier-use { font-size: 12.5px; line-height: 1.45; color: var(--muted); margin: 0 0 22px; min-height: 34px; }
+  .biz-tier .tn { font: 600 16px/1.2 var(--sans); letter-spacing: -0.005em; text-transform: none; color: var(--ink); margin: 0 0 6px; }
+  .tier-job { font: 400 13px/1.45 var(--sans); color: var(--muted); margin: 0 0 26px; min-height: 38px; }
   .biz-tier .tp {
-    font: 600 40px/1 var(--sans); letter-spacing: -0.025em; color: var(--ink);
-    margin: 0 0 4px; font-feature-settings: "tnum";
+    font: 600 42px/1 var(--sans); letter-spacing: -0.025em; color: var(--ink);
+    margin: 0 0 6px; font-feature-settings: "tnum";
     display: flex; align-items: baseline; gap: 4px;
   }
   .biz-tier .tp .u { font: 500 12px/1 var(--mono); color: var(--muted); letter-spacing: 0.02em; }
   .tier-cta {
-    display: block; width: 100%;
-    padding: 11px 14px;
-    margin: 22px 0 22px;
+    display: block; width: 100%; padding: 12px 14px;
+    margin: 20px 0 22px;
     border: 1px solid var(--border-strong);
     background: transparent; color: var(--ink);
     font: 500 12.5px/1 var(--sans);
     text-align: center; text-decoration: none;
-    border-radius: 6px; cursor: pointer;
-    transition: all 0.15s ease;
+    border-radius: 6px; cursor: pointer; transition: all 0.15s ease;
   }
   .tier-cta:hover { border-color: var(--electric); color: var(--electric); }
   .biz-tier.featured .tier-cta {
@@ -854,85 +835,55 @@
   }
   .biz-tier.featured .tier-cta:hover { filter: brightness(1.08); color: var(--bg); }
   .tier-features {
-    list-style: none; padding: 18px 0 0; margin: 0;
+    list-style: none; padding: 20px 0 0; margin: 0;
     border-top: 1px solid var(--border);
-    font-size: 12.5px; line-height: 1.5; color: var(--muted);
+    font-size: 13px; line-height: 1.55; color: var(--muted);
   }
   .tier-features li { position: relative; padding-left: 22px; margin-bottom: 10px; }
   .tier-features li:last-child { margin-bottom: 0; }
   .tier-features li::before {
-    content: ""; position: absolute; left: 0; top: 4px;
+    content: ""; position: absolute; left: 0; top: 5px;
     width: 13px; height: 13px;
     background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 13 13' fill='none' stroke='%2300D4FF' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><path d='M2.5 6.5 L5.5 9.5 L10.5 3.5'/></svg>");
     background-size: contain; background-repeat: no-repeat;
   }
-  .tier-features li.roadmap-feature { color: var(--dim); }
-  .tier-features li.roadmap-feature::before {
-    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 13 13' fill='none' stroke='%23FFB446' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><path d='M2.5 6.5 L5.5 9.5 L10.5 3.5'/></svg>");
-  }
-  .roadmap-tag { font: 500 9px/1 var(--mono); letter-spacing: 0.14em; text-transform: uppercase; color: var(--signal); margin-left: 6px; }
 
-  /* Per-tier usage overage callout (below the CTA, above the features list) */
-  .tier-overage {
-    font: 500 11px/1.4 var(--mono); letter-spacing: 0.02em;
-    color: var(--muted); margin: 0 0 18px;
-    padding: 8px 10px; background: var(--surface);
-    border-radius: 5px; border: 1px dashed var(--border-strong);
+  .tiers-footnote {
+    text-align: center;
+    font: 500 11.5px/1.4 var(--mono); letter-spacing: 0.02em;
+    color: var(--dim); margin: 22px 0 0;
   }
-  .tier-overage b { color: var(--electric); font-weight: 600; }
+  .tiers-footnote b { color: var(--muted); font-weight: 600; }
 
-  /* ===================== ENTERPRISE band (full-width, below the 3-tier grid) ===================== */
-  .enterprise-band {
-    margin-top: 32px; padding: 28px 32px;
+  /* Enterprise + Agent bands collapsed to one-line + CTA */
+  .pricing-band {
+    margin-top: 14px; padding: 18px 24px;
     background: var(--bg-elevated);
     border: 1px solid var(--border);
-    border-left: 3px solid var(--electric);
-    border-radius: 12px;
-    display: grid; grid-template-columns: 1fr auto; align-items: center; gap: 28px;
-  }
-  .enterprise-band-text .eyebrow { color: var(--electric); margin-bottom: 8px; }
-  .enterprise-band-text h4 { font-family: var(--sans); font-weight: 600; font-size: 19px; line-height: 1.25; color: var(--ink); margin: 0 0 8px; letter-spacing: -0.012em; }
-  .enterprise-band-text p { font-size: 13px; line-height: 1.55; color: var(--muted); margin: 0 0 12px; max-width: 600px; }
-  .enterprise-band-logos {
-    display: flex; gap: 14px; flex-wrap: wrap;
-    font: 500 10.5px/1 var(--mono); letter-spacing: 0.14em; text-transform: uppercase; color: var(--dim);
-    margin-top: 4px;
-  }
-  .enterprise-band-logos span { padding: 6px 10px; border: 1px dashed var(--border-strong); border-radius: 4px; }
-  .enterprise-band-cta {
-    display: inline-block; padding: 13px 20px;
-    background: var(--electric); color: var(--bg);
-    border: 1px solid var(--electric); border-radius: 6px;
-    font: 600 12.5px/1 var(--sans); text-decoration: none;
-    white-space: nowrap; transition: filter 0.15s ease;
-  }
-  .enterprise-band-cta:hover { filter: brightness(1.08); color: var(--bg); }
-
-  /* ===================== AGENT-SIDE band (per-call monetization axis) ===================== */
-  .agents-band {
-    margin-top: 16px; padding: 22px 28px;
-    background: var(--bg-elevated);
-    border: 1px solid var(--border);
-    border-left: 3px solid var(--grad-2);
-    border-radius: 12px;
+    border-radius: 10px;
     display: grid; grid-template-columns: 1fr auto; align-items: center; gap: 24px;
   }
-  .agents-band-text .eyebrow { color: var(--grad-2); margin-bottom: 6px; }
-  .agents-band-text h4 { font-family: var(--sans); font-weight: 600; font-size: 16px; line-height: 1.3; color: var(--ink); margin: 0 0 6px; letter-spacing: -0.008em; }
-  .agents-band-text p { font-size: 12.5px; line-height: 1.55; color: var(--muted); margin: 0; max-width: 600px; }
-  .agents-band-text p code { font-family: var(--mono); color: var(--electric); font-size: 11.5px; padding: 1px 5px; background: var(--surface); border-radius: 3px; }
-  .agents-band-cta {
+  .pricing-band.enterprise { border-left: 3px solid var(--electric); margin-top: 28px; }
+  .pricing-band.agents { border-left: 3px solid var(--grad-2); }
+  .pricing-band-line { font: 500 13.5px/1.45 var(--sans); color: var(--muted); margin: 0; }
+  .pricing-band-line b { color: var(--ink); font-weight: 600; }
+  .pricing-band-cta {
     display: inline-block; padding: 10px 16px;
     background: transparent; color: var(--ink);
     border: 1px solid var(--border-strong); border-radius: 6px;
     font: 500 12px/1 var(--sans); text-decoration: none;
     white-space: nowrap; transition: all 0.15s ease;
   }
-  .agents-band-cta:hover { border-color: var(--grad-2); color: var(--grad-2); }
+  .pricing-band-cta:hover { border-color: var(--electric); color: var(--electric); }
+  .pricing-band.enterprise .pricing-band-cta {
+    background: var(--electric); color: var(--bg); border-color: var(--electric); font-weight: 600;
+  }
+  .pricing-band.enterprise .pricing-band-cta:hover { filter: brightness(1.08); color: var(--bg); }
+  .pricing-band.agents .pricing-band-cta:hover { border-color: var(--grad-2); color: var(--grad-2); }
 
   @media (max-width: 900px) {
     .tiers-head { grid-template-columns: 1fr; }
-    .enterprise-band, .agents-band { grid-template-columns: 1fr; }
+    .pricing-band { grid-template-columns: 1fr; }
   }
 
   /* U5 (Day 22) — positioning block: We grade + Agent call pricing */
@@ -1661,7 +1612,6 @@ curl <span class="tok-str">"<!--PUBLIC_BASE_URL-->/a2a/v1/tasks/get/&lt;task_id&
       <div class="tiers-head-text">
         <div class="eyebrow">Pricing</div>
         <h3>Start free. Scale when agents start asking.</h3>
-        <p>Every brand gets an agent card. Pay when you want signed evidence, plaintiff-defense binders, and the trust artifacts retailers and AI commerce platforms will start asking for.</p>
       </div>
       <div class="billing-toggle" role="tablist" aria-label="Billing period">
         <button type="button" data-period="mo" class="active" onclick="setBilling('mo')">Monthly</button>
@@ -1671,76 +1621,54 @@ curl <span class="tok-str">"<!--PUBLIC_BASE_URL-->/a2a/v1/tasks/get/&lt;task_id&
 
     <div class="biz-tiers">
       <div class="biz-tier" id="tier-visible">
-        <span class="tier-status roadmap">Roadmap</span>
         <div class="tn">Visible</div>
-        <div class="tier-use">For any brand on Shopify, Wix, or Webflow.</div>
-        <div class="tp" data-mo="$0" data-yr="$0"><span class="amount">$0</span><span class="u" data-mo="/forever" data-yr="/forever">/forever</span></div>
-        <a class="tier-cta" href="#becomes">Read the roadmap</a>
+        <p class="tier-job">For brands exploring agentic commerce.</p>
+        <div class="tp"><span class="amount">$0</span><span class="u">/forever</span></div>
+        <a class="tier-cta" href="#becomes">Join waitlist</a>
         <ul class="tier-features">
-          <li>Public agent card at your domain</li>
+          <li>Public agent card</li>
           <li>JSON-LD product markup</li>
           <li>Monthly AEO scan</li>
-          <li class="roadmap-feature">Browser trust badge <span class="roadmap-tag">roadmap</span></li>
         </ul>
       </div>
 
       <div class="biz-tier featured" id="tier-verified">
-        <span class="tier-status live">Live</span>
         <div class="tn">Verified</div>
-        <div class="tier-use">Small brand, 1 to 10 SKUs.</div>
+        <p class="tier-job">For brands shipping claims with confidence.</p>
         <div class="tp" data-mo-amount="$149" data-yr-amount="$1,490"><span class="amount">$149</span><span class="u" data-mo="/mo" data-yr="/yr">/mo</span></div>
         <a class="tier-cta" href="/agents">Start verifying</a>
-        <div class="tier-overage">Beyond tier: <b>$0.50</b>/fresh verify · <b>$0.05</b>/cached read</div>
         <ul class="tier-features">
-          <li>10 active SKUs</li>
+          <li>10 SKUs</li>
           <li>Signed PCEC bundle per claim</li>
-          <li>Public chain anchor + audit URL</li>
+          <li>Public chain anchor</li>
           <li>Insurance discount packet</li>
-          <li>Re-verification on copy change</li>
         </ul>
       </div>
 
       <div class="biz-tier" id="tier-trusted">
-        <span class="tier-status live">Live</span>
         <div class="tn">Trusted</div>
-        <div class="tier-use">Mid-market brand, 11 to 50 SKUs.</div>
+        <p class="tier-job">For brands defending what they claim.</p>
         <div class="tp" data-mo-amount="$599" data-yr-amount="$5,990"><span class="amount">$599</span><span class="u" data-mo="/mo" data-yr="/yr">/mo</span></div>
         <a class="tier-cta" href="/agents">Start trusting</a>
-        <div class="tier-overage">Beyond tier: <b>$0.50</b>/fresh verify · <b>$0.05</b>/cached read</div>
         <ul class="tier-features">
-          <li>50 active SKUs</li>
+          <li>50 SKUs</li>
           <li>Priority re-verification</li>
-          <li>Plaintiff-defense binder export</li>
+          <li>Plaintiff-defense binder</li>
           <li>Insurance discount packet</li>
-          <li class="roadmap-feature">Vet attestations <span class="roadmap-tag">roadmap</span></li>
         </ul>
       </div>
     </div>
 
-    <!-- Enterprise band (full-width, below the 3-tier grid) -->
-    <div class="enterprise-band" id="tier-enterprise">
-      <div class="enterprise-band-text">
-        <div class="eyebrow">Enterprise</div>
-        <h4>Need catalog-wide trust?</h4>
-        <p>For retailers requiring brand verification before listing, insurers writing product liability with documented diligence, and AI commerce platforms curating verified-SKU recommendation.</p>
-        <div class="enterprise-band-logos">
-          <span>Retailers</span>
-          <span>Insurers</span>
-          <span>LLM platforms</span>
-          <span>Catalog APIs</span>
-        </div>
-      </div>
-      <a class="enterprise-band-cta" href="mailto:omar.dominguez7@gmail.com?subject=PawConscious%20Enterprise">Talk to our team →</a>
+    <p class="tiers-footnote">Overage past tier: <b>$0.50</b>/fresh verify, <b>$0.05</b>/cached read.</p>
+
+    <div class="pricing-band enterprise" id="tier-enterprise">
+      <p class="pricing-band-line"><b>Enterprise.</b> Catalog-wide trust for retailers, insurers, and AI commerce platforms.</p>
+      <a class="pricing-band-cta" href="mailto:omar.dominguez7@gmail.com?subject=PawConscious%20Enterprise">Talk to our team →</a>
     </div>
 
-    <!-- Agent-side band (per-call monetization axis) -->
-    <div class="agents-band" id="tier-agents">
-      <div class="agents-band-text">
-        <div class="eyebrow">For agents calling the mesh</div>
-        <h4>Per-call pricing for LLM commerce platforms</h4>
-        <p>Free during the hackathon with <code>demo-key-2026-06</code>. Production: <b style="color:var(--ink);font-weight:600;">$0.10</b>/cached read · <b style="color:var(--ink);font-weight:600;">$0.50</b>/fresh verify. Brands subsidize agent calls by default; platform volume deals available.</p>
-      </div>
-      <a class="agents-band-cta" href="/agents">A2A reference →</a>
+    <div class="pricing-band agents" id="tier-agents">
+      <p class="pricing-band-line"><b>Agents calling the mesh.</b> $0.10/cached, $0.50/fresh. Free during the hackathon.</p>
+      <a class="pricing-band-cta" href="/agents">A2A reference →</a>
     </div>
 
     <div class="biz-positioning">
