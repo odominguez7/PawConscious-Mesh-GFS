@@ -3,7 +3,7 @@ steps:
     args:
       - 'build'
       - '-t'
-      - 'us-central1-docker.pkg.dev/pawconscious-mesh-2026/acp-images/mesh-api:$SHORT_SHA'
+      - 'us-central1-docker.pkg.dev/pawconscious-mesh-2026/acp-images/mesh-api:${_SHA}'
       - '-t'
       - 'us-central1-docker.pkg.dev/pawconscious-mesh-2026/acp-images/mesh-api:latest'
       - '-f'
@@ -20,7 +20,7 @@ steps:
       - 'run'
       - 'deploy'
       - 'mesh-api'
-      - '--image=us-central1-docker.pkg.dev/pawconscious-mesh-2026/acp-images/mesh-api:$SHORT_SHA'
+      - '--image=us-central1-docker.pkg.dev/pawconscious-mesh-2026/acp-images/mesh-api:${_SHA}'
       - '--region=us-central1'
       - '--platform=managed'
       - '--quiet'
@@ -35,7 +35,9 @@ steps:
       - '--to-latest'
       - '--quiet'
 images:
-  - 'us-central1-docker.pkg.dev/pawconscious-mesh-2026/acp-images/mesh-api:$SHORT_SHA'
+  - 'us-central1-docker.pkg.dev/pawconscious-mesh-2026/acp-images/mesh-api:${_SHA}'
   - 'us-central1-docker.pkg.dev/pawconscious-mesh-2026/acp-images/mesh-api:latest'
+substitutions:
+  _SHA: 'dev'
 options:
   logging: CLOUD_LOGGING_ONLY
