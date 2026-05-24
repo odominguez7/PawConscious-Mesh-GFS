@@ -24,6 +24,10 @@
       .box         { fill: #16181D; stroke: rgba(255,255,255,0.16); stroke-width: 1.4; }
       .box-agent   { fill: #16181D; stroke: rgba(0,212,255,0.32); stroke-width: 1.4; }
       .box-sign    { fill: #1C1F25; stroke: #00D49B; stroke-width: 1.6; }
+      /* 2026-05-24: clickable agent boxes deep-link to source on GitHub. */
+      a.agent-link { cursor: pointer; }
+      a.agent-link:hover .box-agent { stroke: #00D4FF; stroke-width: 2; filter: brightness(1.08); }
+      a.agent-link:hover .ttl { fill: #00D4FF; }
       .edge        { stroke: rgba(255,255,255,0.22); stroke-width: 1.2; fill: none; }
       .edge-flow   { stroke: #00D4FF; stroke-width: 1.6; fill: none; }
       .edge-dash   { stroke: rgba(255,255,255,0.22); stroke-width: 1.1; stroke-dasharray: 4 5; fill: none; }
@@ -161,15 +165,20 @@
   </g>
 
   <!-- ===== STAGE 1 AGENTS ===== -->
+  <!-- Section 3 (2026-05-24): each agent <g> wrapped in an <a> deep-link
+       to its source file. Mandate-map plumbing the diagram itself. -->
   <!-- 01 Claim Extractor -->
+  <a href="https://github.com/odominguez7/PawConscious-Mesh-GFS/blob/main/agents/claim_extractor.py" target="_blank" rel="noopener" class="agent-link">
   <g transform="translate(298, 308)">
     <rect width="540" height="70" rx="6" class="box-agent"/>
     <text x="18" y="22" class="mono lbl electric">01 · Claim Extractor</text>
     <text x="18" y="44" class="display ttl ink">Pulls every health claim from the PDP</text>
     <text x="18" y="60" class="mono meta muted">ADK 2.0 · LlmAgent · httpx + Firecrawl fallback · Gemini 2.5 Pro · temp 0.0</text>
   </g>
+  </a>
 
   <!-- 02 Evidence Grader -->
+  <a href="https://github.com/odominguez7/PawConscious-Mesh-GFS/blob/main/agents/evidence_grader.py" target="_blank" rel="noopener" class="agent-link">
   <g transform="translate(298, 432)">
     <rect width="160" height="96" rx="6" class="box-agent"/>
     <text x="14" y="22" class="mono lbl electric">02 · Evidence</text>
@@ -178,8 +187,10 @@
     <text x="14" y="74" class="mono meta muted">+ Semantic Scholar</text>
     <text x="14" y="88" class="mono meta muted">Gemini 2.5 Pro</text>
   </g>
+  </a>
 
   <!-- 03 Vet Rubric -->
+  <a href="https://github.com/odominguez7/PawConscious-Mesh-GFS/blob/main/agents/vet_rubric.py" target="_blank" rel="noopener" class="agent-link">
   <g transform="translate(486, 432)">
     <rect width="160" height="96" rx="6" class="box-agent"/>
     <text x="14" y="22" class="mono lbl electric">03 · Vet Rubric</text>
@@ -188,8 +199,10 @@
     <text x="14" y="74" class="mono meta muted">1-5 score + escalate</text>
     <text x="14" y="88" class="mono meta muted">Gemini 2.5 Pro</text>
   </g>
+  </a>
 
   <!-- 04 Compliance -->
+  <a href="https://github.com/odominguez7/PawConscious-Mesh-GFS/blob/main/agents/compliance.py" target="_blank" rel="noopener" class="agent-link">
   <g transform="translate(674, 432)">
     <rect width="160" height="96" rx="6" class="box-agent"/>
     <text x="14" y="22" class="mono lbl electric">04 · Compliance</text>
@@ -198,8 +211,10 @@
     <text x="14" y="74" class="mono meta muted">FTC §255 · AAFCO</text>
     <text x="14" y="88" class="mono meta muted">+ NASC corpus</text>
   </g>
+  </a>
 
   <!-- 05 Auditor (Falsifier) -->
+  <a href="https://github.com/odominguez7/PawConscious-Mesh-GFS/blob/main/agents/auditor.py" target="_blank" rel="noopener" class="agent-link">
   <g transform="translate(298, 580)">
     <rect width="540" height="80" rx="6" class="box-agent"/>
     <text x="18" y="22" class="mono lbl electric">05 · Auditor · Falsifier v0</text>
@@ -207,6 +222,7 @@
     <text x="18" y="60" class="mono meta muted">Gemini 2.5 Flash · temp 0.0 · PMID format check + claim-direction match</text>
     <text x="18" y="74" class="mono meta dim">Custom prompt-only. NOT ADK Eval (datasets not built in 18 days).</text>
   </g>
+  </a>
 
   <!-- Stage 1 hand-off label -->
   <g>
@@ -238,6 +254,7 @@
 
   <!-- ===== STAGE 3 AGENTS ===== -->
   <!-- 06 Cert Composer -->
+  <a href="https://github.com/odominguez7/PawConscious-Mesh-GFS/blob/main/agents/report_writer.py" target="_blank" rel="noopener" class="agent-link">
   <g transform="translate(1142, 308)">
     <rect width="178" height="92" rx="6" class="box-agent"/>
     <text x="14" y="22" class="mono lbl electric">06 · Cert Composer</text>
@@ -246,8 +263,10 @@
     <text x="14" y="76" class="mono meta muted">post-sign · runs in</text>
     <text x="14" y="90" class="mono meta muted">parallel with #07</text>
   </g>
+  </a>
 
   <!-- 07 Second Opinion -->
+  <a href="https://github.com/odominguez7/PawConscious-Mesh-GFS/blob/main/agents/second_opinion.py" target="_blank" rel="noopener" class="agent-link">
   <g transform="translate(1142, 564)">
     <rect width="178" height="160" rx="6" class="box-agent"/>
     <text x="14" y="22" class="mono lbl electric">07 · Second Opinion</text>
@@ -260,6 +279,7 @@
     <text x="14" y="148" class="mono meta-sm muted">• CONSENSUS · scientific</text>
     <text x="14" y="162" class="mono meta-sm muted">• PUBLIC · skepticism</text>
   </g>
+  </a>
 
   <!-- ===== Output: Brand response ===== -->
   <g transform="translate(1142, 820)">
