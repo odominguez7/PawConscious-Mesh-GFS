@@ -525,32 +525,13 @@ task_id = r.json()[<span class="tok-str">"task_id"</span>]
   </section>
 
 
-  <h2>Wire into Vertex AI Agent Engine (ADK)</h2>
-  <p>The documented ADK path for consuming a remote A2A peer is <code class="inline">RemoteA2aAgent</code>. PawConscious publishes a standard A2A v0.3 agent card, so any ADK 2.0 host can wrap it and call <code class="inline">verify_claim</code> as a sub-agent.</p>
-  <pre class="with-copy" data-copy><button class="copy-btn">copy</button><code><span class="tok-cmt"># 1. PawConscious publishes its agent card at:</span>
-<span class="tok-cmt">#    <!--PUBLIC_BASE_URL-->/.well-known/agent-card.json</span>
-
-<span class="tok-cmt"># 2. Wrap it as a remote A2A sub-agent in your ADK host</span>
-<span class="tok-key">from</span> google.adk.agents <span class="tok-key">import</span> LlmAgent
-<span class="tok-key">from</span> google.adk.agents.remote_a2a_agent <span class="tok-key">import</span> RemoteA2aAgent
-
-pawconscious = RemoteA2aAgent(
-    name=<span class="tok-str">"pawconscious"</span>,
-    agent_card=<span class="tok-str">"<!--PUBLIC_BASE_URL-->/.well-known/agent-card.json"</span>,
-)
-
-shopper = LlmAgent(
-    name=<span class="tok-str">"shopper"</span>,
-    model=<span class="tok-str">"gemini-2.5-pro"</span>,
-    sub_agents=[pawconscious],
-    instruction=<span class="tok-str">"Before recommending any pet supplement, call pawconscious with the product URL and gate on a PASS verdict."</span>,
-)
-
-<span class="tok-cmt"># 3. Pass demo-key-2026-06 via the X-API-Key header on the underlying</span>
-<span class="tok-cmt">#    A2A transport during the hackathon window.</span>
-<span class="tok-cmt"># 4. Deploy to Vertex AI Agent Engine:</span>
-<span class="tok-cmt">#    gcloud beta ai reasoning-engines deploy ...</span></code></pre>
-  <p style="font: 500 12px/1.6 var(--mono); color: var(--dim); margin-top: 12px;">Agent card declares the <code class="inline">verify_claim</code> skill, the public Ed25519 verification key, and the async task lifecycle. Bundle signatures verify offline against <code class="inline">/.well-known/did.json</code>. Reference: <a href="https://google.github.io/adk-docs/agents/a2a/" style="color:var(--electric);" target="_blank">ADK A2A docs</a>.</p>
+  <h2>Authentication</h2>
+  <p>Every A2A request requires an API key passed as the <code class="inline">X-API-Key</code> HTTP header. During the GFS hackathon window, the demo key below works against every public endpoint. Post-hackathon, brands and shopping agents receive per-tenant keys via the contracting flow.</p>
+  <div style="background:#07080A; border:1px solid var(--border); border-radius:8px; padding:16px 20px; margin: 12px 0;">
+    <div style="font: 600 11px/1 var(--mono); letter-spacing: 0.14em; text-transform: uppercase; color: var(--dim); margin-bottom: 8px;">Demo key · GFS judges</div>
+    <code class="inline" style="font-size: 14px; color: var(--electric);">X-API-Key: demo-key-2026-06</code>
+    <p style="margin: 12px 0 0; font: 500 12px/1.55 var(--sans); color: var(--muted);">Calls without the header receive <code class="inline">HTTP 401 missing_api_key</code>. Calls with an unknown key receive <code class="inline">HTTP 401 invalid_api_key</code>. The demo key has no rate limit during the judging window; production keys ship with per-tenant pacing.</p>
+  </div>
 
   <h2>Try it from the browser</h2>
   <p>Paste any pet-supplement product URL. Your demo key is pre-loaded. The call goes to our live Cloud Run mesh.</p>
@@ -648,6 +629,33 @@ shopper = LlmAgent(
   <span class="tok-key">"cert_html"</span>: <span class="tok-str">"&lt;executive cert HTML&gt;..."</span>
 }</code></pre>
 
+
+  <h2>Wire into Vertex AI Agent Engine (ADK)</h2>
+  <p>The documented ADK path for consuming a remote A2A peer is <code class="inline">RemoteA2aAgent</code>. PawConscious publishes a standard A2A v0.3 agent card, so any ADK 2.0 host can wrap it and call <code class="inline">verify_claim</code> as a sub-agent. Marketplace-ready, Gemini Enterprise-ready.</p>
+  <pre class="with-copy" data-copy><button class="copy-btn">copy</button><code><span class="tok-cmt"># 1. PawConscious publishes its agent card at:</span>
+<span class="tok-cmt">#    <!--PUBLIC_BASE_URL-->/.well-known/agent-card.json</span>
+
+<span class="tok-cmt"># 2. Wrap it as a remote A2A sub-agent in your ADK host</span>
+<span class="tok-key">from</span> google.adk.agents <span class="tok-key">import</span> LlmAgent
+<span class="tok-key">from</span> google.adk.agents.remote_a2a_agent <span class="tok-key">import</span> RemoteA2aAgent
+
+pawconscious = RemoteA2aAgent(
+    name=<span class="tok-str">"pawconscious"</span>,
+    agent_card=<span class="tok-str">"<!--PUBLIC_BASE_URL-->/.well-known/agent-card.json"</span>,
+)
+
+shopper = LlmAgent(
+    name=<span class="tok-str">"shopper"</span>,
+    model=<span class="tok-str">"gemini-2.5-pro"</span>,
+    sub_agents=[pawconscious],
+    instruction=<span class="tok-str">"Before recommending any pet supplement, call pawconscious with the product URL and gate on a PASS verdict."</span>,
+)
+
+<span class="tok-cmt"># 3. Pass demo-key-2026-06 via the X-API-Key header on the underlying</span>
+<span class="tok-cmt">#    A2A transport during the hackathon window.</span>
+<span class="tok-cmt"># 4. Deploy to Vertex AI Agent Engine:</span>
+<span class="tok-cmt">#    gcloud beta ai reasoning-engines deploy ...</span></code></pre>
+  <p style="font: 500 12px/1.6 var(--mono); color: var(--dim); margin-top: 12px;">Agent card declares the <code class="inline">verify_claim</code> skill, the public Ed25519 verification key, and the async task lifecycle. Bundle signatures verify offline against <code class="inline">/.well-known/did.json</code>. Reference: <a href="https://google.github.io/adk-docs/agents/a2a/" style="color:var(--electric);" target="_blank">ADK A2A docs</a>.</p>
 
   <h2>Verify a signature offline</h2>
   <p>The bundle is canonical-JSON, signed with the Ed25519 key advertised in <code class="inline">/.well-known/did.json</code>. Verify with 6 lines:</p>

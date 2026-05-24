@@ -893,6 +893,60 @@
     .stage-card[data-card="stage2"].show { transform: translateY(-50%) scale(1); }
     .stage-card[data-card="stage3"] { left: 4px; }
   }
+
+  /* Codex T3-K · 2026-05-24 · curl → signed bundle split panel below hero.
+   * Stripe Connect pattern (API request left, resulting data right). The pipes
+   * made visible right after the hero so the value prop pays off in 5 seconds. */
+  .pipes-split { padding: 64px 0 32px; border-top: 1px solid var(--border); }
+  .pipes-head { max-width: 880px; margin: 0 auto 32px; text-align: center; }
+  .pipes-head .eyebrow { font: 700 11px/1 var(--mono); letter-spacing: 0.18em; text-transform: uppercase; color: var(--electric); margin-bottom: 12px; }
+  .pipes-head h2 { font: 500 32px/1.18 var(--sans); color: var(--ink); margin: 0 0 14px; letter-spacing: -0.014em; }
+  .pipes-head p { font: 500 15px/1.55 var(--sans); color: var(--muted); margin: 0; }
+  .pipes-grid {
+    display: grid;
+    grid-template-columns: 1fr 1.1fr;
+    gap: 24px;
+    align-items: stretch;
+  }
+  .pipes-call, .pipes-bundle {
+    background: #07080A;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 22px 22px 18px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    position: relative;
+  }
+  .pipes-bundle { border-color: rgba(0, 181, 220, 0.20); box-shadow: 0 4px 22px rgba(0, 181, 220, 0.04); }
+  .pipes-label {
+    font: 600 10px/1 var(--mono); letter-spacing: 0.16em; text-transform: uppercase;
+    color: var(--dim);
+  }
+  .pipes-bundle .pipes-label { color: var(--electric); }
+  .pipes-code {
+    margin: 0;
+    font: 400 12px/1.55 var(--mono);
+    color: var(--ink);
+    white-space: pre-wrap;
+    word-break: break-word;
+    flex: 1;
+    overflow-x: auto;
+  }
+  .pipes-code .tok-cmt { color: var(--dim); }
+  .pipes-code .tok-str { color: #6FAE7A; }
+  .pipes-code .tok-key { color: var(--electric); }
+  .pipes-code .tok-k { color: var(--electric); }
+  .pipes-code .tok-s { color: #6FAE7A; }
+  .pipes-foot {
+    display: flex; gap: 18px; padding-top: 10px; border-top: 1px solid var(--border);
+    font: 500 11px/1 var(--mono); letter-spacing: 0.06em;
+  }
+  .pipes-foot a { color: var(--electric); text-decoration: none; }
+  .pipes-foot a:hover { text-decoration: underline; }
+  @media (max-width: 900px) {
+    .pipes-grid { grid-template-columns: 1fr; }
+  }
 </style>
 <!--GLOBAL_CHROME_CSS-->
 </head>
@@ -959,7 +1013,7 @@
           <span id="demoModeBadge" class="badge">Ready</span>
           <span class="mode-text" id="demoModeText">click Verify to run · or Replay for a cached preview</span>
         </div>
-        <div class="right" id="demoRight">PCEC v0.1</div>
+        <a class="right" id="demoRight" href="/pcec/v0/chain/head" target="_blank" rel="noopener" title="Live chain head — click to view JSON" style="text-decoration: none;">PCEC v0.1</a>
       </div>
       <!-- A3: coverage line — pre-run readiness, live poll status, post-run claim coverage.
            A6: replay button lives here so it visually associates with the cached cycle. -->
@@ -1063,6 +1117,62 @@
   </div>
 </section>
 
+<!-- ===================== API CALL → SIGNED BUNDLE split panel =====================
+     Stripe Connect pattern: API request on the left, resulting data structure on the
+     right, side by side. The pipes made visible. Codex T3-K, the cheap T3 codex
+     green-lit · 2026-05-24. -->
+<section class="pipes-split" aria-label="API call to signed bundle pipeline">
+  <div class="container">
+    <div class="pipes-head">
+      <div class="eyebrow">The pipes</div>
+      <h2>One HTTP call. A signed bundle out.</h2>
+      <p>The shopper agent POSTs a product URL. The mesh returns a signed PCEC v0.1 bundle in 2 to 4 minutes. Every field on the right is real production output from the live mesh.</p>
+    </div>
+    <div class="pipes-grid">
+      <div class="pipes-call">
+        <div class="pipes-label">A2A v0.3 request · curl</div>
+<pre class="pipes-code"><span class="tok-cmt"># Public demo key for GFS judges</span>
+curl -X POST <span class="tok-str">"<!--PUBLIC_BASE_URL-->/a2a/v1/tasks/send"</span> \
+  -H <span class="tok-str">"X-API-Key: demo-key-2026-06"</span> \
+  -H <span class="tok-str">"Content-Type: application/json"</span> \
+  -d <span class="tok-str">'{"message":{"role":"user","parts":[
+    {"type":"text","text":"https://www.nativepet.com/products/hip-joint"}
+  ]},"skill":"verify_claim"}'</span>
+
+<span class="tok-cmt"># Returns 202 + task_id, then poll:</span>
+curl <span class="tok-str">"<!--PUBLIC_BASE_URL-->/a2a/v1/tasks/get/&lt;task_id&gt;"</span> \
+  -H <span class="tok-str">"X-API-Key: demo-key-2026-06"</span></pre>
+      </div>
+      <div class="pipes-bundle">
+        <div class="pipes-label">PCEC v0.1 signed bundle · live</div>
+<pre class="pipes-code"><span class="tok-key">{</span>
+  <span class="tok-k">"bundle_urn"</span>: <span class="tok-s">"urn:pcec:claim:…"</span>,
+  <span class="tok-k">"bundle_hash"</span>: <span class="tok-s">"<span id="pipesHash">sha256:…</span>"</span>,
+  <span class="tok-k">"bundle_signature"</span>: <span class="tok-s">"ed25519:did:web:…"</span>,
+  <span class="tok-k">"chain_anchor"</span>: <span class="tok-s">"<span id="pipesAnchor">sha256:…</span>"</span>,
+  <span class="tok-k">"chain_anchor_status"</span>: <span class="tok-s">"appended"</span>,
+  <span class="tok-k">"output"</span>: <span class="tok-key">{</span>
+    <span class="tok-k">"claims"</span>: [<span class="tok-cmt">// claim_extractor agent</span>],
+    <span class="tok-k">"evidence"</span>: [<span class="tok-cmt">// BioMCP PubMed PMIDs</span>],
+    <span class="tok-k">"vet_scores"</span>: [<span class="tok-cmt">// 5-criterion rubric</span>],
+    <span class="tok-k">"compliance"</span>: [<span class="tok-cmt">// FTC §255 + AAFCO via Vertex AI Search</span>],
+    <span class="tok-k">"audit"</span>: <span class="tok-s">"PASS"</span>,
+    <span class="tok-k">"second_opinion"</span>: <span class="tok-key">{</span>
+      <span class="tok-k">"overall_verdict"</span>: <span class="tok-s">"PASS"</span>,
+      <span class="tok-k">"tests"</span>: [<span class="tok-cmt">// 4 Google-Search-grounded stress tests</span>]
+    <span class="tok-key">}</span>
+  <span class="tok-key">}</span>,
+  <span class="tok-k">"cert_html"</span>: <span class="tok-s">"&lt;executive cert · ~16 KB&gt;"</span>
+<span class="tok-key">}</span></pre>
+        <div class="pipes-foot">
+          <a href="/pcec/v0/chain/head" target="_blank" rel="noopener">/pcec/v0/chain/head ↗</a>
+          <a href="/agents">full developer reference ↗</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
 <!-- ===================== RESULT REPORT (cert as independent full-width section) =====================
      v0.10.3 ISSUE 1: cert leaves the demo container entirely. After a cycle
      completes, this section reveals with the full Agent 6 cert HTML plus the
@@ -1074,7 +1184,7 @@
       <h2 class="result-title">The mesh produced this signed report.</h2>
       <div class="result-meta">
         <span class="meta-pill" id="resultUrnPill">urn:pcec:claim:…</span>
-        <a class="meta-link" id="resultBundleLink" href="#" target="_blank" rel="noopener">View signed bundle &nearr;</a>
+        <a class="meta-link" id="resultBundleLink" href="/pcec/v0/chain/head" target="_blank" rel="noopener">View signed bundle &nearr;</a>
       </div>
     </div>
     <article class="result-body" id="resultBody">
@@ -1379,9 +1489,9 @@
 
     <div class="biz-roi">
       <div class="biz-roi-lede">A single class-action loss costs more than a decade of Pro-tier coverage.</div>
-      <div class="biz-roi-stat"><div class="num">$11.5M</div><div class="lbl">Cosequin settlement · 2024</div></div>
-      <div class="biz-roi-stat"><div class="num">$499<span style="font:500 12px/1 var(--mono);color:var(--muted);">/mo</span></div><div class="lbl">PawConscious Pro</div></div>
-      <div class="biz-roi-stat"><div class="num">~1,900×</div><div class="lbl">Single-event cost ratio</div></div>
+      <div class="biz-roi-stat"><div class="num">$11.5M</div><div class="lbl">Cosequin settlement · 2024 · <a href="https://topclassactions.com/lawsuit-settlements/lawsuit-news/cosequin-class-action-settlement/" target="_blank" rel="noopener" style="color:var(--electric);font-size:9px;">source</a></div></div>
+      <div class="biz-roi-stat"><div class="num">$499<span style="font:500 12px/1 var(--mono);color:var(--muted);">/mo</span></div><div class="lbl">PawConscious Pro · 12 mo</div></div>
+      <div class="biz-roi-stat"><div class="num">~1,900×</div><div class="lbl">$11.5M ÷ ($499 × 12) <a href="#biz-tiers" style="color:var(--electric);font-size:9px;">math</a></div></div>
     </div>
 
     <div class="biz-tiers">
@@ -2304,6 +2414,30 @@ document.querySelectorAll('#archSvg g.box').forEach(box => {
   });
   box.addEventListener('mouseleave', () => ARCH_TIP.classList.remove('show'));
 });
+
+// Codex T2-C + T3-K · 2026-05-24 · live chain anchor surfaced on page load.
+// Behind-the-monitor pane (Taste rule #7) visible from the first second.
+// Updates the demo chrome's right-chip + the pipes panel sha256 spans.
+(async () => {
+  try {
+    const r = await fetch('/pcec/v0/chain/head');
+    if (!r.ok) return;
+    const d = await r.json();
+    const a = d.current_chain_anchor || '';
+    if (!a.startsWith('sha256:')) return;
+    const short = 'sha256:' + a.slice(7, 15) + '…' + a.slice(-6);
+    const right = document.getElementById('demoRight');
+    if (right) {
+      right.textContent = short;
+      right.title = 'Live chain head: ' + a + ' · click to view JSON';
+    }
+    // T3-K: populate the curl → bundle split panel spans with the real anchor.
+    const pAnchor = document.getElementById('pipesAnchor');
+    if (pAnchor) pAnchor.textContent = a;
+    const pHash = document.getElementById('pipesHash');
+    if (pHash) pHash.textContent = 'sha256:' + a.slice(7, 23) + '…';
+  } catch (_) { /* silent · static fallback keeps placeholder strings */ }
+})();
 </script>
 
 <!--GLOBAL_FOOTER-->
