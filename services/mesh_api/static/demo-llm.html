@@ -176,11 +176,18 @@ html, body {
 }
 
 .gem-thread {
-  flex: 1; overflow: hidden;
-  padding: 28px 32px 24px;
+  /* 2026-05-24: scroll instead of clip. Previously overflow:hidden cropped
+     the BLOCK scene's CTA when content grew (Document AI added a 6th card
+     and the lab-card body wraps to 4-5 lines). Real chat UIs scroll. */
+  flex: 1; overflow-y: auto; overflow-x: hidden;
+  padding: 28px 32px 32px;
   display: flex; flex-direction: column; align-items: center;
   gap: 24px;
+  scrollbar-width: thin;
 }
+.gem-thread::-webkit-scrollbar { width: 6px; }
+.gem-thread::-webkit-scrollbar-thumb { background: rgba(0,0,0,0.12); border-radius: 3px; }
+.gem-thread::-webkit-scrollbar-thumb:hover { background: rgba(0,0,0,0.22); }
 .gem-thread-inner {
   width: 100%; max-width: 760px;
   display: flex; flex-direction: column; gap: 22px;
@@ -1660,8 +1667,12 @@ html, body {
  * the bottom-right toggle, or localStorage). Sync-fades with the
  * card .active animation so labels light up as agents fire.
  * =========================================================== */
+/* 2026-05-24: per-card stack labels are now ALWAYS-ON. Previously gated
+ * by body.judge-mode and the bottom-right toggle, both removed. The
+ * labels show the Google tool driving each agent (ADK LlmAgent, BioMCP
+ * PubMed, Document AI OCR, etc.) and earn their keep on every render. */
 .judge-label {
-  display: none;
+  display: block;
   font: 600 10px/1 var(--mono);
   letter-spacing: 0.10em;
   padding: 5px 8px;
@@ -1670,87 +1681,50 @@ html, body {
   border-left: 2px solid var(--g-muted);
   background: rgba(0, 0, 0, 0.04);
   color: var(--g-muted);
-  opacity: 0.35;
+  opacity: 0.4;
   transition: opacity 320ms, color 320ms, border-color 320ms;
 }
-body.judge-mode .bento .b-card .judge-label { display: block; }
-body.judge-mode .bento .b-card.active .judge-label,
-body.judge-mode .bento .b-card.done .judge-label {
+.bento .b-card.active .judge-label,
+.bento .b-card.done .judge-label {
   opacity: 1; color: var(--g-text);
 }
-/* Per-stage accent colors on the active state */
-body.judge-mode .bento .b-card.b-claim.active .judge-label,
-body.judge-mode .bento .b-card.b-claim.done .judge-label {
+/* Per-stage accent colors */
+.bento .b-card.b-claim.active .judge-label,
+.bento .b-card.b-claim.done .judge-label {
   border-color: #6B5BD2; color: #4A3FB0;
 }
-body.judge-mode .bento .b-card.b-evidence.active .judge-label,
-body.judge-mode .bento .b-card.b-evidence.done .judge-label {
+.bento .b-card.b-evidence.active .judge-label,
+.bento .b-card.b-evidence.done .judge-label {
   border-color: #00B5DC; color: #007A95;
 }
-body.judge-mode .bento .b-card.b-vet.active .judge-label,
-body.judge-mode .bento .b-card.b-vet.done .judge-label {
+.bento .b-card.b-vet.active .judge-label,
+.bento .b-card.b-vet.done .judge-label {
   border-color: #C8920E; color: #7A5A09;
 }
-body.judge-mode .bento .b-card.b-ftc.active .judge-label,
-body.judge-mode .bento .b-card.b-ftc.done .judge-label {
+.bento .b-card.b-ftc.active .judge-label,
+.bento .b-card.b-ftc.done .judge-label {
   border-color: #4185F4; color: #1A5DD0;
 }
-body.judge-mode .bento .b-card.b-lab.active .judge-label,
-body.judge-mode .bento .b-card.b-lab.done .judge-label {
+.bento .b-card.b-lab.active .judge-label,
+.bento .b-card.b-lab.done .judge-label {
   border-color: #34A853; color: #1E6B33;
 }
-body.judge-mode .bento .b-card.b-sign.active .judge-label,
-body.judge-mode .bento .b-card.b-sign.done .judge-label {
+.bento .b-card.b-sign.active .judge-label,
+.bento .b-card.b-sign.done .judge-label {
   border-color: #6FAE7A; color: #467850;
 }
-/* Block-state judge labels: keep red palette consistent with the BLOCK scene */
-body.judge-mode .scene-2b .bento.light .b-card.block.done .judge-label {
+/* Block-state labels keep red palette consistent with the BLOCK scene */
+.scene-2b .bento.light .b-card.block.done .judge-label {
   border-color: #E55050; color: #B83434;
 }
 
-/* Judge Mode toggle button — bottom-right corner of /demo */
-.judge-toggle {
-  position: fixed;
-  bottom: 18px;
-  right: 18px;
-  z-index: 30;
-  padding: 8px 14px 8px 12px;
-  background: var(--g-bg);
-  border: 1px solid var(--g-line);
-  border-radius: 8px;
-  font: 600 11px/1 var(--mono);
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: var(--g-muted);
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  box-shadow: 0 4px 14px rgba(0,0,0,0.08);
-  transition: transform 160ms, box-shadow 160ms, color 220ms, border-color 220ms;
-}
-.judge-toggle:hover { transform: translateY(-1px); box-shadow: 0 6px 18px rgba(0,0,0,0.12); }
-.judge-toggle .dot {
-  width: 8px; height: 8px; border-radius: 4px;
-  background: var(--g-line);
-  transition: background 220ms, box-shadow 220ms;
-}
-body.judge-mode .judge-toggle {
-  color: #1A5DD0;
-  border-color: rgba(65, 133, 244, 0.34);
-}
-body.judge-mode .judge-toggle .dot {
-  background: #4185F4;
-  box-shadow: 0 0 0 3px rgba(65, 133, 244, 0.18);
-}
-
-/* Judge Mode footer strip removed 2026-05-24: it was a position:fixed
- * overlay that clipped the cinematic's bottom (the "Verify the recommended
- * brand" CTA was hidden behind it on the BLOCK scene). The per-card stack
- * chips already say which Google tool is running per agent; the footer
- * was redundant noise. Element kept in DOM for backward compat but never
- * rendered. */
-.judge-footer { display: none !important; }
+/* Show-stack toggle button and footer band removed 2026-05-24:
+ * - The toggle button was opaque internal vocabulary ("Judge Mode") and
+ *   later "Show stack" still required user discovery.
+ * - The footer band was position:fixed and clipped the BLOCK scene's CTA.
+ * - Stack labels now always-on (per-card chips above each bento agent).
+ * Compatibility selectors kept as no-ops so any stale markup still hides. */
+.judge-toggle, .judge-footer { display: none !important; }
 
 /* Scene-2 secondary CTA — "Show me a claim we BLOCK" */
 .scene-2 .show-block-link {
@@ -2391,52 +2365,13 @@ body.judge-mode .judge-toggle .dot {
   <button class="btn" id="replayBtn" title="Replay full demo (R)">↻</button>
 </div>
 
-<!-- Stack labels toggle (bottom-right). Off by default. Reveals the Google
-     framework + tool behind each agent (ADK, BioMCP, Vertex AI Search,
-     Document AI, etc). Renamed from "Judge Mode" 2026-05-24 because the
-     internal vocabulary was opaque to non-judge readers. Still activates
-     via ?judge=1 for backward-compat. -->
-<button class="judge-toggle" id="judgeToggle" title="Reveal the Google tool and framework behind each agent" aria-pressed="false">
-  <span class="dot"></span>
-  <span class="label">Show stack</span>
-</button>
+<!-- Show-stack toggle removed 2026-05-24. Stack labels are now always-on
+     (see .judge-label CSS). -->
 
-<div class="judge-footer" id="judgeFooter">
-  Showing <b>ADK</b> + <b>Gemini 2.5 Pro</b> + <b>BioMCP</b> + <b>Vertex AI Search</b> + <b>Document AI</b> + <b>Ed25519</b> + <b>Google Search grounding</b> as each agent fires.
-</div>
 
 <script>
-// ===========================================================
-// SECTION 5 — Judge Mode bootstrap. Reads ?judge=1, falls back to
-// localStorage. Persists once user clicks the toggle. body.judge-mode
-// drives all per-card .judge-label visibility + the footer band.
-// ===========================================================
-(function bootstrapJudgeMode() {
-  const params = new URLSearchParams(window.location.search);
-  const fromQuery = params.get('judge');
-  let on;
-  if (fromQuery === '1' || fromQuery === 'true') on = true;
-  else if (fromQuery === '0' || fromQuery === 'false') on = false;
-  else on = localStorage.getItem('pcJudgeMode') === '1';
-  if (on) document.body.classList.add('judge-mode');
-})();
-
-window.addEventListener('DOMContentLoaded', () => {
-  const btn = document.getElementById('judgeToggle');
-  if (!btn) return;
-  const sync = () => {
-    const on = document.body.classList.contains('judge-mode');
-    btn.setAttribute('aria-pressed', on ? 'true' : 'false');
-    btn.querySelector('.label').textContent = on ? 'Hide stack' : 'Show stack';
-  };
-  sync();
-  btn.addEventListener('click', () => {
-    const next = !document.body.classList.contains('judge-mode');
-    document.body.classList.toggle('judge-mode', next);
-    localStorage.setItem('pcJudgeMode', next ? '1' : '0');
-    sync();
-  });
-});
+// Show-stack toggle removed 2026-05-24. Per-card stack labels are
+// always visible (see .judge-label CSS, no body class condition).
 
 // Path B (2026-05-24): the cinematic now defaults to BLOCK first on the
 // hip-joint scenario, then routes to the verified alternative (Green Gruff
