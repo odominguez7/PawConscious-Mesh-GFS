@@ -763,18 +763,24 @@
   /* ===================== BUSINESS CASE ===================== */
   .biz { padding: 88px 0 64px; }
   /* 2026-05-24 taste pass: drop biz section border so biz + becomes read as one continuous arc. */
-  .biz-head { max-width: 760px; margin: 0 0 48px; }
-  .biz-head h2 { font-size: 36px; font-weight: 600; letter-spacing: -0.025em; line-height: 1.1; margin: 12px 0 16px; color: var(--ink); }
-  .biz-head p { font-size: 14.5px; line-height: 1.6; color: var(--muted); margin: 0; max-width: 660px; }
-  .biz-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 28px; margin-bottom: 48px; }
-  .biz-card { padding: 24px; background: var(--bg-elevated); border: 1px solid var(--border); border-radius: 8px; }
-  .biz-card .label { font: 600 10px/1 var(--mono); letter-spacing: 0.22em; text-transform: uppercase; color: var(--electric); margin-bottom: 14px; }
-  .biz-card .title { font: 600 16px/1.3 var(--sans); letter-spacing: -0.015em; color: var(--ink); margin-bottom: 10px; }
-  .biz-card .desc { font-size: 13px; line-height: 1.55; color: var(--muted); margin: 0; }
-  .biz-roi { display: grid; grid-template-columns: 1.4fr 1fr 1fr 1fr; gap: 28px; padding: 28px; background: var(--bg-elevated); border: 1px solid var(--border); border-radius: 8px; align-items: end; margin-bottom: 32px; }
-  .biz-roi-lede { font: 500 18px/1.4 var(--sans); color: var(--ink); max-width: 320px; }
-  .biz-roi-stat .num { font: 600 32px/1 var(--mono); color: var(--electric); margin-bottom: 8px; font-variant-numeric: tabular-nums; letter-spacing: -0.02em; }
-  .biz-roi-stat .lbl { font: 500 10px/1 var(--mono); letter-spacing: 0.18em; text-transform: uppercase; color: var(--muted); }
+  /* USE CASES beat — three scenarios + proof stats. Replaces the old buyer-card
+     matrix that read as deck content rather than product copy. */
+  .usecases { margin-bottom: 80px; }
+  .usecases-head { max-width: 760px; margin: 0 0 44px; }
+  .usecases-head .eyebrow { color: var(--electric); }
+  .usecases-head h2 { font-size: 36px; font-weight: 600; letter-spacing: -0.025em; line-height: 1.1; margin: 12px 0 0; color: var(--ink); font-family: var(--sans); }
+  .usecases-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 36px; margin-bottom: 36px; }
+  .usecase-num { font: 600 11px/1 var(--mono); letter-spacing: 0.22em; text-transform: uppercase; color: var(--electric); margin-bottom: 14px; }
+  .usecase-trigger { font-family: var(--sans); font-weight: 600; font-size: 18px; line-height: 1.3; letter-spacing: -0.012em; color: var(--ink); margin: 0 0 12px; }
+  .usecase-body { font-size: 14px; line-height: 1.62; color: var(--muted); margin: 0; }
+  .usecase-proof {
+    display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px;
+    padding: 26px 28px; background: var(--bg-elevated);
+    border: 1px solid var(--border); border-radius: 10px;
+  }
+  .usecase-proof-stat .num { display: block; font: 600 32px/1 var(--mono); color: var(--electric); margin-bottom: 10px; font-variant-numeric: tabular-nums; letter-spacing: -0.02em; }
+  .usecase-proof-stat .num .u { font: 500 12px/1 var(--mono); color: var(--muted); }
+  .usecase-proof-stat .lbl { font: 500 10.5px/1.4 var(--mono); letter-spacing: 0.18em; text-transform: uppercase; color: var(--muted); }
   /* ===================== PRICING (2026-05-24 v3: taste pass · Stripe-grade discipline) =====================
      Cuts from v2: status chips, per-card overage, inline roadmap tags, translateY lift,
      glow shadow, band logos, band h4+p, sub-paragraph under tiers-head. */
@@ -923,26 +929,8 @@
   .track3 .badge:hover { border-color: var(--electric); color: var(--electric); }
   .track3 .badge::before { content: "✓"; color: var(--moss-glow); font-weight: 700; }
 
-  /* ===================== "WHAT THIS BECOMES" band (2026-05-24) ===================== */
-  .becomes { padding: 24px 0 96px; border-bottom: 1px solid var(--border); }
-  .becomes-head { max-width: 760px; margin: 0 0 48px; }
-  .becomes-head .eyebrow { color: var(--electric); }
-  /* h2 sized identically to .biz-head h2 so the two sections read as one continuous arc */
-  .becomes-head h2 { font-family: var(--sans); font-weight: 600; font-size: 36px; line-height: 1.1; letter-spacing: -0.025em; margin: 12px 0 16px; color: var(--ink); }
-  .becomes-head p { font-size: 14.5px; line-height: 1.6; color: var(--muted); margin: 0; max-width: 660px; }
-  .becomes-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; margin-top: 8px; }
-  .becomes-card { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 22px 22px 24px; position: relative; }
-  .becomes-card .badge { position: absolute; top: 18px; right: 18px; font: 600 10px/1 var(--mono); letter-spacing: 0.16em; text-transform: uppercase; color: var(--signal); }
-  .becomes-card .badge.now { color: var(--moss-glow); }
-  .becomes-card .num { font: 500 11px/1 var(--mono); letter-spacing: 0.22em; text-transform: uppercase; color: var(--electric); margin-bottom: 10px; }
-  .becomes-card h3 { font-family: var(--sans); font-weight: 600; font-size: 18px; line-height: 1.25; letter-spacing: -0.012em; color: var(--ink); margin: 0 0 10px; }
-  .becomes-card p { font-size: 13.5px; line-height: 1.55; color: var(--muted); margin: 0 0 12px; }
-  .becomes-card ul { margin: 0; padding-left: 16px; font-size: 12.5px; line-height: 1.6; color: var(--muted); }
-  .becomes-card ul li::marker { color: var(--electric); }
-  .becomes-vert { margin-top: 32px; padding: 18px 20px; background: var(--bg-elevated); border: 1px solid var(--border); border-left: 3px solid var(--grad-2); border-radius: 8px; }
-  .becomes-vert .label { font: 600 10px/1 var(--mono); letter-spacing: 0.22em; text-transform: uppercase; color: var(--grad-2); margin-right: 12px; }
-  .becomes-vert .text { font-size: 13.5px; line-height: 1.55; color: var(--muted); display: inline; }
-  .becomes-vert .text b { color: var(--ink); font-weight: 600; }
+  /* "What this becomes" band removed 2026-05-24 (taste pass): roadmap belongs in
+     the Devpost long-form text and the investor deck, not on the marketing page. */
 
   /* ===================== FOOTER ===================== */
   .footer { padding: 36px 0 48px; }
@@ -957,7 +945,7 @@
      LATER base rules clobbered them and mobile layout never activated. */
   @media (max-width: 1024px) {
     .hero { padding: 56px 0; }
-    .hero-grid, .proof-grid, .moats-grid, .biz-grid, .biz-tiers, .biz-roi, .how-grid, .founder-inner, .becomes-grid { grid-template-columns: 1fr; gap: 28px; }
+    .hero-grid, .proof-grid, .moats-grid, .biz-tiers, .how-grid, .founder-inner, .usecases-grid, .usecase-proof { grid-template-columns: 1fr; gap: 28px; }
     .hero h1 { font-size: 38px; }
     .container { padding: 0 22px; }
     .arch, .how, .proof, .biz, .moats, .founder { padding: 56px 0; }
@@ -1550,37 +1538,53 @@ curl <span class="tok-str">"<!--PUBLIC_BASE_URL-->/a2a/v1/tasks/get/&lt;task_id&
 
 <!-- v0.15.0 U4: proof block relocated into #why-trust-this group below biz. -->
 
-<!-- ===================== BUSINESS CASE ===================== -->
+<!-- ===================== USE CASES + PRICING ===================== -->
 <section class="biz" id="biz">
   <div class="container">
-    <div class="biz-head">
-      <div class="eyebrow">Business case</div>
-      <h2>Who pays, why now, what it costs.</h2>
+
+    <!-- Beat 1: Use Cases. Three scenarios brands actually face, with the ROI
+         proof band sitting at the end of the third one (the plaintiff-letter
+         moment) where avoided-cost math is most relevant. -->
+    <div class="usecases">
+      <div class="usecases-head">
+        <div class="eyebrow">Use cases</div>
+        <h2>Three moments this is built for.</h2>
+      </div>
+      <div class="usecases-grid">
+        <div class="usecase">
+          <div class="usecase-num">01 · Launch</div>
+          <p class="usecase-trigger">When you launch a new SKU.</p>
+          <p class="usecase-body">The mesh extracts every health claim from the PDP, grades evidence against PubMed, and flags FTC §255 risk before you ship. You launch knowing what is substantiated and what is not.</p>
+        </div>
+        <div class="usecase">
+          <div class="usecase-num">02 · Retailer</div>
+          <p class="usecase-trigger">When a retailer asks for substantiation.</p>
+          <p class="usecase-body">One link to a signed PCEC bundle with chain anchor and public audit URL. The catalog team gets the artifact in the format they ask for.</p>
+        </div>
+        <div class="usecase">
+          <div class="usecase-num">03 · Plaintiff</div>
+          <p class="usecase-trigger">When a plaintiff letter lands.</p>
+          <p class="usecase-body">Pull the binder. Every claim cryptographically dated, every source linked. Your attorney has documented diligence on day one.</p>
+        </div>
+      </div>
+
+      <!-- Proof stats anchor the third scenario in dollar math. -->
+      <div class="usecase-proof">
+        <div class="usecase-proof-stat">
+          <span class="num">$11.5M</span>
+          <span class="lbl">Cosequin · 2024 settlement · <a href="https://topclassactions.com/lawsuit-settlements/lawsuit-news/cosequin-class-action-settlement/" target="_blank" rel="noopener" style="color:var(--electric);">source</a></span>
+        </div>
+        <div class="usecase-proof-stat">
+          <span class="num">$599<span class="u">/mo</span></span>
+          <span class="lbl">Trusted tier · 12 months</span>
+        </div>
+        <div class="usecase-proof-stat">
+          <span class="num">~1,600×</span>
+          <span class="lbl">avoided-cost ratio</span>
+        </div>
+      </div>
     </div>
 
-    <div class="biz-grid">
-      <div class="biz-card">
-        <div class="label">Who buys</div>
-        <div class="title">General Counsel · Compliance · CMO</div>
-        <div class="desc">DTC pet brand, $1M-$50M ARR. Catalyst: Cosequin $11.5M settlement (2024), GlycoFlex filing (2024).</div>
-      </div>
-      <div class="biz-card">
-        <div class="label">Why now</div>
-        <div class="title">Plaintiff bar + AI shopping</div>
-        <div class="desc">Amazon Rufus live; Perplexity Shopping shipped. Plaintiff lawyers are templating Cosequin-style cases.</div>
-      </div>
-      <div class="biz-card">
-        <div class="label">What they get</div>
-        <div class="title">Signed PCEC v0.1 bundle per claim</div>
-        <div class="desc">JSON-LD evidence bundle agents call via A2A. Retailers reference. Plaintiffs read. Brand proves what was claimed when.</div>
-      </div>
-    </div>
-
-    <div class="biz-roi">
-      <div class="biz-roi-stat"><div class="num">$11.5M</div><div class="lbl">Cosequin · 2024 <a href="https://topclassactions.com/lawsuit-settlements/lawsuit-news/cosequin-class-action-settlement/" target="_blank" rel="noopener" style="color:var(--electric);font-size:9px;">source</a></div></div>
-      <div class="biz-roi-stat"><div class="num">$599<span style="font:500 12px/1 var(--mono);color:var(--muted);">/mo</span></div><div class="lbl">Trusted · 12 mo</div></div>
-      <div class="biz-roi-stat"><div class="num">~1,600×</div><div class="lbl">vs Trusted · 12 mo</div></div>
-    </div>
 
     <div class="tiers-head">
       <div class="tiers-head-text">
@@ -1598,7 +1602,7 @@ curl <span class="tok-str">"<!--PUBLIC_BASE_URL-->/a2a/v1/tasks/get/&lt;task_id&
         <div class="tn">Visible</div>
         <p class="tier-job">For brands exploring agentic commerce.</p>
         <div class="tp"><span class="amount">$0</span><span class="u">/forever</span></div>
-        <a class="tier-cta" href="#becomes">Join waitlist</a>
+        <a class="tier-cta" href="mailto:omar@pawconscious.com?subject=PawConscious%20Visible%20waitlist">Join waitlist</a>
         <ul class="tier-features">
           <li>Public agent card</li>
           <li>JSON-LD product markup</li>
@@ -1647,59 +1651,9 @@ curl <span class="tok-str">"<!--PUBLIC_BASE_URL-->/a2a/v1/tasks/get/&lt;task_id&
   </div>
 </section>
 
-<!-- ===================== "WHAT THIS BECOMES" band (2026-05-24) =====================
-     Honest roadmap framing. PawConscious is the pet-vertical reference deployment
-     of the agentic-commerce trust platform we are building. Three columns: today,
-     next 12 months, the long game. Vertical roadmap callout below.
-     ============================================================================== -->
-<section class="becomes" id="becomes">
-  <div class="container">
-    <div class="becomes-head">
-      <div class="eyebrow">Where this goes</div>
-      <h2>Pet supplements is the wedge. Every D2C brand is the platform.</h2>
-      <p>Same code, broader frame. Honest about what ships today versus what is roadmap.</p>
-    </div>
-    <div class="becomes-grid">
-      <div class="becomes-card">
-        <span class="badge now">Live today</span>
-        <div class="num">01 · Shipped</div>
-        <h3>PawConscious Mesh, pet vertical</h3>
-        <p>Live A2A v0.3 mesh. Seven agents on Google Cloud. Signed PCEC v0.1 bundles. Real pet-supplement PDPs verified end to end.</p>
-        <ul>
-          <li>$149 and $599/mo tiers, live</li>
-          <li>Enterprise: Chewy, Petsmart catalog conversations</li>
-          <li>JustFoodForDogs, Native Pet design partners</li>
-        </ul>
-      </div>
-      <div class="becomes-card">
-        <span class="badge">Next 12 months</span>
-        <div class="num">02 · Roadmap</div>
-        <h3>AgentReady, Stripe-for-agents</h3>
-        <p>Brand plugs in Shopify or Webflow. Five minutes later: public agent card, AEO-optimized PDP, signed claim corpus per SKU, agent monitoring dashboard.</p>
-        <ul>
-          <li>Free tier: agent card + JSON-LD</li>
-          <li>Browser extension trust badge</li>
-          <li>Insurance partner premium discount pilot</li>
-        </ul>
-      </div>
-      <div class="becomes-card">
-        <span class="badge">Long game</span>
-        <div class="num">03 · Standards</div>
-        <h3>Verifiable Commerce Foundation</h3>
-        <p>PCEC v1 donated to Linux Foundation. Retailers and AI commerce platforms adopt the spec as the canonical substantiation layer for agentic recommendation.</p>
-        <ul>
-          <li>Founding board: Google, Anthropic, Shopify observers</li>
-          <li>W3C Verifiable Credentials binding</li>
-          <li>Catalog-side API for retailers and insurers</li>
-        </ul>
-      </div>
-    </div>
-    <div class="becomes-vert">
-      <span class="label">Vertical expansion</span>
-      <span class="text">Pets is the wedge because we have real relationships. <b>Cosmetics</b> ($60B+ US, bigger claim density, faster sales cycle) is the volume play. Then <b>functional food</b>, <b>personal care</b>, <b>apparel</b>. The mesh is vertical-agnostic; the corpora are vertical-specific.</span>
-    </div>
-  </div>
-</section>
+<!-- "What this becomes" section removed 2026-05-24 (taste pass): roadmap belongs
+     in the Devpost long-form description and investor deck, not on the marketing
+     page. Reference doc: internal/docs/MOONSHOT_RETHINK_2026-05-24.md. -->
 
 <!-- ===================== TRACK 3 MANDATE BAND ===================== -->
 <section id="why-trust-this" class="why-trust-this-group">
