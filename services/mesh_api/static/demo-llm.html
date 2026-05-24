@@ -2231,8 +2231,8 @@ body.judge-mode .judge-footer b { color: #5AB0FF; }
                   <div class="block-banner">
                     <div class="seal">!</div>
                     <div class="copy">
-                      <div class="headline">Single-agent claim. Mesh blocks it.</div>
-                      A standalone Gemini call would have shipped this recommendation. The mesh catches the substantiation gap, the absent lab certificate, and the FTC framing violations before any agent forwards the product.
+                      <div class="headline">3 of 3 claims unsupported. Mesh blocks.</div>
+                      No PubMed evidence backs "reverses arthritis in 7 days" or "1000% absorption" in canine glucosamine. The brand publishes no lab Certificate of Analysis. The bundle does not get signed.
                       <div class="replacement">
                         PawConscious recommends a brand that publishes its lab tests publicly:
                         <code>Green Gruff EASE · Joint &amp; Hip · public COA available</code>
@@ -2404,16 +2404,18 @@ body.judge-mode .judge-footer b { color: #5AB0FF; }
   <button class="btn" id="replayBtn" title="Replay full demo (R)">↻</button>
 </div>
 
-<!-- SECTION 5 — Judge Mode toggle (bottom-right). Off by default. Activates
-     via ?judge=1, click, or persisted localStorage. -->
-<button class="judge-toggle" id="judgeToggle" title="Show the framework + tool behind each agent" aria-pressed="false">
+<!-- Stack labels toggle (bottom-right). Off by default. Reveals the Google
+     framework + tool behind each agent (ADK, BioMCP, Vertex AI Search,
+     Document AI, etc). Renamed from "Judge Mode" 2026-05-24 because the
+     internal vocabulary was opaque to non-judge readers. Still activates
+     via ?judge=1 for backward-compat. -->
+<button class="judge-toggle" id="judgeToggle" title="Reveal the Google tool and framework behind each agent" aria-pressed="false">
   <span class="dot"></span>
-  <span class="label">Judge Mode</span>
+  <span class="label">Show stack</span>
 </button>
 
-<!-- SECTION 5 — Judge Mode footer band. Only renders when body.judge-mode is set. -->
 <div class="judge-footer" id="judgeFooter">
-  Judge Mode · showing <b>ADK</b> + <b>Gemini 2.5 Pro</b> + <b>BioMCP</b> + <b>Vertex AI Search</b> + <b>Ed25519</b> + <b>Google Search grounding</b> as each agent fires.
+  Showing <b>ADK</b> + <b>Gemini 2.5 Pro</b> + <b>BioMCP</b> + <b>Vertex AI Search</b> + <b>Document AI</b> + <b>Ed25519</b> + <b>Google Search grounding</b> as each agent fires.
 </div>
 
 <script>
@@ -2438,7 +2440,7 @@ window.addEventListener('DOMContentLoaded', () => {
   const sync = () => {
     const on = document.body.classList.contains('judge-mode');
     btn.setAttribute('aria-pressed', on ? 'true' : 'false');
-    btn.querySelector('.label').textContent = 'Judge Mode' + (on ? ' · ON' : '');
+    btn.querySelector('.label').textContent = on ? 'Hide stack' : 'Show stack';
   };
   sync();
   btn.addEventListener('click', () => {
@@ -2685,6 +2687,10 @@ async function runScene2(token) {
 // EASE alternative) plays next. Per-card cadence unchanged so the visual
 // rhythm matches scene-2.
 async function runScene2b(token) {
+  // Path B: scene-2b runs as the primary scene-2 beat. showScene(2) first
+  // so currentScene+dots+world stay correct (otherwise Next freezes by
+  // re-playing the block scene). Then showScene2b() flips the visible card.
+  showScene(2);
   showScene2b();
   document.getElementById('s2b-status').textContent = 'VERIFYING';
   const cards = scene2b.querySelectorAll('#s2b-bento .b-card');
