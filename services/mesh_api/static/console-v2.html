@@ -958,14 +958,11 @@
 <section class="hero" id="top">
   <div class="container hero-grid">
     <div class="hero-left">
-      <div class="eyebrow">PawConscious · How AI shopping agents check a product claim</div>
+      <div class="eyebrow">PawConscious · trust layer for AI shopping agents</div>
       <h1>The <span class="grad">trust layer</span> AI agents call before recommending a consumer product.</h1>
-      <p class="hero-sub">Paste a product page URL. Seven AI agents return a signed verdict in 60 to 180 seconds, grounded in PubMed and FTC §255. Built for the shopping agents that will recommend your product next.</p>
-      <!-- v0.10.1c / codex A-codex-8: first-10-seconds trust anchor.
-           Tells the buyer WHY this matters before they paste anything. -->
+      <p class="hero-sub">Paste a product URL. Seven agents return a signed verdict in 60-180 seconds, grounded in PubMed and FTC §255.</p>
       <div class="hero-trust">
-        <span class="icon">✦</span> Gemini 2.5 Pro · 4 of 7 agents on ADK · asyncio.gather runtime · A2A v0.3 · Ed25519 + public chain anchor.
-        <strong>Signed evidence</strong> any A2A agent can verify in one HTTP call.
+        <span class="icon">✦</span> Gemini 2.5 Pro · ADK · A2A v0.3 · Ed25519. <strong>Signed evidence</strong> any A2A agent verifies in one HTTP call.
       </div>
       <div class="hero-cta">
         <input type="text" id="urlInput" placeholder="https://www.justfoodfordogs.com/product/calming-chews-for-dogs/50020180.html"
@@ -980,11 +977,9 @@
         <div class="err-cause"></div>
         <div class="err-fix"></div>
       </div>
-      <!-- v0.10.0b / codex A7: honest footnote. "Top-risk" copy scrubbed entirely
-           — ranking isn't built. Demo verifies the first 3 claims extracted. -->
-      <p class="hero-footnote"><span class="ft-key">Demo</span> verifies the first 3 claims extracted from your URL · <span class="ft-key">Production</span> verifies all claims (see <a href="#biz">tiers</a>).</p>
+      <p class="hero-footnote">Demo runs first 3 claims · production runs all (<a href="#biz">tiers</a>).</p>
       <div class="hero-pills">
-        <span class="pill">7 agents · 4 on ADK</span>
+        <span class="pill">7 agents</span>
         <span class="pill">Ed25519 signed</span>
         <span class="pill">Open MIT</span>
       </div>
@@ -1006,12 +1001,12 @@
            7. docs/video-script.md (narration beats per stage)
          Codex sweep on diagram-touching commits enforces drift detection.
          ================================================================= -->
-    <div class="demo" id="demo" data-mode="ready" aria-label="Agent mesh visualization. Mirrors the canonical 3-stage architecture: Stage 1 Reasoning Mesh (5 agents) → Stage 2 Sign → Stage 3 Adversarial (2 agents). Click Verify to run live mesh against your URL; click Replay below to play a cached run.">
+    <div class="demo" id="demo" data-mode="ready" aria-label="Agent mesh visualization. 3-stage architecture: reasoning, sign, adversarial.">
       <div class="demo-chrome">
         <div class="dots"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span></div>
         <div class="mode">
           <span id="demoModeBadge" class="badge">Ready</span>
-          <span class="mode-text" id="demoModeText">click Verify to run · or Replay for a cached preview</span>
+          <span class="mode-text" id="demoModeText">Verify to run · Replay for cached</span>
         </div>
         <a class="right" id="demoRight" href="/pcec/v0/chain/head" target="_blank" rel="noopener" title="Live chain head — click to view JSON" style="text-decoration: none;">PCEC v0.1</a>
       </div>
@@ -1020,7 +1015,7 @@
       <div class="demo-coverage" id="demoCoverage">
         <div class="cov-left">
           <span class="dot-marker"></span>
-          <span id="demoCoverageText">Ready · paste a URL above and click Verify</span>
+          <span id="demoCoverageText">Ready · paste URL · Verify</span>
         </div>
         <button class="cov-replay" id="replayBtn" onclick="return runCached(event)" aria-label="Replay cached demo cycle">▶ Replay cached demo</button>
       </div>
@@ -1029,19 +1024,19 @@
           <!-- v0.10.1c / codex A-codex-3: stage cinema callouts.
                Sequential (never two visible at once). Trimmed to ≤3 lines each. -->
           <div class="stage-card" data-card="stage1">
-            <div class="sc-header">Stage 1 · Reasoning Mesh</div>
-            <div class="sc-body" id="card1Body">Extracting claims · grading evidence · vet rubric · compliance · auditor</div>
-            <div class="sc-tail" id="card1Tail">3 claims · 7 papers · vet sim 1-2/5 · 2 FTC flags · 1 FAIL</div>
+            <div class="sc-header">Stage 1 · Reasoning</div>
+            <div class="sc-body" id="card1Body">extract · evidence · vet · compliance · auditor</div>
+            <div class="sc-tail" id="card1Tail">3 claims · 7 papers · 2 FTC flags · 1 FAIL</div>
           </div>
           <div class="stage-card" data-card="stage2">
             <div class="sc-header">Stage 2 · Sign ✦</div>
-            <div class="sc-body">Canonical JSON · Ed25519 signature · chain anchor</div>
+            <div class="sc-body">Ed25519 · chain anchor</div>
             <div class="sc-tail" id="card2Tail">sha256:5fb540b6… → Firestore</div>
           </div>
           <div class="stage-card" data-card="stage3">
             <div class="sc-header">Stage 3 · Adversarial</div>
-            <div class="sc-body">Cert composing · Second Opinion stress-testing</div>
-            <div class="sc-tail" id="card3Tail">COURT ✓ · REGULATOR ⚠ · CONSENSUS ⚠ · PUBLIC ⚠</div>
+            <div class="sc-body">Cert composer · Second Opinion</div>
+            <div class="sc-tail" id="card3Tail">COURT ✓ · REG ⚠ · CONSENSUS ⚠ · PUBLIC ⚠</div>
           </div>
           <!-- 3-STAGE PIPELINE MINIATURE
                viewBox 600×260. Stage groups as subtle dashed-cyan rects.
@@ -1126,7 +1121,6 @@
     <div class="pipes-head">
       <div class="eyebrow">The pipes</div>
       <h2>One HTTP call. A signed bundle out.</h2>
-      <p>The shopper agent POSTs a product URL. The mesh returns a signed PCEC v0.1 bundle in 2 to 4 minutes. Every field on the right is real production output from the live mesh.</p>
     </div>
     <div class="pipes-grid">
       <div class="pipes-call">
@@ -1433,8 +1427,8 @@ curl <span class="tok-str">"<!--PUBLIC_BASE_URL-->/a2a/v1/tasks/get/&lt;task_id&
     <div class="how-grid">
       <div class="how-step">
         <div class="n">01 · Submit</div>
-        <div class="title">Paste a product page URL</div>
-        <div class="desc">Any pet supplement PDP. Firecrawl fetches the live page; the claim-extractor parses every health claim on the label.</div>
+        <div class="title">Paste a product URL</div>
+        <div class="desc">Firecrawl fetches the PDP; claim-extractor pulls every health claim.</div>
         <div class="code">POST /a2a/v1/tasks/send
 { "skill": "verify_claim",
   "input": { "product_url": … } }</div>
@@ -1442,13 +1436,13 @@ curl <span class="tok-str">"<!--PUBLIC_BASE_URL-->/a2a/v1/tasks/get/&lt;task_id&
       <div class="how-step">
         <div class="n">02 · Mesh</div>
         <div class="title">Seven agents · three stages</div>
-        <div class="desc">Per claim, evidence-grader (BioMCP / PubMed), vet-rubric, and compliance (Vertex AI Search · FTC §255) run in parallel via A2A. Auditor merges. Adversarial cert-composer plus second-opinion (Gemini + Google Search grounding) stress-test the verdict.</div>
+        <div class="desc">Evidence, vet, compliance run in parallel. Auditor merges; adversarial second-opinion stress-tests.</div>
         <div class="code"><a href="/architecture" style="color:var(--electric);text-decoration:none;">See full 7-agent architecture →</a></div>
       </div>
       <div class="how-step">
         <div class="n">03 · Sign</div>
         <div class="title">Ed25519 + chain anchor</div>
-        <div class="desc">Bundle merged, signed against the mesh DID, appended to Firestore log. Any A2A v0.3 agent can fetch and verify.</div>
+        <div class="desc">Bundle signed against the mesh DID, appended to Firestore log. Any A2A v0.3 agent can verify.</div>
         <div class="code">GET /a2a/v1/tasks/get/{id}
 → { bundle_hash, signature,
     chain_anchor, output: {…} }</div>
@@ -1466,76 +1460,69 @@ curl <span class="tok-str">"<!--PUBLIC_BASE_URL-->/a2a/v1/tasks/get/&lt;task_id&
     <div class="biz-head">
       <div class="eyebrow">Business case</div>
       <h2>Who pays, why now, what it costs.</h2>
-      <p>Sold to the General Counsel or Head of Compliance at a DTC pet supplement brand. Bought from existing legal and compliance budget when a plaintiff demand letter lands, a retailer asks for substantiation, or an AI shopping agent skips the SKU for lack of evidence.</p>
     </div>
 
     <div class="biz-grid">
       <div class="biz-card">
         <div class="label">Who buys</div>
-        <div class="title">General Counsel · Head of Compliance · CMO</div>
-        <div class="desc">DTC pet supplement brand, $1M to $50M ARR. Owns claim defense, retailer onboarding, and FTC §255 risk. Class-action templating (Cosequin $11.5M Nutramax settlement; GlycoFlex filed against VetriScience Sept 2024) is the catalyst.</div>
+        <div class="title">General Counsel · Compliance · CMO</div>
+        <div class="desc">DTC pet brand, $1M-$50M ARR. Catalyst: Cosequin $11.5M settlement (2024), GlycoFlex filing (2024).</div>
       </div>
       <div class="biz-card">
         <div class="label">Why now</div>
-        <div class="title">Plaintiff bar + AI-shopping shift</div>
-        <div class="desc">Plaintiff lawyers are templating Cosequin-style cases. Amazon Rufus is live across the US Amazon catalog (Q3 2025 earnings); Perplexity Shopping shipped 2025. Both shifts drive the same buy.</div>
+        <div class="title">Plaintiff bar + AI shopping</div>
+        <div class="desc">Amazon Rufus live; Perplexity Shopping shipped. Plaintiff lawyers are templating Cosequin-style cases.</div>
       </div>
       <div class="biz-card">
         <div class="label">What they get</div>
-        <div class="title">Signed PCEC v0.1 bundle per SKU per claim</div>
-        <div class="desc">Each verified claim becomes a JSON-LD evidence bundle published alongside the product. AI agents call it via A2A. Retailers reference it. Plaintiffs read it. The brand can prove what was claimed and when.</div>
+        <div class="title">Signed PCEC v0.1 bundle per claim</div>
+        <div class="desc">JSON-LD evidence bundle agents call via A2A. Retailers reference. Plaintiffs read. Brand proves what was claimed when.</div>
       </div>
     </div>
 
     <div class="biz-roi">
-      <div class="biz-roi-lede">A single class-action loss costs more than a decade of Pro-tier coverage.</div>
-      <div class="biz-roi-stat"><div class="num">$11.5M</div><div class="lbl">Cosequin settlement · 2024 · <a href="https://topclassactions.com/lawsuit-settlements/lawsuit-news/cosequin-class-action-settlement/" target="_blank" rel="noopener" style="color:var(--electric);font-size:9px;">source</a></div></div>
-      <div class="biz-roi-stat"><div class="num">$499<span style="font:500 12px/1 var(--mono);color:var(--muted);">/mo</span></div><div class="lbl">PawConscious Pro · 12 mo</div></div>
-      <div class="biz-roi-stat"><div class="num">~1,900×</div><div class="lbl">$11.5M ÷ ($499 × 12) <a href="#biz-tiers" style="color:var(--electric);font-size:9px;">math</a></div></div>
+      <div class="biz-roi-stat"><div class="num">$11.5M</div><div class="lbl">Cosequin · 2024 <a href="https://topclassactions.com/lawsuit-settlements/lawsuit-news/cosequin-class-action-settlement/" target="_blank" rel="noopener" style="color:var(--electric);font-size:9px;">source</a></div></div>
+      <div class="biz-roi-stat"><div class="num">$499<span style="font:500 12px/1 var(--mono);color:var(--muted);">/mo</span></div><div class="lbl">Pro · 12 mo</div></div>
+      <div class="biz-roi-stat"><div class="num">~1,900×</div><div class="lbl">vs Pro · 12 mo</div></div>
     </div>
 
     <div class="biz-tiers">
       <div class="biz-tier">
         <div class="tn">Starter</div>
         <div class="tp">$99<span class="u"> / mo</span></div>
-        <div class="tb">SMB · 1-5 SKUs</div>
+        <div class="tb">1-5 SKUs</div>
         <ul>
-          <li>5 active SKUs</li>
-          <li>Self-serve verify</li>
+          <li>5 SKUs</li>
           <li>Signed PCEC bundle per claim</li>
-          <li>Public chain anchor + audit URL</li>
-          <li>Monitoring on</li>
+          <li>Public chain anchor</li>
         </ul>
       </div>
       <div class="biz-tier featured">
         <div class="tn">Pro · recommended</div>
         <div class="tp">$499<span class="u"> / mo</span></div>
-        <div class="tb">Mid-market · 6-25 SKUs</div>
+        <div class="tb">6-25 SKUs</div>
         <ul>
-          <li>25 active SKUs</li>
-          <li>Vet attestations <em style="font-style:normal;color:var(--signal);">(roadmap)</em></li>
+          <li>25 SKUs</li>
           <li>Priority re-verification</li>
-          <li>Audit-grade PDF export <em style="font-style:normal;color:var(--signal);">(roadmap)</em></li>
-          <li>Plaintiff-defense file template</li>
+          <li>Plaintiff-defense template</li>
+          <li>Vet attestations <em style="font-style:normal;color:var(--signal);">(roadmap)</em></li>
         </ul>
       </div>
       <div class="biz-tier">
         <div class="tn">Enterprise</div>
         <div class="tp">Custom<span class="u"> · annual</span></div>
-        <div class="tb">Retailer · Insurer · &gt;50 SKUs</div>
+        <div class="tb">&gt;50 SKUs</div>
         <ul>
           <li>Unlimited catalog</li>
-          <li>SLA + dedicated review</li>
-          <li>Co-issued cert program</li>
-          <li>Bulk catalog verification API</li>
+          <li>SLA · dedicated review</li>
+          <li>Bulk verification API</li>
         </ul>
       </div>
     </div>
 
     <div class="biz-positioning">
       <div class="biz-positioning-agents">
-        <div class="eyebrow">For AI agents calling the mesh</div>
-        <p>Free during the hackathon with demo key <code style="font-family:var(--mono);color:var(--electric);">demo-key-2026-06</code>. Post-hackathon: per-claim, ~$0.10 to $0.40 per verified claim. Brands pay the subscription above; agents inherit the trust at no cost. See <a href="/agents" style="color:var(--electric);"><code style="font-family:var(--mono);">/agents</code></a> for the A2A v0.3 reference.</p>
+        <p>For agents calling the mesh: free with key <code style="font-family:var(--mono);color:var(--electric);">demo-key-2026-06</code>. A2A reference at <a href="/agents" style="color:var(--electric);"><code style="font-family:var(--mono);">/agents</code></a>.</p>
       </div>
     </div>
   </div>
