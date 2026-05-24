@@ -867,35 +867,65 @@
   }
   .tiers-footnote b { color: var(--muted); font-weight: 600; }
 
-  /* Enterprise + Agent bands collapsed to one-line + CTA */
+  /* Two side-by-side pricing alternative cards (enterprise + agents).
+     Replaces the previous horizontal one-line bands. */
+  .pricing-bands {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 18px;
+    margin-top: 32px;
+  }
   .pricing-band {
-    margin-top: 14px; padding: 18px 24px;
+    position: relative;
+    padding: 32px 28px 28px;
     background: var(--bg-elevated);
     border: 1px solid var(--border);
-    border-radius: 10px;
-    display: grid; grid-template-columns: 1fr auto; align-items: center; gap: 24px;
+    border-radius: 12px;
+    overflow: hidden;
+    display: flex; flex-direction: column;
+    transition: border-color 0.18s ease;
   }
-  .pricing-band.enterprise { border-left: 3px solid var(--electric); margin-top: 28px; }
-  .pricing-band.agents { border-left: 3px solid var(--grad-2); }
-  .pricing-band-line { font: 500 13.5px/1.45 var(--sans); color: var(--muted); margin: 0; }
-  .pricing-band-line b { color: var(--ink); font-weight: 600; }
+  .pricing-band:hover { border-color: var(--border-strong); }
+  .pricing-band.enterprise {
+    background: linear-gradient(155deg, rgba(0,212,255,0.06), transparent 65%), var(--bg-elevated);
+    border-color: rgba(0,212,255,0.22);
+  }
+  .pricing-band.agents {
+    background: linear-gradient(155deg, rgba(123,108,255,0.06), transparent 65%), var(--bg-elevated);
+    border-color: rgba(123,108,255,0.22);
+  }
+  .pricing-band-eyebrow { font: 600 11px/1 var(--mono); letter-spacing: 0.22em; text-transform: uppercase; margin: 0 0 14px; }
+  .pricing-band.enterprise .pricing-band-eyebrow { color: var(--electric); }
+  .pricing-band.agents .pricing-band-eyebrow { color: var(--grad-2); }
+  .pricing-band-title { font: 600 20px/1.25 var(--sans); letter-spacing: -0.015em; color: var(--ink); margin: 0 0 12px; }
+  .pricing-band-body { font: 400 13.5px/1.55 var(--sans); color: var(--muted); margin: 0 0 24px; flex: 1; }
+  .pricing-band-body b { color: var(--ink); font-weight: 600; }
+  .pricing-band-rates {
+    display: inline-flex; gap: 16px;
+    font: 500 12px/1 var(--mono); color: var(--muted);
+    margin-bottom: 24px;
+    padding-bottom: 24px;
+    border-bottom: 1px dashed var(--border);
+  }
+  .pricing-band-rates span b { color: var(--electric); font-weight: 600; font-size: 16px; letter-spacing: -0.01em; margin-right: 4px; }
+  .pricing-band.agents .pricing-band-rates span b { color: var(--grad-2); }
   .pricing-band-cta {
-    display: inline-block; padding: 10px 16px;
+    display: inline-block; align-self: flex-start;
+    padding: 11px 18px;
     background: transparent; color: var(--ink);
     border: 1px solid var(--border-strong); border-radius: 6px;
-    font: 500 12px/1 var(--sans); text-decoration: none;
-    white-space: nowrap; transition: all 0.15s ease;
+    font: 500 12.5px/1 var(--sans); text-decoration: none;
+    transition: all 0.15s ease;
   }
   .pricing-band-cta:hover { border-color: var(--electric); color: var(--electric); }
   .pricing-band.enterprise .pricing-band-cta {
-    background: var(--electric); color: var(--bg); border-color: var(--electric); font-weight: 600;
+    background: var(--electric); color: var(--bg);
+    border-color: var(--electric); font-weight: 600;
   }
   .pricing-band.enterprise .pricing-band-cta:hover { filter: brightness(1.08); color: var(--bg); }
   .pricing-band.agents .pricing-band-cta:hover { border-color: var(--grad-2); color: var(--grad-2); }
 
   @media (max-width: 900px) {
     .tiers-head { grid-template-columns: 1fr; }
-    .pricing-band { grid-template-columns: 1fr; }
+    .pricing-bands { grid-template-columns: 1fr; }
   }
 
   /* ===================== MOATS ===================== */
@@ -1559,17 +1589,17 @@ curl <span class="tok-str">"<!--PUBLIC_BASE_URL-->/a2a/v1/tasks/get/&lt;task_id&
         <div class="usecase">
           <div class="usecase-num">01 · Launch</div>
           <p class="usecase-trigger">You're shipping a new product page on Tuesday.</p>
-          <p class="usecase-body">The mesh reads every health claim on the page ("reduces inflammation", "vet-formulated"), checks each one against real research, and tells you which ones the FTC could challenge. Ship the ones that hold up. Rewrite the ones that do not.</p>
+          <p class="usecase-body">The mesh reads every claim on the page, checks each one against real research, and flags anything regulators could question. Ship what holds up, rewrite what doesn't.</p>
         </div>
         <div class="usecase">
           <div class="usecase-num">02 · Retailer</div>
-          <p class="usecase-trigger">Thursday afternoon. The Chewy catalog team emails: "show your substantiation."</p>
-          <p class="usecase-body">You forward one URL. It opens to a cryptographically signed page showing every claim, every source paper, every regulatory check, dated and timestamped. No back-and-forth.</p>
+          <p class="usecase-trigger">Thursday afternoon, the Chewy catalog team emails: "show your substantiation."</p>
+          <p class="usecase-body">You send one link. It opens to a signed record of every claim, every source paper, every check, all dated and timestamped.</p>
         </div>
         <div class="usecase">
           <div class="usecase-num">03 · Plaintiff</div>
-          <p class="usecase-trigger">Monday at nine. A demand letter says "class action filed."</p>
-          <p class="usecase-body">You forward the bundle to your attorney within an hour. Two years of dated substantiation evidence, every claim audited, every source linked. Your attorney has what they need before lunch.</p>
+          <p class="usecase-trigger">Monday at nine, a demand letter arrives: "class action filed."</p>
+          <p class="usecase-body">You forward the binder to your attorney within an hour. Two years of dated evidence, every claim audited, every source linked, and they have what they need before lunch.</p>
         </div>
       </div>
 
@@ -1582,11 +1612,11 @@ curl <span class="tok-str">"<!--PUBLIC_BASE_URL-->/a2a/v1/tasks/get/&lt;task_id&
         <div class="usecase-proof-stats">
           <div class="usecase-proof-stat">
             <span class="num">$11,500,000</span>
-            <span class="lbl">Nutramax paid this in 2024 to settle a class action over Cosequin claims it could not substantiate. <a href="https://topclassactions.com/lawsuit-settlements/lawsuit-news/cosequin-class-action-settlement/" target="_blank" rel="noopener">source</a></span>
+            <span class="lbl">Nutramax paid this in 2024 to settle a class action over Cosequin claims it could not substantiate. <a href="https://topclassactions.com/lawsuit-settlements/open-lawsuit-settlements/11-5m-cosequin-dog-supplements-class-action-settlement/" target="_blank" rel="noopener">source</a></span>
           </div>
           <div class="usecase-proof-stat">
-            <span class="num">$7,188</span>
-            <span class="lbl">What Trusted runs for twelve months. You do the math.</span>
+            <span class="num">$599<span class="u">/mo</span></span>
+            <span class="lbl">What Trusted runs. Twelve months of it costs less than a brand's first round of outside counsel on a single demand letter.</span>
           </div>
         </div>
       </div>
@@ -1646,14 +1676,24 @@ curl <span class="tok-str">"<!--PUBLIC_BASE_URL-->/a2a/v1/tasks/get/&lt;task_id&
 
     <p class="tiers-footnote">Overage past tier: <b>$0.50</b>/fresh verify, <b>$0.05</b>/cached read.</p>
 
-    <div class="pricing-band enterprise" id="tier-enterprise">
-      <p class="pricing-band-line"><b>Enterprise.</b> Catalog-wide trust for retailers, insurers, and AI commerce platforms.</p>
-      <a class="pricing-band-cta" href="mailto:omar@pawconscious.com?subject=PawConscious%20Enterprise">Talk to our team →</a>
-    </div>
+    <div class="pricing-bands">
+      <div class="pricing-band enterprise" id="tier-enterprise">
+        <div class="pricing-band-eyebrow">Enterprise</div>
+        <h3 class="pricing-band-title">Catalog-wide trust for retailers, insurers, and AI commerce platforms.</h3>
+        <p class="pricing-band-body">For teams ingesting verified-SKU pools at scale, writing premium discounts off documented diligence, or sourcing a trusted recommendation layer. White-label cert programs, bulk verification API, dedicated trust ops.</p>
+        <a class="pricing-band-cta" href="mailto:omar@pawconscious.com?subject=PawConscious%20Enterprise">Talk to our team →</a>
+      </div>
 
-    <div class="pricing-band agents" id="tier-agents">
-      <p class="pricing-band-line"><b>Agents calling the mesh.</b> $0.10/cached, $0.50/fresh. Free during the hackathon.</p>
-      <a class="pricing-band-cta" href="/agents">A2A reference →</a>
+      <div class="pricing-band agents" id="tier-agents">
+        <div class="pricing-band-eyebrow">Agents calling the mesh</div>
+        <h3 class="pricing-band-title">Per-call pricing for any AI assistant recommending a product.</h3>
+        <p class="pricing-band-body">Brands subsidize agent calls by default during the hackathon, so any A2A-compatible client gets verified evidence at no charge. Volume deals available for production traffic.</p>
+        <div class="pricing-band-rates">
+          <span><b>$0.10</b>cached</span>
+          <span><b>$0.50</b>fresh</span>
+        </div>
+        <a class="pricing-band-cta" href="/agents">A2A reference →</a>
+      </div>
     </div>
   </div>
 </section>
