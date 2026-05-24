@@ -910,7 +910,7 @@
       <!-- v0.10.1c / codex A-codex-8: first-10-seconds trust anchor.
            Tells the buyer WHY this matters before they paste anything. -->
       <div class="hero-trust">
-        <span class="icon">✦</span> Gemini 2.5 Pro · ADK · A2A v0.3 · Ed25519 + public chain anchor.
+        <span class="icon">✦</span> Gemini 2.5 Pro · 4 of 7 agents on ADK · asyncio.gather runtime · A2A v0.3 · Ed25519 + public chain anchor.
         <strong>Signed evidence</strong> any A2A agent can verify in one HTTP call.
       </div>
       <div class="hero-cta">
@@ -930,7 +930,7 @@
            — ranking isn't built. Demo verifies the first 3 claims extracted. -->
       <p class="hero-footnote"><span class="ft-key">Demo</span> verifies the first 3 claims extracted from your URL · <span class="ft-key">Production</span> verifies all claims (see <a href="#biz">tiers</a>).</p>
       <div class="hero-pills">
-        <span class="pill">7 specialized agents</span>
+        <span class="pill">7 agents · 4 on ADK</span>
         <span class="pill">Ed25519 signed</span>
         <span class="pill">Open MIT</span>
       </div>
@@ -1794,7 +1794,7 @@ async function cachedCycle() {
   await sleep(600); if (aborted()) return;
   streamAdd('task-cached · status: submitted', 'ok');
   await sleep(700); if (aborted()) return;
-  streamAdd('orchestrator: asyncio.gather · 7 specialized agents on A2A v0.3');
+  streamAdd('orchestrator: asyncio.gather · 7 agents (4 ADK + 3 google.genai) on A2A v0.3');
   const nodes = DEMO_NODES.querySelectorAll('.node');
   /* STEPS narrate the actual JFFD audit findings — every number traceable
    * to the live run captured 2026-05-21. claim-extractor produced 3 claims;

@@ -272,6 +272,134 @@
   .tryit-output .fail { color: var(--warning); }
   .tryit-output .head { color: var(--electric); }
 
+  /* Bundle render panel (codex P0 from /agents audit: surface the cert HTML
+   * + bundle JSON + Second Opinion + Ed25519 instead of 5 lines of plaintext). */
+  .bundle-panel {
+    display: none;
+    margin-top: 18px;
+    background: var(--bg-elev);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    overflow: hidden;
+  }
+  .bundle-panel.visible { display: block; }
+  .bundle-tabs {
+    display: flex;
+    border-bottom: 1px solid var(--border);
+    background: rgba(0,0,0,0.18);
+  }
+  .bundle-tab {
+    flex: 0 0 auto;
+    padding: 11px 18px;
+    background: transparent;
+    border: 0;
+    color: var(--dim);
+    font: 600 11px/1 var(--mono);
+    letter-spacing: 0.10em;
+    text-transform: uppercase;
+    cursor: pointer;
+    border-bottom: 2px solid transparent;
+    transition: color 160ms, border-color 160ms;
+  }
+  .bundle-tab:hover { color: var(--ink); }
+  .bundle-tab.active { color: var(--electric); border-bottom-color: var(--electric); }
+  .bundle-tab-panel { display: none; padding: 18px 22px; }
+  .bundle-tab-panel.active { display: block; }
+  .bundle-tab-panel iframe.cert-frame {
+    width: 100%;
+    min-height: 520px;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    background: #fff;
+  }
+  .bundle-tab-panel pre.bundle-json {
+    margin: 0;
+    padding: 16px 18px;
+    background: #07080A;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    font: 400 12px/1.55 var(--mono);
+    color: var(--muted);
+    max-height: 520px;
+    overflow: auto;
+  }
+  .bundle-tab-panel pre.bundle-json .json-k { color: var(--electric); }
+  .bundle-tab-panel pre.bundle-json .json-s { color: var(--moss-glow); }
+  .bundle-tab-panel pre.bundle-json .json-n { color: #C8A464; }
+  .bundle-tab-panel pre.bundle-json .json-b { color: var(--warning); }
+  .so-table {
+    width: 100%;
+    border-collapse: collapse;
+    font: 400 13px/1.5 'Inter', sans-serif;
+  }
+  .so-table th {
+    text-align: left;
+    padding: 10px 14px;
+    font: 600 11px/1 var(--mono);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--dim);
+    border-bottom: 1px solid var(--border);
+  }
+  .so-table td {
+    padding: 12px 14px;
+    border-bottom: 1px solid var(--border);
+    color: var(--ink);
+    vertical-align: top;
+  }
+  .so-table tr:last-child td { border-bottom: 0; }
+  .so-table td.verdict-pass { color: var(--moss-glow); font-weight: 600; }
+  .so-table td.verdict-fail { color: var(--warning); font-weight: 600; }
+  .so-table td.verdict-review { color: #C8A464; font-weight: 600; }
+  .verify-panel {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+  }
+  .verify-panel .sig-row {
+    background: #07080A;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 12px 14px;
+    font: 400 12px/1.5 var(--mono);
+    color: var(--muted);
+    word-break: break-all;
+  }
+  .verify-panel .sig-row .label {
+    display: block;
+    font: 600 10px/1 var(--mono);
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--dim);
+    margin-bottom: 6px;
+  }
+  .verify-panel .sig-row .val { color: var(--electric); }
+  .verify-btn {
+    align-self: flex-start;
+    padding: 10px 18px;
+    background: transparent;
+    border: 1px solid rgba(0, 181, 220, 0.40);
+    color: var(--electric);
+    border-radius: 6px;
+    font: 600 12px/1 var(--mono);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: background 160ms;
+  }
+  .verify-btn:hover { background: rgba(0, 181, 220, 0.08); }
+  .verify-btn.verified {
+    background: rgba(111, 174, 122, 0.10);
+    border-color: rgba(111, 174, 122, 0.42);
+    color: var(--moss-glow);
+  }
+  .verify-result {
+    font: 500 13px/1.5 'Inter', sans-serif;
+    color: var(--muted);
+  }
+  .verify-result.pass { color: var(--moss-glow); }
+  .verify-result.fail { color: var(--warning); }
+
   /* Footer */
   .foot {
     border-top: 1px solid var(--border);
@@ -304,11 +432,11 @@
 
   <div class="mandates">
     <span class="mandate">Linux Foundation A2A v0.3 spec</span>
-    <span class="mandate">PawConscious flat shape</span>
-    <span class="mandate">JSON-RPC 2.0 wrapping</span>
+    <span class="mandate">7 agents · 4 on ADK · asyncio.gather</span>
+    <span class="mandate">JSON-RPC 2.0 envelope</span>
     <span class="mandate">Ed25519 signed bundles</span>
     <span class="mandate">Async tasks with idempotency</span>
-    <span class="mandate">Marketplace-ready discovery · public A2A agent card</span>
+    <span class="mandate">Marketplace-ready discovery</span>
   </div>
 
   <section class="quickstart">
@@ -431,6 +559,47 @@ shopper = LlmAgent(
     <button class="tryit-btn" id="tryit-go">Submit A2A task</button>
     <span style="font: 500 12px var(--mono); color: var(--dim); margin-left: 14px;" id="tryit-status">ready</span>
     <div class="tryit-output" id="tryit-out">Click "Submit A2A task" to send a real A2A v0.3 request to the mesh.</div>
+
+    <!-- Bundle render panel · surfaces when a task completes.
+         4 tabs: Cert HTML (iframe) · Bundle JSON · Second Opinion · Verify offline. -->
+    <div class="bundle-panel" id="bundlePanel">
+      <div class="bundle-tabs">
+        <button class="bundle-tab active" data-btab="cert">Cert</button>
+        <button class="bundle-tab" data-btab="json">Bundle JSON</button>
+        <button class="bundle-tab" data-btab="so">Second Opinion</button>
+        <button class="bundle-tab" data-btab="verify">Verify Ed25519</button>
+      </div>
+      <div class="bundle-tab-panel active" id="btab-cert">
+        <iframe class="cert-frame" id="certFrame" sandbox=""></iframe>
+      </div>
+      <div class="bundle-tab-panel" id="btab-json">
+        <pre class="bundle-json" id="bundleJson">(awaiting completion)</pre>
+      </div>
+      <div class="bundle-tab-panel" id="btab-so">
+        <table class="so-table" id="soTable">
+          <thead><tr><th>Stress test</th><th>Verdict</th><th>Reasoning</th></tr></thead>
+          <tbody id="soTbody"><tr><td colspan="3" style="color:var(--dim)">(awaiting completion)</td></tr></tbody>
+        </table>
+      </div>
+      <div class="bundle-tab-panel" id="btab-verify">
+        <div class="verify-panel">
+          <div class="sig-row">
+            <span class="label">bundle_hash</span>
+            <span class="val" id="vfHash">(awaiting completion)</span>
+          </div>
+          <div class="sig-row">
+            <span class="label">bundle_signature (Ed25519)</span>
+            <span class="val" id="vfSig">(awaiting completion)</span>
+          </div>
+          <div class="sig-row">
+            <span class="label">chain_anchor (public, /pcec/v0/chain/head)</span>
+            <span class="val" id="vfAnchor">(awaiting completion)</span>
+          </div>
+          <button class="verify-btn" id="verifyBtn" type="button" disabled>Verify signature in browser</button>
+          <div class="verify-result" id="verifyResult"></div>
+        </div>
+      </div>
+    </div>
   </div>
 
 
@@ -589,6 +758,166 @@ pub.verify(base64.b64decode(bundle[<span class="tok-str">"signature"</span>]), c
   const BASE = window.location.origin;
   const KEY = 'demo-key-2026-06';
 
+  // Bundle render panel (codex P0 amend from /agents audit · 2026-05-24).
+  // Surfaces cert HTML, bundle JSON, Second Opinion verdicts, and Ed25519
+  // signature with a browser-side verify button. Replaces 5 lines of plaintext.
+  const bundlePanel = document.getElementById('bundlePanel');
+  const certFrame = document.getElementById('certFrame');
+  const bundleJsonEl = document.getElementById('bundleJson');
+  const soTbody = document.getElementById('soTbody');
+  const vfHash = document.getElementById('vfHash');
+  const vfSig = document.getElementById('vfSig');
+  const vfAnchor = document.getElementById('vfAnchor');
+  const verifyBtn = document.getElementById('verifyBtn');
+  const verifyResult = document.getElementById('verifyResult');
+  let lastBundle = null;
+
+  function syntaxHighlightJson(obj) {
+    const json = JSON.stringify(obj, null, 2);
+    return json
+      .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+      .replace(/("(?:\\u[a-fA-F0-9]{4}|\\[^u]|[^\\"])*"\s*:)/g, '<span class="json-k">$1</span>')
+      .replace(/:\s*"((?:\\u[a-fA-F0-9]{4}|\\[^u]|[^\\"])*)"/g, ': <span class="json-s">"$1"</span>')
+      .replace(/:\s*(true|false)/g, ': <span class="json-b">$1</span>')
+      .replace(/:\s*(-?\d+(\.\d+)?([eE][+\-]?\d+)?)/g, ': <span class="json-n">$1</span>');
+  }
+
+  function renderBundle(s) {
+    lastBundle = s;
+    bundlePanel.classList.add('visible');
+
+    // Cert HTML in iframe (sandbox = "" = no scripts, no top-level nav, no forms)
+    if (s.cert_html) {
+      const blob = new Blob([s.cert_html], { type: 'text/html' });
+      certFrame.src = URL.createObjectURL(blob);
+    } else {
+      certFrame.srcdoc = '<div style="padding:24px; font-family: -apple-system, sans-serif; color:#666;">No cert_html in response.</div>';
+    }
+
+    // Bundle JSON, syntax-highlighted
+    const trimmed = {
+      task_id: s.task_id,
+      status: s.status,
+      bundle_urn: s.bundle_urn,
+      bundle_hash: s.bundle_hash,
+      bundle_signature: s.bundle_signature,
+      chain_anchor: s.chain_anchor,
+      chain_anchor_status: s.chain_anchor_status,
+      output: s.output || null,
+    };
+    bundleJsonEl.innerHTML = syntaxHighlightJson(trimmed);
+
+    // Second Opinion verdicts
+    const so = s.second_opinion;
+    if (so && Array.isArray(so.tests) && so.tests.length) {
+      const rows = so.tests.map(t => {
+        const v = (t.verdict || '').toUpperCase();
+        const cls = v === 'PASS' ? 'verdict-pass'
+                  : v === 'FAIL' ? 'verdict-fail'
+                  : 'verdict-review';
+        return `<tr>
+          <td><strong>${t.name || t.kind || '?'}</strong></td>
+          <td class="${cls}">${v || '—'}</td>
+          <td>${(t.reasoning || t.summary || '').slice(0, 240)}</td>
+        </tr>`;
+      });
+      const headerRow = `<tr style="background: rgba(0,212,255,0.04)">
+        <td colspan="3"><strong>Overall:</strong> ${(so.overall_verdict || '—').toUpperCase()}${so.note ? ' · ' + so.note : ''}</td>
+      </tr>`;
+      soTbody.innerHTML = headerRow + rows.join('');
+    } else {
+      soTbody.innerHTML = '<tr><td colspan="3" style="color:var(--dim)">No Second Opinion returned (adversarial pass unavailable).</td></tr>';
+    }
+
+    // Signature row
+    vfHash.textContent = s.bundle_hash || '(missing)';
+    vfSig.textContent = s.bundle_signature || '(missing)';
+    vfAnchor.textContent = s.chain_anchor || '(missing)';
+    verifyBtn.disabled = !s.bundle_signature || !s.bundle_hash;
+    verifyResult.textContent = '';
+    verifyResult.className = 'verify-result';
+    verifyBtn.classList.remove('verified');
+    verifyBtn.textContent = 'Verify signature in browser';
+  }
+
+  // Bundle-panel tabs
+  document.querySelectorAll('.bundle-tab').forEach(tab => {
+    tab.addEventListener('click', () => {
+      const target = tab.dataset.btab;
+      document.querySelectorAll('.bundle-tab').forEach(t => t.classList.remove('active'));
+      tab.classList.add('active');
+      document.querySelectorAll('.bundle-tab-panel').forEach(p => p.classList.remove('active'));
+      document.getElementById('btab-' + target).classList.add('active');
+    });
+  });
+
+  // Verify-offline button: fetches did.json, extracts the Ed25519 public key,
+  // verifies the bundle signature against the canonical bundle hash. Pure
+  // browser-side (Web Crypto) so the judge sees the check happen on their machine.
+  function multibaseToBytes(mb) {
+    // multibase 'z' prefix = base58btc. Strip the 'z'.
+    if (!mb || mb[0] !== 'z') return null;
+    const alphabet = '123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz';
+    let buffer = [0];
+    for (const ch of mb.slice(1)) {
+      const idx = alphabet.indexOf(ch);
+      if (idx < 0) return null;
+      let carry = idx;
+      for (let i = 0; i < buffer.length; i++) {
+        carry += buffer[i] * 58;
+        buffer[i] = carry & 0xff;
+        carry >>= 8;
+      }
+      while (carry) { buffer.push(carry & 0xff); carry >>= 8; }
+    }
+    for (const ch of mb.slice(1)) { if (ch !== '1') break; buffer.push(0); }
+    return new Uint8Array(buffer.reverse());
+  }
+
+  verifyBtn.addEventListener('click', async () => {
+    if (!lastBundle) return;
+    verifyBtn.disabled = true;
+    verifyResult.className = 'verify-result';
+    verifyResult.textContent = 'Fetching did.json + computing canonical hash…';
+    try {
+      const did = await (await fetch('/.well-known/did.json')).json();
+      const vm = (did.verificationMethod || [])[0];
+      const pkMb = vm && (vm.publicKeyMultibase || vm.publicKeyMultibase58);
+      const raw = pkMb ? multibaseToBytes(pkMb) : null;
+      // Multicodec prefix for Ed25519-pub is 0xed 0x01 (2 bytes); strip them.
+      const pubKeyBytes = raw && raw.length > 2 && raw[0] === 0xed && raw[1] === 0x01
+        ? raw.slice(2) : raw;
+      if (!pubKeyBytes || pubKeyBytes.length !== 32) {
+        throw new Error('failed to extract 32-byte Ed25519 public key from did.json');
+      }
+      // Pull the same bundle output the mesh signed: canonical JSON of `output`.
+      const canonical = JSON.stringify(lastBundle.output, Object.keys(lastBundle.output).sort());
+      const msg = new TextEncoder().encode(canonical);
+      // Parse signature: format is `ed25519:<did>#owner:<base64>`
+      const sigStr = lastBundle.bundle_signature || '';
+      const sigB64 = sigStr.split(':').pop();
+      const sigBytes = Uint8Array.from(atob(sigB64.replace(/-/g, '+').replace(/_/g, '/')),
+                                       c => c.charCodeAt(0));
+      const cryptoKey = await crypto.subtle.importKey('raw', pubKeyBytes,
+        { name: 'Ed25519' }, false, ['verify']);
+      const ok = await crypto.subtle.verify('Ed25519', cryptoKey, sigBytes, msg);
+      if (ok) {
+        verifyResult.className = 'verify-result pass';
+        verifyResult.textContent = '✓ VERIFIED in your browser. The mesh signed this bundle with the Ed25519 key advertised in /.well-known/did.json.';
+        verifyBtn.classList.add('verified');
+        verifyBtn.textContent = '✓ Verified';
+      } else {
+        verifyResult.className = 'verify-result fail';
+        verifyResult.textContent = '✗ Signature did NOT verify against the published public key. (Note: canonical-JSON ordering may differ between this browser-side check and the mesh\'s server-side canonical form. Use the Python snippet above for the authoritative check.)';
+        verifyBtn.disabled = false;
+      }
+    } catch (err) {
+      verifyResult.className = 'verify-result fail';
+      verifyResult.textContent = '✗ Verify failed: ' + (err.message || err);
+      verifyBtn.disabled = false;
+    }
+  });
+
   function log(msg, cls) {
     const span = cls ? `<span class="${cls}">${msg}</span>` : msg;
     tryitOut.innerHTML += span + '\n';
@@ -655,6 +984,7 @@ pub.verify(base64.b64decode(bundle[<span class="tok-str">"signature"</span>]), c
             log(`audit_verdict=${s.output.audit_verdict || '(none)'}`);
           }
           tryitStatus.textContent = 'completed';
+          renderBundle(s);   // surface the cert, JSON, Second Opinion, signature
           break;
         }
         if (s.status === 'failed') {

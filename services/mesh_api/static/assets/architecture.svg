@@ -255,9 +255,10 @@
     <text x="14" y="64" class="mono meta muted">Gemini 2.5 Pro · temp 0.3</text>
     <text x="14" y="80" class="mono meta muted">+ Google Search grounding</text>
     <text x="14" y="104" class="mono lbl warn">4 stress tests:</text>
-    <text x="14" y="122" class="mono meta-sm muted">• COURT · plaintiff use?</text>
-    <text x="14" y="136" class="mono meta-sm muted">• REGULATOR · FTC flag?</text>
-    <text x="14" y="150" class="mono meta-sm muted">• CONSENSUS · PUBLIC</text>
+    <text x="14" y="120" class="mono meta-sm muted">• COURT · plaintiff use?</text>
+    <text x="14" y="134" class="mono meta-sm muted">• REGULATOR · FTC flag?</text>
+    <text x="14" y="148" class="mono meta-sm muted">• CONSENSUS · scientific</text>
+    <text x="14" y="162" class="mono meta-sm muted">• PUBLIC · skepticism</text>
   </g>
 
   <!-- ===== Output: Brand response ===== -->

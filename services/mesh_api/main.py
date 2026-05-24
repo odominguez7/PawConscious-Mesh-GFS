@@ -314,7 +314,7 @@ A2A_AGENT_CARD = {
             "name": "Verify endorsement claim",
             "description": (
                 "Given a product URL, run the full mesh pipeline (7 specialized agents on "
-                "Google Cloud: 1 ADK + 6 google.genai direct) and return a signed PCEC v0.1 "
+                "Google Cloud: 4 ADK + 3 google.genai direct) and return a signed PCEC v0.1 "
                 "evidence bundle with vet-rubric scoring, FTC §255 mapping, adversarial audit "
                 "verdict, a branded executive cert, and an adversarial Second Opinion using "
                 "Google Search grounding. ASYNC task: POST returns 202 with task_id; poll GET "
@@ -1445,6 +1445,16 @@ async def architecture() -> HTMLResponse:
 <div class="frame">
   <div class="svg-wrap">{svg}</div>
 
+  <p style="margin: 18px 0 0; padding: 0 24px; font: 500 13px/1.6 'Inter', sans-serif; color: var(--muted); max-width: 1100px;">
+    <b style="color:var(--ink); font-weight: 600;">How we use ADK.</b>
+    Four of seven agents are Agent Development Kit (ADK 2.0) <code style="color:var(--electric); font-family:'JetBrains Mono', monospace; font-size: 12px;">LlmAgent</code> instances:
+    <code style="color:var(--electric); font-family:'JetBrains Mono', monospace; font-size: 12px;">claim_extractor</code>,
+    <code style="color:var(--electric); font-family:'JetBrains Mono', monospace; font-size: 12px;">evidence_grader</code>,
+    <code style="color:var(--electric); font-family:'JetBrains Mono', monospace; font-size: 12px;">compliance</code>, and
+    <code style="color:var(--electric); font-family:'JetBrains Mono', monospace; font-size: 12px;">auditor</code>.
+    The orchestrator fans them out per claim via <code style="color:var(--electric); font-family:'JetBrains Mono', monospace; font-size: 12px;">asyncio.gather</code> for deterministic latency. ADK <code style="color:var(--electric); font-family:'JetBrains Mono', monospace; font-size: 12px;">ParallelAgent</code> + <code style="color:var(--electric); font-family:'JetBrains Mono', monospace; font-size: 12px;">SequentialAgent</code> wrappers are the declared topology shape, with feature-flagged migration to Vertex AI Agent Engine Runtime (<a href="/health/agent-engine" style="color:var(--electric);">verify</a>).
+  </p>
+
   <!-- Section 3 (codex 2026-05-22) — Track 3 Mandate Map. Every required
        mandate plus the bonus signals the rubric emphasizes, mapped to the
        component that ships it and the live URL a judge can click. -->
@@ -1471,7 +1481,7 @@ async def architecture() -> HTMLResponse:
         </tr>
         <tr>
           <td><span class="badge">Required</span> Gemini</td>
-          <td>Six agents on Gemini 2.5 Pro (extract, evidence, vet, compliance, cert composer, second opinion). One on 2.5 Flash (auditor).</td>
+          <td>Six agents on Gemini 2.5 Pro (extract, evidence, vet, compliance, cert composer, second opinion). One on 2.5 Flash (auditor). Four of seven wrap as ADK 2.0 <code>LlmAgent</code>; the orchestrator fans them out per claim via <code>asyncio.gather</code>.</td>
           <td><a href="https://github.com/odominguez7/PawConscious-Mesh-GFS/blob/main/agents/orchestrator.py" target="_blank">orchestrator.py ↗</a></td>
         </tr>
         <tr>
