@@ -773,25 +773,41 @@
   .usecase-num { font: 600 11px/1 var(--mono); letter-spacing: 0.22em; text-transform: uppercase; color: var(--electric); margin-bottom: 14px; }
   .usecase-trigger { font-family: var(--sans); font-weight: 600; font-size: 18px; line-height: 1.3; letter-spacing: -0.012em; color: var(--ink); margin: 0 0 12px; }
   .usecase-body { font-size: 14px; line-height: 1.62; color: var(--muted); margin: 0; }
+  /* Centered single-number cost band. No PawConscious pricing here. */
   .usecase-proof {
-    padding: 30px 32px; background: var(--bg-elevated);
-    border: 1px solid var(--border); border-radius: 10px;
+    padding: 44px 32px;
+    background: var(--bg-elevated);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    text-align: center;
+    max-width: 760px;
+    margin: 0 auto;
   }
-  .usecase-proof-head { margin-bottom: 22px; }
+  .usecase-proof-head { margin-bottom: 18px; }
   .usecase-proof-head .eyebrow { color: var(--electric); }
-  .usecase-proof-stats {
-    display: grid; grid-template-columns: repeat(2, 1fr); gap: 40px;
+  .usecase-proof-num {
+    font: 600 56px/1 var(--mono);
+    color: var(--electric);
+    letter-spacing: -0.025em;
+    font-variant-numeric: tabular-nums;
+    margin: 0 0 18px;
   }
-  .usecase-proof-stat .num { display: block; font: 600 36px/1 var(--mono); color: var(--electric); margin-bottom: 12px; font-variant-numeric: tabular-nums; letter-spacing: -0.02em; }
-  .usecase-proof-stat .num .u { font: 500 12px/1 var(--mono); color: var(--muted); }
-  .usecase-proof-stat .lbl { font: 400 13px/1.55 var(--sans); color: var(--muted); letter-spacing: 0; text-transform: none; display: block; }
-  .usecase-proof-stat .lbl a { color: var(--electric); }
+  .usecase-proof-line {
+    font: 400 14px/1.55 var(--sans);
+    color: var(--muted);
+    margin: 0 auto;
+    max-width: 560px;
+  }
+  .usecase-proof-line a { color: var(--electric); }
+  @media (max-width: 640px) {
+    .usecase-proof-num { font-size: 40px; }
+  }
   /* ===================== PRICING (2026-05-24 v3: taste pass · Stripe-grade discipline) =====================
      Cuts from v2: status chips, per-card overage, inline roadmap tags, translateY lift,
      glow shadow, band logos, band h4+p, sub-paragraph under tiers-head. */
   .tiers-head { max-width: 880px; margin: 48px 0 32px; display: grid; grid-template-columns: 1fr auto; align-items: end; gap: 24px; }
   .tiers-head-text .eyebrow { color: var(--electric); }
-  .tiers-head-text h3 { font-family: var(--sans); font-weight: 600; font-size: 26px; line-height: 1.18; letter-spacing: -0.02em; color: var(--ink); margin: 10px 0 0; }
+  .tiers-head-text h2 { font-family: var(--sans); font-weight: 600; font-size: 36px; line-height: 1.1; letter-spacing: -0.025em; color: var(--ink); margin: 12px 0 0; }
 
   .billing-toggle {
     display: inline-flex; background: var(--surface);
@@ -807,21 +823,26 @@
   .billing-toggle button:hover:not(.active) { color: var(--ink); }
   .billing-toggle .save { font-size: 9.5px; color: var(--moss-glow); margin-left: 5px; letter-spacing: 0.1em; }
 
-  .biz-tiers { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; margin-top: 8px; padding-top: 12px; max-width: 1080px; }
+  .biz-tiers { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; margin: 8px auto 0; padding-top: 16px; max-width: 1080px; }
   .biz-tier {
     position: relative; display: flex; flex-direction: column;
     background: var(--bg-elevated); border: 1px solid var(--border);
     border-radius: 12px; padding: 32px 26px 26px;
-    transition: border-color 0.18s ease;
+    transition: border-color 0.18s ease, box-shadow 0.18s ease;
   }
   .biz-tier:hover { border-color: var(--border-strong); }
-  .biz-tier.featured { border-color: rgba(0,212,255,0.36); }
+  .biz-tier.featured {
+    border-color: rgba(0,212,255,0.55);
+    box-shadow: 0 0 0 1px rgba(0,212,255,0.18), 0 24px 60px -20px rgba(0,212,255,0.18);
+    background: linear-gradient(180deg, rgba(0,212,255,0.04), transparent 60%), var(--bg-elevated);
+  }
   .biz-tier.featured::before {
     content: "Most popular"; position: absolute;
-    top: -11px; left: 50%; transform: translateX(-50%);
-    font: 600 9.5px/1 var(--mono); letter-spacing: 0.18em; text-transform: uppercase;
+    top: -14px; left: 50%; transform: translateX(-50%);
+    font: 700 11px/1 var(--mono); letter-spacing: 0.2em; text-transform: uppercase;
     color: var(--bg); background: var(--electric);
-    padding: 5px 10px; border-radius: 4px; white-space: nowrap;
+    padding: 7px 14px; border-radius: 5px; white-space: nowrap;
+    box-shadow: 0 6px 20px -4px rgba(0,212,255,0.4);
   }
   .biz-tier .tn { font: 600 16px/1.2 var(--sans); letter-spacing: -0.005em; text-transform: none; color: var(--ink); margin: 0 0 6px; }
   .tier-job { font: 400 13px/1.45 var(--sans); color: var(--muted); margin: 0 0 26px; min-height: 38px; }
@@ -1583,42 +1604,34 @@ curl <span class="tok-str">"<!--PUBLIC_BASE_URL-->/a2a/v1/tasks/get/&lt;task_id&
     <div class="usecases">
       <div class="usecases-head">
         <div class="eyebrow">Use cases</div>
-        <h2>Three moments this is built for.</h2>
+        <h2>Three moments this is built for</h2>
       </div>
       <div class="usecases-grid">
         <div class="usecase">
           <div class="usecase-num">01 · Launch</div>
-          <p class="usecase-trigger">You're shipping a new product page on Tuesday.</p>
-          <p class="usecase-body">The mesh reads every claim on the page, checks each one against real research, and flags anything regulators could question. Ship what holds up, rewrite what doesn't.</p>
+          <p class="usecase-trigger">Before you ship a new product page</p>
+          <p class="usecase-body">The mesh reads every claim, checks it against real research, and flags anything regulators could question, so you ship what holds up and rewrite what doesn't</p>
         </div>
         <div class="usecase">
           <div class="usecase-num">02 · Retailer</div>
-          <p class="usecase-trigger">Thursday afternoon, the Chewy catalog team emails: "show your substantiation."</p>
-          <p class="usecase-body">You send one link. It opens to a signed record of every claim, every source paper, every check, all dated and timestamped.</p>
+          <p class="usecase-trigger">When a retailer asks for proof</p>
+          <p class="usecase-body">You send one link that opens to a signed record of every claim, every source paper, every check, all dated and timestamped</p>
         </div>
         <div class="usecase">
-          <div class="usecase-num">03 · Plaintiff</div>
-          <p class="usecase-trigger">Monday at nine, a demand letter arrives: "class action filed."</p>
-          <p class="usecase-body">You forward the binder to your attorney within an hour. Two years of dated evidence, every claim audited, every source linked, and they have what they need before lunch.</p>
+          <div class="usecase-num">03 · Legal</div>
+          <p class="usecase-trigger">When a lawyer threatens to sue</p>
+          <p class="usecase-body">Two years of dated proof in one folder, every claim audited, every source linked, in your attorney's inbox before lunch</p>
         </div>
       </div>
 
-      <!-- ROI contrast: two real numbers, no abstract multiplier. The reader
-           does the math themselves and the lesson lands harder for it. -->
+      <!-- Cost band: single big number, centered, no PawConscious pricing
+           preview. The $599 lives in the Trusted tier card below, not here. -->
       <div class="usecase-proof">
         <div class="usecase-proof-head">
-          <div class="eyebrow">What it cost not to be ready</div>
+          <div class="eyebrow">The cost of being wrong</div>
         </div>
-        <div class="usecase-proof-stats">
-          <div class="usecase-proof-stat">
-            <span class="num">$11,500,000</span>
-            <span class="lbl">Nutramax paid this in 2024 to settle a class action over Cosequin claims it could not substantiate. <a href="https://topclassactions.com/lawsuit-settlements/open-lawsuit-settlements/11-5m-cosequin-dog-supplements-class-action-settlement/" target="_blank" rel="noopener">source</a></span>
-          </div>
-          <div class="usecase-proof-stat">
-            <span class="num">$599<span class="u">/mo</span></span>
-            <span class="lbl">What Trusted runs. Twelve months of it costs less than a brand's first round of outside counsel on a single demand letter.</span>
-          </div>
-        </div>
+        <div class="usecase-proof-num">$11,500,000</div>
+        <p class="usecase-proof-line">Nutramax paid this in 2024 to settle a class action over Cosequin claims they could not back up. <a href="https://topclassactions.com/lawsuit-settlements/open-lawsuit-settlements/11-5m-cosequin-dog-supplements-class-action-settlement/" target="_blank" rel="noopener">source</a></p>
       </div>
     </div>
 
@@ -1626,7 +1639,7 @@ curl <span class="tok-str">"<!--PUBLIC_BASE_URL-->/a2a/v1/tasks/get/&lt;task_id&
     <div class="tiers-head">
       <div class="tiers-head-text">
         <div class="eyebrow">Pricing</div>
-        <h3>Start free. Scale when agents start asking.</h3>
+        <h2>Start free, scale when agents start asking</h2>
       </div>
       <div class="billing-toggle" role="tablist" aria-label="Billing period">
         <button type="button" data-period="mo" class="active" onclick="setBilling('mo')">Monthly</button>
@@ -1637,7 +1650,7 @@ curl <span class="tok-str">"<!--PUBLIC_BASE_URL-->/a2a/v1/tasks/get/&lt;task_id&
     <div class="biz-tiers">
       <div class="biz-tier" id="tier-visible">
         <div class="tn">Visible</div>
-        <p class="tier-job">For brands exploring agentic commerce.</p>
+        <p class="tier-job">For brands exploring agentic commerce</p>
         <div class="tp"><span class="amount">$0</span><span class="u">/forever</span></div>
         <a class="tier-cta" href="mailto:omar@pawconscious.com?subject=PawConscious%20Visible%20waitlist">Join waitlist</a>
         <ul class="tier-features">
@@ -1649,7 +1662,7 @@ curl <span class="tok-str">"<!--PUBLIC_BASE_URL-->/a2a/v1/tasks/get/&lt;task_id&
 
       <div class="biz-tier featured" id="tier-verified">
         <div class="tn">Verified</div>
-        <p class="tier-job">For brands shipping claims with confidence.</p>
+        <p class="tier-job">For brands shipping claims with confidence</p>
         <div class="tp" data-mo-amount="$149" data-yr-amount="$1,490"><span class="amount">$149</span><span class="u" data-mo="/mo" data-yr="/yr">/mo</span></div>
         <a class="tier-cta" href="/agents">Start verifying</a>
         <ul class="tier-features">
@@ -1662,7 +1675,7 @@ curl <span class="tok-str">"<!--PUBLIC_BASE_URL-->/a2a/v1/tasks/get/&lt;task_id&
 
       <div class="biz-tier" id="tier-trusted">
         <div class="tn">Trusted</div>
-        <p class="tier-job">For brands defending what they claim.</p>
+        <p class="tier-job">For brands defending what they claim</p>
         <div class="tp" data-mo-amount="$599" data-yr-amount="$5,990"><span class="amount">$599</span><span class="u" data-mo="/mo" data-yr="/yr">/mo</span></div>
         <a class="tier-cta" href="/agents">Start trusting</a>
         <ul class="tier-features">
@@ -1679,15 +1692,15 @@ curl <span class="tok-str">"<!--PUBLIC_BASE_URL-->/a2a/v1/tasks/get/&lt;task_id&
     <div class="pricing-bands">
       <div class="pricing-band enterprise" id="tier-enterprise">
         <div class="pricing-band-eyebrow">Enterprise</div>
-        <h3 class="pricing-band-title">Catalog-wide trust for retailers, insurers, and AI commerce platforms.</h3>
-        <p class="pricing-band-body">For teams ingesting verified-SKU pools at scale, writing premium discounts off documented diligence, or sourcing a trusted recommendation layer. White-label cert programs, bulk verification API, dedicated trust ops.</p>
+        <h3 class="pricing-band-title">Catalog-wide trust for retailers, insurers, and AI commerce platforms</h3>
+        <p class="pricing-band-body">For teams ingesting verified-SKU pools at scale, writing premium discounts off documented care, or sourcing a trusted recommendation layer, with white-label cert programs, bulk verification API, and dedicated trust ops</p>
         <a class="pricing-band-cta" href="mailto:omar@pawconscious.com?subject=PawConscious%20Enterprise">Talk to our team →</a>
       </div>
 
       <div class="pricing-band agents" id="tier-agents">
         <div class="pricing-band-eyebrow">Agents calling the mesh</div>
-        <h3 class="pricing-band-title">Per-call pricing for any AI assistant recommending a product.</h3>
-        <p class="pricing-band-body">Brands subsidize agent calls by default during the hackathon, so any A2A-compatible client gets verified evidence at no charge. Volume deals available for production traffic.</p>
+        <h3 class="pricing-band-title">Per-call pricing for any AI assistant recommending a product</h3>
+        <p class="pricing-band-body">Brands subsidize agent calls by default during the hackathon, so any A2A-compatible client gets verified evidence at no charge, with volume deals available for production traffic</p>
         <div class="pricing-band-rates">
           <span><b>$0.10</b>cached</span>
           <span><b>$0.50</b>fresh</span>
