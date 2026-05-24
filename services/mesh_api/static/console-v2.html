@@ -761,7 +761,8 @@
   .proof-cert .json-p { color: var(--moss-glow); font-weight: 700; }
 
   /* ===================== BUSINESS CASE ===================== */
-  .biz { padding: 88px 0; border-bottom: 1px solid var(--border); }
+  .biz { padding: 88px 0 64px; }
+  /* 2026-05-24 taste pass: drop biz section border so biz + becomes read as one continuous arc. */
   .biz-head { max-width: 760px; margin: 0 0 48px; }
   .biz-head h2 { font-size: 36px; font-weight: 600; letter-spacing: -0.025em; line-height: 1.1; margin: 12px 0 16px; color: var(--ink); }
   .biz-head p { font-size: 14.5px; line-height: 1.6; color: var(--muted); margin: 0; max-width: 660px; }
@@ -886,34 +887,6 @@
     .pricing-band { grid-template-columns: 1fr; }
   }
 
-  /* U5 (Day 22) — positioning block: We grade + Agent call pricing */
-  .biz-positioning {
-    display: grid; grid-template-columns: 1fr 1fr; gap: 18px;
-    margin-top: 32px;
-  }
-  .biz-positioning > div {
-    padding: 24px;
-    background: var(--bg-elevated);
-    border: 1px solid var(--border);
-    border-radius: 8px;
-  }
-  .biz-positioning .eyebrow {
-    font: 600 10px/1 var(--mono);
-    letter-spacing: 0.22em;
-    text-transform: uppercase;
-    color: var(--electric);
-    margin-bottom: 14px;
-  }
-  .biz-positioning p {
-    font-size: 13px;
-    line-height: 1.65;
-    color: var(--muted);
-    margin: 0;
-  }
-  @media (max-width: 760px) {
-    .biz-positioning { grid-template-columns: 1fr; }
-  }
-
   /* ===================== MOATS ===================== */
   .moats { padding: 88px 0; background: var(--bg-elevated); border-bottom: 1px solid var(--border); }
   .moats-head { max-width: 720px; margin: 0 0 48px; }
@@ -951,11 +924,12 @@
   .track3 .badge::before { content: "✓"; color: var(--moss-glow); font-weight: 700; }
 
   /* ===================== "WHAT THIS BECOMES" band (2026-05-24) ===================== */
-  .becomes { padding: 88px 0 96px; border-bottom: 1px solid var(--border); }
-  .becomes-head { max-width: 760px; margin: 0 0 36px; }
-  .becomes-head .eyebrow { color: var(--grad-2); }
-  .becomes-head h2 { font-family: var(--sans); font-weight: 600; font-size: 36px; line-height: 1.08; letter-spacing: -0.022em; margin: 14px 0 14px; color: var(--ink); }
-  .becomes-head p { font-size: 15.5px; line-height: 1.6; color: var(--muted); margin: 0; }
+  .becomes { padding: 24px 0 96px; border-bottom: 1px solid var(--border); }
+  .becomes-head { max-width: 760px; margin: 0 0 48px; }
+  .becomes-head .eyebrow { color: var(--electric); }
+  /* h2 sized identically to .biz-head h2 so the two sections read as one continuous arc */
+  .becomes-head h2 { font-family: var(--sans); font-weight: 600; font-size: 36px; line-height: 1.1; letter-spacing: -0.025em; margin: 12px 0 16px; color: var(--ink); }
+  .becomes-head p { font-size: 14.5px; line-height: 1.6; color: var(--muted); margin: 0; max-width: 660px; }
   .becomes-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; margin-top: 8px; }
   .becomes-card { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 22px 22px 24px; position: relative; }
   .becomes-card .badge { position: absolute; top: 18px; right: 18px; font: 600 10px/1 var(--mono); letter-spacing: 0.16em; text-transform: uppercase; color: var(--signal); }
@@ -1663,18 +1637,12 @@ curl <span class="tok-str">"<!--PUBLIC_BASE_URL-->/a2a/v1/tasks/get/&lt;task_id&
 
     <div class="pricing-band enterprise" id="tier-enterprise">
       <p class="pricing-band-line"><b>Enterprise.</b> Catalog-wide trust for retailers, insurers, and AI commerce platforms.</p>
-      <a class="pricing-band-cta" href="mailto:omar.dominguez7@gmail.com?subject=PawConscious%20Enterprise">Talk to our team →</a>
+      <a class="pricing-band-cta" href="mailto:omar@pawconscious.com?subject=PawConscious%20Enterprise">Talk to our team →</a>
     </div>
 
     <div class="pricing-band agents" id="tier-agents">
       <p class="pricing-band-line"><b>Agents calling the mesh.</b> $0.10/cached, $0.50/fresh. Free during the hackathon.</p>
       <a class="pricing-band-cta" href="/agents">A2A reference →</a>
-    </div>
-
-    <div class="biz-positioning">
-      <div class="biz-positioning-agents">
-        <p>For agents calling the mesh: free with key <code style="font-family:var(--mono);color:var(--electric);">demo-key-2026-06</code>. A2A reference at <a href="/agents" style="color:var(--electric);"><code style="font-family:var(--mono);">/agents</code></a>.</p>
-      </div>
     </div>
   </div>
 </section>
@@ -1687,9 +1655,9 @@ curl <span class="tok-str">"<!--PUBLIC_BASE_URL-->/a2a/v1/tasks/get/&lt;task_id&
 <section class="becomes" id="becomes">
   <div class="container">
     <div class="becomes-head">
-      <div class="eyebrow">Roadmap · honest framing</div>
-      <h2>PawConscious is the pet-vertical reference. The platform is bigger.</h2>
-      <p>What ships today is the trust mesh for one vertical. What we are building is the layer every D2C brand plugs into to be ready for agentic commerce. Same code, broader frame, honest about what is shipped versus what is roadmap.</p>
+      <div class="eyebrow">Where this goes</div>
+      <h2>Pet supplements is the wedge. Every D2C brand is the platform.</h2>
+      <p>Same code, broader frame. Honest about what ships today versus what is roadmap.</p>
     </div>
     <div class="becomes-grid">
       <div class="becomes-card">
