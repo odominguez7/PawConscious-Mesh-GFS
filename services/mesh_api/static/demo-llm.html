@@ -2418,7 +2418,49 @@ window.addEventListener('DOMContentLoaded', () => {
   });
 });
 
-const QUERY = "What are the best hip and joint soft chews for an older dog with inflammation?";
+// Section 7 video recording — `?intro=block` swaps the cold-open prompt to
+// the calming-chews thunderstorms scenario (matches scene-2b BLOCK story).
+// Default stays the hip-joint prompt for the existing PASS flow.
+const _introMode = new URLSearchParams(window.location.search).get('intro');
+const QUERY = _introMode === 'block'
+  ? "My dog is anxious during thunderstorms. Are these calming chews any good?"
+  : "What are the best hip and joint soft chews for an older dog with inflammation?";
+
+// Section 7 — also swap the sidebar "current conversation" label so the
+// chrome reads consistent with the typed prompt.
+if (_introMode === 'block') {
+  document.querySelectorAll('.scene-0 .convo.current, .scene-1 .convo.current, .scene-2 .convo.current').forEach(el => {
+    el.textContent = 'Calming chews for an anxious dog…';
+  });
+  // v4 polish (codex P0): scene-1 user-msg + assistant-msg + 3 product cards
+  // were still showing the hip-joint storyline when intro=block. Swap them
+  // here so the BLOCK cold open is internally consistent.
+  const s1 = document.querySelector('.scene-1 .gem-thread-inner');
+  if (s1) {
+    const userMsg = s1.querySelector('.user-msg');
+    if (userMsg) userMsg.textContent = 'My dog is anxious during thunderstorms. Are these calming chews any good?';
+    const assistantText = s1.querySelector('.assistant-msg .text');
+    if (assistantText) {
+      assistantText.innerHTML = "I found three calming-chew options for anxious dogs. Before I recommend one, I'll call <b>PawConscious</b> to verify the evidence and FTC §255 compliance on each.";
+    }
+    const cards = s1.querySelectorAll('.product-card');
+    const BLOCK_PRODUCTS = [
+      { name: 'Calming Chews', brand: 'Native Pet · 120 soft chews', price: '$36.99' },
+      { name: 'Calm Mode', brand: 'Wellpaw · 90 soft chews', price: '$28.99' },
+      { name: 'Quiet Time', brand: 'Goldenpaw · 120 soft chews', price: '$32.99' },
+    ];
+    cards.forEach((c, i) => {
+      const p = BLOCK_PRODUCTS[i];
+      if (!p) return;
+      const nameEl = c.querySelector('.name');
+      const brandEl = c.querySelector('.brand');
+      const priceEl = c.querySelector('.price');
+      if (nameEl) nameEl.textContent = p.name;
+      if (brandEl) brandEl.textContent = p.brand;
+      if (priceEl) priceEl.textContent = p.price;
+    });
+  }
+}
 
 // ---------- Sound design (Web Audio API, no asset deps) ----------
 // Tasteful, subtle. Browsers gate audio behind a user-gesture, so we lazy-init

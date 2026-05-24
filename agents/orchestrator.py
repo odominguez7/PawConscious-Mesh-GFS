@@ -31,19 +31,46 @@ from shared.pcec_schema import (  # noqa: E402
     AuditVerdict, Claim, ComplianceMapping, EndorsementClaimBundle,
     EvidenceBundle, VetRubricScore,
 )
+from shared.telemetry import agent_span  # Section 6 — per-agent observability
+
+
+def _claim_id(claim: Claim) -> str:
+    """Short stable id derived from claim text. Schema has no id field."""
+    import hashlib
+    return hashlib.sha1(claim.text.encode("utf-8")).hexdigest()[:10]
+
+
+async def _grade_with_span(claim: Claim) -> EvidenceBundle:
+    async with agent_span("evidence-grader", claim_id=_claim_id(claim)):
+        return await grade_claim(claim)
+
+
+async def _vet_with_span(claim: Claim) -> VetRubricScore:
+    async with agent_span("vet-rubric", claim_id=_claim_id(claim)):
+        return await vet_score(claim)
+
+
+async def _compliance_with_span(claim: Claim) -> ComplianceMapping:
+    async with agent_span("compliance", claim_id=_claim_id(claim)):
+        return await compliance_map(claim)
+
+
+async def _audit_with_span(evidence: EvidenceBundle, claim_id: str) -> AuditVerdict:
+    async with agent_span("auditor", claim_id=claim_id):
+        return await audit_bundle(evidence)
 
 
 async def process_claim(claim: Claim) -> tuple[EvidenceBundle, VetRubricScore, ComplianceMapping, AuditVerdict]:
     """ParallelAgent equivalent: fan out evidence-grade + vet-score + compliance-map for one claim,
     then run auditor on the evidence bundle."""
-    # Parallel fan-out
+    # Parallel fan-out (each subcall wrapped in its own observability span)
     evidence, vet, comp = await asyncio.gather(
-        grade_claim(claim),
-        vet_score(claim),
-        compliance_map(claim),
+        _grade_with_span(claim),
+        _vet_with_span(claim),
+        _compliance_with_span(claim),
     )
     # Auditor runs after evidence is available
-    audit = await audit_bundle(evidence)
+    audit = await _audit_with_span(evidence, claim_id=_claim_id(claim))
     return evidence, vet, comp, audit
 
 
@@ -53,7 +80,8 @@ async def run_mesh(product_url: str, max_claims: int | None = None) -> Endorseme
     Returns the assembled EndorsementClaimBundle ready for signing.
     """
     print(f"[orchestrator] Step 1: claim extraction from {product_url}")
-    claims = await extract_claims(product_url)
+    async with agent_span("claim-extractor", extra={"product_url": product_url}):
+        claims = await extract_claims(product_url)
     if max_claims is not None:
         claims = claims[:max_claims]
     print(f"[orchestrator] Extracted {len(claims)} claims")

@@ -41,3 +41,27 @@ research/raw/
 .gbrain-source
 tests/adk_eval/results/eval-*.jsonl
 !tests/adk_eval/results/latest.json
+
+# Internal-only: business docs, codex reviews, demo iteration scratch, agent routing
+internal/
+demo/captures/_work_v*/
+demo/captures/raw*/
+demo/captures/music-v*/
+demo/captures/vo*/
+demo/captures/veo*/
+demo/captures/sync-check*/
+demo/captures/cards/
+demo/captures/*.mp4
+demo/captures/gen_*.py
+demo/captures/mix_video*.sh
+demo/captures/record_demo*.py
+demo/captures/render_*.py
+demo/captures/intro_card.*
+demo/captures/end_card.*
+demo/captures/Demo_*.mp4
+demo/captures/*.txt
+demo/captures/__pycache__/
+
+# macOS
+.DS_Store
+**/.DS_Store

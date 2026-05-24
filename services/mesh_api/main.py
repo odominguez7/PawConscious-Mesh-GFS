@@ -79,7 +79,7 @@ SIGNING_SECRET_RESOURCE = (
 
 
 app = FastAPI(
-    title="PawConscious Mesh · ACP v0.1",
+    title="PawConscious · A2A v0.3 trust layer",
     version=SERVICE_VERSION,
     description="Trust layer for AI shopping agents · pet supplement reference deployment. "
                 "Public A2A v0.3 mesh endpoint. Submit pet product URLs for evidence verification.",
@@ -174,6 +174,18 @@ async def _route_verify_path() -> str:
         return "agent_engine" if _traffic_gate_open else "inline"
 
 
+async def _route_verify_path_snapshot() -> tuple[str, bool, str]:
+    """Section 6 (codex P1): atomic snapshot of (path, gate_open, gate_reason)
+    under a single lock acquisition. Use this when logging the routing
+    decision so the snapshot can't drift between the read and the log emit
+    under concurrent traffic."""
+    async with _traffic_gate_lock:
+        gate_open = _traffic_gate_open
+        gate_reason = _traffic_gate_reason
+        path = "agent_engine" if gate_open else "inline"
+        return path, gate_open, gate_reason
+
+
 async def _record_latency(path: str, latency_ms: float, succeeded: bool) -> None:
     """Update the per-path latency window and re-evaluate the gate."""
     global _traffic_gate_open, _traffic_gate_reason, _agent_engine_consec_failures
@@ -235,7 +247,7 @@ async def _run_mesh_via_agent_engine(product_url: str, max_claims: int) -> Endor
 
 
 A2A_AGENT_CARD = {
-    "name": "PawConscious Mesh",
+    "name": "PawConscious",
     "description": (
         "A2A trust mesh for expert-claim commerce. Verify endorsement claims on commerce "
         "SKUs against signed PCEC v0.1 evidence bundles. Pet supplement reference deployment."
@@ -306,7 +318,7 @@ A2A_AGENT_CARD = {
                 "evidence bundle with vet-rubric scoring, FTC §255 mapping, adversarial audit "
                 "verdict, a branded executive cert, and an adversarial Second Opinion using "
                 "Google Search grounding. ASYNC task: POST returns 202 with task_id; poll GET "
-                "/a2a/v1/tasks/get/{task_id} for completion. ~30-45s per claim."
+                "/a2a/v1/tasks/get/{task_id} for completion. Typical product: 2 to 4 minutes (60 to 90 seconds per claim)."
             ),
             "tags": ["trust", "endorsement", "substantiation", "pet-supplements", "PCEC"],
             "examples": [
@@ -774,7 +786,19 @@ async def _run_verify_claim_background(task_id: str, product_url: str, max_claim
     Latency per path is recorded; if Agent Engine p95 > N x inline p95, gate auto-closes.
     """
     try:
-        path = await _route_verify_path()
+        # Section 6 — bind task_id to the contextvar so every agent_span
+        # emitted downstream picks it up for correlation in Cloud Logging.
+        from shared.telemetry import log_route_decision, set_task_id
+        set_task_id(task_id)
+        # Atomic snapshot of routing decision + gate state under one lock
+        # (codex P1: prevents drift between read and log emit).
+        path, gate_open_snap, gate_reason_snap = await _route_verify_path_snapshot()
+        log_route_decision(
+            path,
+            task_id=task_id,
+            gate_open=gate_open_snap,
+            reason=gate_reason_snap,
+        )
         await task_store.update(
             task_id,
             status="working",
@@ -1185,7 +1209,7 @@ _GLOBAL_FOOTER_HTML = """
     </div>
   </div>
   <div class="pc-globalfooter-meta">
-    PawConscious Mesh · Trust layer for AI shopping agents · GFS AI Agents Challenge Track 3
+    PawConscious · Trust layer for AI shopping agents · GFS AI Agents Challenge Track 3
   </div>
 </footer>
 """
@@ -1512,7 +1536,7 @@ async def architecture() -> HTMLResponse:
 @app.get("/api-info", response_class=PlainTextResponse)
 async def api_info() -> str:
     return (
-        "PawConscious Mesh — ACP v0.1\n\n"
+        "PawConscious · A2A v0.3 trust layer · ACP v0.1\n\n"
         "Public endpoints:\n"
         "  GET  /                              Mesh Console UI\n"
         "  GET  /.well-known/agent-card.json   A2A v0.3 agent card\n"
