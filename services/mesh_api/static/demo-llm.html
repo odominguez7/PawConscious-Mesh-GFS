@@ -1744,26 +1744,13 @@ body.judge-mode .judge-toggle .dot {
   box-shadow: 0 0 0 3px rgba(65, 133, 244, 0.18);
 }
 
-/* Judge Mode footer strip — sticky band below the cinematic explaining the
- * overlay. Off by default; surfaces only when judge mode is on. */
-.judge-footer {
-  display: none;
-}
-body.judge-mode .judge-footer {
-  display: block;
-  position: fixed;
-  bottom: 0; left: 0; right: 0;
-  z-index: 25;
-  padding: 8px 18px;
-  background: rgba(13, 18, 28, 0.92);
-  color: rgba(255,255,255,0.85);
-  font: 500 11px/1.5 var(--mono);
-  letter-spacing: 0.06em;
-  text-align: center;
-  border-top: 1px solid rgba(65, 133, 244, 0.40);
-  backdrop-filter: blur(6px);
-}
-body.judge-mode .judge-footer b { color: #5AB0FF; }
+/* Judge Mode footer strip removed 2026-05-24: it was a position:fixed
+ * overlay that clipped the cinematic's bottom (the "Verify the recommended
+ * brand" CTA was hidden behind it on the BLOCK scene). The per-card stack
+ * chips already say which Google tool is running per agent; the footer
+ * was redundant noise. Element kept in DOM for backward compat but never
+ * rendered. */
+.judge-footer { display: none !important; }
 
 /* Scene-2 secondary CTA — "Show me a claim we BLOCK" */
 .scene-2 .show-block-link {
