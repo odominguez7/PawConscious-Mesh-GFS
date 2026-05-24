@@ -203,7 +203,7 @@
   <g transform="translate(298, 580)">
     <rect width="540" height="80" rx="6" class="box-agent"/>
     <text x="18" y="22" class="mono lbl electric">05 · Auditor · Falsifier v0</text>
-    <text x="18" y="44" class="display ttl ink">Adversarial pre-sign pass — catches hallucinations</text>
+    <text x="18" y="44" class="display ttl ink">Adversarial pre-sign pass · catches hallucinations</text>
     <text x="18" y="60" class="mono meta muted">Gemini 2.5 Flash · temp 0.0 · PMID format check + claim-direction match</text>
     <text x="18" y="74" class="mono meta dim">Custom prompt-only. NOT ADK Eval (datasets not built in 18 days).</text>
   </g>
@@ -255,8 +255,8 @@
     <text x="14" y="64" class="mono meta muted">Gemini 2.5 Pro · temp 0.3</text>
     <text x="14" y="80" class="mono meta muted">+ Google Search grounding</text>
     <text x="14" y="104" class="mono lbl warn">4 stress tests:</text>
-    <text x="14" y="122" class="mono meta-sm muted">• COURT — plaintiff use?</text>
-    <text x="14" y="136" class="mono meta-sm muted">• REGULATOR — FTC flag?</text>
+    <text x="14" y="122" class="mono meta-sm muted">• COURT · plaintiff use?</text>
+    <text x="14" y="136" class="mono meta-sm muted">• REGULATOR · FTC flag?</text>
     <text x="14" y="150" class="mono meta-sm muted">• CONSENSUS · PUBLIC</text>
   </g>
 

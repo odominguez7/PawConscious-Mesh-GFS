@@ -279,7 +279,7 @@ A2A_AGENT_CARD = {
         "schemes": ["api-key"],
         "note": (
             "Hackathon period: demo API key required (header: X-API-Key). "
-            "GFS JUDGES — demo key: `demo-key-2026-06`. Add header "
+            "GFS JUDGES · demo key: `demo-key-2026-06`. Add header "
             "`X-API-Key: demo-key-2026-06` to any /a2a/v1/* request. "
             "Public open access ships post-hackathon once abuse controls validated."
         ),
@@ -504,7 +504,7 @@ async def health_vertex_search() -> dict[str, Any]:
         "sample": sample,
         "note": (
             "Live probe against the FTC §255 + AAFCO PF7 + NASC corpus. "
-            "If status != 'ok', the compliance agent will run prompt-only — "
+            "If status != 'ok', the compliance agent will run prompt-only. "
             "surfacing the failure mode instead of silently falling back."
         ),
     }
@@ -1300,7 +1300,7 @@ async def architecture() -> HTMLResponse:
     nav = _global_nav(active="architecture")
     html = f"""<!doctype html>
 <html lang="en"><head><meta charset="utf-8">
-<title>PawConscious — Architecture</title>
+<title>PawConscious · Architecture</title>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="theme-color" content="#0A0B0D">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -1516,15 +1516,15 @@ async def architecture() -> HTMLResponse:
   <div class="arch-cta">
     <div class="lede">
       <strong>This diagram is live code.</strong>
-      <p>Watch the ShopperAgent call the public A2A mesh against a real DTC PDP. The signed bundle returned shows the chain anchor + Ed25519 signature drawn in Stage 2 — the diagram, actually running.</p>
+      <p>Watch the ShopperAgent call the public A2A mesh against a real DTC PDP. The signed bundle returned shows the chain anchor + Ed25519 signature drawn in Stage 2. The diagram, actually running.</p>
     </div>
     <a class="btn" href="/demo">View a signed bundle in action ↗</a>
   </div>
   <div class="caption">
     <h3>How to read this diagram</h3>
-    <p><b style="color:var(--ink)">Stage 1 — Reasoning Mesh.</b> The five-agent core. <code>claim-extractor</code> runs first (sequential), then for every claim the orchestrator fans out <code>evidence-grader</code>, <code>vet-rubric</code>, and <code>compliance</code> via <code>asyncio.gather</code>. The <code>auditor</code> merges the evidence and runs an adversarial pre-sign pass. Internal flow is a single-process multi-agent pipeline with a public A2A mesh at the edge; ADK migration in progress per the Day-20/21 plan.</p>
-    <p><b style="color:var(--ink)">Stage 2 — Sign.</b> The merged <code>EndorsementClaimBundle</code> is canonicalized, signed with <code>Ed25519</code> against <code>did:web:mesh-api-…</code>, and the chain anchor <code>sha256(bundle_hash + ":" + (prev_hash or "genesis"))</code> is appended to the Firestore transparency log.</p>
-    <p><b style="color:var(--ink)">Stage 3 — Adversarial.</b> After signing, two agents run in parallel: <code>cert-composer</code> renders the human-readable HTML certificate, and <code>second-opinion</code> uses <code>Gemini 2.5 Pro</code> with <b style="color:var(--ink)">Google Search grounding</b> to run four adversarial stress tests against the conclusion (court, regulator, scientific consensus, public skepticism). Fails CLOSED with <code>UNAVAILABLE</code> when the adversarial pass cannot complete, never silently agreeing.</p>
+    <p><b style="color:var(--ink)">Stage 1 · Reasoning Mesh.</b> The five-agent core. <code>claim-extractor</code> runs first (sequential), then for every claim the orchestrator fans out <code>evidence-grader</code>, <code>vet-rubric</code>, and <code>compliance</code> via <code>asyncio.gather</code>. The <code>auditor</code> merges the evidence and runs an adversarial pre-sign pass. Internal flow is a single-process multi-agent pipeline with a public A2A mesh at the edge; ADK migration in progress per the Day-20/21 plan.</p>
+    <p><b style="color:var(--ink)">Stage 2 · Sign.</b> The merged <code>EndorsementClaimBundle</code> is canonicalized, signed with <code>Ed25519</code> against <code>did:web:mesh-api-…</code>, and the chain anchor <code>sha256(bundle_hash + ":" + (prev_hash or "genesis"))</code> is appended to the Firestore transparency log.</p>
+    <p><b style="color:var(--ink)">Stage 3 · Adversarial.</b> After signing, two agents run in parallel: <code>cert-composer</code> renders the human-readable HTML certificate, and <code>second-opinion</code> uses <code>Gemini 2.5 Pro</code> with <b style="color:var(--ink)">Google Search grounding</b> to run four adversarial stress tests against the conclusion (court, regulator, scientific consensus, public skepticism). Fails CLOSED with <code>UNAVAILABLE</code> when the adversarial pass cannot complete, never silently agreeing.</p>
     <p><b style="color:var(--ink)">A2A v0.3.</b> The public agent card at <code>/.well-known/agent-card.json</code> declares two skills: <code>verify_claim</code> (URL in, signed bundle out) and <code>fetch_substantiation_bundle</code> (PCEC URN in, full bundle out). Our reference <code>ShopperAgent</code> is the live external consumer.</p>
   </div>
 </div>

@@ -1052,11 +1052,11 @@
         <div class="demo-cert" id="demoCert">
           <!-- v0.10.0a: verdict moved to TOP so it's always the first visible line.
                At 96px cert max-height, lower lines scroll. Verdict is the buyer's primary signal. -->
-          <div class="line"><span class="k">verdict</span><span class="v pass" id="dcVerdict">—</span></div>
-          <div class="line"><span class="k">bundle_urn</span><span class="v" id="dcUrn">—</span></div>
-          <div class="line"><span class="k">bundle_hash</span><span class="v" id="dcHash">—</span></div>
-          <div class="line"><span class="k">chain_anchor</span><span class="v" id="dcAnchor">—</span></div>
-          <div class="line"><span class="k">signature</span><span class="v" id="dcSig">—</span></div>
+          <div class="line"><span class="k">verdict</span><span class="v pass" id="dcVerdict">…</span></div>
+          <div class="line"><span class="k">bundle_urn</span><span class="v" id="dcUrn">…</span></div>
+          <div class="line"><span class="k">bundle_hash</span><span class="v" id="dcHash">…</span></div>
+          <div class="line"><span class="k">chain_anchor</span><span class="v" id="dcAnchor">…</span></div>
+          <div class="line"><span class="k">signature</span><span class="v" id="dcSig">…</span></div>
         </div>
       </div>
     </div>
@@ -1073,7 +1073,7 @@
       <div class="eyebrow">Verified certificate · signed bundle</div>
       <h2 class="result-title">The mesh produced this signed report.</h2>
       <div class="result-meta">
-        <span class="meta-pill" id="resultUrnPill">urn:pcec:claim:—</span>
+        <span class="meta-pill" id="resultUrnPill">urn:pcec:claim:…</span>
         <a class="meta-link" id="resultBundleLink" href="#" target="_blank" rel="noopener">View signed bundle &nearr;</a>
       </div>
     </div>
@@ -1216,7 +1216,7 @@
         <g class="box agent" data-tip="auditor">
           <rect x="244" y="348" width="476" height="66"/>
           <text class="label" x="262" y="370">05 · Auditor · Falsifier v0</text>
-          <text class="title" x="262" y="392">Adversarial pre-sign pass — catches hallucinations</text>
+          <text class="title" x="262" y="392">Adversarial pre-sign pass · catches hallucinations</text>
           <text class="meta" x="262" y="407">Gemini 2.5 Flash · PMID check · claim-direction match</text>
         </g>
 
@@ -1276,8 +1276,8 @@
       </svg>
 
       <div class="arch-tooltip" id="archTip">
-        <div class="t-name" id="tipName">—</div>
-        <div class="t-meta" id="tipMeta">—</div>
+        <div class="t-name" id="tipName">…</div>
+        <div class="t-meta" id="tipMeta">…</div>
       </div>
     </div>
 
@@ -1296,11 +1296,11 @@
       </div>
       <div class="item">
         <div class="h"><span class="name">Grounding</span><span class="badge">Truth</span></div>
-        <p><b>Vertex AI Search</b> grounds the <b>compliance</b> agent against a public-redistributable regulator corpus (FTC 16 CFR §255 · AAFCO PF7 · NASC). <b>Google Search grounding</b> via <code style="color:var(--electric);font-family:var(--mono);">google.genai</code> powers the Second Opinion's 4 stress tests (court · regulator · consensus · public skepticism). Vet-panel is intentionally prompt-only — no licensed handbook ingest.</p>
+        <p><b>Vertex AI Search</b> grounds the <b>compliance</b> agent against a public-redistributable regulator corpus (FTC 16 CFR §255 · AAFCO PF7 · NASC). <b>Google Search grounding</b> via <code style="color:var(--electric);font-family:var(--mono);">google.genai</code> powers the Second Opinion's 4 stress tests (court · regulator · consensus · public skepticism). Vet-panel is intentionally prompt-only. No licensed handbook ingest.</p>
       </div>
       <div class="item">
         <div class="h"><span class="name">A2A v0.3</span><span class="badge">Interop</span></div>
-        <p>Public agent card at <code style="color:var(--electric);font-family:var(--mono);">/.well-known/agent-card.json</code>. Async lifecycle: <code style="color:var(--electric);font-family:var(--mono);">/tasks/send</code> → poll <code style="color:var(--electric);font-family:var(--mono);">/tasks/get</code>. External ShopperAgent (separate Cloud Run service, MIT) consumes it end-to-end — no third-party integrations claimed.</p>
+        <p>Public agent card at <code style="color:var(--electric);font-family:var(--mono);">/.well-known/agent-card.json</code>. Async lifecycle: <code style="color:var(--electric);font-family:var(--mono);">/tasks/send</code> → poll <code style="color:var(--electric);font-family:var(--mono);">/tasks/get</code>. External ShopperAgent (separate Cloud Run service, MIT) consumes it end-to-end. No third-party integrations claimed.</p>
       </div>
       <div class="item">
         <div class="h"><span class="name">MCP + Citations</span><span class="badge">Evidence</span></div>

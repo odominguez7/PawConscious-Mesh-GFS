@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<title>PawConscious for Agents — A2A reference</title>
+<title>PawConscious for Agents · A2A reference</title>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="description" content="Connect any A2A v0.3 client to the PawConscious trust mesh. Demo key + curl + verification snippets in 30 seconds.">
 <meta name="theme-color" content="#0A0B0D">
@@ -434,7 +434,7 @@ shopper = LlmAgent(
   </div>
 
 
-  <h2>Discovery — well-knowns</h2>
+  <h2>Discovery · well-knowns</h2>
   <p>Standards-compliant A2A clients discover us by fetching the agent card. Everything below is publicly accessible.</p>
   <div class="endpoints">
     <div class="endpoint">
@@ -498,20 +498,20 @@ pub.verify(base64.b64decode(bundle[<span class="tok-str">"signature"</span>]), c
   <h2>Errors</h2>
   <p>HTTP responses currently emitted by <code class="inline">/a2a/v1/*</code>.
   The mesh's internal failure modes surface through the task envelope, not the
-  transport — a 200 with <code class="inline">status: "failed"</code> in the
+  transport. A 200 with <code class="inline">status: "failed"</code> in the
   task is the common shape for agent-stage errors.</p>
   <table class="ref-tbl">
     <thead>
       <tr><th>HTTP</th><th>Meaning</th><th>Recover</th></tr>
     </thead>
     <tbody>
-      <tr><td><code class="inline">200</code></td><td>Task fetched (GET) — including replay of an idempotent submission.</td><td>Read <code class="inline">output</code>; check <code class="inline">status</code> for agent-stage failures.</td></tr>
+      <tr><td><code class="inline">200</code></td><td>Task fetched (GET), including replay of an idempotent submission.</td><td>Read <code class="inline">output</code>; check <code class="inline">status</code> for agent-stage failures.</td></tr>
       <tr><td><code class="inline">202</code></td><td>Task accepted async. Body has <code class="inline">task_id</code>. Idempotent re-submit of the same key also returns 202 with the original id.</td><td>Poll <code class="inline">GET /a2a/v1/tasks/get/{task_id}</code>.</td></tr>
-      <tr><td><code class="inline">400</code></td><td>Semantic error — e.g. missing <code class="inline">product_url</code> on a <code class="inline">verify_claim</code> envelope, or skill+input shape mismatch.</td><td>Check shape against the A2A v0.3 example above.</td></tr>
+      <tr><td><code class="inline">400</code></td><td>Semantic error. For example, missing <code class="inline">product_url</code> on a <code class="inline">verify_claim</code> envelope, or skill+input shape mismatch.</td><td>Check shape against the A2A v0.3 example above.</td></tr>
       <tr><td><code class="inline">401</code></td><td>Missing or invalid <code class="inline">X-API-Key</code>.</td><td>Add the demo key <code class="inline">demo-key-2026-06</code> for hackathon access.</td></tr>
       <tr><td><code class="inline">404</code></td><td>Unknown <code class="inline">skill</code>, unknown <code class="inline">task_id</code>, or expired task.</td><td>Re-submit the verify_claim task with a known skill.</td></tr>
-      <tr><td><code class="inline">409</code></td><td>Returned by <code class="inline">/a2a/v1/tasks/cancel/{task_id}</code> when the task is already in a terminal state (completed / failed / canceled).</td><td>Don't retry — the task is already done. Fetch it via <code class="inline">/a2a/v1/tasks/get/{task_id}</code>.</td></tr>
-      <tr><td><code class="inline">422</code></td><td>FastAPI validation — malformed JSON body, missing required field, or wrong type. Distinct from <code class="inline">400</code> (semantic) and <code class="inline">404</code> (unknown skill).</td><td>Response body has the specific field path. Fix the payload and re-submit.</td></tr>
+      <tr><td><code class="inline">409</code></td><td>Returned by <code class="inline">/a2a/v1/tasks/cancel/{task_id}</code> when the task is already in a terminal state (completed / failed / canceled).</td><td>Don't retry. The task is already done. Fetch it via <code class="inline">/a2a/v1/tasks/get/{task_id}</code>.</td></tr>
+      <tr><td><code class="inline">422</code></td><td>FastAPI validation. Malformed JSON body, missing required field, or wrong type. Distinct from <code class="inline">400</code> (semantic) and <code class="inline">404</code> (unknown skill).</td><td>Response body has the specific field path. Fix the payload and re-submit.</td></tr>
       <tr><td><code class="inline">5xx</code></td><td>Cloud Run / upstream Vertex AI / Firestore unavailability.</td><td>Retry with exponential backoff.</td></tr>
     </tbody>
   </table>
@@ -522,7 +522,7 @@ pub.verify(base64.b64decode(bundle[<span class="tok-str">"signature"</span>]), c
 
   <h2>Rate limits (recommended pacing)</h2>
   <p>The hackathon mesh runs without a per-key rate limiter. The numbers below
-  are <em>recommended pacing</em> for integrators — not enforced quotas. The
+  are <em>recommended pacing</em> for integrators, not enforced quotas. The
   only enforced backpressure today is the platform layer (Cloud Run instance
   concurrency); exceed it and you'll see latency, not <code class="inline">429</code>s.</p>
   <table class="ref-tbl">
@@ -664,7 +664,7 @@ pub.verify(base64.b64decode(bundle[<span class="tok-str">"signature"</span>]), c
         }
       }
       if (attempts >= maxAttempts) {
-        log('timeout — task still running. Poll manually: /a2a/v1/tasks/get/' + sub.task_id, 'fail');
+        log('timeout. Task still running. Poll manually: /a2a/v1/tasks/get/' + sub.task_id, 'fail');
         tryitStatus.textContent = 'timeout';
       }
     } catch (e) {
