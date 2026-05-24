@@ -774,13 +774,18 @@
   .usecase-trigger { font-family: var(--sans); font-weight: 600; font-size: 18px; line-height: 1.3; letter-spacing: -0.012em; color: var(--ink); margin: 0 0 12px; }
   .usecase-body { font-size: 14px; line-height: 1.62; color: var(--muted); margin: 0; }
   .usecase-proof {
-    display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px;
-    padding: 26px 28px; background: var(--bg-elevated);
+    padding: 30px 32px; background: var(--bg-elevated);
     border: 1px solid var(--border); border-radius: 10px;
   }
-  .usecase-proof-stat .num { display: block; font: 600 32px/1 var(--mono); color: var(--electric); margin-bottom: 10px; font-variant-numeric: tabular-nums; letter-spacing: -0.02em; }
+  .usecase-proof-head { margin-bottom: 22px; }
+  .usecase-proof-head .eyebrow { color: var(--electric); }
+  .usecase-proof-stats {
+    display: grid; grid-template-columns: repeat(2, 1fr); gap: 40px;
+  }
+  .usecase-proof-stat .num { display: block; font: 600 36px/1 var(--mono); color: var(--electric); margin-bottom: 12px; font-variant-numeric: tabular-nums; letter-spacing: -0.02em; }
   .usecase-proof-stat .num .u { font: 500 12px/1 var(--mono); color: var(--muted); }
-  .usecase-proof-stat .lbl { font: 500 10.5px/1.4 var(--mono); letter-spacing: 0.18em; text-transform: uppercase; color: var(--muted); }
+  .usecase-proof-stat .lbl { font: 400 13px/1.55 var(--sans); color: var(--muted); letter-spacing: 0; text-transform: none; display: block; }
+  .usecase-proof-stat .lbl a { color: var(--electric); }
   /* ===================== PRICING (2026-05-24 v3: taste pass · Stripe-grade discipline) =====================
      Cuts from v2: status chips, per-card overage, inline roadmap tags, translateY lift,
      glow shadow, band logos, band h4+p, sub-paragraph under tiers-head. */
@@ -945,7 +950,7 @@
      LATER base rules clobbered them and mobile layout never activated. */
   @media (max-width: 1024px) {
     .hero { padding: 56px 0; }
-    .hero-grid, .proof-grid, .moats-grid, .biz-tiers, .how-grid, .founder-inner, .usecases-grid, .usecase-proof { grid-template-columns: 1fr; gap: 28px; }
+    .hero-grid, .proof-grid, .moats-grid, .biz-tiers, .how-grid, .founder-inner, .usecases-grid, .usecase-proof-stats { grid-template-columns: 1fr; gap: 28px; }
     .hero h1 { font-size: 38px; }
     .container { padding: 0 22px; }
     .arch, .how, .proof, .biz, .moats, .founder { padding: 56px 0; }
@@ -1553,34 +1558,36 @@ curl <span class="tok-str">"<!--PUBLIC_BASE_URL-->/a2a/v1/tasks/get/&lt;task_id&
       <div class="usecases-grid">
         <div class="usecase">
           <div class="usecase-num">01 · Launch</div>
-          <p class="usecase-trigger">When you launch a new SKU.</p>
-          <p class="usecase-body">The mesh extracts every health claim from the PDP, grades evidence against PubMed, and flags FTC §255 risk before you ship. You launch knowing what is substantiated and what is not.</p>
+          <p class="usecase-trigger">You're shipping a new product page on Tuesday.</p>
+          <p class="usecase-body">The mesh reads every health claim on the page ("reduces inflammation", "vet-formulated"), checks each one against real research, and tells you which ones the FTC could challenge. Ship the ones that hold up. Rewrite the ones that do not.</p>
         </div>
         <div class="usecase">
           <div class="usecase-num">02 · Retailer</div>
-          <p class="usecase-trigger">When a retailer asks for substantiation.</p>
-          <p class="usecase-body">One link to a signed PCEC bundle with chain anchor and public audit URL. The catalog team gets the artifact in the format they ask for.</p>
+          <p class="usecase-trigger">Thursday afternoon. The Chewy catalog team emails: "show your substantiation."</p>
+          <p class="usecase-body">You forward one URL. It opens to a cryptographically signed page showing every claim, every source paper, every regulatory check, dated and timestamped. No back-and-forth.</p>
         </div>
         <div class="usecase">
           <div class="usecase-num">03 · Plaintiff</div>
-          <p class="usecase-trigger">When a plaintiff letter lands.</p>
-          <p class="usecase-body">Pull the binder. Every claim cryptographically dated, every source linked. Your attorney has documented diligence on day one.</p>
+          <p class="usecase-trigger">Monday at nine. A demand letter says "class action filed."</p>
+          <p class="usecase-body">You forward the bundle to your attorney within an hour. Two years of dated substantiation evidence, every claim audited, every source linked. Your attorney has what they need before lunch.</p>
         </div>
       </div>
 
-      <!-- Proof stats anchor the third scenario in dollar math. -->
+      <!-- ROI contrast: two real numbers, no abstract multiplier. The reader
+           does the math themselves and the lesson lands harder for it. -->
       <div class="usecase-proof">
-        <div class="usecase-proof-stat">
-          <span class="num">$11.5M</span>
-          <span class="lbl">Cosequin · 2024 settlement · <a href="https://topclassactions.com/lawsuit-settlements/lawsuit-news/cosequin-class-action-settlement/" target="_blank" rel="noopener" style="color:var(--electric);">source</a></span>
+        <div class="usecase-proof-head">
+          <div class="eyebrow">What it cost not to be ready</div>
         </div>
-        <div class="usecase-proof-stat">
-          <span class="num">$599<span class="u">/mo</span></span>
-          <span class="lbl">Trusted tier · 12 months</span>
-        </div>
-        <div class="usecase-proof-stat">
-          <span class="num">~1,600×</span>
-          <span class="lbl">avoided-cost ratio</span>
+        <div class="usecase-proof-stats">
+          <div class="usecase-proof-stat">
+            <span class="num">$11,500,000</span>
+            <span class="lbl">Nutramax paid this in 2024 to settle a class action over Cosequin claims it could not substantiate. <a href="https://topclassactions.com/lawsuit-settlements/lawsuit-news/cosequin-class-action-settlement/" target="_blank" rel="noopener">source</a></span>
+          </div>
+          <div class="usecase-proof-stat">
+            <span class="num">$7,188</span>
+            <span class="lbl">What Trusted runs for twelve months. You do the math.</span>
+          </div>
         </div>
       </div>
     </div>
