@@ -1674,6 +1674,75 @@ html, body {
   color: var(--g-text);
 }
 
+/* Verified-pool widget (2026-05-24): surfaces the future-state placement-
+ * bidding mechanism. 1 real public-COA brand (Green Gruff EASE) + 4
+ * synthetic example brands, all disclosed honestly via the "example"
+ * chip and the header disclosure line. Shown only on BLOCK scene. */
+.scene-2b .verified-pool {
+  margin-top: 20px;
+  padding: 16px 18px;
+  background: rgba(99, 154, 96, 0.04);
+  border: 1px solid rgba(99, 154, 96, 0.18);
+  border-radius: 10px;
+}
+.scene-2b .vp-head {
+  display: flex; align-items: baseline; justify-content: space-between;
+  margin-bottom: 12px; gap: 12px;
+}
+.scene-2b .vp-eyebrow {
+  font: 600 11px var(--mono); letter-spacing: 0.18em; text-transform: uppercase;
+  color: var(--pc-moss);
+}
+.scene-2b .vp-disclosure { font: 500 10px var(--mono); color: var(--g-dim); letter-spacing: 0.04em; }
+.scene-2b .vp-grid {
+  display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px;
+}
+.scene-2b .vp-card {
+  position: relative; padding: 11px 12px;
+  background: #FFF; border: 1px solid var(--g-line); border-radius: 7px;
+  cursor: pointer; transition: all 0.18s ease;
+  text-decoration: none; color: inherit; display: flex; flex-direction: column;
+}
+.scene-2b .vp-card:hover {
+  border-color: var(--pc-moss);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(99, 154, 96, 0.12);
+}
+.scene-2b .vp-card.real {
+  border-color: rgba(99, 154, 96, 0.55);
+  background: linear-gradient(180deg, rgba(99, 154, 96, 0.06), #FFF 50%);
+  box-shadow: 0 0 0 1px rgba(99, 154, 96, 0.22);
+}
+.scene-2b .vp-card .vp-name { font: 600 12px var(--sans); color: var(--g-text); margin-bottom: 3px; }
+.scene-2b .vp-card .vp-meta { font: 400 10.5px/1.4 var(--sans); color: var(--g-dim); margin-bottom: 8px; flex: 1; }
+.scene-2b .vp-card .vp-stats { font: 500 10.5px var(--mono); color: var(--g-text); display: flex; justify-content: space-between; }
+.scene-2b .vp-card .vp-stats .trust { color: var(--pc-moss); font-weight: 600; }
+.scene-2b .vp-card .vp-tag {
+  position: absolute; top: 6px; right: 6px;
+  font: 600 8.5px var(--mono);
+  color: #8C5A12;
+  background: rgba(229, 165, 60, 0.10);
+  border: 1px solid rgba(229, 165, 60, 0.28);
+  padding: 2px 5px; border-radius: 3px;
+  letter-spacing: 0.06em;
+}
+.scene-2b .vp-more {
+  margin-top: 12px;
+  padding: 7px 13px;
+  background: transparent;
+  border: 1px dashed var(--pc-moss);
+  border-radius: 6px;
+  font: 500 11px var(--mono);
+  color: var(--pc-moss);
+  letter-spacing: 0.06em;
+  cursor: pointer;
+}
+.scene-2b .vp-more:hover { background: rgba(99, 154, 96, 0.06); }
+
+@media (max-width: 900px) {
+  .scene-2b .vp-grid { grid-template-columns: repeat(2, 1fr); }
+}
+
 /* CTA pair on scene-2b. 2026-05-24 fix: base .post-tool-row sets
  * opacity:0 and only .scene-2.complete activates it. Scene-2b had no
  * equivalent activator so the BLOCK CTAs stayed invisible. Explicitly
@@ -2232,11 +2301,46 @@ html, body {
                     <div class="copy">
                       <div class="headline">3 of 3 claims unsupported. Mesh blocks.</div>
                       No PubMed evidence backs "reverses arthritis in 7 days" or "1000% absorption" in canine glucosamine. The brand publishes no lab Certificate of Analysis. The bundle does not get signed.
-                      <div class="replacement">
-                        One of the candidates above publishes its lab tests publicly:
-                        <code>Green Gruff EASE · Joint &amp; Hip</code>. Verify that one instead.
-                      </div>
                     </div>
+                  </div>
+
+                  <div class="verified-pool">
+                    <div class="vp-head">
+                      <span class="vp-eyebrow">Verified hip+joint pool</span>
+                      <span class="vp-disclosure">1 real public-COA brand + 4 synthetic examples for demo</span>
+                    </div>
+                    <div class="vp-grid">
+                      <a class="vp-card real" href="#" id="vp-greengruff">
+                        <div class="vp-name">Green Gruff EASE</div>
+                        <div class="vp-meta">Joint &amp; Hip · public COA</div>
+                        <div class="vp-stats"><span>$54.99</span><span class="trust">trust 94</span></div>
+                      </a>
+                      <a class="vp-card" href="#">
+                        <div class="vp-name">Wellpaw Mobility</div>
+                        <div class="vp-meta">Hip+Joint · published lab</div>
+                        <div class="vp-stats"><span>$42.99</span><span class="trust">trust 91</span></div>
+                        <span class="vp-tag">example</span>
+                      </a>
+                      <a class="vp-card" href="#">
+                        <div class="vp-name">PetTrust Senior</div>
+                        <div class="vp-meta">NSF-certified</div>
+                        <div class="vp-stats"><span>$48.50</span><span class="trust">trust 88</span></div>
+                        <span class="vp-tag">example</span>
+                      </a>
+                      <a class="vp-card" href="#">
+                        <div class="vp-name">Vital Paws</div>
+                        <div class="vp-meta">Inflammation · 3rd-party lab</div>
+                        <div class="vp-stats"><span>$36.50</span><span class="trust">trust 85</span></div>
+                        <span class="vp-tag">example</span>
+                      </a>
+                      <a class="vp-card" href="#">
+                        <div class="vp-name">Calm Joint Pro</div>
+                        <div class="vp-meta">Mobility · ISO 17025</div>
+                        <div class="vp-stats"><span>$51.99</span><span class="trust">trust 82</span></div>
+                        <span class="vp-tag">example</span>
+                      </a>
+                    </div>
+                    <button class="vp-more">See 8 more verified brands →</button>
                   </div>
                 </div>
 
@@ -2678,22 +2782,19 @@ async function runScene2b(token) {
   }
 }
 
-// Scene 3: Gemini's warm recommendation.
+// Scene 3: Gemini's brief recommendation. 2026-05-24 Omar review: the
+// scene now compresses to a 2.4s transition beat that auto-advances into
+// scene 4 (vendor page). Verified bento was the user's last manual click;
+// from here the cinematic flows automatically. No "Open Green Gruff →"
+// click needed.
 async function runScene3(token) {
   showScene(3);
   scenes[3].classList.remove('show-reco');
   pointerHide();
-  await wait(420, token); if (token !== runToken) return;
+  await wait(380, token); if (token !== runToken) return;
   scenes[3].classList.add('show-reco');
-  await wait(900, token); if (token !== runToken) return;
-  // Hint: fly the pointer over the "Open the verified product" CTA.
-  const ctaBtn = document.getElementById('goToVendor');
-  if (ctaBtn) {
-    await pointerMoveTo(ctaBtn, { fromOffscreen: true });
-    if (token !== runToken) return;
-    await wait(1400, token); if (token !== runToken) return;
-    pointerHide();
-  }
+  await wait(2400, token); if (token !== runToken) return;
+  runScene4(token);
 }
 
 // Scene 4: vendor + autonomous checkout with animated cursor.
