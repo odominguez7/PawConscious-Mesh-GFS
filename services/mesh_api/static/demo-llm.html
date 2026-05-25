@@ -178,14 +178,13 @@ html, body {
 }
 
 .gem-thread {
-  /* 2026-05-24: scroll instead of clip. Previously overflow:hidden cropped
-     the BLOCK scene's CTA when content grew. Real chat UIs scroll.
-     2026-05-24 night (Omar 4th pass): tighter top/bottom padding + smaller
-     inter-message gap so the bento + CTA fit one viewport without scroll. */
+  /* 2026-05-24 night (Omar 6th pass): even tighter. user-msg + bento +
+     CTAs all need to fit one viewport. Padding shrunk further and
+     inter-message gap collapsed to 8px. */
   flex: 1; overflow-y: auto; overflow-x: hidden;
-  padding: 16px 32px 18px;
+  padding: 10px 32px 12px;
   display: flex; flex-direction: column; align-items: center;
-  gap: 16px;
+  gap: 10px;
   scrollbar-width: thin;
 }
 .gem-thread::-webkit-scrollbar { width: 6px; }
@@ -193,7 +192,7 @@ html, body {
 .gem-thread::-webkit-scrollbar-thumb:hover { background: rgba(0,0,0,0.22); }
 .gem-thread-inner {
   width: 100%; max-width: 760px;
-  display: flex; flex-direction: column; gap: 22px;
+  display: flex; flex-direction: column; gap: 12px;
 }
 
 /* The Gemini four-point star, SVG-friendly */
@@ -714,16 +713,16 @@ html, body {
   max-width: 80%;
   background: var(--g-bg-soft);
   border-radius: 18px;
-  padding: 12px 16px;
-  font: 400 15px/1.5 var(--sans); color: var(--g-text);
+  padding: 8px 14px;
+  font: 400 13.5px/1.45 var(--sans); color: var(--g-text);
 }
 
 .assistant-msg {
-  display: flex; gap: 14px;
+  display: flex; gap: 12px;
   width: 100%;
 }
 .assistant-msg .av {
-  width: 32px; height: 32px; flex-shrink: 0;
+  width: 22px; height: 22px; flex-shrink: 0;
 }
 .assistant-msg .body { flex: 1; min-width: 0; }
 .assistant-msg .text {
@@ -928,14 +927,21 @@ html, body {
    Cards 78px (was 104px) + sign 56px (was 72px) + gap 8px (was 12px).
    Per-card padding 10px 12px (was 16px 18px). Saves ~120px per scene
    so BLOCK + VERIFY both fit one viewport on standard laptop browsers. */
-.bento { gap: 8px; }
-.bento .b-card { padding: 10px 12px; }
+.bento { gap: 6px; }
+.bento .b-card { padding: 8px 11px; }
 .bento .b-card.b-claim    { grid-column: span 2; grid-row: 1; min-height: 78px; }
 .bento .b-card.b-evidence { grid-column: span 4; grid-row: 1; min-height: 78px; }
 .bento .b-card.b-lab      { grid-column: span 2; grid-row: 2; min-height: 78px; }
 .bento .b-card.b-vet      { grid-column: span 2; grid-row: 2; min-height: 78px; }
 .bento .b-card.b-ftc      { grid-column: span 2; grid-row: 2; min-height: 78px; }
-.bento .b-card.b-sign     { grid-column: span 6; grid-row: 3; min-height: 56px; }
+.bento .b-card.b-sign     { grid-column: span 6; grid-row: 3; min-height: 38px; padding: 6px 12px; }
+/* Sign card is a thin one-liner: judge label INLINE with the head, body
+   inline beside it. No second row needed for the sha hash. */
+.bento .b-card.b-sign { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+.bento .b-card.b-sign .judge-label { margin: 0; flex-shrink: 0; }
+.bento .b-card.b-sign .head { margin: 0; flex-shrink: 0; }
+.bento .b-card.b-sign .body.stream { font-size: 11px; }
+.bento .b-card.b-sign .body.stream > div + div { margin-top: 0; }
 /* Header line shrinks too so the cards do not just clip text */
 .bento .b-card .head { margin-bottom: 6px; }
 .bento .b-card .body.stream { font-size: 11.5px; line-height: 1.4; }
@@ -1691,6 +1697,13 @@ html, body {
   transition: all 200ms;
 }
 .controls .btn:hover { background: rgba(255,255,255,0.10); color: #FFF; }
+/* 2026-05-24 night: visible flash on click so the button feels responsive
+   even when the scene change is brief or already on-screen. */
+.controls .btn.flash {
+  background: rgba(155,114,203,0.32);
+  color: #FFF;
+  transition: background 80ms;
+}
 /* Next button gets the Gemini brand treatment so it visually matches the
    in-scene "Click to ..." CTAs. Users learn one pattern: gradient = advance. */
 .controls .btn#nextBtn {
@@ -2534,13 +2547,14 @@ html, body {
                       <div class="t-line"><b>PawConscious Trust Layer</b> · BLOCKED before recommendation</div>
                       <div class="t-sub">A2A v0.3 · 5 agents · adversarial pre-sign pass</div>
                     </div>
-                    <div class="tool-use-status" id="s2b-status">BLOCKED</div>
+                    <div class="tool-use-status" id="s2b-status" title="Demo composition: 'MaxJoint Pro' is a synthetic example brand. Document AI, BioMCP, Vertex AI Search, Ed25519, and Firestore chain anchor are all real.">BLOCKED</div>
                   </div>
 
-                  <div class="synthetic-banner">
-                    <b>Demo composition:</b> "MaxJoint Pro" is a synthetic example brand. Document AI, BioMCP, Vertex AI Search, Ed25519, and Firestore chain anchor are all real.
-                  </div>
-
+                  <!-- 2026-05-24 night (Omar 6th pass): the standalone
+                       synthetic-banner was eating ~35px just to disclose
+                       "MaxJoint Pro is example data". Moved into a small
+                       title attribute on the BLOCKED pill above + an
+                       inline "example brand" tag inside the claim card. -->
                   <div class="bento light" id="s2b-bento">
                     <div class="b-card b-claim block" data-stage="claim">
                       <div class="judge-label">ADK LlmAgent</div>
@@ -2592,14 +2606,12 @@ html, body {
                       </div>
                     </div>
                   </div>
-
-                  <div class="block-banner">
-                    <div class="seal">!</div>
-                    <div class="copy">
-                      <div class="headline">3 of 3 claims unsupported. Mesh blocks.</div>
-                      No PubMed evidence backs "reverses arthritis" or "1000% absorption" in canine glucosamine. No published lab COA. Bundle is not signed.
-                    </div>
-                  </div>
+                  <!-- 2026-05-24 night (Omar 6th pass): the redundant
+                       block-banner ("3 of 3 claims unsupported. Mesh
+                       blocks.") was removed. The BLOCKED status pill plus
+                       the all-red bento plus the sign-card "REJECT" line
+                       already deliver the message. Saves ~80px of
+                       vertical space so the CTAs fit one viewport. -->
                 </div>
 
                 <div class="post-tool-row">
@@ -3474,13 +3486,34 @@ function playScene(n) {
 
 // ---- Manual click-through ----
 
+// 2026-05-24 night (Omar): Prev/Next buttons get a brief visual flash so the
+// user sees the click registered. Previously a Prev press felt dumb because
+// the page only re-renders on a real scene change.
+function flashBtn(btn) {
+  if (!btn) return;
+  btn.classList.add('flash');
+  setTimeout(() => btn.classList.remove('flash'), 280);
+}
 function next() {
+  flashBtn(document.getElementById('nextBtn'));
   if (currentScene < 4) playScene(currentScene + 1);
 }
 function prev() {
+  flashBtn(document.getElementById('prevBtn'));
+  // Scene 3 is a pass-through to scene 4 (the Gemini recommendation beat
+  // was removed). Going from scene 4 → scene 3 would re-enter scene 4
+  // and feel like nothing happened. Skip directly to runScene2 (VERIFY).
+  if (currentScene === 4) {
+    runToken += 1;
+    runScene2(runToken);
+    return;
+  }
   if (currentScene > 0) playScene(currentScene - 1);
 }
-function restart() { playScene(0); }
+function restart() {
+  flashBtn(document.getElementById('replayBtn'));
+  playScene(0);
+}
 
 document.getElementById('prevBtn').addEventListener('click', prev);
 document.getElementById('nextBtn').addEventListener('click', next);
