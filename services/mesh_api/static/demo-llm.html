@@ -2116,7 +2116,7 @@ html, body {
                 </div>
 
                 <div class="post-tool-row">
-                  <button class="advance-cta" id="goToRecommend">Click to see Gemini's answer <span class="arrow">→</span></button>
+                  <button class="advance-cta" id="goToRecommend">Continue <span class="arrow">→</span></button>
                   <a class="show-block-link" href="/agents" target="_blank" rel="noopener" title="Read the A2A reference and try the live curl">Try this on your own product →</a>
                 </div>
               </div>
@@ -2280,23 +2280,18 @@ html, body {
             <div class="assistant-msg">
               <svg class="av" viewBox="0 0 24 24" fill="url(#gstarGrad)"><path d="M12 2 L14 10 L22 12 L14 14 L12 22 L10 14 L2 12 L10 10 Z"/></svg>
               <div class="body">
-                <div class="trust-banner"><span class="seal">✓</span> Trust check complete</div>
+                <div class="trust-banner"><span class="seal">✓</span> Verified by PawConscious</div>
                 <div class="text">
-                  Of the three options, I'd recommend <b>Green Gruff EASE Joint &amp; Hip</b>. It's the one that passed PawConscious with substantiated evidence, a real public lab certificate, and no FTC §255 concern flags. MaxJoint Pro was blocked for unsubstantiated efficacy claims. Goldenpaw was missing PubMed support for two of its claims. Want me to open the verified product page?
+                  Recommending <b>Green Gruff EASE · Joint &amp; Hip</b>. Opening their product page.
                 </div>
                 <div class="reco-card">
                   <div class="thumb"><img src="/assets/native-pet-hip-joint-alt-warm.png" alt="Green Gruff EASE"></div>
                   <div class="body">
-                    <div class="verified-row"><span class="seal">✓</span> Verified by PawConscious</div>
                     <div class="name">Green Gruff EASE · Joint &amp; Hip</div>
-                    <div class="meta">
-                      <span>3 claims audited</span><span>3 PubMed citations</span><span>Public COA · Document AI</span><span>Ed25519 signed</span>
-                    </div>
                   </div>
                 </div>
                 <div class="cta-row">
-                  <button class="cta-primary" id="goToVendor">Click to open the verified product <span class="arrow">→</span></button>
-                  <button class="cta-secondary">Show me the evidence</button>
+                  <button class="cta-primary" id="goToVendor">Open Green Gruff <span class="arrow">→</span></button>
                 </div>
               </div>
             </div>
@@ -2637,7 +2632,7 @@ async function runScene2(token) {
   // 2026-05-24 Omar review: do not auto-advance to scene 3. The verified
   // scene should pause so the user can read the Trust Report, click PMIDs,
   // open the COA, and click "Try this on your own product →". Pointer
-  // hint over the primary "Click to see Gemini's answer →" CTA.
+  // hint over the primary "Continue →" CTA (was "Click to see Gemini's answer", rewritten to not duplicate what the bento already shows).
   await wait(1200, token); if (token !== runToken) return;
   const recBtn = document.getElementById('goToRecommend');
   if (recBtn) {
