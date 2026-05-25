@@ -177,12 +177,13 @@ html, body {
 
 .gem-thread {
   /* 2026-05-24: scroll instead of clip. Previously overflow:hidden cropped
-     the BLOCK scene's CTA when content grew (Document AI added a 6th card
-     and the lab-card body wraps to 4-5 lines). Real chat UIs scroll. */
+     the BLOCK scene's CTA when content grew. Real chat UIs scroll.
+     2026-05-24 night (Omar 4th pass): tighter top/bottom padding + smaller
+     inter-message gap so the bento + CTA fit one viewport without scroll. */
   flex: 1; overflow-y: auto; overflow-x: hidden;
-  padding: 28px 32px 32px;
+  padding: 16px 32px 18px;
   display: flex; flex-direction: column; align-items: center;
-  gap: 24px;
+  gap: 16px;
   scrollbar-width: thin;
 }
 .gem-thread::-webkit-scrollbar { width: 6px; }
@@ -921,15 +922,24 @@ html, body {
   overflow: hidden;
   transition: background 320ms, border-color 320ms, box-shadow 320ms;
 }
-/* 2026-05-24 evening: bento card heights compressed from 124px/96px to
-   104px/72px so the BLOCK scene fits one viewport without scroll. The
-   chat-thread overflow:auto stays as a fallback for small screens. */
-.bento .b-card.b-claim    { grid-column: span 2; grid-row: 1; min-height: 104px; }
-.bento .b-card.b-evidence { grid-column: span 4; grid-row: 1; min-height: 104px; }
-.bento .b-card.b-lab      { grid-column: span 2; grid-row: 2; min-height: 104px; }
-.bento .b-card.b-vet      { grid-column: span 2; grid-row: 2; min-height: 104px; }
-.bento .b-card.b-ftc      { grid-column: span 2; grid-row: 2; min-height: 104px; }
-.bento .b-card.b-sign     { grid-column: span 6; grid-row: 3; min-height: 72px; }
+/* 2026-05-24 night (Omar fourth pass): bento aggressively compressed.
+   Cards 78px (was 104px) + sign 56px (was 72px) + gap 8px (was 12px).
+   Per-card padding 10px 12px (was 16px 18px). Saves ~120px per scene
+   so BLOCK + VERIFY both fit one viewport on standard laptop browsers. */
+.bento { gap: 8px; }
+.bento .b-card { padding: 10px 12px; }
+.bento .b-card.b-claim    { grid-column: span 2; grid-row: 1; min-height: 78px; }
+.bento .b-card.b-evidence { grid-column: span 4; grid-row: 1; min-height: 78px; }
+.bento .b-card.b-lab      { grid-column: span 2; grid-row: 2; min-height: 78px; }
+.bento .b-card.b-vet      { grid-column: span 2; grid-row: 2; min-height: 78px; }
+.bento .b-card.b-ftc      { grid-column: span 2; grid-row: 2; min-height: 78px; }
+.bento .b-card.b-sign     { grid-column: span 6; grid-row: 3; min-height: 56px; }
+/* Header line shrinks too so the cards do not just clip text */
+.bento .b-card .head { margin-bottom: 6px; }
+.bento .b-card .body.stream { font-size: 11.5px; line-height: 1.4; }
+.bento .b-card .body.stream > div + div { margin-top: 3px; }
+/* Judge labels compact */
+.judge-label { padding: 3px 6px; margin-bottom: 5px; font-size: 9.5px; }
 
 .bento .b-card.active {
   background: var(--pc-bg-card-lit);
@@ -994,8 +1004,8 @@ html, body {
   background: var(--g-bg);
   border: 1px solid var(--g-line);
   border-radius: 16px;
-  padding: 16px;
-  margin: 14px 0 10px;
+  padding: 14px 16px 12px;
+  margin: 8px 0 6px;
   box-shadow: 0 4px 18px rgba(0,0,0,0.04);
   transition: box-shadow 480ms, transform 480ms cubic-bezier(.34,1.56,.64,1);
   position: relative;
@@ -1012,9 +1022,9 @@ html, body {
 }
 .tool-use-header {
   display: flex; align-items: flex-start; gap: 12px;
-  padding-bottom: 12px;
+  padding-bottom: 8px;
   border-bottom: 1px solid var(--g-line);
-  margin-bottom: 12px;
+  margin-bottom: 10px;
 }
 .tool-use-icon {
   width: 28px; height: 28px; flex-shrink: 0;
@@ -1445,7 +1455,13 @@ html, body {
 .checkout-overlay {
   position: fixed; inset: 0;
   background: rgba(43,31,18,0.45);
-  display: flex; align-items: center; justify-content: center;
+  display: flex; align-items: flex-start; justify-content: center;
+  /* 2026-05-24 (Omar): the Model B receipt makes this card taller than the
+     viewport. Allow vertical scroll inside the overlay; reserve ~110px at
+     the bottom so the floating Prev/Next nav bar (position:fixed bottom:22px
+     plus ~50px height) never overlaps the "View the signed bundle" action. */
+  padding: 32px 20px 110px;
+  overflow-y: auto;
   opacity: 0; visibility: hidden;
   transition: opacity 280ms, visibility 0ms 280ms;
   z-index: 100;
@@ -1793,6 +1809,14 @@ html, body {
   100% { opacity: 1; transform: translateY(0); }
 }
 
+/* 2026-05-24 night (Omar): the pool now has TWO pages. Refresh swaps the
+   grid between page-1 (real Green Gruff + 4 examples) and page-2 (5
+   different example brands). Pointer cycles back to page-1 before picking
+   Green Gruff. This proves catalog depth rather than reloading the same 5. */
+.pool-grid-2 { display: none; }
+.pool-frame.on-page-2 .pool-grid-1 { display: none; }
+.pool-frame.on-page-2 .pool-grid-2 { display: grid; }
+
 @media (max-width: 980px) {
   .pool-grid { grid-template-columns: repeat(2, 1fr); }
 }
@@ -1849,12 +1873,12 @@ html, body {
 /* Synthetic-content disclosure banner. 2026-05-24 evening: compressed
    to free vertical space on the BLOCK scene so it fits one viewport. */
 .scene-2b .synthetic-banner {
-  margin-bottom: 10px;
-  padding: 7px 12px;
+  margin-bottom: 8px;
+  padding: 5px 10px;
   background: rgba(229, 165, 60, 0.08);
   border: 1px solid rgba(229, 165, 60, 0.30);
   border-radius: 6px;
-  font: 500 11px/1.45 var(--sans);
+  font: 500 10.5px/1.4 var(--sans);
   color: #8C5A12;
 }
 .scene-2b .synthetic-banner b { color: #5F3A02; font-weight: 700; }
@@ -1863,29 +1887,29 @@ html, body {
 /* 2026-05-24 evening: block-banner compressed. Smaller seal, tighter
    padding, smaller body font. Frees vertical space for the CTA below. */
 .scene-2b .block-banner {
-  margin-top: 12px;
-  padding: 11px 14px;
+  margin-top: 8px;
+  padding: 8px 12px;
   background: linear-gradient(180deg, #FFF8F8 0%, #FFF 100%);
   border: 1px solid rgba(229, 80, 80, 0.22);
   border-left: 3px solid #E55050;
   border-radius: 8px;
   display: grid;
   grid-template-columns: auto 1fr;
-  gap: 12px;
+  gap: 10px;
   align-items: center;
 }
 .scene-2b .block-banner .seal {
-  width: 28px; height: 28px; border-radius: 14px;
+  width: 24px; height: 24px; border-radius: 12px;
   background: #E55050; color: #fff;
   display: flex; align-items: center; justify-content: center;
-  font: 700 16px/1 var(--sans);
+  font: 700 14px/1 var(--sans);
 }
 .scene-2b .block-banner .copy {
-  font: 500 12.5px/1.5 var(--sans); color: var(--g-text);
+  font: 500 12px/1.45 var(--sans); color: var(--g-text);
 }
 .scene-2b .block-banner .headline {
-  font: 700 13.5px/1.4 var(--sans); color: #B83434;
-  margin-bottom: 3px;
+  font: 700 12.5px/1.4 var(--sans); color: #B83434;
+  margin-bottom: 2px;
 }
 .scene-2b .block-banner .replacement {
   margin-top: 6px;
@@ -2412,7 +2436,7 @@ html, body {
                 </div>
 
                 <div class="post-tool-row">
-                  <button class="advance-cta" id="goToRecommend">Continue <span class="arrow">→</span></button>
+                  <button class="advance-cta" id="goToRecommend">Continue to purchase <span class="arrow">→</span></button>
                   <a class="show-block-link" href="/agents" target="_blank" rel="noopener" title="A2A v0.3 developer reference. Paste any product URL into the live curl example.">Open developer reference →</a>
                 </div>
               </div>
@@ -2563,7 +2587,7 @@ html, body {
           <span class="pool-disclosure">1 real public-COA brand + 4 synthetic examples for demo</span>
         </div>
       </div>
-      <div class="pool-grid">
+      <div class="pool-grid pool-grid-1">
         <a class="pool-card real" href="#" id="pool-greengruff">
           <div class="pool-img-wrap"><img src="/assets/native-pet-hip-joint-alt-warm.png" alt="Green Gruff EASE"></div>
           <div class="pool-body">
@@ -2624,8 +2648,75 @@ html, body {
           </div>
         </a>
       </div>
+      <!-- 2026-05-24 night: page 2 of the pool. Swaps in when the pointer
+           clicks "Show me more options". 5 different synthetic example brands,
+           Green Gruff intentionally absent so the second refresh back to
+           page-1 demonstrates "user returned to the verified COA brand they
+           remembered". -->
+      <div class="pool-grid pool-grid-2">
+        <a class="pool-card" href="#">
+          <span class="pool-tag">example</span>
+          <div class="pool-img-wrap"><img src="/assets/native-pet-hip-joint-alt-warm.png" alt="AquaJoint Plus"></div>
+          <div class="pool-body">
+            <div class="pool-name">AquaJoint Plus</div>
+            <div class="pool-sub">Marine-source GAG · 3rd-party lab</div>
+            <div class="pool-stats">
+              <span class="pool-price">$39.50</span>
+              <span class="pool-trust">trust 80</span>
+            </div>
+          </div>
+        </a>
+        <a class="pool-card" href="#">
+          <span class="pool-tag">example</span>
+          <div class="pool-img-wrap"><img src="/assets/wellpaw-hip-joint.png" alt="Pure Hip Care"></div>
+          <div class="pool-body">
+            <div class="pool-name">Pure Hip Care</div>
+            <div class="pool-sub">Senior · UC-II · NASC-quality</div>
+            <div class="pool-stats">
+              <span class="pool-price">$44.00</span>
+              <span class="pool-trust">trust 78</span>
+            </div>
+          </div>
+        </a>
+        <a class="pool-card" href="#">
+          <span class="pool-tag">example</span>
+          <div class="pool-img-wrap"><img src="/assets/goldenpaw-hip-joint.png" alt="MovePet Active"></div>
+          <div class="pool-body">
+            <div class="pool-name">MovePet Active</div>
+            <div class="pool-sub">Joint mobility · cGMP</div>
+            <div class="pool-stats">
+              <span class="pool-price">$33.99</span>
+              <span class="pool-trust">trust 76</span>
+            </div>
+          </div>
+        </a>
+        <a class="pool-card" href="#">
+          <span class="pool-tag">example</span>
+          <div class="pool-img-wrap"><img src="/assets/wellpaw-hip-joint.png" alt="ZenBone Daily"></div>
+          <div class="pool-body">
+            <div class="pool-name">ZenBone Daily</div>
+            <div class="pool-sub">All-life-stage · ISO 17025</div>
+            <div class="pool-stats">
+              <span class="pool-price">$28.99</span>
+              <span class="pool-trust">trust 74</span>
+            </div>
+          </div>
+        </a>
+        <a class="pool-card" href="#">
+          <span class="pool-tag">example</span>
+          <div class="pool-img-wrap"><img src="/assets/goldenpaw-hip-joint.png" alt="FlexCanine Lab"></div>
+          <div class="pool-body">
+            <div class="pool-name">FlexCanine Lab</div>
+            <div class="pool-sub">Mobility · lot-tested · COA</div>
+            <div class="pool-stats">
+              <span class="pool-price">$46.50</span>
+              <span class="pool-trust">trust 71</span>
+            </div>
+          </div>
+        </a>
+      </div>
       <div class="pool-footer">
-        <div class="pool-pagination">Page 1 of 3 · 13 verified hip+joint brands</div>
+        <div class="pool-pagination" id="poolPagination">Page 1 of 3 · 13 verified hip+joint brands</div>
         <div class="pool-actions">
           <button class="pool-refresh" type="button">Show me more options ↻</button>
           <button class="advance-cta pool-cta" id="poolPickGreenGruff">Continue with Green Gruff EASE <span class="arrow">→</span></button>
@@ -3099,74 +3190,99 @@ async function runScene2(token) {
   }
 }
 
-// Verified Browser scene-pool with autonomous pointer journey.
-// 2026-05-24 evening (Omar review): pointer visits each of the 5 cards,
-// clicks "Show me more options", then on the second pass lands on Green
-// Gruff EASE, clicks to select, and finally hovers the "Continue with
-// Green Gruff EASE" CTA where the user takes over.
+// Verified Browser scene-pool with two-page autonomous pointer journey.
+// 2026-05-24 night (Omar review): clicking "Show me more options" used to
+// re-animate the SAME 5 cards. Now it cycles: page 1 (Green Gruff + 4
+// examples) → refresh → page 2 (5 different example brands, no Green
+// Gruff) → refresh → back to page 1 → pointer picks Green Gruff. The
+// timing is also tighter (~5.3s vs 6.5s before).
 async function runScenePool(token) {
   showScene(2);
   showScenePool();
   pointerHide();
-  await wait(700, token); if (token !== runToken) return;
+  await wait(620, token); if (token !== runToken) return;
 
-  const cards = scenePool.querySelectorAll('.pool-card');
-  const grid = scenePool.querySelector('.pool-grid');
-  const refreshBtn = scenePool.querySelector('.pool-refresh');
-  const greenGruffCard = scenePool.querySelector('.pool-card.real');
-  const ctaBtn = document.getElementById('poolPickGreenGruff');
+  const poolFrame    = scenePool.querySelector('.pool-frame');
+  const grid1        = scenePool.querySelector('.pool-grid-1');
+  const grid2        = scenePool.querySelector('.pool-grid-2');
+  const refreshBtn   = scenePool.querySelector('.pool-refresh');
+  const greenGruffCd = scenePool.querySelector('.pool-card.real');
+  const pagination   = document.getElementById('poolPagination');
+  const ctaBtn       = document.getElementById('poolPickGreenGruff');
 
-  // Clear any prior "selected" state if scene replays
-  cards.forEach(c => c.classList.remove('selected'));
+  // Reset state if scene replays
+  poolFrame.classList.remove('on-page-2');
+  grid1.querySelectorAll('.pool-card').forEach(c => c.classList.remove('selected'));
+  if (pagination) pagination.textContent = 'Page 1 of 3 · 13 verified hip+joint brands';
 
-  // First pass: pointer browses all 5 cards
-  for (let i = 0; i < cards.length; i++) {
+  // ----- PAGE 1: browse 5 cards -----
+  const page1Cards = grid1.querySelectorAll('.pool-card');
+  for (let i = 0; i < page1Cards.length; i++) {
     if (token !== runToken) return;
-    await pointerMoveTo(cards[i], i === 0 ? { fromOffscreen: true } : {});
+    await pointerMoveTo(page1Cards[i], i === 0 ? { fromOffscreen: true } : {});
     if (token !== runToken) return;
-    await wait(320, token); if (token !== runToken) return;
+    await wait(240, token); if (token !== runToken) return;
   }
 
-  // Click "Show me more options"
-  if (refreshBtn) {
-    await pointerMoveTo(refreshBtn, {});
+  // ----- Click "Show me more options" → swap to PAGE 2 -----
+  await pointerMoveTo(refreshBtn, {});
+  if (token !== runToken) return;
+  await wait(200, token); if (token !== runToken) return;
+  await pointerClick(refreshBtn);
+  sfx.click();
+  if (token !== runToken) return;
+  grid1.classList.add('refreshing');
+  await wait(360, token); if (token !== runToken) return;
+  // Mid-animation: swap which grid is visible
+  poolFrame.classList.add('on-page-2');
+  if (pagination) pagination.textContent = 'Page 2 of 3 · 13 verified hip+joint brands';
+  grid2.classList.add('refreshing');
+  await wait(380, token); if (token !== runToken) return;
+  grid1.classList.remove('refreshing');
+  grid2.classList.remove('refreshing');
+
+  // ----- PAGE 2: quicker browse of the 5 different brands -----
+  const page2Cards = grid2.querySelectorAll('.pool-card');
+  for (let i = 0; i < page2Cards.length; i++) {
+    if (token !== runToken) return;
+    await pointerMoveTo(page2Cards[i], {});
+    if (token !== runToken) return;
+    await wait(190, token); if (token !== runToken) return;
+  }
+
+  // ----- Click "Show me more options" again → cycle BACK to PAGE 1 -----
+  await pointerMoveTo(refreshBtn, {});
+  if (token !== runToken) return;
+  await wait(180, token); if (token !== runToken) return;
+  await pointerClick(refreshBtn);
+  sfx.click();
+  if (token !== runToken) return;
+  grid2.classList.add('refreshing');
+  await wait(340, token); if (token !== runToken) return;
+  poolFrame.classList.remove('on-page-2');
+  if (pagination) pagination.textContent = 'Page 1 of 3 · 13 verified hip+joint brands';
+  grid1.classList.add('refreshing');
+  await wait(360, token); if (token !== runToken) return;
+  grid1.classList.remove('refreshing');
+  grid2.classList.remove('refreshing');
+
+  // ----- Land on Green Gruff, click to select -----
+  if (greenGruffCd) {
+    await pointerMoveTo(greenGruffCd, {});
     if (token !== runToken) return;
     await wait(260, token); if (token !== runToken) return;
-    await pointerClick(refreshBtn);
+    await pointerClick(greenGruffCd);
     sfx.click();
     if (token !== runToken) return;
-    if (grid) {
-      grid.classList.add('refreshing');
-      await wait(820, token); if (token !== runToken) return;
-      grid.classList.remove('refreshing');
-    }
+    greenGruffCd.classList.add('selected');
+    await wait(440, token); if (token !== runToken) return;
   }
 
-  // Second pass: quicker browse, lands on Green Gruff
-  for (let i = 0; i < cards.length; i++) {
-    if (token !== runToken) return;
-    await pointerMoveTo(cards[i], {});
-    if (token !== runToken) return;
-    await wait(220, token); if (token !== runToken) return;
-  }
-
-  // Land on Green Gruff card and click it (select)
-  if (greenGruffCard) {
-    await pointerMoveTo(greenGruffCard, {});
-    if (token !== runToken) return;
-    await wait(280, token); if (token !== runToken) return;
-    await pointerClick(greenGruffCard);
-    sfx.click();
-    if (token !== runToken) return;
-    greenGruffCard.classList.add('selected');
-    await wait(580, token); if (token !== runToken) return;
-  }
-
-  // Hover the Continue CTA and wait for user
+  // ----- Hover the Continue CTA, hand control to user -----
   if (ctaBtn) {
     await pointerMoveTo(ctaBtn, {});
     if (token !== runToken) return;
-    await wait(1400, token); if (token !== runToken) return;
+    await wait(1200, token); if (token !== runToken) return;
     pointerHide();
   }
 }
