@@ -1592,18 +1592,36 @@ html, body {
 .scene-2b .sign-key.fail { color: #B83434; }
 .scene-2b .sign-hash.fail { color: #B83434; opacity: 0.85; }
 
-/* Placeholder tag — small, low-key, honest. Lowercase per spec. */
+/* Placeholder tag — visible honest disclosure that this part of the
+   cinematic is synthetic. 2026-05-24: bumped from 9px / very low contrast
+   to 10.5px / amber border so a skimming judge sees it. Better to
+   over-disclose than to be caught looking like we're hiding it. */
 .scene-2b .placeholder-tag {
   display: inline-block;
   margin-left: 6px;
-  padding: 1px 6px;
+  padding: 2px 7px;
   border-radius: 4px;
-  background: rgba(0, 0, 0, 0.06);
-  color: var(--g-dim);
-  font: 500 9px/1 var(--mono);
+  background: rgba(229, 165, 60, 0.10);
+  color: #8C5A12;
+  border: 1px solid rgba(229, 165, 60, 0.35);
+  font: 600 10px/1 var(--mono);
   letter-spacing: 0.08em;
   vertical-align: middle;
 }
+
+/* Visible banner at the top of the BLOCK scene's bento — fronts the
+   synthetic-content disclosure so judges see it before they scan the
+   bento. Honest framing protects from "you faked this" critique. */
+.scene-2b .synthetic-banner {
+  margin-bottom: 14px;
+  padding: 10px 14px;
+  background: rgba(229, 165, 60, 0.08);
+  border: 1px solid rgba(229, 165, 60, 0.30);
+  border-radius: 8px;
+  font: 500 12px/1.5 var(--sans);
+  color: #8C5A12;
+}
+.scene-2b .synthetic-banner b { color: #5F3A02; font-weight: 700; }
 
 /* Block banner — the "Single-agent claim. Mesh blocks it." card */
 .scene-2b .block-banner {
@@ -2032,9 +2050,9 @@ html, body {
                       <div class="head"><div class="label">Evidence match</div><div class="badge">BioMCP · PubMed</div><span class="latency" data-ms="412">412ms</span></div>
                       <div class="body stream">
                         <div class="ev-list">
-                          <div class="ev-item"><span class="pmid">PMID 32316397</span><span class="quote">Glucosamine + chondroitin in canine osteoarthritis</span><span class="tag">supports</span></div>
-                          <div class="ev-item"><span class="pmid">PMID 32855474</span><span class="quote">CBD reduces canine OA pain (Cornell, 2018-2020)</span><span class="tag">supports</span></div>
-                          <div class="ev-item"><span class="pmid">PMID 28845362</span><span class="quote">UC-II vs glucosamine comparison trial</span><span class="tag">supports</span></div>
+                          <div class="ev-item"><a class="pmid" href="https://pubmed.ncbi.nlm.nih.gov/16647870/" target="_blank" rel="noopener">PMID 16647870</a><span class="quote">Glucosamine + chondroitin RCT in canine osteoarthritis (McCarthy, 2007)</span><span class="tag">supports</span></div>
+                          <div class="ev-item"><a class="pmid" href="https://pubmed.ncbi.nlm.nih.gov/30083539/" target="_blank" rel="noopener">PMID 30083539</a><span class="quote">CBD efficacy for OA pain in dogs (Gamble, Cornell 2018)</span><span class="tag">supports</span></div>
+                          <div class="ev-item"><a class="pmid" href="https://pubmed.ncbi.nlm.nih.gov/32316397/" target="_blank" rel="noopener">PMID 32316397</a><span class="quote">UC-II joint health review in companion animals (Gencoglu, 2020)</span><span class="tag">supports</span></div>
                         </div>
                       </div>
                     </div>
@@ -2043,7 +2061,7 @@ html, body {
                       <div class="head"><div class="label">Lab certificate</div><div class="badge">Document AI</div><span class="latency" data-ms="412">412ms</span></div>
                       <div class="body stream">
                         <div class="lab-finding"><span class="lab-amount">CBD 553 mg</span> per chew, lab confirmed</div>
-                        <div class="lab-source">Real public COA from Green Gruff EASE (lot file processed live by Document AI · 37 findings extracted)</div>
+                        <div class="lab-source">Real public COA from <a href="https://cdn.shopify.com/s/files/1/0254/9661/7050/files/EASE.pdf?v=1716478485" target="_blank" rel="noopener">Green Gruff EASE</a> (lot file processed live by Document AI · 37 findings extracted)</div>
                       </div>
                     </div>
                     <div class="b-card b-vet" data-stage="vet">
@@ -2080,7 +2098,7 @@ html, body {
                       <div class="tr-seal">✓</div>
                       <div class="tr-main">
                         <div class="tr-title"><b>Verified.</b> Substantiated evidence · 0 FTC §255 flags</div>
-                        <div class="tr-anchor">sha256:26ca807353b3e8242370f7843eace8e58a6781f2fc0131009a563c1d6ace9455</div>
+                        <a class="tr-anchor" href="/pcec/v0/chain/head" target="_blank" rel="noopener" title="Open the live chain head in a new tab">sha256:26ca807353b3e8242370f7843eace8e58a6781f2fc0131009a563c1d6ace9455</a>
                       </div>
                     </div>
                   </div>
@@ -2088,7 +2106,7 @@ html, body {
 
                 <div class="post-tool-row">
                   <button class="advance-cta" id="goToRecommend">Click to see Gemini's answer <span class="arrow">→</span></button>
-                  <button class="show-block-link" id="goToBlock">Show me a claim we BLOCK</button>
+                  <a class="show-block-link" href="/agents" target="_blank" rel="noopener" title="Read the A2A reference and try the live curl">Try this on your own product →</a>
                 </div>
               </div>
             </div>
@@ -2139,6 +2157,10 @@ html, body {
                       <div class="t-sub">A2A v0.3 · 5 agents · adversarial pre-sign pass</div>
                     </div>
                     <div class="tool-use-status" id="s2b-status">BLOCKED</div>
+                  </div>
+
+                  <div class="synthetic-banner">
+                    <b>Demo composition:</b> "MaxJoint Pro" is a synthetic example brand with intentionally aggressive claims. Document AI, BioMCP PubMed lookups, Vertex AI Search, Ed25519 signing, and Firestore chain anchor are all real.
                   </div>
 
                   <div class="bento light" id="s2b-bento">
@@ -2805,11 +2827,11 @@ document.getElementById('goToPawConscious').addEventListener('click', () => play
 document.getElementById('goToRecommend').addEventListener('click', () => playScene(3));
 document.getElementById('goToVendor').addEventListener('click', () => playScene(4));
 
-// Section 4 — scene-2b sub-state navigation.
-document.getElementById('goToBlock').addEventListener('click', () => {
-  runToken += 1;
-  runScene2b(runToken);
-});
+// Path B (2026-05-24): the "Show me a claim we BLOCK" secondary button
+// was replaced by a "Try this on your own product →" anchor that links
+// to /agents. Block scene now plays as the FIRST mesh beat, so the
+// goToBlock toggle is obsolete. Handler removed; element no longer has
+// id="goToBlock".
 // Path B: scene-2b bridge CTA triggers the VERIFIED-ALTERNATIVE beat
 // (runScene2). Scene 2 then auto-advances to scene 3 at its end.
 document.getElementById('goToRecommendFromBlock').addEventListener('click', () => {
