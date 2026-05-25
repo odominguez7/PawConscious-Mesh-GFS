@@ -921,16 +921,15 @@ html, body {
   overflow: hidden;
   transition: background 320ms, border-color 320ms, box-shadow 320ms;
 }
-/* 2026-05-24: bento expanded to 3 rows to accommodate the new b-lab card
-   (Document AI third-party lab certificate ingest). Visual rhythm now reads
-   as input -> analysis -> output: claim+evidence on row 1, lab+vet+ftc on
-   row 2, signed bundle as full-width finale on row 3. */
-.bento .b-card.b-claim    { grid-column: span 2; grid-row: 1; min-height: 124px; }
-.bento .b-card.b-evidence { grid-column: span 4; grid-row: 1; min-height: 124px; }
-.bento .b-card.b-lab      { grid-column: span 2; grid-row: 2; min-height: 124px; }
-.bento .b-card.b-vet      { grid-column: span 2; grid-row: 2; min-height: 124px; }
-.bento .b-card.b-ftc      { grid-column: span 2; grid-row: 2; min-height: 124px; }
-.bento .b-card.b-sign     { grid-column: span 6; grid-row: 3; min-height: 96px; }
+/* 2026-05-24 evening: bento card heights compressed from 124px/96px to
+   104px/72px so the BLOCK scene fits one viewport without scroll. The
+   chat-thread overflow:auto stays as a fallback for small screens. */
+.bento .b-card.b-claim    { grid-column: span 2; grid-row: 1; min-height: 104px; }
+.bento .b-card.b-evidence { grid-column: span 4; grid-row: 1; min-height: 104px; }
+.bento .b-card.b-lab      { grid-column: span 2; grid-row: 2; min-height: 104px; }
+.bento .b-card.b-vet      { grid-column: span 2; grid-row: 2; min-height: 104px; }
+.bento .b-card.b-ftc      { grid-column: span 2; grid-row: 2; min-height: 104px; }
+.bento .b-card.b-sign     { grid-column: span 6; grid-row: 3; min-height: 72px; }
 
 .bento .b-card.active {
   background: var(--pc-bg-card-lit);
@@ -1663,6 +1662,12 @@ html, body {
 .scene-2b { display: none; }
 .scene-2b.active { display: block; }
 
+/* 2026-05-24 evening: scene-3 (Gemini recommendation) is no longer
+   shown in the cinematic. The HTML stays in the DOM for runners-array
+   contract continuity but never renders. The Verified Browser scene
+   carries the brand-choice beat scene-3 used to convey. */
+.scene-3 { display: none !important; }
+
 /* SCENE POOL (2026-05-24): Verified Browser. Plays after BLOCK, before
  * VERIFY. Marketplace-style visual grid of verified alternatives. Sub-
  * state of scene-2 (no dedicated dot in the navigation). */
@@ -1751,6 +1756,43 @@ html, body {
 }
 .pool-refresh:hover { border-color: var(--pc-moss); color: var(--pc-moss); }
 
+/* 2026-05-24 evening: pool primary CTA gets the rainbow gradient that
+   matches the cinematic's other primary CTAs (was rendering as a flat
+   dark button because .advance-cta gradient was scoped to .post-tool-row). */
+.pool-actions .pool-cta,
+.pool-actions .advance-cta {
+  display: inline-flex; align-items: center; gap: 10px;
+  background: var(--g-grad); color: #FFF;
+  font: 600 13px var(--sans);
+  padding: 11px 20px;
+  border: 0; border-radius: 100px;
+  cursor: pointer;
+  box-shadow: 0 8px 22px rgba(155,114,203,0.30);
+  transition: transform 200ms, box-shadow 200ms, filter 200ms;
+}
+.pool-actions .pool-cta:hover { transform: translateY(-1px); filter: brightness(1.05); }
+.pool-actions .pool-cta .arrow { transition: transform 200ms; }
+.pool-actions .pool-cta:hover .arrow { transform: translateX(3px); }
+
+/* Card "selected" state after the pointer clicks it during the autonomous
+   pool journey. Pulses briefly to communicate "this is what we picked". */
+.pool-card.selected {
+  border-color: var(--pc-moss);
+  box-shadow: 0 0 0 2px rgba(99, 154, 96, 0.35), 0 12px 28px rgba(99, 154, 96, 0.18);
+  transform: translateY(-2px);
+}
+
+/* Grid refresh state — quick fade-out then in to suggest "new feed loaded" */
+.pool-grid.refreshing {
+  animation: poolRefresh 800ms ease;
+}
+@keyframes poolRefresh {
+  0%   { opacity: 1; transform: translateY(0); }
+  35%  { opacity: 0.35; transform: translateY(6px); }
+  65%  { opacity: 0.35; transform: translateY(-6px); }
+  100% { opacity: 1; transform: translateY(0); }
+}
+
 @media (max-width: 980px) {
   .pool-grid { grid-template-columns: repeat(2, 1fr); }
 }
@@ -1804,45 +1846,46 @@ html, body {
   vertical-align: middle;
 }
 
-/* Visible banner at the top of the BLOCK scene's bento — fronts the
-   synthetic-content disclosure so judges see it before they scan the
-   bento. Honest framing protects from "you faked this" critique. */
+/* Synthetic-content disclosure banner. 2026-05-24 evening: compressed
+   to free vertical space on the BLOCK scene so it fits one viewport. */
 .scene-2b .synthetic-banner {
-  margin-bottom: 14px;
-  padding: 10px 14px;
+  margin-bottom: 10px;
+  padding: 7px 12px;
   background: rgba(229, 165, 60, 0.08);
   border: 1px solid rgba(229, 165, 60, 0.30);
-  border-radius: 8px;
-  font: 500 12px/1.5 var(--sans);
+  border-radius: 6px;
+  font: 500 11px/1.45 var(--sans);
   color: #8C5A12;
 }
 .scene-2b .synthetic-banner b { color: #5F3A02; font-weight: 700; }
 
 /* Block banner — the "Single-agent claim. Mesh blocks it." card */
+/* 2026-05-24 evening: block-banner compressed. Smaller seal, tighter
+   padding, smaller body font. Frees vertical space for the CTA below. */
 .scene-2b .block-banner {
-  margin-top: 16px;
-  padding: 16px 18px;
+  margin-top: 12px;
+  padding: 11px 14px;
   background: linear-gradient(180deg, #FFF8F8 0%, #FFF 100%);
   border: 1px solid rgba(229, 80, 80, 0.22);
   border-left: 3px solid #E55050;
-  border-radius: 10px;
+  border-radius: 8px;
   display: grid;
   grid-template-columns: auto 1fr;
-  gap: 14px;
+  gap: 12px;
   align-items: center;
 }
 .scene-2b .block-banner .seal {
-  width: 36px; height: 36px; border-radius: 18px;
+  width: 28px; height: 28px; border-radius: 14px;
   background: #E55050; color: #fff;
   display: flex; align-items: center; justify-content: center;
-  font: 700 18px/1 var(--sans);
+  font: 700 16px/1 var(--sans);
 }
 .scene-2b .block-banner .copy {
-  font: 500 14px/1.5 var(--sans); color: var(--g-text);
+  font: 500 12.5px/1.5 var(--sans); color: var(--g-text);
 }
 .scene-2b .block-banner .headline {
-  font: 700 15px/1.4 var(--sans); color: #B83434;
-  margin-bottom: 4px;
+  font: 700 13.5px/1.4 var(--sans); color: #B83434;
+  margin-bottom: 3px;
 }
 .scene-2b .block-banner .replacement {
   margin-top: 6px;
@@ -2584,8 +2627,8 @@ html, body {
       <div class="pool-footer">
         <div class="pool-pagination">Page 1 of 3 · 13 verified hip+joint brands</div>
         <div class="pool-actions">
-          <button class="pool-refresh" type="button">Refresh feed ↻</button>
-          <button class="advance-cta" id="poolPickGreenGruff">Verify Green Gruff EASE <span class="arrow">→</span></button>
+          <button class="pool-refresh" type="button">Show me more options ↻</button>
+          <button class="advance-cta pool-cta" id="poolPickGreenGruff">Continue with Green Gruff EASE <span class="arrow">→</span></button>
         </div>
       </div>
     </div>
@@ -2781,10 +2824,14 @@ html, body {
 <div class="controls">
   <button class="btn" id="prevBtn" title="Previous (←)">‹ Prev</button>
   <div class="dots" id="dots">
+    <!-- 2026-05-24 evening: scene-3 dot removed because the Gemini
+         recommendation scene was eliminated. The 4 visible beats now map
+         to data-jump indices 0, 1, 2, 4 (with index 3 hidden as a
+         pass-through). showScene uses data-jump (not array index) to
+         set the active dot. -->
     <div class="dot" data-jump="0"></div>
     <div class="dot" data-jump="1"></div>
     <div class="dot" data-jump="2"></div>
-    <div class="dot" data-jump="3"></div>
     <div class="dot" data-jump="4"></div>
   </div>
   <button class="btn" id="nextBtn" title="Next (→ or space)">Next ›</button>
@@ -2868,13 +2915,17 @@ function setWorld(scene) { stage.setAttribute('data-world', SCENE_WORLD[scene] |
 function showScene(n) {
   currentScene = n;
   Object.entries(scenes).forEach(([k, el]) => { el.classList.toggle('active', Number(k) === n); });
-  // Section 4: any showScene call clears the scene-2b sub-state.
+  // Sub-state activators are mutually exclusive with the main scene index.
   if (scene2b) scene2b.classList.remove('active');
+  if (scenePool) scenePool.classList.remove('active');
   setWorld(n);
-  dots.forEach((d, i) => {
+  // 2026-05-24: dots use data-jump (not array index) because scene-3 dot
+  // was removed when the Gemini recommendation scene was eliminated.
+  dots.forEach((d) => {
+    const idx = parseInt(d.dataset.jump, 10);
     d.classList.remove('active', 'done');
-    if (i < n) d.classList.add('done');
-    else if (i === n) d.classList.add('active');
+    if (idx < n) d.classList.add('done');
+    else if (idx === n) d.classList.add('active');
   });
 }
 
@@ -3048,19 +3099,72 @@ async function runScene2(token) {
   }
 }
 
-// 2026-05-24 evening: Verified Browser scene-pool. Plays AFTER BLOCK,
-// when the user clicks "See verified alternatives →" on the block scene.
-// Shows the marketplace-style grid of verified hip+joint brands. User
-// picks one (auto-pointer-hint on Green Gruff) → runs runScene2 (verify
-// bento on the picked brand).
+// Verified Browser scene-pool with autonomous pointer journey.
+// 2026-05-24 evening (Omar review): pointer visits each of the 5 cards,
+// clicks "Show me more options", then on the second pass lands on Green
+// Gruff EASE, clicks to select, and finally hovers the "Continue with
+// Green Gruff EASE" CTA where the user takes over.
 async function runScenePool(token) {
   showScene(2);
   showScenePool();
   pointerHide();
-  await wait(900, token); if (token !== runToken) return;
+  await wait(700, token); if (token !== runToken) return;
+
+  const cards = scenePool.querySelectorAll('.pool-card');
+  const grid = scenePool.querySelector('.pool-grid');
+  const refreshBtn = scenePool.querySelector('.pool-refresh');
+  const greenGruffCard = scenePool.querySelector('.pool-card.real');
   const ctaBtn = document.getElementById('poolPickGreenGruff');
+
+  // Clear any prior "selected" state if scene replays
+  cards.forEach(c => c.classList.remove('selected'));
+
+  // First pass: pointer browses all 5 cards
+  for (let i = 0; i < cards.length; i++) {
+    if (token !== runToken) return;
+    await pointerMoveTo(cards[i], i === 0 ? { fromOffscreen: true } : {});
+    if (token !== runToken) return;
+    await wait(320, token); if (token !== runToken) return;
+  }
+
+  // Click "Show me more options"
+  if (refreshBtn) {
+    await pointerMoveTo(refreshBtn, {});
+    if (token !== runToken) return;
+    await wait(260, token); if (token !== runToken) return;
+    await pointerClick(refreshBtn);
+    sfx.click();
+    if (token !== runToken) return;
+    if (grid) {
+      grid.classList.add('refreshing');
+      await wait(820, token); if (token !== runToken) return;
+      grid.classList.remove('refreshing');
+    }
+  }
+
+  // Second pass: quicker browse, lands on Green Gruff
+  for (let i = 0; i < cards.length; i++) {
+    if (token !== runToken) return;
+    await pointerMoveTo(cards[i], {});
+    if (token !== runToken) return;
+    await wait(220, token); if (token !== runToken) return;
+  }
+
+  // Land on Green Gruff card and click it (select)
+  if (greenGruffCard) {
+    await pointerMoveTo(greenGruffCard, {});
+    if (token !== runToken) return;
+    await wait(280, token); if (token !== runToken) return;
+    await pointerClick(greenGruffCard);
+    sfx.click();
+    if (token !== runToken) return;
+    greenGruffCard.classList.add('selected');
+    await wait(580, token); if (token !== runToken) return;
+  }
+
+  // Hover the Continue CTA and wait for user
   if (ctaBtn) {
-    await pointerMoveTo(ctaBtn, { fromOffscreen: true });
+    await pointerMoveTo(ctaBtn, {});
     if (token !== runToken) return;
     await wait(1400, token); if (token !== runToken) return;
     pointerHide();
@@ -3102,18 +3206,13 @@ async function runScene2b(token) {
   }
 }
 
-// Scene 3: Gemini's brief recommendation. 2026-05-24 Omar review: the
-// scene now compresses to a 2.4s transition beat that auto-advances into
-// scene 4 (vendor page). Verified bento was the user's last manual click;
-// from here the cinematic flows automatically. No "Open Green Gruff →"
-// click needed.
+// Scene 3 (Gemini recommendation) removed from the cinematic per Omar
+// 2026-05-24 evening review. Pass-through to runScene4 (vendor page +
+// checkout). The Verified Browser scene now carries the brand-choice
+// beat the recommendation scene used to convey. Scene-3 HTML stays in
+// the DOM but is hidden via CSS to keep the runners array contract
+// and not break the dot navigation indexing for older bookmarks.
 async function runScene3(token) {
-  showScene(3);
-  scenes[3].classList.remove('show-reco');
-  pointerHide();
-  await wait(380, token); if (token !== runToken) return;
-  scenes[3].classList.add('show-reco');
-  await wait(2400, token); if (token !== runToken) return;
   runScene4(token);
 }
 
@@ -3240,7 +3339,9 @@ function restart() { playScene(0); }
 document.getElementById('prevBtn').addEventListener('click', prev);
 document.getElementById('nextBtn').addEventListener('click', next);
 document.getElementById('replayBtn').addEventListener('click', restart);
-dots.forEach((d, i) => d.addEventListener('click', () => playScene(i)));
+// 2026-05-24: dot click uses data-jump (not array index) since scene-3 dot
+// was removed. Dot at array index 3 now jumps to scene 4 via data-jump=4.
+dots.forEach((d) => d.addEventListener('click', () => playScene(parseInt(d.dataset.jump, 10))));
 
 // Submit button inside scene 0 (Gemini input) advances to scene 1.
 // First plays the dive-in zoom (Chrome window fills the viewport, macOS +
