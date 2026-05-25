@@ -1521,6 +1521,95 @@ html, body {
   margin-top: 1px;
 }
 .confirm-block .pc-footer b { color: var(--pc-moss); }
+
+/* Model B (2026-05-24 prototype): dual-signed PCEC purchase receipt.
+   Auto-renders after the confirmation. Styled as a Stripe-style receipt
+   with a PawConscious co-sign section at the bottom. */
+.receipt-card {
+  display: none;
+  margin-top: 22px;
+  padding: 22px 24px;
+  background: #FFF;
+  border: 1px solid var(--v-line);
+  border-radius: 12px;
+  box-shadow: 0 6px 20px rgba(0,0,0,0.04);
+  text-align: left;
+  opacity: 0; transform: translateY(8px);
+  transition: opacity 480ms 220ms, transform 480ms 220ms;
+}
+.scene-4.confirmed .receipt-card { display: block; opacity: 1; transform: translateY(0); }
+.receipt-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 18px; }
+.receipt-brand { display: flex; align-items: center; gap: 10px; }
+.receipt-logo { width: 22px; height: 22px; }
+.receipt-title { font: 700 14px var(--sans); color: var(--v-text); letter-spacing: -0.005em; }
+.receipt-sub { font: 500 11.5px var(--mono); color: var(--v-dim); letter-spacing: 0.04em; margin-top: 2px; }
+.receipt-stripe {
+  font: 600 10px var(--mono); letter-spacing: 0.18em; text-transform: uppercase;
+  color: #635BFF;
+  padding: 5px 10px;
+  background: rgba(99, 91, 255, 0.08);
+  border-radius: 5px;
+}
+.receipt-lines { border-top: 1px solid var(--v-line); padding-top: 12px; }
+.receipt-line {
+  display: flex; justify-content: space-between;
+  font: 500 13px var(--sans); color: var(--v-text);
+  padding: 6px 0;
+}
+.receipt-line.total {
+  margin-top: 6px; padding-top: 12px;
+  border-top: 1px solid var(--v-line);
+  font-weight: 700;
+}
+.receipt-pc {
+  margin-top: 18px; padding: 16px 18px;
+  background: rgba(99, 154, 96, 0.05);
+  border: 1px solid rgba(99, 154, 96, 0.22);
+  border-radius: 10px;
+}
+.receipt-pc-row { display: flex; gap: 12px; align-items: flex-start; }
+.receipt-pc-seal {
+  flex-shrink: 0;
+  width: 22px; height: 22px;
+  background: var(--pc-moss);
+  color: #FFF;
+  display: flex; align-items: center; justify-content: center;
+  border-radius: 50%;
+  font: 700 12px var(--sans);
+}
+.receipt-pc-copy { flex: 1; }
+.receipt-pc-title { font: 600 13px var(--sans); color: var(--v-text); margin-bottom: 4px; }
+.receipt-pc-title b { color: var(--pc-moss); }
+.receipt-pc-line { font: 400 12px/1.5 var(--sans); color: var(--v-dim); }
+.receipt-pc-anchor {
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: 1px dashed rgba(99, 154, 96, 0.25);
+  display: flex; align-items: baseline; gap: 8px; flex-wrap: wrap;
+}
+.receipt-pc-anchor .anchor-label {
+  font: 600 9.5px var(--mono); letter-spacing: 0.18em; text-transform: uppercase;
+  color: var(--pc-moss);
+}
+.receipt-pc-anchor .anchor-value {
+  font: 500 11px var(--mono); color: var(--v-dim);
+  word-break: break-all;
+}
+.receipt-pc-actions {
+  margin-top: 12px;
+  display: flex; justify-content: space-between; align-items: center;
+  flex-wrap: wrap; gap: 10px;
+}
+.receipt-action {
+  font: 600 11.5px var(--mono); letter-spacing: 0.06em;
+  color: var(--pc-moss);
+  text-decoration: none;
+}
+.receipt-action:hover { text-decoration: underline; }
+.receipt-disclosure {
+  font: 500 10px var(--mono); letter-spacing: 0.04em;
+  color: var(--v-dim);
+}
 .confirm-block .pc-footer .anchor {
   display: block; margin-top: 4px;
   font: 500 10px/1.4 var(--mono); color: var(--v-dim);
@@ -1573,6 +1662,101 @@ html, body {
  * =========================================================== */
 .scene-2b { display: none; }
 .scene-2b.active { display: block; }
+
+/* SCENE POOL (2026-05-24): Verified Browser. Plays after BLOCK, before
+ * VERIFY. Marketplace-style visual grid of verified alternatives. Sub-
+ * state of scene-2 (no dedicated dot in the navigation). */
+.scene-pool { display: none; background: #FAFAFB; }
+.scene-pool.active { display: flex; align-items: center; justify-content: center; padding: 32px 24px; }
+.pool-frame {
+  width: 100%; max-width: 1080px;
+  background: #FFF;
+  border: 1px solid var(--g-line);
+  border-radius: 14px;
+  padding: 28px 32px 24px;
+  box-shadow: 0 12px 40px rgba(0,0,0,0.05);
+}
+.pool-chrome { display: flex; justify-content: space-between; align-items: baseline; gap: 16px; margin-bottom: 22px; flex-wrap: wrap; }
+.pool-mark { display: flex; align-items: center; gap: 8px; font: 600 14px var(--sans); color: var(--g-text); }
+.pool-mark .star { width: 16px; height: 16px; }
+.pool-mark b { font-weight: 700; }
+.pool-meta { font: 500 11.5px var(--mono); color: var(--g-dim); letter-spacing: 0.04em; }
+.pool-meta .pool-sep { margin: 0 6px; }
+.pool-meta .pool-disclosure { color: var(--g-dim); }
+.pool-grid {
+  display: grid; grid-template-columns: repeat(5, 1fr); gap: 14px;
+}
+.pool-card {
+  position: relative;
+  background: #FFF;
+  border: 1px solid var(--g-line);
+  border-radius: 10px;
+  padding: 12px;
+  text-decoration: none; color: inherit;
+  display: flex; flex-direction: column;
+  transition: all 0.18s ease;
+  cursor: pointer;
+}
+.pool-card:hover {
+  border-color: var(--pc-moss);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 22px rgba(99, 154, 96, 0.12);
+}
+.pool-card.real {
+  border-color: rgba(99, 154, 96, 0.6);
+  background: linear-gradient(180deg, rgba(99, 154, 96, 0.05), #FFF 40%);
+  box-shadow: 0 0 0 1px rgba(99, 154, 96, 0.22);
+}
+.pool-img-wrap {
+  height: 110px;
+  background: linear-gradient(135deg, #FBF7EE 0%, #F2EBDD 100%);
+  border-radius: 7px;
+  display: flex; align-items: center; justify-content: center;
+  overflow: hidden;
+  margin-bottom: 10px;
+}
+.pool-img-wrap img { max-height: 100%; max-width: 100%; object-fit: contain; }
+.pool-body { display: flex; flex-direction: column; flex: 1; }
+.pool-name { font: 600 13px var(--sans); color: var(--g-text); margin-bottom: 3px; }
+.pool-sub { font: 400 11px/1.4 var(--sans); color: var(--g-dim); margin-bottom: 10px; flex: 1; }
+.pool-stats { display: flex; justify-content: space-between; align-items: baseline; font: 600 11.5px var(--mono); }
+.pool-stats .pool-price { color: var(--g-text); }
+.pool-stats .pool-trust { color: var(--pc-moss); font-weight: 600; }
+.pool-card .pool-tag {
+  position: absolute; top: 8px; right: 8px;
+  font: 600 8.5px var(--mono);
+  color: #8C5A12;
+  background: rgba(229, 165, 60, 0.10);
+  border: 1px solid rgba(229, 165, 60, 0.32);
+  padding: 2px 5px; border-radius: 3px;
+  letter-spacing: 0.06em;
+  z-index: 2;
+}
+.pool-footer {
+  margin-top: 22px;
+  display: flex; justify-content: space-between; align-items: center; gap: 16px; flex-wrap: wrap;
+}
+.pool-pagination { font: 500 11px var(--mono); color: var(--g-dim); letter-spacing: 0.04em; }
+.pool-actions { display: flex; gap: 10px; align-items: center; }
+.pool-refresh {
+  padding: 8px 14px;
+  background: transparent;
+  border: 1px solid var(--g-line);
+  border-radius: 6px;
+  font: 500 11.5px var(--mono);
+  color: var(--g-muted);
+  letter-spacing: 0.04em;
+  cursor: pointer;
+  transition: all 0.18s ease;
+}
+.pool-refresh:hover { border-color: var(--pc-moss); color: var(--pc-moss); }
+
+@media (max-width: 980px) {
+  .pool-grid { grid-template-columns: repeat(2, 1fr); }
+}
+@media (max-width: 600px) {
+  .pool-grid { grid-template-columns: 1fr; }
+}
 
 /* Header status pill for BLOCKED */
 .scene-2b .tool-use-card .tool-use-status {
@@ -2303,49 +2487,10 @@ html, body {
                       No PubMed evidence backs "reverses arthritis in 7 days" or "1000% absorption" in canine glucosamine. The brand publishes no lab Certificate of Analysis. The bundle does not get signed.
                     </div>
                   </div>
-
-                  <div class="verified-pool">
-                    <div class="vp-head">
-                      <span class="vp-eyebrow">Verified hip+joint pool</span>
-                      <span class="vp-disclosure">1 real public-COA brand + 4 synthetic examples for demo</span>
-                    </div>
-                    <div class="vp-grid">
-                      <a class="vp-card real" href="#" id="vp-greengruff">
-                        <div class="vp-name">Green Gruff EASE</div>
-                        <div class="vp-meta">Joint &amp; Hip · public COA</div>
-                        <div class="vp-stats"><span>$54.99</span><span class="trust">trust 94</span></div>
-                      </a>
-                      <a class="vp-card" href="#">
-                        <div class="vp-name">Wellpaw Mobility</div>
-                        <div class="vp-meta">Hip+Joint · published lab</div>
-                        <div class="vp-stats"><span>$42.99</span><span class="trust">trust 91</span></div>
-                        <span class="vp-tag">example</span>
-                      </a>
-                      <a class="vp-card" href="#">
-                        <div class="vp-name">PetTrust Senior</div>
-                        <div class="vp-meta">NSF-certified</div>
-                        <div class="vp-stats"><span>$48.50</span><span class="trust">trust 88</span></div>
-                        <span class="vp-tag">example</span>
-                      </a>
-                      <a class="vp-card" href="#">
-                        <div class="vp-name">Vital Paws</div>
-                        <div class="vp-meta">Inflammation · 3rd-party lab</div>
-                        <div class="vp-stats"><span>$36.50</span><span class="trust">trust 85</span></div>
-                        <span class="vp-tag">example</span>
-                      </a>
-                      <a class="vp-card" href="#">
-                        <div class="vp-name">Calm Joint Pro</div>
-                        <div class="vp-meta">Mobility · ISO 17025</div>
-                        <div class="vp-stats"><span>$51.99</span><span class="trust">trust 82</span></div>
-                        <span class="vp-tag">example</span>
-                      </a>
-                    </div>
-                    <button class="vp-more">See 8 more verified brands →</button>
-                  </div>
                 </div>
 
                 <div class="post-tool-row">
-                  <button class="advance-cta" id="goToRecommendFromBlock">Verify Green Gruff EASE <span class="arrow">→</span></button>
+                  <button class="advance-cta" id="goToRecommendFromBlock">See verified alternatives <span class="arrow">→</span></button>
                   <button class="advance-cta secondary" id="backToVerified">← Re-read the block</button>
                 </div>
               </div>
@@ -2353,6 +2498,96 @@ html, body {
           </div>
         </div>
       </main>
+    </div>
+  </section>
+
+  <!-- =========================================================
+       SCENE POOL (new 2026-05-24) — Verified Browser.
+       Sub-state of scene-2, plays after scene-2b BLOCK. Shows the
+       verified alternatives in a visual marketplace-style grid
+       before the user picks one to re-verify.
+       ========================================================= -->
+  <section class="scene scene-pool" data-scene="pool">
+    <div class="pool-frame">
+      <div class="pool-chrome">
+        <div class="pool-mark">
+          <svg class="star" viewBox="0 0 24 24" fill="url(#gstarGrad)"><path d="M12 2 L14 10 L22 12 L14 14 L12 22 L10 14 L2 12 L10 10 Z"/></svg>
+          <span class="pool-mark-text"><b>PawConscious</b> · verified hip+joint chews</span>
+        </div>
+        <div class="pool-meta">
+          <span>Ranked by trust score</span>
+          <span class="pool-sep">·</span>
+          <span class="pool-disclosure">1 real public-COA brand + 4 synthetic examples for demo</span>
+        </div>
+      </div>
+      <div class="pool-grid">
+        <a class="pool-card real" href="#" id="pool-greengruff">
+          <div class="pool-img-wrap"><img src="/assets/native-pet-hip-joint-alt-warm.png" alt="Green Gruff EASE"></div>
+          <div class="pool-body">
+            <div class="pool-name">Green Gruff EASE</div>
+            <div class="pool-sub">Joint &amp; Hip · public COA</div>
+            <div class="pool-stats">
+              <span class="pool-price">$54.99</span>
+              <span class="pool-trust">trust 94</span>
+            </div>
+          </div>
+        </a>
+        <a class="pool-card" href="#">
+          <span class="pool-tag">example</span>
+          <div class="pool-img-wrap"><img src="/assets/wellpaw-hip-joint.png" alt="Wellpaw Mobility"></div>
+          <div class="pool-body">
+            <div class="pool-name">Wellpaw Mobility</div>
+            <div class="pool-sub">Hip+Joint · published lab</div>
+            <div class="pool-stats">
+              <span class="pool-price">$42.99</span>
+              <span class="pool-trust">trust 91</span>
+            </div>
+          </div>
+        </a>
+        <a class="pool-card" href="#">
+          <span class="pool-tag">example</span>
+          <div class="pool-img-wrap"><img src="/assets/goldenpaw-hip-joint.png" alt="PetTrust Senior"></div>
+          <div class="pool-body">
+            <div class="pool-name">PetTrust Senior</div>
+            <div class="pool-sub">NSF-certified</div>
+            <div class="pool-stats">
+              <span class="pool-price">$48.50</span>
+              <span class="pool-trust">trust 88</span>
+            </div>
+          </div>
+        </a>
+        <a class="pool-card" href="#">
+          <span class="pool-tag">example</span>
+          <div class="pool-img-wrap"><img src="/assets/wellpaw-hip-joint.png" alt="Vital Paws"></div>
+          <div class="pool-body">
+            <div class="pool-name">Vital Paws</div>
+            <div class="pool-sub">Inflammation · 3rd-party lab</div>
+            <div class="pool-stats">
+              <span class="pool-price">$36.50</span>
+              <span class="pool-trust">trust 85</span>
+            </div>
+          </div>
+        </a>
+        <a class="pool-card" href="#">
+          <span class="pool-tag">example</span>
+          <div class="pool-img-wrap"><img src="/assets/goldenpaw-hip-joint.png" alt="Calm Joint Pro"></div>
+          <div class="pool-body">
+            <div class="pool-name">Calm Joint Pro</div>
+            <div class="pool-sub">Mobility · ISO 17025</div>
+            <div class="pool-stats">
+              <span class="pool-price">$51.99</span>
+              <span class="pool-trust">trust 82</span>
+            </div>
+          </div>
+        </a>
+      </div>
+      <div class="pool-footer">
+        <div class="pool-pagination">Page 1 of 3 · 13 verified hip+joint brands</div>
+        <div class="pool-actions">
+          <button class="pool-refresh" type="button">Refresh feed ↻</button>
+          <button class="advance-cta" id="poolPickGreenGruff">Verify Green Gruff EASE <span class="arrow">→</span></button>
+        </div>
+      </div>
     </div>
   </section>
 
@@ -2471,6 +2706,60 @@ html, body {
             </div>
           </div>
         </div>
+
+        <!-- Model B (2026-05-24 roadmap prototype): dual-signed PCEC purchase
+             receipt. Auto-renders after the confirmation. The brand emits a
+             signed receipt referencing the verified claim bundle; the buyer
+             keeps it as warranty/return/dispute evidence. -->
+        <div class="receipt-card" id="receiptCard">
+          <div class="receipt-head">
+            <div class="receipt-brand">
+              <svg class="receipt-logo" viewBox="0 0 24 24" fill="none">
+                <path d="M12 2 L14 10 L22 12 L14 14 L12 22 L10 14 L2 12 L10 10 Z" fill="#9B72CB"/>
+              </svg>
+              <div>
+                <div class="receipt-title">Receipt</div>
+                <div class="receipt-sub">Green Gruff · order #GG-26-2814</div>
+              </div>
+            </div>
+            <div class="receipt-stripe">via stripe</div>
+          </div>
+          <div class="receipt-lines">
+            <div class="receipt-line">
+              <span>EASE · Joint &amp; Hip · 30 chews</span>
+              <span>$54.99</span>
+            </div>
+            <div class="receipt-line">
+              <span>Shipping</span>
+              <span>Free</span>
+            </div>
+            <div class="receipt-line">
+              <span>Tax</span>
+              <span>$4.36</span>
+            </div>
+            <div class="receipt-line total">
+              <span>Total charged · card •••• 4242</span>
+              <span>$59.35</span>
+            </div>
+          </div>
+          <div class="receipt-pc">
+            <div class="receipt-pc-row">
+              <span class="receipt-pc-seal">✓</span>
+              <div class="receipt-pc-copy">
+                <div class="receipt-pc-title"><b>PawConscious</b> co-signed this receipt.</div>
+                <div class="receipt-pc-line">Claims verified at sale time. Lab certificate matched. FTC §255 clear. Keep this receipt for warranty, returns, or dispute defense.</div>
+              </div>
+            </div>
+            <div class="receipt-pc-anchor">
+              <span class="anchor-label">chain anchor</span>
+              <span class="anchor-value">sha256:26ca807353b3e8242370f7843eace8e58a6781f2fc0131009a563c1d6ace9455</span>
+            </div>
+            <div class="receipt-pc-actions">
+              <a class="receipt-action" href="/pcec/v0/chain/head" target="_blank" rel="noopener">View the signed bundle ↗</a>
+              <span class="receipt-disclosure">Model B prototype · per-receipt fee paid by Green Gruff</span>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   </section>
@@ -2567,6 +2856,7 @@ const scenes = {
 };
 // Section 4 — scene-2b sibling. Not in the dots/runners array; sub-state of scene 2.
 const scene2b = document.querySelector('.scene-2b');
+const scenePool = document.querySelector('.scene-pool');
 const dots = Array.from(document.querySelectorAll('[data-jump]'));
 const SCENE_WORLD = { 0:'llm', 1:'llm', 2:'llm', 3:'llm', 4:'vendor' };
 
@@ -2593,9 +2883,20 @@ function showScene(n) {
 function showScene2b() {
   if (!scene2b) return;
   scenes[2].classList.remove('active');
+  if (scenePool) scenePool.classList.remove('active');
   scene2b.classList.add('active');
   setWorld(2);
   // Dot 2 stays "active" — scene-2b is sub-state, no dedicated dot.
+}
+
+// 2026-05-24: Verified Browser sub-state. Plays after BLOCK, before
+// VERIFY. Same dot-state pattern as scene-2b.
+function showScenePool() {
+  if (!scenePool) return;
+  scenes[2].classList.remove('active');
+  if (scene2b) scene2b.classList.remove('active');
+  scenePool.classList.add('active');
+  setWorld(2);
 }
 
 function wait(ms, token) {
@@ -2747,10 +3048,29 @@ async function runScene2(token) {
   }
 }
 
+// 2026-05-24 evening: Verified Browser scene-pool. Plays AFTER BLOCK,
+// when the user clicks "See verified alternatives →" on the block scene.
+// Shows the marketplace-style grid of verified hip+joint brands. User
+// picks one (auto-pointer-hint on Green Gruff) → runs runScene2 (verify
+// bento on the picked brand).
+async function runScenePool(token) {
+  showScene(2);
+  showScenePool();
+  pointerHide();
+  await wait(900, token); if (token !== runToken) return;
+  const ctaBtn = document.getElementById('poolPickGreenGruff');
+  if (ctaBtn) {
+    await pointerMoveTo(ctaBtn, { fromOffscreen: true });
+    if (token !== runToken) return;
+    await wait(1400, token); if (token !== runToken) return;
+    pointerHide();
+  }
+}
+
 // Path B (2026-05-24): scene-2b BLOCK is now the FIRST mesh beat. After the
-// block lands, the bridge UI ("Verify the recommended brand") surfaces and
-// the pointer hints toward it. User clicks → runScene2 (verified Green Gruff
-// EASE alternative) plays next. Per-card cadence unchanged so the visual
+// block lands, the bridge UI ("See verified alternatives") surfaces and
+// the pointer hints toward it. User clicks → runScenePool → user picks →
+// runScene2 (verify bento). Per-card cadence unchanged so the visual
 // rhythm matches scene-2.
 async function runScene2b(token) {
   // Path B: scene-2b runs as the primary scene-2 beat. showScene(2) first
@@ -2946,12 +3266,22 @@ document.getElementById('goToVendor').addEventListener('click', () => playScene(
 // to /agents. Block scene now plays as the FIRST mesh beat, so the
 // goToBlock toggle is obsolete. Handler removed; element no longer has
 // id="goToBlock".
-// Path B: scene-2b bridge CTA triggers the VERIFIED-ALTERNATIVE beat
-// (runScene2). Scene 2 then auto-advances to scene 3 at its end.
+// Path B + Pool (2026-05-24): block scene's "See verified alternatives"
+// CTA opens the Verified Browser. The browser's "Verify Green Gruff EASE"
+// CTA then triggers the VERIFIED-ALTERNATIVE beat. Two clicks total
+// between BLOCK and VERIFY, surfacing the choice moment.
 document.getElementById('goToRecommendFromBlock').addEventListener('click', () => {
   runToken += 1;
-  runScene2(runToken);
+  runScenePool(runToken);
 });
+const poolPickBtn = document.getElementById('poolPickGreenGruff');
+if (poolPickBtn) {
+  poolPickBtn.addEventListener('click', (e) => {
+    e.preventDefault();
+    runToken += 1;
+    runScene2(runToken);
+  });
+}
 document.getElementById('backToVerified').addEventListener('click', () => {
   // Return to scene-2 in its completed/verified state without rerunning the
   // bento animation. Keeps the trust-report visible.
