@@ -313,6 +313,14 @@
     text-transform: uppercase;
     color: var(--electric);
   }
+  /* 2026-05-25 night · readiness-check subline · brand-owner one-liner.
+     Sits between the eyebrow and the URL input so the section earns its
+     real estate the moment a visitor lands. */
+  .vw-subline {
+    font: 500 12.5px/1.45 'Geist', ui-sans-serif, system-ui, sans-serif;
+    color: var(--muted);
+    margin-top: -4px;
+  }
   .vw-input-row {
     display: flex; gap: 8px;
   }
@@ -492,6 +500,22 @@
     color: var(--ink);
     opacity: 0.86;
   }
+  /* Visible-tier upsell · shown only when the verdict is PASS (clean).
+     If there are issues the verdict-cta below the summary handles the
+     action path. Don't double-CTA. */
+  .verdict-upsell {
+    display: none;
+    margin-top: 9px;
+    font: 500 11.5px/1 'JetBrains Mono', ui-monospace, monospace;
+    letter-spacing: 0.04em;
+    color: var(--moss-glow);
+    text-decoration: none;
+    border-bottom: 1px dashed currentColor;
+    width: fit-content;
+    transition: color 180ms;
+  }
+  .verdict-upsell:hover { color: var(--electric); }
+  .verdict-panel[data-status="pass"] .verdict-upsell { display: inline-block; }
 
   .verdict-summary {
     display: flex; flex-direction: column; gap: 8px;
@@ -1736,20 +1760,27 @@
          ================================================================= -->
     <div class="bundle-card" aria-label="PawConscious signed bundle · live verifier">
 
-      <!-- VERIFY WIDGET -->
+      <!-- AI-AGENT READINESS CHECK · landing right column (2026-05-25 night)
+           Reframed from generic "verify" to a free product audit that
+           mirrors the Visible tier's "Monthly AEO scan" promise. The
+           section now has a clear job: brand owners check if their
+           product is AI-agent ready in one click. Pre-cached brands
+           teach "what good looks like". On PASS, an inline upsell points
+           to the Visible tier (#biz). -->
       <div class="vw" id="verifyWidget">
-        <div class="vw-eyebrow">Run a live verification</div>
+        <div class="vw-eyebrow">Free · AI-Agent Readiness Check</div>
+        <div class="vw-subline">Paste your product URL · we show what an AI agent reads about your brand</div>
         <div class="vw-input-row">
           <input type="text" class="vw-url" id="vwUrl"
                  value="https://www.greengruff.com/products/ease"
                  placeholder="https://your-brand.com/product/...">
           <button type="button" class="vw-go" id="vwGo">
-            <span class="vw-go-label">Verify</span>
-            <span class="vw-go-arrow">▶</span>
+            <span class="vw-go-label">Check my product</span>
+            <span class="vw-go-arrow">→</span>
           </button>
         </div>
         <div class="vw-chip-row">
-          <span class="vw-chip-label">Or try cached:</span>
+          <span class="vw-chip-label">Or see what good looks like:</span>
           <button type="button" class="vw-chip active" data-brand="greengruff">Green Gruff EASE</button>
           <button type="button" class="vw-chip" data-brand="nativepet">Native Pet H&amp;J</button>
           <button type="button" class="vw-chip" data-brand="jffd">JFFD Calming</button>
@@ -1777,6 +1808,10 @@
           <span class="verdict-text" id="verdictHeadline">Fully verified</span>
         </div>
         <div class="verdict-subline" id="verdictSubline">AI agents have everything they need to recommend this product with confidence.</div>
+        <!-- Visible-tier upsell · appears only on PASS verdicts (CSS-gated).
+             Closes the loop between the free readiness check and the
+             "Monthly AEO scan" promise of the $0 Visible tier. -->
+        <a class="verdict-upsell" href="#biz">Want monthly checks? See the Visible tier →</a>
       </div>
 
       <!-- Four plain-English summary rows. Brand owner reads these and knows
