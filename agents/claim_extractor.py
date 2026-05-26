@@ -11,13 +11,61 @@ Model: gemini-2.5-pro (GA). Upgrade path to gemini-3-pro on Vertex AI GA.
 from __future__ import annotations
 
 import asyncio
+import ipaddress
 import json
+import socket
 import sys
 from pathlib import Path
 from typing import Any
+from urllib.parse import urljoin, urlsplit
 
 import httpx
 from bs4 import BeautifulSoup
+
+# SSRF guard: the product_url is attacker-controlled and fetched server-side.
+# On Cloud Run an unguarded fetch can reach the metadata server
+# (169.254.169.254) for SA-token exfil, or any internal IP. We resolve the
+# host and reject private/loopback/link-local/reserved targets, and validate
+# EVERY redirect hop (a public host can 302 to a private IP).
+_BLOCKED_HOSTS = {"metadata.google.internal", "metadata", "localhost"}
+
+
+def _assert_public_url(url: str) -> None:
+    parts = urlsplit(url)
+    if parts.scheme not in ("http", "https"):
+        raise ValueError(f"SSRF guard: blocked non-http(s) scheme {parts.scheme!r}")
+    host = parts.hostname
+    if not host:
+        raise ValueError("SSRF guard: URL has no host")
+    if host.lower() in _BLOCKED_HOSTS:
+        raise ValueError(f"SSRF guard: blocked host {host!r}")
+    port = parts.port or (443 if parts.scheme == "https" else 80)
+    try:
+        infos = socket.getaddrinfo(host, port, proto=socket.IPPROTO_TCP)
+    except socket.gaierror as e:
+        raise ValueError(f"SSRF guard: cannot resolve {host!r}: {e}")
+    for info in infos:
+        ip = ipaddress.ip_address(info[4][0])
+        if (ip.is_private or ip.is_loopback or ip.is_link_local or ip.is_reserved
+                or ip.is_multicast or ip.is_unspecified):
+            raise ValueError(f"SSRF guard: {host!r} resolves to non-public IP {ip}")
+
+
+async def _ssrf_guarded_get(client: httpx.AsyncClient, url: str, headers: dict,
+                            max_redirects: int = 5) -> httpx.Response:
+    """GET with the SSRF guard applied to the initial URL and every redirect hop."""
+    current = url
+    for _ in range(max_redirects + 1):
+        _assert_public_url(current)
+        resp = await client.get(current, headers=headers)
+        if resp.is_redirect:
+            loc = resp.headers.get("location")
+            if not loc:
+                return resp
+            current = urljoin(current, loc)
+            continue
+        return resp
+    raise ValueError(f"SSRF guard: exceeded {max_redirects} redirects")
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 from shared.pcec_schema import Claim, ClaimKind  # noqa: E402
@@ -102,10 +150,15 @@ async def fetch_pdp_html(url: str) -> str:
         "Accept-Language": "en-US,en;q=0.9",
     }
     try:
-        async with httpx.AsyncClient(follow_redirects=True, timeout=30.0) as client:
-            response = await client.get(url, headers=headers)
+        # follow_redirects=False: we follow manually so the SSRF guard runs on
+        # every hop (a public host can 302 to a private/metadata IP).
+        async with httpx.AsyncClient(follow_redirects=False, timeout=30.0) as client:
+            response = await _ssrf_guarded_get(client, url, headers)
             response.raise_for_status()
             html = response.text
+    except ValueError:
+        # SSRF-guard rejection: do NOT fall back to Firecrawl (treat as hostile).
+        raise
     except httpx.HTTPStatusError as e:
         if e.response.status_code in (403, 429, 503):
             print(f"[claim-extractor] httpx {e.response.status_code} on {url}; falling back to Firecrawl")

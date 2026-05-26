@@ -23,6 +23,8 @@ steps:
       - '--image=us-central1-docker.pkg.dev/pawconscious-mesh-2026/acp-images/mesh-api:${_SHA}'
       - '--region=us-central1'
       - '--platform=managed'
+      - '--max-instances=4'
+      - '--concurrency=8'
       - '--quiet'
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
     entrypoint: 'gcloud'

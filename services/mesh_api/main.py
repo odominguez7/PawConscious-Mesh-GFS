@@ -50,6 +50,24 @@ from shared.transparency_log import (
 _idempotency_cache: dict[str, str] = {}
 _idempotency_lock = asyncio.Lock()
 
+# DoS guard: cap concurrent in-flight mesh runs per instance. Each run is ~8
+# Gemini 2.5 calls + PubMed/Vertex Search (60-180s); unbounded concurrency means
+# unbounded Vertex cost + worker exhaustion. Paired with Cloud Run
+# --max-instances=4 (cloudbuild) for a hard ceiling. Reject (429), don't queue.
+MAX_CONCURRENT_VERIFIES = int(os.environ.get("ACP_MAX_CONCURRENT_VERIFIES", "3"))
+_active_verifies = 0
+_active_verifies_lock = asyncio.Lock()
+
+
+async def _run_verify_claim_guarded(task_id: str, product_url: str, max_claims: int) -> None:
+    """Wrap the background mesh run so the in-flight counter always decrements."""
+    global _active_verifies
+    try:
+        await _run_verify_claim_background(task_id, product_url, max_claims)
+    finally:
+        async with _active_verifies_lock:
+            _active_verifies -= 1
+
 
 DEMO_API_KEY = os.environ.get("ACP_DEMO_API_KEY", "demo-key-2026-06")
 SERVICE_VERSION = "0.1.0"
@@ -1097,8 +1115,22 @@ async def a2a_send(
         async with _idempotency_lock:
             _idempotency_cache[idempotency_key] = state.task_id
 
+    # DoS guard: cap concurrent in-flight mesh runs (reject, don't queue).
+    global _active_verifies
+    async with _active_verifies_lock:
+        if _active_verifies >= MAX_CONCURRENT_VERIFIES:
+            raise HTTPException(
+                status_code=429,
+                detail=(
+                    f"Mesh at capacity ({_active_verifies}/{MAX_CONCURRENT_VERIFIES} verifications "
+                    "in flight). Each runs the full agent mesh (~60-180s). Retry shortly, or "
+                    "GET /a2a/v1/lookup?url=... for an already-verified bundle."
+                ),
+            )
+        _active_verifies += 1
+
     # Fire-and-forget background processing per A2A v0.3 async spec
-    asyncio.create_task(_run_verify_claim_background(state.task_id, product_url, max_claims))
+    asyncio.create_task(_run_verify_claim_guarded(state.task_id, product_url, max_claims))
 
     # G19 #4: return chain head at submit time
     head_anchor = await get_head_anchor_async()
