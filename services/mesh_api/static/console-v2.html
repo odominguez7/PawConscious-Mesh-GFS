@@ -1927,12 +1927,12 @@
           <span class="askgem-icon">✦</span>
           <span>Ask Gemini · grounded on verified pet products</span>
         </div>
-        <div class="askgem-subline">Real Gemini 2.5 · grounding source: PawConscious verified bundles. Ask anything a dog parent would ask.</div>
+        <div class="askgem-subline">Real Gemini 2.5 · grounded only on adversarially-verified products · see what an AI agent surfaces, and why.</div>
 
         <div class="askgem-chip-row">
-          <button type="button" class="askgem-chip" data-q="Best hip and joint chews for my senior lab with inflammation?">Best hip and joint chews for senior dogs</button>
-          <button type="button" class="askgem-chip" data-q="What calming chews work for puppies during fireworks?">Calming chews for fireworks</button>
-          <button type="button" class="askgem-chip" data-q="Which products have published lab tests and DVM language?">DVM-language compliant products</button>
+          <button type="button" class="askgem-chip" data-q="Which joint-health products would an AI agent recommend for a senior dog, and why?">Which products would an AI agent recommend?</button>
+          <button type="button" class="askgem-chip" data-q="Show the PubMed studies and lab tests behind a verified joint product">PubMed + lab evidence behind a product</button>
+          <button type="button" class="askgem-chip" data-q="Did any calming product get flagged on its claims, and why?">A product the mesh flagged on its claims</button>
         </div>
 
         <div class="askgem-input-row">
@@ -3660,37 +3660,78 @@ const BRAND_BUNDLES = {
     }
     if (vwUrl) vwUrl.value = b.url;
   }
+  // Derive a flat view from the REAL signed bundle (nested mesh output).
+  // Mirrors the backend bundle_summary(); the signed output is never mutated.
+  function deriveBundle(cached) {
+    const out = cached.output || {};
+    const rawClaims = out.claims || [];
+    const claimTexts = (rawClaims.length && typeof rawClaims[0] === 'object')
+      ? rawClaims.map(c => c.text).filter(Boolean) : rawClaims.slice();
+    let pmids = [];
+    if (out.evidence) {
+      const seen = new Set();
+      out.evidence.forEach(e => (e.papers || []).forEach(p => {
+        if (p.pmid && !seen.has(p.pmid)) { seen.add(p.pmid); pmids.push(p.pmid); }
+      }));
+    } else { pmids = out.pubmed || []; }
+    const vetNums = (out.vet_scores || []).map(v => v.score).filter(s => s != null);
+    const vetScore = vetNums.length ? Math.min(...vetNums) : out.vet_score;
+    let vetNote = out.vet_note || ((out.vet_scores && out.vet_scores[0]) ? out.vet_scores[0].rationale : null);
+    let ftcFlags = out.compliance
+      ? out.compliance.filter(c => c.violation_flag && c.ftc_section).map(c => c.ftc_section)
+      : (out.ftc_flags || []);
+    const av = (out.audit || []).map(a => a.verdict).filter(Boolean);
+    let verdict;
+    if (av.length) {
+      if (av.includes('FAIL')) verdict = 'FAIL';
+      else if (av.includes('CONDITIONAL')) verdict = 'CONDITIONAL';
+      else if (ftcFlags.length) verdict = 'PASS_WITH_FLAGS';
+      else verdict = 'PASS';
+    } else { verdict = out.audit_verdict; }
+    const so = (cached.second_opinion && cached.second_opinion.overall_verdict) || null;
+    return { claimTexts, pmids, vetScore, vetNote, ftcFlags, verdict, secondOpinion: so };
+  }
+
   function renderBundleFromApi(cached, elapsedMs) {
-    // API returns the task-store entry. We map it onto the verdict panel +
-    // technical proof. When the API output is sparse (e.g. seeds), fall back
-    // to the matching brand's frontend example so the verdict reads correctly.
+    // The REAL signed bundle is the source of truth. Only fall back to the
+    // frontend example if the API output has no audit (truly empty).
     const out = cached.output || {};
     const url = cached.url || '';
     const matched = brandByHost ? brandByHost(url) : null;
     const fallback = matched ? BRAND_BUNDLES[matched] : null;
+    const d = deriveBundle(cached);
 
-    const productLabel = out.product_label || (fallback && fallback.product) || 'Verified product';
+    const productLabel = cached.product_label || (fallback && fallback.product) || 'Verified product';
     if (bundleProductName) bundleProductName.textContent = productLabel;
     if (bvProduct)         bvProduct.textContent         = productLabel;
 
-    // Prefer fallback's structured verdict; otherwise synthesize from out.
-    let verdict = fallback ? fallback.verdict : null;
-    let summary = fallback ? fallback.summary : null;
-    let cta     = fallback ? fallback.cta : null;
-    if (!verdict) {
-      const flagCount = (out.ftc_flags || []).length;
-      const claimCount = (out.claims || []).length;
-      verdict = flagCount === 0
-        ? { status: 'pass', headline: 'Fully verified',
-            subline: 'AI agents have everything they need to recommend this product.' }
-        : { status: 'pass_with_issues', headline: `PASS · ${flagCount} issue${flagCount > 1 ? 's' : ''}`,
-            subline: 'AI agents can recommend, but tighten the flagged claims for clean compliance.' };
+    let verdict, summary, cta = null;
+    if (d.verdict) {
+      const nFlags = d.ftcFlags.length;
+      const VMAP = {
+        FAIL:            { status: 'fail',             headline: 'Blocked · claim failed',
+                           subline: 'The mesh rejected a claim it could not substantiate. Not safe for an agent to recommend as-is.' },
+        CONDITIONAL:     { status: 'pass_with_issues', headline: 'Conditional',
+                           subline: 'Verifiable only with qualified language. An agent should surface the caveat.' },
+        PASS_WITH_FLAGS: { status: 'pass_with_issues', headline: `Pass · ${nFlags} FTC flag${nFlags > 1 ? 's' : ''}`,
+                           subline: 'Substantiated, but tighten the flagged claim language for clean compliance.' },
+        PASS:            { status: 'pass',             headline: 'Verified',
+                           subline: 'Claims are substantiated. An agent can recommend this product.' },
+      };
+      verdict = VMAP[d.verdict] || VMAP.PASS;
+      const complianceVal = nFlags === 0 ? 'Clean · 0 FTC §255 flags'
+        : `${nFlags} FTC flag${nFlags > 1 ? 's' : ''} · ${d.ftcFlags.join(', ')}`;
       summary = [
-        { label: 'Substantiated', value: `${claimCount} / ${claimCount} claims backed by ${(out.pubmed || []).length} PubMed PMIDs` },
-        { label: 'Compliance',    value: flagCount === 0 ? 'Clean · 0 FTC §255 flags' : `${flagCount} flag${flagCount > 1 ? 's' : ''} · see /agents` },
-        { label: 'Vet rubric',    value: out.vet_score ? `${out.vet_score} / 5 · ${out.vet_note || 'qualified'}` : '—' },
-        { label: 'Lab evidence',  value: out.coa_findings ? `${out.coa_findings} findings extracted` : '—' },
+        { label: 'Substantiated', value: `${d.claimTexts.length} claims checked against ${d.pmids.length} PubMed PMIDs` },
+        { label: 'Compliance',    value: complianceVal },
+        { label: 'Vet rubric',    value: (d.vetScore != null) ? `${d.vetScore} / 5 · ${d.vetNote ? String(d.vetNote).slice(0,60) : 'scored'}` : '—' },
+        { label: 'Second opinion',value: d.secondOpinion ? `${d.secondOpinion} · adversarial post-sign check` : '—' },
       ];
+    } else if (fallback) {
+      verdict = fallback.verdict; summary = fallback.summary; cta = fallback.cta;
+    } else {
+      verdict = { status: 'pass', headline: 'Verified', subline: 'Signed bundle returned.' };
+      summary = [];
     }
     if (verdictPanel) {
       verdictPanel.setAttribute('data-status', verdict.status);

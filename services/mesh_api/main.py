@@ -111,77 +111,51 @@ if _assets_dir.exists():
 # (sorted by completed_at desc), so a real verify overrides the seed.
 # ---------------------------------------------------------------------------
 
-HOTPATH_SEEDS = [
-    {
-        "product_url": "https://www.greengruff.com/products/ease",
-        "product_label": "Green Gruff EASE · Joint & Hip",
-        "bundle_hash": "sha256:26ca807353b3e8242370f7843eace8e58a6781f2fc0131009a563c1d6ace9455",
-        "bundle_signature": "Ed25519:6f8a3d1c0a4b9d8e2c1f5a7b6e3d2c9b8a4f1d0e7c5b3a9f6e2d1c0b8a7f4e3d",
-        "chain_anchor": "sha256:b66c42f87f7ba0c5ce7ae3d74ac594c79c89b1eae35b64211f87a3c5d2e9b4a1",
-        "output": {
-            "product_label": "Green Gruff EASE · Joint & Hip",
-            "claims": ["553 mg CBD per chew", "Supports joint mobility", "Third-party tested"],
-            "ftc_flags": [],
-            "pubmed": ["16647870", "30083539", "32316397"],
-            "coa_findings": 37,
-            "vet_score": 4,
-            "vet_note": "qualified language",
-            "audit_verdict": "PASS",
-        },
-    },
-    {
-        "product_url": "https://www.nativepet.com/products/hip-joint",
-        "product_label": "Native Pet Hip + Joint · Senior",
-        "bundle_hash": "sha256:9bccd9326ecca264b75cdcf3f35cfb0b9a7343171737d68a9e2c1d4b5a8f6e3c",
-        "bundle_signature": "Ed25519:3a1f7b2e8c5d4a9f6b3e2c1d0a7f8e5b4c3d2e1f0a9b8c7d6e5f4a3b2c1d0e9f",
-        "chain_anchor": "sha256:1f8a3c5d2e9b4a1f8a3c5d2e9b4a1f8a3c5d2e9b4a1f8a3c5d2e9b4a1f8a3c5d",
-        "output": {
-            "product_label": "Native Pet Hip + Joint · Senior",
-            "claims": ["Glucosamine + chondroitin", "Promotes joint mobility", "Third-party NSF tested", "Senior formula"],
-            "ftc_flags": [],
-            "pubmed": ["16647870", "20657596", "27465972", "32316397"],
-            "coa_findings": 24,
-            "vet_score": 5,
-            "vet_note": "DVM language compliant",
-            "audit_verdict": "PASS",
-        },
-    },
-    {
-        "product_url": "https://www.justfoodfordogs.com/product/calming-chews-for-dogs/50020180.html",
-        "product_label": "Just Food For Dogs · Calming Chews",
-        "bundle_hash": "sha256:c4d9a5e2b8f7a3d6c9b8a4f1d0e7c5b3a9f6e2d1c0b8a7f4e3d2c1b0a9f8e7d6",
-        "bundle_signature": "Ed25519:c4d9a5e2b8f7a3d6c9b8a4f1d0e7c5b3a9f6e2d1c0b8a7f4e3d2c1b0a9f8e7d6",
-        "chain_anchor": "sha256:f87a3c5d2e9b4a1f8a3c5d2e9b4a1f8a3c5d2e9b4a1f8a3c5d2e9b4a1f87a3c5",
-        "output": {
-            "product_label": "Just Food For Dogs · Calming Chews",
-            "claims": ["L-theanine + chamomile", "Supports calm behavior", "Made in USA"],
-            "ftc_flags": ["§255 — 'supports calm' needs qualified language"],
-            "pubmed": ["28245859", "31133068"],
-            "coa_findings": 0,
-            "vet_score": 4,
-            "vet_note": "'supports calm' qualified",
-            "audit_verdict": "PASS_WITH_FLAGS",
-        },
-    },
-]
+# Real signed bundles, captured 2026-05-26 by running the live mesh on each
+# brand (tools/capture_seed_bundles.py). Each carries the EXACT signed `output`,
+# the real Ed25519 signature, the real bundle hash, and the real Firestore
+# chain anchor, so /a2a/v1/lookup serves a bundle whose signature verifies
+# against the published DID. NOT hand-authored. To refresh, re-run the capture.
+_SEED_BUNDLES_PATH = os.path.join(os.path.dirname(__file__), "seed_bundles.json")
+
+
+def _load_seed_bundles() -> list[dict[str, Any]]:
+    try:
+        with open(_SEED_BUNDLES_PATH) as f:
+            return json.load(f)
+    except Exception as e:
+        import logging as _l
+        _l.getLogger(__name__).warning("seed bundles load failed (non-fatal): %s", e)
+        return []
+
+
+HOTPATH_SEEDS = _load_seed_bundles()
 
 
 async def _seed_hot_path_cache() -> None:
-    """Inject the seed bundles into task_store so /a2a/v1/lookup hits."""
-    import time as _t
+    """Inject the REAL signed seed bundles into task_store so /a2a/v1/lookup hits.
+
+    These are not synthetic: each is the verbatim `output` of a real mesh run,
+    with a real Ed25519 signature that verifies against the published public
+    key, and a real chain anchor. A later cold-path verify of the same URL
+    sorts newer (completed_at desc) and overrides the seed.
+    """
     for seed in HOTPATH_SEEDS:
         state = await task_store.create(
-            input_data={"product_url": seed["product_url"], "max_claims": 3, "_seed": True}
+            input_data={"product_url": seed["product_url"], "max_claims": 3,
+                        "_seed": True, "product_label": seed.get("product_label")}
         )
         await task_store.update(
             state.task_id,
             status="completed",
-            progress_message="hot-path seed entry · matches frontend chip data",
+            progress_message="hot-path seed · real signed bundle (cached from a live mesh run)",
             output=seed["output"],
             bundle_hash=seed["bundle_hash"],
             bundle_signature=seed["bundle_signature"],
             chain_anchor=seed["chain_anchor"],
-            chain_anchor_status="seeded",
+            chain_anchor_status=seed.get("chain_anchor_status", "appended"),
+            cert_html=seed.get("cert_html"),
+            second_opinion=seed.get("second_opinion"),
         )
 
 
@@ -1280,6 +1254,78 @@ USER QUESTION:
 Answer:"""
 
 
+def bundle_summary(state) -> dict[str, Any]:
+    """Derive a flat, human-readable summary from a signed bundle.
+
+    Handles BOTH shapes: the real mesh `output` (nested claims/evidence/
+    vet_scores/compliance/audit) AND the legacy flat shape. The real signed
+    output is never mutated, so its Ed25519 signature still verifies; this is
+    a read-only projection for grounding + UI.
+    """
+    out = state.output or {}
+    inp = getattr(state, "input", {}) or {}
+
+    # claim texts
+    raw_claims = out.get("claims", [])
+    if raw_claims and isinstance(raw_claims[0], dict):
+        claim_texts = [c.get("text") for c in raw_claims if c.get("text")]
+    else:
+        claim_texts = list(raw_claims)
+
+    # pubmed PMIDs: union across nested evidence, else legacy flat list
+    pmids = []
+    if out.get("evidence"):
+        seen = set()
+        for e in out["evidence"]:
+            for p in (e.get("papers") or []):
+                pid = p.get("pmid")
+                if pid and pid not in seen:
+                    seen.add(pid); pmids.append(pid)
+    else:
+        pmids = out.get("pubmed", [])
+
+    # vet scores
+    vet_scores = [v.get("score") for v in out.get("vet_scores", []) if isinstance(v, dict)]
+    vet_score = (min(vet_scores) if vet_scores else out.get("vet_score"))
+    vet_note = out.get("vet_note")
+    if not vet_note and out.get("vet_scores"):
+        vet_note = (out["vet_scores"][0] or {}).get("rationale")
+
+    # FTC / compliance flags
+    if out.get("compliance"):
+        ftc_flags = [c.get("ftc_section") for c in out["compliance"]
+                     if isinstance(c, dict) and c.get("violation_flag") and c.get("ftc_section")]
+    else:
+        ftc_flags = out.get("ftc_flags", [])
+
+    # audit verdict: aggregate across claims (FAIL > CONDITIONAL > PASS)
+    audit_verdicts = [a.get("verdict") for a in out.get("audit", []) if isinstance(a, dict)]
+    if audit_verdicts:
+        if "FAIL" in audit_verdicts:
+            verdict = "FAIL"
+        elif "CONDITIONAL" in audit_verdicts:
+            verdict = "PASS_WITH_CONDITIONS"
+        elif ftc_flags:
+            verdict = "PASS_WITH_FLAGS"
+        else:
+            verdict = "PASS"
+    else:
+        verdict = out.get("audit_verdict")
+
+    so = getattr(state, "second_opinion", None) or {}
+    return {
+        "product": inp.get("product_label") or out.get("product_label") or "(unnamed)",
+        "url": inp.get("product_url"),
+        "claim_examples": claim_texts[:3],
+        "pubmed_pmids": pmids,
+        "vet_score": vet_score,
+        "vet_note": vet_note,
+        "ftc_flags": ftc_flags,
+        "audit_verdict": verdict,
+        "second_opinion": so.get("overall_verdict") if isinstance(so, dict) else None,
+    }
+
+
 async def _build_bundles_context() -> str:
     """Pull the seeded + verified bundles from task_store as Gemini context."""
     bundles = []
@@ -1289,20 +1335,7 @@ async def _build_bundles_context() -> str:
             key=lambda s: s.completed_at or 0,
             reverse=True,
         )
-        for state in ordered[:8]:  # top 8 most recent verified bundles
-            out = state.output or {}
-            bundles.append({
-                "product": out.get("product_label", "(unnamed)"),
-                "url": state.input.get("product_url"),
-                "claims_substantiated": f"{len(out.get('claims', []))}/{len(out.get('claims', []))}",
-                "claim_examples": out.get("claims", [])[:3],
-                "ftc_flags": out.get("ftc_flags", []),
-                "pubmed_pmids": out.get("pubmed", []),
-                "vet_score": out.get("vet_score"),
-                "vet_note": out.get("vet_note"),
-                "lab_findings": out.get("coa_findings"),
-                "audit_verdict": out.get("audit_verdict"),
-            })
+        bundles = [bundle_summary(state) for state in ordered[:8]]
     return json.dumps(bundles, indent=2)
 
 
@@ -1436,6 +1469,8 @@ async def a2a_lookup(url: str) -> JSONResponse:
         "status": "completed",
         "served_from": "task_store_hot_path",
         "url": url,
+        "product_label": state.input.get("product_label"),
+        "second_opinion": state.second_opinion,
         "task_id": state.task_id,
         "bundle_urn": bundle_urn,
         "bundle_hash": state.bundle_hash,
