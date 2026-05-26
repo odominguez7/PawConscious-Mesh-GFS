@@ -24,6 +24,7 @@ from shared.pcec_schema import EndorsementClaimBundle  # noqa: E402
 
 from google import genai
 from google.genai import types
+from shared.llm_retry import agenerate
 
 
 # v0.10.1a (codex amendment A-codex-2): prompt restructured with positive
@@ -176,7 +177,7 @@ async def compose_cert(bundle: EndorsementClaimBundle, bundle_hash: str | None, 
     client = _client()
     # gemini-2.5-pro — known-working on our Vertex project.
     # max_output_tokens=8000 (was 2000 — cert was truncated mid-CSS in v0.8.1).
-    response = client.models.generate_content(
+    response = await agenerate(client, 
         model="gemini-2.5-pro",
         contents=prompt,
         config=types.GenerateContentConfig(

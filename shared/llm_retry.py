@@ -48,3 +48,12 @@ async def with_retry(
     if last_exc is not None:
         raise last_exc
     raise RuntimeError("with_retry exhausted attempts with no exception captured")
+
+
+async def agenerate(client, **kwargs):
+    """Run a blocking Vertex `generate_content` in a worker thread so it never
+    blocks the asyncio event loop. Without this, one in-flight mesh run freezes
+    the whole worker (every other request, including /tasks/get polls, hangs)
+    for the duration of the synchronous Gemini call. Pure offload, no retry, so
+    it composes with callers that already retry (e.g. /api/ask-gemini)."""
+    return await asyncio.to_thread(lambda: client.models.generate_content(**kwargs))

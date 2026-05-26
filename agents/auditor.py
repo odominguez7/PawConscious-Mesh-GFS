@@ -28,6 +28,7 @@ from shared.pcec_schema import (
 
 from google import genai
 from google.genai import types
+from shared.llm_retry import agenerate
 
 
 PMID_REGEX = re.compile(r"\A\d{6,9}\Z")
@@ -101,7 +102,7 @@ async def audit_bundle(bundle: EvidenceBundle) -> AuditVerdict:
         claim_kind=claim.kind.value,
         evidence_json=evidence_json,
     )
-    response = client.models.generate_content(
+    response = await agenerate(client, 
         model="gemini-2.5-flash",
         contents=prompt,
         config=types.GenerateContentConfig(

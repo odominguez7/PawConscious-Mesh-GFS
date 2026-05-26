@@ -43,6 +43,7 @@ from shared.task_store import task_store, TaskState
 from shared.transparency_log import (
     append_bundle_async, fetch_bundle_async, get_head_anchor_async, urn_for_hash,
 )
+from shared.llm_retry import agenerate
 
 # G19 #6 amendment: idempotency cache for /a2a/v1/tasks/send.
 # Maps Idempotency-Key -> task_id so client retries return the same task.
@@ -1422,7 +1423,7 @@ async def api_ask_gemini(request: Request) -> JSONResponse:
             client = _genai.Client(vertexai=True, project="pawconscious-mesh-2026", location="us-central1")
             # Use 2.5 Flash for the public chat surface · sub-2s latency, no
             # thinking-budget overhead, much cheaper for high-frequency public calls.
-            response = client.models.generate_content(
+            response = await agenerate(client, 
                 model="gemini-2.5-flash",
                 contents=prompt,
                 config=_genai_types.GenerateContentConfig(

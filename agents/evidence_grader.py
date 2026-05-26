@@ -26,6 +26,7 @@ from agents.citation_enricher import enrich_with_citations  # noqa: E402
 from biomcp.articles.search import PubmedRequest, search_articles
 from google import genai
 from google.genai import types
+from shared.llm_retry import agenerate
 
 
 KEYWORD_EXTRACTION_PROMPT = """You are the evidence-grader agent in the PawConscious Mesh / ACP system.
@@ -89,7 +90,7 @@ async def extract_search_terms(claim: Claim) -> dict[str, list[str]]:
         claim_text=claim.text,
         claim_kind=claim.kind.value,
     )
-    response = client.models.generate_content(
+    response = await agenerate(client, 
         model="gemini-2.5-pro",
         contents=prompt,
         config=types.GenerateContentConfig(
@@ -143,7 +144,7 @@ async def grade_evidence(claim: Claim, search_results: str, debug: bool = False)
         claim_kind=claim.kind.value,
         search_results=search_results[:15000],  # cap to avoid context overflow
     )
-    response = client.models.generate_content(
+    response = await agenerate(client, 
         model="gemini-2.5-pro",
         contents=prompt,
         config=types.GenerateContentConfig(

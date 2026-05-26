@@ -22,6 +22,7 @@ from shared.pcec_schema import Claim, ClaimKind, VetRubricScore  # noqa: E402
 
 from google import genai
 from google.genai import types
+from shared.llm_retry import agenerate
 
 
 VET_RUBRIC_PROMPT = """You are simulating a panel of 5 board-certified veterinarians (DVM with ACVN or ACVIM specialty) reviewing a pet supplement health claim.
@@ -64,7 +65,7 @@ async def score_claim(claim: Claim) -> VetRubricScore:
         claim_kind=claim.kind.value,
         claim_context=claim.raw_context or "(no surrounding context)",
     )
-    response = client.models.generate_content(
+    response = await agenerate(client, 
         model="gemini-2.5-pro",
         contents=prompt,
         config=types.GenerateContentConfig(

@@ -25,6 +25,7 @@ import hashlib
 
 from google import genai
 from google.genai import types
+from shared.llm_retry import agenerate
 
 
 COMPLIANCE_PROMPT = """You are the compliance agent in the PawConscious Mesh / ACP system.
@@ -240,7 +241,7 @@ async def map_claim(claim: Claim) -> ComplianceMapping:
         claim_kind=claim.kind.value,
         claim_context=claim.raw_context or "(no surrounding context)",
     )
-    response = client.models.generate_content(
+    response = await agenerate(client, 
         model="gemini-2.5-pro",
         contents=prompt,
         config=types.GenerateContentConfig(

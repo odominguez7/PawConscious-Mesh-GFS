@@ -73,6 +73,7 @@ from shared.pcec_schema import Claim, ClaimKind  # noqa: E402
 # ADK + Vertex imports
 from google.adk.agents import LlmAgent
 from google.adk.tools import FunctionTool
+from shared.llm_retry import agenerate
 
 
 PDP_USER_AGENT = (
@@ -264,7 +265,7 @@ async def extract_claims(url: str) -> list[Claim]:
 
     prompt = CLAIM_EXTRACTION_PROMPT.format(pdp_text=pdp_text)
 
-    response = client.models.generate_content(
+    response = await agenerate(client, 
         model="gemini-2.5-pro",
         contents=prompt,
         config=types.GenerateContentConfig(

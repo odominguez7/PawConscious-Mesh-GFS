@@ -34,6 +34,7 @@ from shared.pcec_schema import EndorsementClaimBundle  # noqa: E402
 
 from google import genai
 from google.genai import types
+from shared.llm_retry import agenerate
 
 
 SECOND_OPINION_PROMPT = """You are the SECOND OPINION agent for PawConscious — an adversarial double-validation layer that runs AFTER five other agents have verified a product claim and signed an evidence bundle.
@@ -92,7 +93,7 @@ async def get_second_opinion(bundle: EndorsementClaimBundle) -> dict:
     prompt = SECOND_OPINION_PROMPT.format(bundle_summary=json.dumps(summary, indent=2))
 
     client = _client()
-    response = client.models.generate_content(
+    response = await agenerate(client, 
         model="gemini-2.5-pro",  # 2.5 Pro for the depth (this agent needs to reason about adversarial evidence)
         contents=prompt,
         config=types.GenerateContentConfig(
