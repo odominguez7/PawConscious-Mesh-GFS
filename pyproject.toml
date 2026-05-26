@@ -9,6 +9,12 @@ authors = [{name = "Omar Dominguez", email = "omar.dominguez7@gmail.com"}]
 dependencies = [
     "google-adk>=1.33.0",
     "google-cloud-aiplatform>=1.153.0",
+    "google-cloud-firestore>=2.19.0",
+    "google-cloud-discoveryengine>=0.13.0",
+    "google-cloud-secret-manager>=2.20.0",
+    "cryptography>=43.0.0",
+    "biomcp-python>=0.7.0",
+    "mcp>=1.0.0",
     "httpx>=0.28.0",
     "beautifulsoup4>=4.14.0",
     "lxml>=5.0.0",
