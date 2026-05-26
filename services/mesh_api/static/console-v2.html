@@ -2043,7 +2043,7 @@ curl <span class="tok-str">"<!--PUBLIC_BASE_URL-->/a2a/v1/tasks/get/&lt;task_id&
       </div>
       <div class="item">
         <div class="h"><span class="name">ADK 2.0</span><span class="badge">Orchestration</span></div>
-        <p>Used by <b>claim-extractor</b> (<code style="color:var(--electric);font-family:var(--mono);">google.adk.agents.LlmAgent</code>). The other 6 agents call <code style="color:var(--electric);font-family:var(--mono);">google.genai</code> SDK direct for v0.1 deterministic latency. ADK <code style="color:var(--electric);font-family:var(--mono);">ParallelAgent</code> + <code style="color:var(--electric);font-family:var(--mono);">SequentialAgent</code> wrappers are documented as the Phase 4 Vertex AI Agent Engine deployment surface.</p>
+        <p>Four of seven agents wrap as <code style="color:var(--electric);font-family:var(--mono);">google.adk.agents.LlmAgent</code> (<b>claim-extractor, evidence-grader, compliance, auditor</b>); the orchestrator fans them out via <code style="color:var(--electric);font-family:var(--mono);">asyncio.gather</code>. The other 3 call <code style="color:var(--electric);font-family:var(--mono);">google.genai</code> SDK direct for v0.1 deterministic latency. ADK <code style="color:var(--electric);font-family:var(--mono);">ParallelAgent</code> + <code style="color:var(--electric);font-family:var(--mono);">SequentialAgent</code> wrappers are documented as the Phase 4 Vertex AI Agent Engine deployment surface.</p>
       </div>
       <div class="item">
         <div class="h"><span class="name">Gemini 2.5</span><span class="badge">Reasoning</span></div>
