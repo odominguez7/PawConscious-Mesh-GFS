@@ -721,6 +721,41 @@ task_id = r.json()[<span class="tok-str">"task_id"</span>]
   </div>
 
 
+  <!-- Verify it yourself · consolidated proof (2026-05-26). Moved the old
+       offline-verify section up next to the try-it widget and added the real
+       ShopperAgent + tamper test. Three ways, zero-setup first. -->
+  <h2>Verify it yourself — don't trust us</h2>
+  <p>Every bundle is Ed25519-signed over a transport-stable canonical (the signed JSON, minus its <code class="inline">signature</code> and the derived <code class="inline">bundle_urn</code>) against the key published at <code class="inline">/.well-known/did.json</code>. Three ways to check it, no setup first:</p>
+
+  <p><strong>1 · In the browser.</strong> The <strong>Verify signature</strong> tab on the try-it widget above runs the Ed25519 check client-side on the bundle you just generated. It never trusts this API's verdict.</p>
+
+  <p><strong>2 · A real external agent.</strong> <code class="inline">examples/shopper_agent.py</code> discovers the agent card, looks up a signed bundle, verifies it against the published key, decides RECOMMEND or SKIP from the verdict, then forges a FAIL into a PASS and watches the signature reject it:</p>
+  <pre class="with-copy" data-copy><button class="copy-btn">copy</button><code>$ python examples/shopper_agent.py
+
+  Cosequin     signature VALID ✅   CONDITIONAL · §255.3   → RECOMMEND WITH CAVEAT
+  Green Gruff  signature VALID ✅   FAIL · §255.1          → SKIP
+  JFFD         signature VALID ✅   PASS                   → RECOMMEND
+
+  TAMPER TEST · forge Green Gruff's FAIL into a PASS, keep the signature:
+  signature INVALID ❌ → forged bundle rejected</code></pre>
+  <p>Or run every live check for the whole submission with <code class="inline">./verify.sh</code> (7/7 green against prod).</p>
+
+  <p><strong>3 · From scratch, offline.</strong> The same check in a few lines of Python:</p>
+  <pre class="with-copy" data-copy><button class="copy-btn">copy</button><code>from cryptography.hazmat.primitives.asymmetric.ed25519 import Ed25519PublicKey
+import base58, base64, json, httpx
+
+did = httpx.get("<!--PUBLIC_BASE_URL-->/.well-known/did.json").json()
+mb  = did["verificationMethod"][0]["publicKeyMultibase"]          # z6Mk… did:key
+raw = base58.b58decode(mb[1:])                                    # strip multibase 'z'
+pub = Ed25519PublicKey.from_public_bytes(raw[2:34])               # drop 0xed01 prefix
+
+b   = httpx.get("<!--PUBLIC_BASE_URL-->/a2a/v1/lookup?url=...").json()
+canon = json.dumps({k: v for k, v in b["output"].items()
+                    if k not in ("signature", "bundle_urn")},
+                   sort_keys=True, separators=(",", ":")).encode()
+sig = base64.b64decode(b["bundle_signature"].rsplit(":", 1)[1])   # ed25519:&lt;did&gt;:&lt;b64&gt;
+pub.verify(sig, canon)   # raises InvalidSignature if the bundle was tampered</code></pre>
+
   <h2>Discovery · well-knowns</h2>
   <p>Standards-compliant A2A clients discover us by fetching the agent card. Everything below is publicly accessible.</p>
   <div class="endpoints">
@@ -793,21 +828,6 @@ shopper = LlmAgent(
 <span class="tok-cmt"># 4. Deploy to Vertex AI Agent Engine:</span>
 <span class="tok-cmt">#    gcloud beta ai reasoning-engines deploy ...</span></code></pre>
   <p style="font: 500 12px/1.6 var(--mono); color: var(--dim); margin-top: 12px;">Agent card declares the <code class="inline">verify_claim</code> skill, the public Ed25519 verification key, and the async task lifecycle. Bundle signatures verify offline against <code class="inline">/.well-known/did.json</code>. Reference: <a href="https://google.github.io/adk-docs/agents/a2a/" style="color:var(--electric);" target="_blank">ADK A2A docs</a>.</p>
-
-  <h2>Verify a signature offline</h2>
-  <p>The bundle is canonical-JSON, signed with the Ed25519 key advertised in <code class="inline">/.well-known/did.json</code>. Verify with 6 lines:</p>
-  <pre class="with-copy" data-copy><button class="copy-btn">copy</button><code><span class="tok-key">from</span> cryptography.hazmat.primitives.asymmetric.ed25519 <span class="tok-key">import</span> Ed25519PublicKey
-<span class="tok-key">import</span> base58, base64, httpx, json
-
-did = httpx.get(<span class="tok-str">"<!--PUBLIC_BASE_URL-->/.well-known/did.json"</span>).json()
-pk_multibase = did[<span class="tok-str">"verificationMethod"</span>][<span class="tok-num">0</span>][<span class="tok-str">"publicKeyMultibase"</span>]
-pk_bytes = base58.b58decode(pk_multibase[<span class="tok-num">1</span>:])[<span class="tok-num">2</span>:]  <span class="tok-cmt"># strip multibase 'z' + 0xed01 prefix</span>
-pub = Ed25519PublicKey.from_public_bytes(pk_bytes)
-
-<span class="tok-cmt"># canonical_json = bundle minus the signature field, no whitespace</span>
-pub.verify(base64.b64decode(bundle[<span class="tok-str">"signature"</span>]), canonical_json.encode())
-<span class="tok-cmt"># Raises InvalidSignature if tampered. Else: trust the bundle.</span></code></pre>
-
 
   <h2>Errors</h2>
   <p>HTTP responses currently emitted by <code class="inline">/a2a/v1/*</code>.
