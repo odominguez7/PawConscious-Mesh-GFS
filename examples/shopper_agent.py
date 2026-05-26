@@ -111,6 +111,7 @@ def main() -> int:
     print(f"2. fetched issuer public key: {vm['publicKeyMultibase'][:24]}…\n")
 
     last_good = None
+    forge_target = None
     for url in BRANDS:
         b = _get(f"{base}/a2a/v1/lookup?url={urllib.parse.quote(url, safe='')}")
         if b.get("status") != "completed":
@@ -129,17 +130,21 @@ def main() -> int:
         print(f"     verdict   : {verdict}{' · flags ' + str(flags) if flags else ''}")
         print(f"     decision  : {decide(verdict, flags)}\n")
         last_good = (b, out)
+        if verdict == "FAIL" and forge_target is None:
+            forge_target = (b, out)  # the meaningful forgery: turn a FAIL into a PASS
 
     # TAMPER TEST — the proof that the decision rests on crypto, not the API.
-    if last_good:
-        b, out = last_good
+    target = forge_target or last_good
+    if target:
+        b, out = target
+        label = b.get("product_label")
         print("-" * 64)
-        print("TAMPER TEST · flip the audit verdict, keep the original signature:")
+        print(f"TAMPER TEST · forge {label}'s verdict to PASS, keep the original signature:")
         tampered = copy.deepcopy(out)
-        if tampered.get("audit"):
-            tampered["audit"][0]["verdict"] = "PASS"  # forge a pass
+        for a in tampered.get("audit", []):
+            a["verdict"] = "PASS"  # forge every failed/conditional verdict to PASS
         valid = verify_signature(tampered, b["bundle_signature"], pubkey)
-        print(f"   signature : {'VALID ✅' if valid else 'INVALID ❌ (tamper detected)'}")
+        print(f"   signature : {'VALID ✅ (forgery undetected!)' if valid else 'INVALID ❌ (tamper detected)'}")
         print(f"   decision  : {'RECOMMEND' if valid else 'SKIP — forged bundle rejected'}")
         print("=" * 64)
         print("A forged verdict does not verify against the issuer key. The agent's"

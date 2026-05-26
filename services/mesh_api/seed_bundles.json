@@ -10,7 +10,7 @@
           "text": "Joint Health Supplement for Dogs",
           "kind": "efficacy",
           "position_on_page": "hero",
-          "raw_context": "Cosequin\nJoint Health Supplement for Dogs\nChewable Tablets with Glucosamine, Chondroitin, and MSM"
+          "raw_context": "Cosequin Joint Health Supplement for Dogs. Chewable Tablets with Glucosamine, Chondroitin, and MSM."
         },
         {
           "text": "#1 vet recommended retail joint health supplement brand",
@@ -31,108 +31,88 @@
             "text": "Joint Health Supplement for Dogs",
             "kind": "efficacy",
             "position_on_page": "hero",
-            "raw_context": "Cosequin\nJoint Health Supplement for Dogs\nChewable Tablets with Glucosamine, Chondroitin, and MSM"
+            "raw_context": "Cosequin Joint Health Supplement for Dogs. Chewable Tablets with Glucosamine, Chondroitin, and MSM."
           },
           "papers": [
+            {
+              "pmid": "34048452",
+              "doi": null,
+              "title": null,
+              "relevance_score": 1.0,
+              "citation_count": 19,
+              "influential_citation_count": 1,
+              "supports_claim_direction": true,
+              "notes": "This randomized, double-blinded study in dogs with osteoarthritis found that a combination of Curcuvet, Boswellic acid, and conventional nutraceuticals improved ground reaction forces, suggesting a benefit for joint health."
+            },
+            {
+              "pmid": "36747264",
+              "doi": null,
+              "title": null,
+              "relevance_score": 1.0,
+              "citation_count": 8,
+              "influential_citation_count": 1,
+              "supports_claim_direction": true,
+              "notes": "This study in dogs with osteoarthritis suggests that a supplement containing palmitoyl-glucosamine and curcumin effectively maintained pain relief, allowing for a reduction in the use of the NSAID meloxicam."
+            },
+            {
+              "pmid": "34603064",
+              "doi": null,
+              "title": null,
+              "relevance_score": 0.4,
+              "citation_count": 34,
+              "influential_citation_count": 0,
+              "supports_claim_direction": false,
+              "notes": "This is a general review on novel osteoarthritis treatments, focusing on tissue engineering and DMOADs, and is not specific to dogs or common dietary supplements."
+            },
             {
               "pmid": "27826450",
               "doi": null,
               "title": null,
-              "relevance_score": 0.3,
-              "citation_count": 0,
-              "influential_citation_count": 0,
+              "relevance_score": 0.6,
+              "citation_count": 43,
+              "influential_citation_count": 2,
               "supports_claim_direction": false,
-              "notes": "This study investigates lifestyle risk factors for intervertebral disc disease in Dachshunds, not the efficacy of joint supplements."
+              "notes": "This observational study on Dachshunds found an association between the use of glucosamine/chondroitin supplements and an increased risk of intervertebral disc disease, though this may be due to owners supplementing dogs already at risk."
             },
             {
               "pmid": "28331832",
               "doi": null,
               "title": null,
               "relevance_score": 1.0,
-              "citation_count": 0,
-              "influential_citation_count": 0,
-              "supports_claim_direction": true,
-              "notes": "This review directly examines the use and evidence for glucosamine and chondroitin, common joint supplements, for treating osteoarthritis in dogs."
+              "citation_count": 50,
+              "influential_citation_count": 2,
+              "supports_claim_direction": false,
+              "notes": "This review of the literature on glucosamine and chondroitin for canine osteoarthritis concludes that the evidence for their effectiveness is limited and conflicting."
             },
             {
               "pmid": "32316397",
               "doi": null,
               "title": null,
               "relevance_score": 1.0,
-              "citation_count": 0,
-              "influential_citation_count": 0,
+              "citation_count": 50,
+              "influential_citation_count": 2,
               "supports_claim_direction": true,
-              "notes": "This paper reviews the current knowledge on the use of Undenatured Type II Collagen (UC-II) for joint health in companion animals, including dogs."
+              "notes": "This review summarizes studies on Undenatured Type II Collagen (UC-II) and concludes it offers joint health benefits for companion animals with osteoarthritis."
             },
             {
               "pmid": "30732623",
               "doi": null,
               "title": null,
-              "relevance_score": 0.1,
-              "citation_count": 0,
+              "relevance_score": 0.0,
+              "citation_count": 3,
               "influential_citation_count": 0,
               "supports_claim_direction": false,
-              "notes": "This document is a collection of proceedings from a veterinary symposium and does not represent a single study on joint supplement efficacy."
+              "notes": "This is a conference proceedings paper with no abstract, making it impossible to evaluate its relevance or support for the claim."
             },
             {
-              "pmid": "36142319",
-              "doi": null,
-              "title": null,
-              "relevance_score": 1.0,
-              "citation_count": 0,
-              "influential_citation_count": 0,
-              "supports_claim_direction": true,
-              "notes": "This systematic review and meta-analysis evaluates the evidence for nutraceuticals (supplements) in treating canine osteoarthritis, providing a high level of evidence."
-            },
-            {
-              "pmid": "37240271",
+              "pmid": "36336651",
               "doi": null,
               "title": null,
               "relevance_score": 0.2,
-              "citation_count": 0,
-              "influential_citation_count": 0,
+              "citation_count": 16,
+              "influential_citation_count": 1,
               "supports_claim_direction": false,
-              "notes": "This review focuses on stem cell therapy for osteoarthritis, which is a different treatment modality than oral joint health supplements."
-            },
-            {
-              "pmid": "40357193",
-              "doi": null,
-              "title": null,
-              "relevance_score": 0.8,
-              "citation_count": 0,
-              "influential_citation_count": 0,
-              "supports_claim_direction": true,
-              "notes": "This paper proposes a multimodal management framework for canine osteoarthritis that includes the use of joint supplements as one component of care."
-            },
-            {
-              "pmid": "37756077",
-              "doi": null,
-              "title": null,
-              "relevance_score": 0.2,
-              "citation_count": 0,
-              "influential_citation_count": 0,
-              "supports_claim_direction": false,
-              "notes": "This study compares injectable treatments (platelet-rich plasma and NSAIDs) and is not relevant to the efficacy of oral joint supplements."
-            },
-            {
-              "pmid": "35448112",
-              "doi": null,
-              "title": null,
-              "relevance_score": 0.1,
-              "citation_count": 0,
-              "influential_citation_count": 0,
-              "supports_claim_direction": false,
-              "notes": "This paper discusses an experimental hydrogel treatment for disc degeneration and is not about joint supplements for dogs."
-            },
-            {
-              "pmid": "34451822",
-              "doi": null,
-              "title": null,
-              "relevance_score": 0.9,
-              "citation_count": 0,
-              "influential_citation_count": 0,
-              "supports_claim_direction": true,
-              "notes": "This bibliographic review covers Devil's Claw, a herbal product commonly used as a joint supplement in both humans and animals."
+              "notes": "This paper reviews advanced cell-free therapies for canine osteoarthritis, a different category of treatment from common dietary joint supplements."
             }
           ],
           "grader_agent": "did:web:mesh-api-40952019806.us-central1.run.app:agents:evidence-grader",
@@ -199,84 +179,74 @@
           },
           "papers": [
             {
-              "pmid": "36233300",
+              "pmid": "40357193",
+              "doi": null,
+              "title": null,
+              "relevance_score": 0.6,
+              "citation_count": 0,
+              "influential_citation_count": 0,
+              "supports_claim_direction": false,
+              "notes": "This review discusses various management options for osteoarthritis in dogs but does not provide evidence for the 25-year history of any specific treatment."
+            },
+            {
+              "pmid": "35558892",
+              "doi": null,
+              "title": null,
+              "relevance_score": 0.6,
+              "citation_count": 0,
+              "influential_citation_count": 0,
+              "supports_claim_direction": false,
+              "notes": "These 2022 guidelines for treating osteoarthritis in dogs confirm the existence of treatments but do not address the 25-year historical aspect of the claim."
+            },
+            {
+              "pmid": "34829953",
               "doi": null,
               "title": null,
               "relevance_score": 0.1,
-              "citation_count": 18,
+              "citation_count": 0,
               "influential_citation_count": 0,
               "supports_claim_direction": false,
-              "notes": "This study on human synovial fluid is about the basic science of joint pathology and is not relevant to supporting joint health in dogs."
+              "notes": "This review focuses on osteoarthritis therapies in humans, not dogs, making it largely irrelevant to the claim."
             },
             {
-              "pmid": "35035489",
+              "pmid": "34070353",
               "doi": null,
               "title": null,
-              "relevance_score": 0.2,
-              "citation_count": 18,
-              "influential_citation_count": 1,
-              "supports_claim_direction": false,
-              "notes": "This review discusses stem cell therapy for cartilage regeneration, a topic related to joint health, but it is not specific to dogs and does not evaluate a long-standing treatment."
-            },
-            {
-              "pmid": "32817908",
-              "doi": null,
-              "title": null,
-              "relevance_score": 0.5,
-              "citation_count": 8,
+              "relevance_score": 0.3,
+              "citation_count": 0,
               "influential_citation_count": 0,
               "supports_claim_direction": false,
-              "notes": "This paper is moderately relevant as it proposes using dogs as a model for arthritis research, but it does not test or provide evidence for any intervention supporting joint health."
+              "notes": "This is a general review of collagen hydrolysate for humans and animals and does not provide specific evidence regarding its use for joint health in dogs over a 25-year period."
             },
             {
-              "pmid": "34667642",
+              "pmid": "34451822",
+              "doi": null,
+              "title": null,
+              "relevance_score": 0.7,
+              "citation_count": 0,
+              "influential_citation_count": 0,
+              "supports_claim_direction": true,
+              "notes": "This historical review of Devil's claw, a joint health supplement, documents its use and study over two centuries, supporting the concept of long-standing treatments, although it does not specifically mention dogs in the abstract."
+            },
+            {
+              "pmid": "32316397",
+              "doi": null,
+              "title": null,
+              "relevance_score": 0.8,
+              "citation_count": 0,
+              "influential_citation_count": 0,
+              "supports_claim_direction": false,
+              "notes": "This review confirms the use and efficacy of Undenatured Type II Collagen for joint health in dogs but does not provide evidence regarding a 25-year history of use."
+            },
+            {
+              "pmid": "16569256",
               "doi": null,
               "title": null,
               "relevance_score": 0.1,
-              "citation_count": 12,
-              "influential_citation_count": 1,
-              "supports_claim_direction": false,
-              "notes": "This review on a potential osteoarthritis treatment focuses on human applications and does not provide any information relevant to joint health in dogs."
-            },
-            {
-              "pmid": "22516098",
-              "doi": null,
-              "title": null,
-              "relevance_score": 0.0,
-              "citation_count": 99,
-              "influential_citation_count": 1,
-              "supports_claim_direction": false,
-              "notes": "This study on Bartonella infection and rheumatic symptoms in humans is irrelevant to the claim about supporting joint health in dogs."
-            },
-            {
-              "pmid": "36937015",
-              "doi": null,
-              "title": null,
-              "relevance_score": 0.2,
-              "citation_count": 17,
-              "influential_citation_count": 1,
-              "supports_claim_direction": false,
-              "notes": "This research on cannabinoid receptors in horse joints is not directly applicable to the claim about supporting joint health in dogs."
-            },
-            {
-              "pmid": "37047767",
-              "doi": null,
-              "title": null,
-              "relevance_score": 0.1,
-              "citation_count": 7,
+              "citation_count": 0,
               "influential_citation_count": 0,
               "supports_claim_direction": false,
-              "notes": "This basic science review on ion channels in musculoskeletal stem cells is too general and far-removed to be relevant to the specific claim about dogs."
-            },
-            {
-              "pmid": "34539449",
-              "doi": null,
-              "title": null,
-              "relevance_score": 0.2,
-              "citation_count": 21,
-              "influential_citation_count": 0,
-              "supports_claim_direction": false,
-              "notes": "This general review on the mechanisms of inflammation in arthritis is not specific to dogs and does not evaluate any interventions for joint health."
+              "notes": "This 2006 review focuses on osteoarthritis treatments in humans, not dogs, and is therefore not relevant to the claim."
             }
           ],
           "grader_agent": "did:web:mesh-api-40952019806.us-central1.run.app:agents:evidence-grader",
@@ -289,10 +259,10 @@
             "text": "Joint Health Supplement for Dogs",
             "kind": "efficacy",
             "position_on_page": "hero",
-            "raw_context": "Cosequin\nJoint Health Supplement for Dogs\nChewable Tablets with Glucosamine, Chondroitin, and MSM"
+            "raw_context": "Cosequin Joint Health Supplement for Dogs. Chewable Tablets with Glucosamine, Chondroitin, and MSM."
           },
           "score": 4,
-          "rationale": "Multiple randomized controlled trials and systematic reviews exist for the core ingredients (glucosamine, chondroitin) in dogs, showing a mild to moderate positive effect on osteoarthritis signs, though some evidence is mixed.",
+          "rationale": "There is a moderate to strong body of evidence, including several randomized controlled trials, for the use of glucosamine and chondroitin in canine joint health, though results can be mixed. The claim is supported by plausible mechanisms and is considered one of the more evidence-based claims in the supplement category.",
           "escalate_to_human_vet": true
         },
         {
@@ -302,8 +272,8 @@
             "position_on_page": "bullets",
             "raw_context": "Cosequin is the #1 vet recommended retail joint health supplement brand, supporting joint health in dogs for over 25 years."
           },
-          "score": 2,
-          "rationale": "The claim is a marketing statement based on survey data, not a direct health claim supported by peer-reviewed clinical evidence. While the underlying ingredients have some mixed evidence, the claim itself is promotional and lacks scientific substantiation.",
+          "score": 1,
+          "rationale": "This is a marketing claim about brand popularity based on survey data, not a scientific health claim supported by peer-reviewed clinical evidence. It is considered promotional language.",
           "escalate_to_human_vet": true
         },
         {
@@ -324,13 +294,13 @@
             "text": "Joint Health Supplement for Dogs",
             "kind": "efficacy",
             "position_on_page": "hero",
-            "raw_context": "Cosequin\nJoint Health Supplement for Dogs\nChewable Tablets with Glucosamine, Chondroitin, and MSM"
+            "raw_context": "Cosequin Joint Health Supplement for Dogs. Chewable Tablets with Glucosamine, Chondroitin, and MSM."
           },
           "ftc_section": null,
           "aafco_definition": "PF7 Substantiation of Claims",
           "nasc_public_standard": "Does not certify efficacy",
           "violation_flag": false,
-          "rationale": "This is a structure-function efficacy claim ('supports joint health'), which requires scientific substantiation under AAFCO PF7. The NASC Quality Seal explicitly does not certify such efficacy claims, and since no endorsement is made, FTC \u00a7255 does not apply.",
+          "rationale": "The claim 'Joint Health Supplement' is a structure-function efficacy claim, requiring scientific substantiation under AAFCO PF7. It is not an endorsement, so it does not trigger FTC \u00a7255, and NASC explicitly does not certify efficacy claims.",
           "grounding_sources": [
             {
               "source_id": "aafco-pf7-substantiation",
@@ -400,7 +370,7 @@
           "aafco_definition": "PF7 Substantiation of Claims",
           "nasc_public_standard": "Does not certify efficacy claims",
           "violation_flag": false,
-          "rationale": "The claim 'supports joint health' is an efficacy claim requiring scientific substantiation under both AAFCO PF7 and general FTC principles (\u00a7255.1). The NASC Quality Seal explicitly does not certify or substantiate such efficacy claims.",
+          "rationale": "The claim 'supports joint health' is a structure-function efficacy claim that requires substantiation with competent scientific evidence under both FTC \u00a7255.1 and AAFCO PF7. NASC's quality seal program explicitly does not certify or substantiate such efficacy claims.",
           "grounding_sources": [
             {
               "source_id": "aafco-pf7-substantiation",
@@ -431,7 +401,7 @@
             "text": "Joint Health Supplement for Dogs",
             "kind": "efficacy",
             "position_on_page": "hero",
-            "raw_context": "Cosequin\nJoint Health Supplement for Dogs\nChewable Tablets with Glucosamine, Chondroitin, and MSM"
+            "raw_context": "Cosequin Joint Health Supplement for Dogs. Chewable Tablets with Glucosamine, Chondroitin, and MSM."
           },
           "verdict": "PASS",
           "challenges_run": [
@@ -465,53 +435,29 @@
             "position_on_page": "bullets",
             "raw_context": "Cosequin is the #1 vet recommended retail joint health supplement brand, supporting joint health in dogs for over 25 years."
           },
-          "verdict": "PASS",
+          "verdict": "CONDITIONAL",
           "challenges_run": [
             "direction_only_falsifier_v0",
             "citation_existence",
             "claim_direction_match"
           ],
-          "findings": [],
+          "findings": [
+            "PMID 34451822 rationale describes a study that does not specifically mention dogs, but supports_claim_direction=true \u2014 MISMATCH"
+          ],
           "auditor_agent": "did:web:mesh-api-40952019806.us-central1.run.app:agents:auditor"
         }
       ],
-      "issued_at": "2026-05-26T17:13:50.117271",
+      "issued_at": "2026-05-26T21:00:57.238163",
       "issuer": "did:web:mesh-api-40952019806.us-central1.run.app",
-      "bundle_urn": "urn:pcec:claim:c3b7xvmtv4fm2ff7z6j3vtu2",
-      "signature": "ed25519:did:web:mesh-api-40952019806.us-central1.run.app#owner:RsFaYBxSH9dB4YpvyM7EfgvM97F8i0HszqzIuP75FGHlXw+FYgx2exs/5dE4IPz3r3xQRUfJtBj5TLxIC6a9Cg=="
+      "bundle_urn": "urn:pcec:claim:zkojqndjfatmm2g6hvljyfdj",
+      "signature": "ed25519:did:web:mesh-api-40952019806.us-central1.run.app#owner:7chyQ+ClQH0QaumsSjkh3mL/RcjSbO6M1Fr3N0DkP5oIcg8nmWb48Y4vum3M/zDmV6nVC3vmaW8s1HFcxTDlCA=="
     },
-    "bundle_hash": "sha256:16c3fbd593af0acd14bfcf93bace9af927a229b489f1f0999d2f3120c66f939d",
-    "bundle_signature": "ed25519:did:web:mesh-api-40952019806.us-central1.run.app#owner:RsFaYBxSH9dB4YpvyM7EfgvM97F8i0HszqzIuP75FGHlXw+FYgx2exs/5dE4IPz3r3xQRUfJtBj5TLxIC6a9Cg==",
-    "chain_anchor": "sha256:25cd673fb2efe0603e15af080165867b3d6d504058ad002910a0745e1e54d20f",
+    "bundle_hash": "sha256:ca9c9834692826c668de3d569c1469d4b1650b9ba12dc73c1dd0c9148c1649fe",
+    "bundle_signature": "ed25519:did:web:mesh-api-40952019806.us-central1.run.app#owner:7chyQ+ClQH0QaumsSjkh3mL/RcjSbO6M1Fr3N0DkP5oIcg8nmWb48Y4vum3M/zDmV6nVC3vmaW8s1HFcxTDlCA==",
+    "chain_anchor": "sha256:6ca903b96156971334964ce1227f8f2a29c2cb0fef442b862da261790c8e4dda",
     "chain_anchor_status": "appended",
-    "second_opinion": {
-      "tests": [
-        {
-          "name": "COURT",
-          "verdict": "NEEDS REVIEW",
-          "rationale": "Nutramax agreed to an $11.5 million settlement in California over a class-action lawsuit alleging the company misrepresented the benefits and efficacy of its Cosequin dog supplements. "
-        },
-        {
-          "name": "REGULATOR",
-          "verdict": "SURVIVES",
-          "rationale": "No FTC or FDA warning letters or other direct regulatory actions were found against Nutramax for Cosequin, although the FTC is broadly putting supplement advertisers on notice that they must substantiate their claims. "
-        },
-        {
-          "name": "SCIENTIFIC CONSENSUS",
-          "verdict": "NEEDS REVIEW",
-          "rationale": "A 2022 systematic review and meta-analysis concluded there is a 'very marked non-effect of chondroitin-glucosamine nutraceuticals' and recommended they 'should no longer be recommended for pain management in canine and feline osteoarthritis'. "
-        },
-        {
-          "name": "PUBLIC SKEPTICISM",
-          "verdict": "NEEDS REVIEW",
-          "rationale": "While many pet owners anecdotally support Cosequin, there is a notable counter-narrative from science-based veterinarians and publications questioning its efficacy based on the lack of strong evidence. "
-        }
-      ],
-      "strongest_counter": "A recent, major class-action lawsuit against Nutramax for Cosequin was settled for $11.5 million because the company was allegedly unable to substantiate its joint health claims in court, and as part of the settlement, they must remove specific mobility claims from their packaging. ",
-      "overall_verdict": "NEEDS REVIEW",
-      "summary": "We can't stand behind Cosequin because the science is being challenged in court and by systematic reviews, resulting in an $11.5M settlement and the removal of key claims from their packaging."
-    },
-    "cert_html": "<div class=\"cert-composed\">\n  <style>\n    .cert-composed {\n      --ink: #E0E0E0;\n      --muted: #8A8A8A;\n      --electric: #00D4FF;\n      --moss-glow: #00D49B;\n      --signal: #FFB446;\n      --warning: #FF5C35;\n      --mono: 'JetBrains Mono', monospace;\n      --sans: system-ui, -apple-system, BlinkMacSystemFont, \"Segoe UI\", Roboto, \"Helvetica Neue\", Arial, sans-serif;\n      \n      background-color: #1A1A1A;\n      border: 1px solid #333;\n      border-radius: 8px;\n      padding: 24px;\n      color: var(--ink);\n      font-family: var(--sans);\n      font-size: 0.9rem;\n      line-height: 1.6;\n    }\n    .cert-headline {\n      font-size: 1.1rem;\n      font-weight: 500;\n      margin: 0 0 16px 0;\n      color: var(--ink);\n    }\n    .cert-narrative {\n      margin-bottom: 24px;\n    }\n    .cert-narrative p {\n      margin: 0 0 1em 0;\n    }\n    .cert-narrative p:last-child {\n      margin-bottom: 0;\n    }\n    .cert-ship-section {\n      border-top: 1px solid #333;\n      padding-top: 16px;\n      margin-bottom: 24px;\n    }\n    .cert-ship-section h3 {\n      font-size: 0.75rem;\n      font-weight: 600;\n      letter-spacing: 0.05em;\n      text-transform: uppercase;\n      color: var(--muted);\n      margin: 0 0 12px 0;\n    }\n    .cert-ship-section ol {\n      padding-left: 20px;\n      margin: 0;\n    }\n    .cert-ship-section li {\n      margin-bottom: 8px;\n    }\n    .cert-footer {\n      border-top: 1px solid #333;\n      padding-top: 16px;\n      font-family: var(--mono);\n      font-size: 0.68rem;\n      color: var(--muted);\n      line-height: 1.5;\n    }\n    .cert-disclosure-inline {\n      display: block;\n      margin-top: 12px;\n      font-size: 0.62rem;\n      color: var(--muted);\n      font-family: var(--sans);\n    }\n  </style>\n\n  <h1 class=\"cert-headline\">Cosequin \u00b7 Joint Health &amp; Vet Recommendation Claims \u00b7 <span style=\"color:var(--signal);\">NEEDS REVIEW</span></h1>\n\n  <div class=\"cert-narrative\">\n    <p>This evidence bundle covers three marketing claims for Cosequin's joint health supplement. The primary compliance risk stems from the expert claim, \"#1 vet recommended retail joint health supplement brand.\" The <strong>FTC \u00a7255 substantiation check (Vertex AI Search grounded)</strong> flagged this claim for a violation under \u00a7255.3 (Expert Endorsements), as it requires substantiation via a statistically valid survey of veterinarians\u2014a high evidence bar. The <strong>AI vet-rubric simulation</strong> reinforced this finding, scoring the claim just 2 out of 5 and noting it is a marketing statement lacking direct clinical support.</p>\n    <p>The two efficacy claims (\"Joint Health Supplement\" and \"supporting... for over 25 years\") passed the FTC check as permissible structure-function statements. The <strong>simulated 5-vet rubric</strong> scored these 4/5 and 3/5 respectively, citing that while multiple studies on the core ingredients exist, the evidence shows only a mild to moderate effect. All <strong>PubMed-retrieved papers</strong> in the bundle passed the <strong>Falsifier auditor's</strong> PMID-format and claim-direction checks. Due to the high-risk FTC flag, this bundle is issued with an escalation for review.</p>\n  </div>\n\n  <div class=\"cert-ship-section\">\n    <h3>Ship Before Launch: 3 Fixes</h3>\n    <ol>\n      <li><strong>Revise or Remove Expert Claim:</strong> Immediately remove the \"#1 vet recommended\" claim. To reintroduce it, you must possess and be prepared to furnish a recent, statistically valid survey of veterinarians that substantiates this specific ranking, per FTC \u00a7255.3.</li>\n      <li><strong>Align Efficacy Language:</strong> While the \"supports joint health\" claims are compliant, consider aligning marketing copy with the evidence quality noted by the AI-simulated vet rubric (\"mild to moderate effect\") to minimize risk of implied overstatement.</li>\n      <li><strong>Document Corrective Action:</strong> Archive the decision-making process for removing or substantiating the flagged claim. This documentation is critical for demonstrating compliance diligence in response to any future regulatory inquiry.</li>\n    </ol>\n  </div>\n\n  <div class=\"cert-footer\">\n    urn:pcec:claim:c3b7xvmtv4fm2ff7z6j3vtu2<br>\n    sha256:16c3fbd593af0acd14bfcf93bace9af927a229b489f1f0999d2f3120c66f939d<br>\n    <span class=\"cert-disclosure-inline\">Disclosure: AI-derived attestation \u00b7 vet rubric is an LLM simulation \u00b7 audit + Second Opinion are LLM agents over real evidence (PubMed, FTC \u00a7255, Google Search) \u00b7 Ed25519 signed</span>\n    <details style=\"margin-top:6px;\">\n      <summary style=\"cursor:pointer;color:var(--electric);font-family:var(--mono);font-size:0.62rem;letter-spacing:0.16em;text-transform:uppercase;\">Show full scope of attestation</summary>\n      <ul style=\"margin:8px 0 0 0;padding-left:18px;font-family:var(--mono);font-size:0.62rem;color:var(--dim);line-height:1.6;list-style:none;\">\n        <li>\u00b7 Vet rubric: Gemini 2.5 Pro simulating a 5-vet panel. Not licensed-DVM attestation. Replaced by the attest_expert A2A skill in v0.2.</li>\n        <li>\u00b7 Evidence retrieval: BioMCP \u2192 PubMed (real papers) + Semantic Scholar citation grading. Real-existence verification of PMIDs is PMID-format only at v0.1; citation_enricher extends to existence + influence.</li>\n        <li>\u00b7 Compliance: Vertex AI Search over public FTC 16 CFR \u00a7255 + AAFCO PF7 + NASC public seal corpus. No licensed handbooks ingested.</li>\n        <li>\u00b7 Auditor (Falsifier v0): claim-direction + PMID-format checks only.</li>\n        <li>\u00b7 Second Opinion: Gemini 2.5 Pro + Google Search grounding.</li>\n        <li>\u00b7 Signed: Ed25519 with mesh's own key (did:web:mesh-api-...). Not a 3rd-party accredited co-signature; partner co-signing tier (NASC / NSF / vet-school) is v0.2 roadmap.</li>\n      </ul>\n    </details>\n  </div>\n</div>"
+    "second_opinion": null,
+    "cert_html": null
   },
   {
     "product_url": "https://www.greengruff.com/products/ease",
@@ -563,41 +509,11 @@
               "pmid": "40357193",
               "doi": null,
               "title": null,
-              "relevance_score": 0.2,
+              "relevance_score": 0.3,
               "citation_count": 6,
               "influential_citation_count": 0,
               "supports_claim_direction": false,
-              "notes": "This review proposes a general framework for managing osteoarthritis in dogs and does not test or mention any specific product."
-            },
-            {
-              "pmid": "40530040",
-              "doi": null,
-              "title": null,
-              "relevance_score": 0.8,
-              "citation_count": 1,
-              "influential_citation_count": 0,
-              "supports_claim_direction": true,
-              "notes": "This randomized controlled trial demonstrates the efficacy of a multi-ingredient joint supplement for improving mobility in dogs with osteoarthritis, providing indirect support for the claimed product type."
-            },
-            {
-              "pmid": "41183983",
-              "doi": null,
-              "title": null,
-              "relevance_score": 0.3,
-              "citation_count": 1,
-              "influential_citation_count": 0,
-              "supports_claim_direction": false,
-              "notes": "This is a review of specific disease-modifying drugs for canine osteoarthritis and does not evaluate the specific product in the claim."
-            },
-            {
-              "pmid": "35558892",
-              "doi": null,
-              "title": null,
-              "relevance_score": 0.1,
-              "citation_count": 15,
-              "influential_citation_count": 0,
-              "supports_claim_direction": false,
-              "notes": "This paper presents general consensus guidelines for treating canine osteoarthritis and does not evaluate or mention any specific commercial products."
+              "notes": "This review describes a framework for managing osteoarthritis in dogs but does not test or endorse any specific supplement."
             },
             {
               "pmid": "35285032",
@@ -607,47 +523,77 @@
               "citation_count": 56,
               "influential_citation_count": 6,
               "supports_claim_direction": false,
-              "notes": "This review focuses on pharmaceutical treatment options for canine osteoarthritis, which is a different category from the likely supplement product in the claim."
+              "notes": "This review focuses on pharmaceutical treatments for canine osteoarthritis, not a specific supplement like the one named in the claim."
+            },
+            {
+              "pmid": "41183983",
+              "doi": null,
+              "title": null,
+              "relevance_score": 0.5,
+              "citation_count": 1,
+              "influential_citation_count": 0,
+              "supports_claim_direction": false,
+              "notes": "This is a review evaluating the efficacy of DMOADs like glucosamine in dogs, but it does not present results or support a specific product."
+            },
+            {
+              "pmid": "40530040",
+              "doi": null,
+              "title": null,
+              "relevance_score": 0.9,
+              "citation_count": 1,
+              "influential_citation_count": 0,
+              "supports_claim_direction": true,
+              "notes": "This randomized controlled trial found that a multi-ingredient joint supplement significantly improved mobility and quality of life in dogs with osteoarthritis."
+            },
+            {
+              "pmid": "35558892",
+              "doi": null,
+              "title": null,
+              "relevance_score": 0.3,
+              "citation_count": 15,
+              "influential_citation_count": 0,
+              "supports_claim_direction": false,
+              "notes": "This paper presents consensus guidelines for treating canine osteoarthritis and does not provide new evidence on the efficacy of a specific supplement."
             },
             {
               "pmid": "34829953",
               "doi": null,
               "title": null,
-              "relevance_score": 0.0,
+              "relevance_score": 0.1,
               "citation_count": 0,
               "influential_citation_count": 0,
               "supports_claim_direction": false,
-              "notes": "This review discusses cell-based therapies for osteoarthritis, which is an entirely different treatment modality and not relevant to a nutritional supplement."
-            },
-            {
-              "pmid": "38535867",
-              "doi": null,
-              "title": null,
-              "relevance_score": 0.1,
-              "citation_count": 7,
-              "influential_citation_count": 0,
-              "supports_claim_direction": false,
-              "notes": "This review on herbal remedies in puppies is generally cautionary about the lack of evidence and does not mention or support the specific claim."
+              "notes": "This review discusses cell-based therapies for human osteoarthritis and is not relevant to a canine joint supplement."
             },
             {
               "pmid": "30643103",
               "doi": null,
               "title": null,
-              "relevance_score": 0.0,
+              "relevance_score": 0.2,
               "citation_count": 14,
               "influential_citation_count": 0,
               "supports_claim_direction": false,
-              "notes": "This clinical trial evaluates botulinum toxin injections for canine hip dysplasia, a treatment completely unrelated to the claimed supplement."
+              "notes": "This clinical trial on botulinum toxin injections for canine hip pain found the treatment was no more effective than the control."
             },
             {
               "pmid": "27847523",
               "doi": null,
               "title": null,
-              "relevance_score": 0.3,
+              "relevance_score": 0.4,
               "citation_count": 23,
               "influential_citation_count": 0,
+              "supports_claim_direction": true,
+              "notes": "This study showed that a traditional treatment including an oral nutraceutical reduced clinical signs of hip osteoarthritis in dogs, although intra-articular injections were more effective."
+            },
+            {
+              "pmid": "23035739",
+              "doi": null,
+              "title": null,
+              "relevance_score": 0.2,
+              "citation_count": 113,
+              "influential_citation_count": 3,
               "supports_claim_direction": false,
-              "notes": "This study compares hyaluronic acid injections to a conservative treatment that includes an unspecified oral nutraceutical, but it does not isolate or assess the supplement's efficacy."
+              "notes": "This trial evaluates the efficacy of specific analgesic drugs for canine hip osteoarthritis, not a nutritional supplement."
             }
           ],
           "grader_agent": "did:web:mesh-api-40952019806.us-central1.run.app:agents:evidence-grader",
@@ -666,8 +612,8 @@
               "doi": null,
               "title": null,
               "relevance_score": 0.2,
-              "citation_count": 63,
-              "influential_citation_count": 7,
+              "citation_count": 0,
+              "influential_citation_count": 0,
               "supports_claim_direction": false,
               "notes": "This genetic study identifies susceptibility loci for hip dysplasia and osteoarthritis in dogs but does not evaluate any intervention for maintaining joint function."
             },
@@ -676,7 +622,7 @@
               "doi": null,
               "title": null,
               "relevance_score": 0.9,
-              "citation_count": 14,
+              "citation_count": 0,
               "influential_citation_count": 0,
               "supports_claim_direction": true,
               "notes": "This study found that intra-articular hyaluronic acid, alone or with ozone, improved lameness and orthopedic scores in dogs with osteoarthritis, thus supporting the concept of improving joint function."
@@ -686,8 +632,8 @@
               "doi": null,
               "title": null,
               "relevance_score": 0.9,
-              "citation_count": 79,
-              "influential_citation_count": 9,
+              "citation_count": 0,
+              "influential_citation_count": 0,
               "supports_claim_direction": true,
               "notes": "This study demonstrates that stem cell injections improved range of motion, lameness, and pain in dogs with hip dysplasia, supporting the claim of improving joint function."
             },
@@ -696,7 +642,7 @@
               "doi": null,
               "title": null,
               "relevance_score": 1.0,
-              "citation_count": 23,
+              "citation_count": 0,
               "influential_citation_count": 0,
               "supports_claim_direction": true,
               "notes": "This study concluded that intra-articular hyaluronic acid injections significantly reduced clinical signs of osteoarthritis in dogs, thereby supporting the improvement of hip joint function."
@@ -706,8 +652,8 @@
               "doi": null,
               "title": null,
               "relevance_score": 1.0,
-              "citation_count": 33,
-              "influential_citation_count": 3,
+              "citation_count": 0,
+              "influential_citation_count": 0,
               "supports_claim_direction": true,
               "notes": "This study objectively showed that platelet-rich plasma injections improved limb function in dogs with hip osteoarthritis, supporting the concept of restoring joint function."
             },
@@ -716,8 +662,8 @@
               "doi": null,
               "title": null,
               "relevance_score": 1.0,
-              "citation_count": 10,
-              "influential_citation_count": 1,
+              "citation_count": 0,
+              "influential_citation_count": 0,
               "supports_claim_direction": true,
               "notes": "This study indicates that a combination of mesenchymal stromal cells and hyaluronic acid is effective in reducing lameness and pain in dogs with chronic osteoarthritis, thus improving joint function."
             },
@@ -726,8 +672,8 @@
               "doi": null,
               "title": null,
               "relevance_score": 1.0,
-              "citation_count": 117,
-              "influential_citation_count": 8,
+              "citation_count": 0,
+              "influential_citation_count": 0,
               "supports_claim_direction": true,
               "notes": "This blinded study objectively demonstrated that intraarticular stem cell therapy improved limb function in dogs with hip osteoarthritis for up to three months."
             },
@@ -736,8 +682,8 @@
               "doi": null,
               "title": null,
               "relevance_score": 1.0,
-              "citation_count": 128,
-              "influential_citation_count": 5,
+              "citation_count": 0,
+              "influential_citation_count": 0,
               "supports_claim_direction": false,
               "notes": "While the study design is highly relevant to the claim, the provided abstract is incomplete, making it impossible to determine the findings and whether they support the claim."
             }
@@ -777,7 +723,7 @@
             "raw_context": "EASE Joint & Hip soft chews may maintain the healthy function of joints, hips, and muscles. Every EASE soft chew is made with ingredients high in glucosamine..."
           },
           "score": 2,
-          "rationale": "The panel found the mechanism plausible but noted the evidence for glucosamine in maintaining joint health is sparse and largely extrapolated from mixed or weak studies on disease treatment. The claim lacks strong, direct evidence for a 'maintenance' effect in healthy animals.",
+          "rationale": "The evidence for glucosamine's efficacy in joint health is widely considered mixed to weak, and there is little to no evidence for its role in maintaining function in healthy animals.",
           "escalate_to_human_vet": true
         }
       ],
@@ -912,43 +858,17 @@
           "auditor_agent": "did:web:mesh-api-40952019806.us-central1.run.app:agents:auditor"
         }
       ],
-      "issued_at": "2026-05-26T17:18:58.900126",
+      "issued_at": "2026-05-26T21:03:14.946849",
       "issuer": "did:web:mesh-api-40952019806.us-central1.run.app",
-      "bundle_urn": "urn:pcec:claim:yrn6ebma6atqeqpz2lokxivx",
-      "signature": "ed25519:did:web:mesh-api-40952019806.us-central1.run.app#owner:nFXyPHfxwexDLL11CKgO8N8gepXDWtB4jiUjikS/9+Ib4SYsYgzZEh4B+sCZr8k/lz18niBlcoSl87IW09r0CQ=="
+      "bundle_urn": "urn:pcec:claim:t4j352caecwrmsyteotnrncf",
+      "signature": "ed25519:did:web:mesh-api-40952019806.us-central1.run.app#owner:6ZJZrgv1yFbWmhF8TKdmt11P3FOkNweogkS3PLWvmr3enlquFxUSW2srO3yEfjtMzhKboVco0zM7DjBj5aF9CA=="
     },
-    "bundle_hash": "sha256:c45be20580f0270241f9d2dcaba2b75845e7b34f41129d723818bec4f8ee35b1",
-    "bundle_signature": "ed25519:did:web:mesh-api-40952019806.us-central1.run.app#owner:nFXyPHfxwexDLL11CKgO8N8gepXDWtB4jiUjikS/9+Ib4SYsYgzZEh4B+sCZr8k/lz18niBlcoSl87IW09r0CQ==",
-    "chain_anchor": "sha256:8326e6457d1806f96d249db8538cc9be5e299a39fb6b761994ceab30a1ff2bf0",
+    "bundle_hash": "sha256:9f13bee84020ad164b1323a6d8b44586027f9c41b3b9082136380c7c270684cf",
+    "bundle_signature": "ed25519:did:web:mesh-api-40952019806.us-central1.run.app#owner:6ZJZrgv1yFbWmhF8TKdmt11P3FOkNweogkS3PLWvmr3enlquFxUSW2srO3yEfjtMzhKboVco0zM7DjBj5aF9CA==",
+    "chain_anchor": "sha256:752ef584bb2c050b5962b59d78b0e433e4aaee673c25015b418690093d9b2e78",
     "chain_anchor_status": "appended",
-    "second_opinion": {
-      "tests": [
-        {
-          "name": "COURT",
-          "verdict": "NEEDS REVIEW",
-          "rationale": "A recent $11.5M class-action settlement against Nutramax for its Cosequin dog supplements involved similar joint health claims that were alleged to be scientifically unsubstantiated. "
-        },
-        {
-          "name": "REGULATOR",
-          "verdict": "NEEDS REVIEW",
-          "rationale": "The FDA and AAFCO have not approved CBD as a safe and effective ingredient for animal food, and the FDA actively issues warning letters to companies making health claims for pet CBD products. "
-        },
-        {
-          "name": "SCIENTIFIC CONSENSUS",
-          "verdict": "NEEDS REVIEW",
-          "rationale": "A 2023 systematic review and meta-analysis concluded that while CBD is considered safe for canine OA, the evidence is very uncertain to conclude its clinical efficacy for pain reduction. "
-        },
-        {
-          "name": "PUBLIC SKEPTICISM",
-          "verdict": "NEEDS REVIEW",
-          "rationale": "Public reviews on Trustpilot are poor (2.4/5) and mention customer service and product quality issues, creating a counter-narrative to the company's positive testimonials. "
-        }
-      ],
-      "strongest_counter": "The FDA explicitly states that CBD is not an approved ingredient for animal food, considers such products adulterated, and actively pursues enforcement against companies making health-related claims, putting the product in a state of regulatory jeopardy.",
-      "overall_verdict": "NEEDS REVIEW",
-      "summary": "The science is uncertain, the regulators haven't approved it, and competitors making similar claims have been successfully sued."
-    },
-    "cert_html": "<div class=\"cert-composed\" style=\"--ink: #f0f0f0; --muted: #999; --electric: #00D4FF; --moss-glow: #00D49B; --signal: #FFB446; --warning: #FF5C35; --mono: 'JetBrains Mono', monospace; --sans: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; font-family: var(--sans); color: var(--ink); line-height: 1.6;\">\n\n  <h1 style=\"font-size: 1.2rem; margin: 0 0 12px 0; font-weight: 500;\">\n    Green Gruff &middot; EASE Joint & Hip Supplements &middot; <span style=\"color: var(--warning); font-weight: 600;\">NEEDS REVIEW</span>\n  </h1>\n\n  <p style=\"font-size: 0.9rem; margin: 0 0 24px 0; color: var(--muted);\">\n    This evidence bundle fails verification due to a significant compliance risk and insufficient scientific substantiation. The <strong style=\"color: var(--signal);\">FTC \u00a7255 substantiation check flagged the product name 'EASE' as a potential violation of \u00a7255.1 General</strong>. This term implies a specific physiological benefit, which is an efficacy claim requiring prior substantiation with \"competent and reliable scientific evidence\" that is not present in the bundle. This finding is corroborated by the AI vet-rubric simulation, which assigned low scores (2-3 out of 5) to all associated claims, citing that evidence for CBD in canine joint health is limited and not yet definitive. Furthermore, the Falsifier auditor returned a <strong style=\"color: var(--warning);\">FAIL</strong> verdict for the primary claim \"Joint & Hip CBD Supplements For Dogs,\" as the bundle contained zero PubMed-retrieved papers for substantiation. Due to the FTC flag and critical evidence gap, this bundle is escalated for immediate review.\n  </p>\n\n  <h3 style=\"font-size: 0.8rem; letter-spacing: 0.05em; text-transform: uppercase; margin: 0 0 8px 0; color: var(--ink);\">Ship Before Launch: Actionable Fixes</h3>\n  <ol style=\"margin: 0 0 24px 0; padding-left: 18px; font-size: 0.9rem; color: var(--muted);\">\n    <li style=\"margin-bottom: 8px;\">\n      <strong>Re-evaluate the product name 'EASE'.</strong> This term implies a specific physiological benefit, triggering a high substantiation standard under FTC \u00a7255.1 that the current evidence does not meet. Consider a name focused on structure/function (e.g., 'Joint & Hip Mobility').\n    </li>\n    <li style=\"margin-bottom: 8px;\">\n      <strong>Substantiate the primary claim.</strong> The Falsifier auditor found zero PubMed-retrieved papers for \"Joint & Hip CBD Supplements For Dogs,\" causing an automatic audit failure. A new evidence bundle must be created with relevant scientific literature for this claim.\n    </li>\n    <li>\n      <strong>Strengthen the overall evidence portfolio.</strong> The AI-simulated vet rubric consistently scored all claims low (2-3/5), flagging the evidence as sparse and mixed. To support any joint health claims, seek higher-quality evidence, such as randomized controlled trials in dogs.\n    </li>\n  </ol>\n\n  <div class=\"cert-footer\" style=\"border-top: 1px solid #444; padding-top: 12px; font-size: 0.75rem; color: var(--muted);\">\n    <div style=\"font-family: var(--mono); margin-bottom: 4px;\">urn:pcec:claim:yrn6ebma6atqeqpz2lokxivx</div>\n    <div style=\"font-family: var(--mono); margin-bottom: 12px;\">sha256:c45be20580f0270241f9d2dcaba2b75845e7b34f41129d723818bec4f8ee35b1</div>\n    <span class=\"cert-disclosure-inline\" style=\"font-size: 0.62rem; line-height: 1.5;\">Disclosure: AI-derived attestation \u00b7 vet rubric is an LLM simulation \u00b7 audit + Second Opinion are LLM agents over real evidence (PubMed, FTC \u00a7255, Google Search) \u00b7 Ed25519 signed</span>\n    <details style=\"margin-top:6px;\">\n      <summary style=\"cursor:pointer;color:var(--electric);font-family:var(--mono);font-size:0.62rem;letter-spacing:0.16em;text-transform:uppercase;\">Show full scope of attestation</summary>\n      <ul style=\"margin:8px 0 0 0;padding-left:18px;font-family:var(--mono);font-size:0.62rem;color:var(--muted);line-height:1.6;list-style:none;\">\n        <li>\u00b7 Vet rubric: Gemini 2.5 Pro simulating a 5-vet panel. Not licensed-DVM attestation. Replaced by the attest_expert A2A skill in v0.2.</li>\n        <li>\u00b7 Evidence retrieval: BioMCP \u2192 PubMed (real papers) + Semantic Scholar citation grading. Real-existence verification of PMIDs is PMID-format only at v0.1; citation_enricher extends to existence + influence.</li>\n        <li>\u00b7 Compliance: Vertex AI Search over public FTC 16 CFR \u00a7255 + AAFCO PF7 + NASC public seal corpus. No licensed handbooks ingested.</li>\n        <li>\u00b7 Auditor (Falsifier v0): claim-direction + PMID-format checks only.</li>\n        <li>\u00b7 Second Opinion: Gemini 2.5 Pro + Google Search grounding.</li>\n        <li>\u00b7 Signed: Ed25519 with mesh's own key (did:web:mesh-api-...). Not a 3rd-party accredited co-signature; partner co-signing tier (NASC / NSF / vet-school) is v0.2 roadmap.</li>\n      </ul>\n    </details>\n  </div>\n\n</div>"
+    "second_opinion": null,
+    "cert_html": null
   },
   {
     "product_url": "https://www.justfoodfordogs.com/product/calming-chews-for-dogs/50020180.html",
@@ -1120,64 +1040,64 @@
           },
           "papers": [
             {
-              "pmid": "41920840",
-              "doi": null,
-              "title": null,
-              "relevance_score": 0.0,
-              "citation_count": 0,
-              "influential_citation_count": 0,
-              "supports_claim_direction": false,
-              "notes": "This archaeological study on ancient diets is unrelated to the nutritional effects of botanicals and micronutrients."
-            },
-            {
-              "pmid": "35413882",
-              "doi": null,
-              "title": null,
-              "relevance_score": 0.0,
-              "citation_count": 0,
-              "influential_citation_count": 0,
-              "supports_claim_direction": false,
-              "notes": "This paper defines complementary and alternative medicine terms and does not evaluate the effects of botanicals or micronutrients."
-            },
-            {
-              "pmid": "27925141",
-              "doi": null,
-              "title": null,
-              "relevance_score": 0.7,
-              "citation_count": 0,
-              "influential_citation_count": 0,
-              "supports_claim_direction": true,
-              "notes": "This study in geriatric dogs found that a diet supplemented with functional foods, including fruits and vegetables (botanicals), improved renal function."
-            },
-            {
-              "pmid": "32260299",
-              "doi": null,
-              "title": null,
-              "relevance_score": 0.6,
-              "citation_count": 0,
-              "influential_citation_count": 0,
-              "supports_claim_direction": true,
-              "notes": "This review highlights the beneficial effects of nutritional supplements, which often contain botanicals and micronutrients, in managing canine dermatological disorders."
-            },
-            {
-              "pmid": "27088214",
-              "doi": null,
-              "title": null,
-              "relevance_score": 0.8,
-              "citation_count": 0,
-              "influential_citation_count": 0,
-              "supports_claim_direction": true,
-              "notes": "This study demonstrated that a test food containing botanicals (fruits and vegetables) and micronutrients improved renal function biomarkers in geriatric dogs."
-            },
-            {
-              "pmid": "32670224",
+              "pmid": "37505859",
               "doi": null,
               "title": null,
               "relevance_score": 0.5,
-              "citation_count": 0,
+              "citation_count": 17,
+              "influential_citation_count": 0,
+              "supports_claim_direction": false,
+              "notes": "This paper discusses supplementing animal feed with minerals, vitamins, and botanical substances like polyphenols, but does not describe a single ingredient as being 'packed' with them."
+            },
+            {
+              "pmid": "37127694",
+              "doi": null,
+              "title": null,
+              "relevance_score": 0.2,
+              "citation_count": 8,
+              "influential_citation_count": 0,
+              "supports_claim_direction": false,
+              "notes": "This paper discusses the risks of excessive micronutrient intake from supplements in children and is not relevant to a specific ingredient's botanical and micronutrient content."
+            },
+            {
+              "pmid": "40570455",
+              "doi": null,
+              "title": null,
+              "relevance_score": 0.9,
+              "citation_count": 9,
               "influential_citation_count": 0,
               "supports_claim_direction": true,
-              "notes": "This review discusses how nutritional components, which can include botanicals and micronutrients, impact the gut microbiome and overall health in cats and dogs."
+              "notes": "This review describes the microalgae Spirulina as a botanical with a 'rich biochemical composition that offers high protein content and essential nutrients,' aligning with the claim."
+            },
+            {
+              "pmid": "39123734",
+              "doi": null,
+              "title": null,
+              "relevance_score": 0.6,
+              "citation_count": 3,
+              "influential_citation_count": 0,
+              "supports_claim_direction": true,
+              "notes": "This paper notes that apiculture by-products, derived from botanical sources like pollen and nectar, possess 'unique nutritional and therapeutic properties' for use in animal nutrition."
+            },
+            {
+              "pmid": "37893672",
+              "doi": null,
+              "title": null,
+              "relevance_score": 0.7,
+              "citation_count": 8,
+              "influential_citation_count": 0,
+              "supports_claim_direction": false,
+              "notes": "This review argues that agricultural intensification has led to a decline in the concentration of desirable compounds, including micronutrients and phenolics, in many botanical foods."
+            },
+            {
+              "pmid": "39028725",
+              "doi": null,
+              "title": null,
+              "relevance_score": 0.9,
+              "citation_count": 5,
+              "influential_citation_count": 1,
+              "supports_claim_direction": true,
+              "notes": "This study highlights the botanical Pueraria tuberosa for its 'wide range of medicinal and nutritional value,' which includes phenolics, flavonoids, and other phytoconstituents."
             }
           ],
           "grader_agent": "did:web:mesh-api-40952019806.us-central1.run.app:agents:evidence-grader",
@@ -1193,7 +1113,7 @@
             "raw_context": "This is the product's name, displayed as the main title on the page. The name itself implies the product has a calming effect."
           },
           "score": 1,
-          "rationale": "The product name alone is considered promotional language and provides no scientific evidence or plausible mechanism for a calming effect.",
+          "rationale": "The claim is made solely through the product's name without any listed ingredients or supporting evidence. This is considered unsubstantiated promotional language.",
           "escalate_to_human_vet": true
         },
         {
@@ -1229,9 +1149,9 @@
           },
           "ftc_section": null,
           "aafco_definition": "PF7 Substantiation of Claims",
-          "nasc_public_standard": "NASC does NOT certify clinical efficacy claims",
+          "nasc_public_standard": null,
           "violation_flag": false,
-          "rationale": "The claim 'Calming' is a direct efficacy claim, not an endorsement, so FTC \u00a7255 is not applicable. AAFCO PF7 requires such performance claims to be substantiated with scientifically valid evidence for the target species.",
+          "rationale": "The claim 'Calming' is a direct efficacy claim made by the advertiser, not an endorsement, so FTC \u00a7255 does not apply. AAFCO PF7 requires that such efficacy claims be substantiated with scientifically valid, species-specific evidence.",
           "grounding_sources": [
             {
               "source_id": "aafco-pf7-substantiation",
@@ -1254,9 +1174,9 @@
           },
           "ftc_section": null,
           "aafco_definition": "Ingredient-based claims",
-          "nasc_public_standard": "Substantiation of ingredient quantities, absence of contaminants",
+          "nasc_public_standard": "Absence of contaminants",
           "violation_flag": false,
-          "rationale": "The claim 'developed with clean ingredients' is a marketing claim about ingredient quality, not an endorsement, so FTC \u00a7255 does not apply. AAFCO and NASC standards would require the manufacturer to possess development records and substantiate their definition of 'clean,' for example, through testing for contaminants.",
+          "rationale": "The term 'clean ingredients' is considered marketing puffery as 'clean' lacks a specific regulatory definition, and the claim is not an endorsement, making FTC \u00a7255 inapplicable. However, it is an ingredient-based claim under AAFCO and implies a standard of quality, such as the absence of contaminants, which is audited under NASC standards.",
           "grounding_sources": [
             {
               "source_id": "aafco-pf7-substantiation",
@@ -1293,10 +1213,10 @@
             "raw_context": "JustFoodForDogs Calming Soft Chews were developed with a blend of clean ingredients packed with botanical and micronutrients that work together to help your dog handle internal and external stressors."
           },
           "ftc_section": null,
-          "aafco_definition": "Ingredient-based claim",
-          "nasc_public_standard": "Labeling compliance / label accuracy testing",
+          "aafco_definition": null,
+          "nasc_public_standard": "Labeling compliance",
           "violation_flag": false,
-          "rationale": "The claim is a statement about product composition, not an endorsement, so FTC \u00a7255 does not apply. Under AAFCO and NASC, this ingredient-based claim is substantiated by confirming the presence of botanicals and micronutrients on the ingredient list; 'packed with' is considered puffery.",
+          "rationale": "The claim 'packed with' is subjective marketing language (puffery) about ingredients, not a specific, quantifiable promise or an endorsement. As long as the product contains the named ingredients, it is unlikely to trigger a violation under FTC, AAFCO, or NASC rules.",
           "grounding_sources": [
             {
               "source_id": "aafco-pf7-substantiation",
@@ -1361,42 +1281,16 @@
           "auditor_agent": "did:web:mesh-api-40952019806.us-central1.run.app:agents:auditor"
         }
       ],
-      "issued_at": "2026-05-26T17:32:03.855597",
+      "issued_at": "2026-05-26T21:04:47.964510",
       "issuer": "did:web:mesh-api-40952019806.us-central1.run.app",
-      "bundle_urn": "urn:pcec:claim:zesf6xz5lq5ycue7p5dkcth2",
-      "signature": "ed25519:did:web:mesh-api-40952019806.us-central1.run.app#owner:0OOaaILDGt2So21nyeTSjKkYA75JwlV1rEGZ+KbonP/aoSccuYWF2+zceqmnnvoJCWygabji9KOQcdCB3jhBAg=="
+      "bundle_urn": "urn:pcec:claim:geuli2biuufx6vryeai6kb45",
+      "signature": "ed25519:did:web:mesh-api-40952019806.us-central1.run.app#owner:DT+xww15J9ID4JfcO1uJ+wVowNYQ+m0UNTPoe4c3WhS0YdNondGhFi3XkifcgJ/jxZ+Qdi/RQ9+DrW4yuEMUDg=="
     },
-    "bundle_hash": "sha256:c9245f5f3d5c3b81509f7f46a14cfa5620f3e802b57fcb73fc2eaffb7aee57c1",
-    "bundle_signature": "ed25519:did:web:mesh-api-40952019806.us-central1.run.app#owner:0OOaaILDGt2So21nyeTSjKkYA75JwlV1rEGZ+KbonP/aoSccuYWF2+zceqmnnvoJCWygabji9KOQcdCB3jhBAg==",
-    "chain_anchor": "sha256:bce781058f7cb094af1910b0b4547ab664c701b79ce427f756c510dc93858396",
+    "bundle_hash": "sha256:3128b46828a50b7f56382011e5079d070138c3bf04ac228044940425db50d8ce",
+    "bundle_signature": "ed25519:did:web:mesh-api-40952019806.us-central1.run.app#owner:DT+xww15J9ID4JfcO1uJ+wVowNYQ+m0UNTPoe4c3WhS0YdNondGhFi3XkifcgJ/jxZ+Qdi/RQ9+DrW4yuEMUDg==",
+    "chain_anchor": "sha256:3f217249e5524546fa99756e9cb3d560ebab45c1b7bb263a7d5c813d2d9eebf2",
     "chain_anchor_status": "appended",
-    "second_opinion": {
-      "tests": [
-        {
-          "name": "COURT",
-          "verdict": "NEEDS REVIEW",
-          "rationale": "While no lawsuits exist against this specific product, a recent $11.5M settlement in a class action against another pet supplement brand (Nutramax/Cosequin) for unsubstantiated claims sets a precedent for legal risk. "
-        },
-        {
-          "name": "REGULATOR",
-          "verdict": "SURVIVES",
-          "rationale": "No FDA warning letters or FTC enforcement actions were found for this product, though the brand had a food recall in 2018 for an unrelated issue. "
-        },
-        {
-          "name": "SCIENTIFIC CONSENSUS",
-          "verdict": "NEEDS REVIEW",
-          "rationale": "A 2024 study showed a supplement with Valerian and Passionflower reduced firework fear in dogs, but scientific reviews state direct canine evidence for most of the active ingredients remains weak or unproven. "
-        },
-        {
-          "name": "PUBLIC SKEPTICISM",
-          "verdict": "NEEDS REVIEW",
-          "rationale": "A significant number of customer reviews state the product was ineffective or caused adverse effects, and a general skepticism about unregulated calming supplements exists online. "
-        }
-      ],
-      "strongest_counter": "The scientific evidence for the calming efficacy of the specific active ingredients (Passionflower, Valerian, Melatonin) in dogs is considered weak and largely extrapolated from human or rodent studies, with some canine-specific studies showing no effect.",
-      "overall_verdict": "NEEDS REVIEW",
-      "summary": "While we haven't faced legal or regulatory action, the scientific proof behind our calming claim is thin, and a number of customers report it doesn't work."
-    },
-    "cert_html": "<div class=\"cert-composed\" style=\"font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; color: var(--ink);\">\n  <h1 style=\"font-size: 1.125rem; line-height: 1.4; font-weight: 600; margin: 0 0 1rem 0;\">\n    JustFoodForDogs &middot; Calming Chews Efficacy &amp; Ingredient Claims &middot; <span style=\"color:var(--warning);\">NEEDS REVIEW</span>\n  </h1>\n\n  <p style=\"font-size: 0.9rem; line-height: 1.6; color: var(--muted); margin: 0 0 1.5rem 0;\">\n    This evidence bundle covers three related product claims: \"Calming,\" \"developed with a blend of clean ingredients,\" and \"packed with botanical and micronutrients.\" All three claims were flagged for using unsubstantiated marketing language. The AI vet-rubric simulation scored each claim 1 out of 5, triggering immediate escalation. The simulated 5-vet rubric cited the use of \"promotional language,\" \"undefined marketing terms,\" and a lack of \"competent and reliable scientific evidence\" to support the primary efficacy claim. While the FTC \u00a7255 substantiation check did not find a direct violation under that specific rule, its analysis confirmed that other regulatory standards (AAFCO PF7) require scientific validation for such performance claims, which is absent here. The Falsifier auditor confirmed all PubMed-retrieved papers passed the PMID-format check, indicating the evidence bundle is structurally sound but the evidence itself is insufficient to support the claims as written.\n  </p>\n\n  <h2 style=\"font-size: 0.75rem; font-weight: 600; letter-spacing: 0.05em; text-transform: uppercase; color: var(--electric); margin: 0 0 0.75rem 0;\">\n    Ship-Before-Launch Fixes\n  </h2>\n  <ol style=\"margin: 0 0 1.5rem 0; padding-left: 1.25rem; font-size: 0.9rem; line-height: 1.6; color: var(--muted);\">\n    <li style=\"margin-bottom: 0.5rem;\"><strong>Revise Claim Language:</strong> Remove subjective, promotional terms like \"Calming,\" \"clean ingredients,\" and \"packed with.\" These are considered unsubstantiated marketing language by the AI-simulated vet rubric.</li>\n    <li style=\"margin-bottom: 0.5rem;\"><strong>Substantiate with Specifics:</strong> Replace vague categories like \"botanicals\" with the names of key active ingredients. Claims must be tied to specific, verifiable components of the product.</li>\n    <li style=\"margin-bottom: 0.5rem;\"><strong>Align Evidence to Claims:</strong> The current PubMed-retrieved papers were insufficient. The brand must provide competent and reliable scientific evidence (e.g., randomized controlled trials in dogs) that directly supports the specific calming effect claimed for the final product formulation.</li>\n  </ol>\n\n  <div class=\"cert-footer\" style=\"border-top: 1px solid rgba(255,255,255,0.1); padding-top: 1rem; font-family: var(--mono); font-size: 0.7rem; line-height: 1.5; color: var(--muted);\">\n    urn:pcec:claim:zesf6xz5lq5ycue7p5dkcth2<br>\n    sha256:c9245f5f3d5c3b81509f7f46a14cfa5620f3e802b57fcb73fc2eaffb7aee57c1<br>\n    <span class=\"cert-disclosure-inline\">Disclosure: AI-derived attestation \u00b7 vet rubric is an LLM simulation \u00b7 audit + Second Opinion are LLM agents over real evidence (PubMed, FTC \u00a7255, Google Search) \u00b7 Ed25519 signed</span>\n    <details style=\"margin-top:6px;\">\n      <summary style=\"cursor:pointer;color:var(--electric);font-family:var(--mono);font-size:0.62rem;letter-spacing:0.16em;text-transform:uppercase;\">Show full scope of attestation</summary>\n      <ul style=\"margin:8px 0 0 0;padding-left:18px;font-family:var(--mono);font-size:0.62rem;color:var(--muted);line-height:1.6;list-style:none;\">\n        <li>\u00b7 Vet rubric: Gemini 2.5 Pro simulating a 5-vet panel. Not licensed-DVM attestation. Replaced by the attest_expert A2A skill in v0.2.</li>\n        <li>\u00b7 Evidence retrieval: BioMCP \u2192 PubMed (real papers) + Semantic Scholar citation grading. Real-existence verification of PMIDs is PMID-format only at v0.1; citation_enricher extends to existence + influence.</li>\n        <li>\u00b7 Compliance: Vertex AI Search over public FTC 16 CFR \u00a7255 + AAFCO PF7 + NASC public seal corpus. No licensed handbooks ingested.</li>\n        <li>\u00b7 Auditor (Falsifier v0): claim-direction + PMID-format checks only.</li>\n        <li>\u00b7 Second Opinion: Gemini 2.5 Pro + Google Search grounding.</li>\n        <li>\u00b7 Signed: Ed25519 with mesh's own key (did:web:mesh-api-...). Not a 3rd-party accredited co-signature; partner co-signing tier (NASC / NSF / vet-school) is v0.2 roadmap.</li>\n      </ul>\n    </details>\n  </div>\n</div>"
+    "second_opinion": null,
+    "cert_html": null
   }
 ]
