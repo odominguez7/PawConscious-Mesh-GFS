@@ -1624,12 +1624,9 @@ def _render_page(filename: str, active: str) -> str:
 
 
 @app.get("/", response_class=HTMLResponse)
-async def root(v: Optional[str] = None) -> HTMLResponse:
-    """Console UI. Default = v2 (deck-aligned redesign, flipped 2026-05-19 night after Stage 2A.x
-    + v0.3.x codex handshakes cleared and E2E verified). v1 always available at /?v=v1 as fallback.
-    """
-    filename = "console.html" if v == "v1" else "console-v2.html"
-    return HTMLResponse(content=_render_page(filename, active="product"))
+async def root() -> HTMLResponse:
+    """Console UI (console-v2.html · deck-aligned redesign, flipped 2026-05-19)."""
+    return HTMLResponse(content=_render_page("console-v2.html", active="product"))
 
 
 @app.get("/demo", response_class=HTMLResponse)
