@@ -32,6 +32,20 @@ def canonical_bundle_bytes(obj: Any) -> bytes:
     d = obj.model_dump(mode="json") if hasattr(obj, "model_dump") else dict(obj)
     d.pop("signature", None)
     d.pop("bundle_urn", None)
+    # Number canonicalization (toward RFC 8785): a whole-valued float must
+    # serialize identically in every language. Python json emits 1.0, but
+    # JavaScript JSON.stringify emits 1 (it can't tell a whole float from an
+    # int after JSON.parse). Collapse whole floats to ints so a browser
+    # verifier reproduces the exact bytes. bool is not a float, so it's safe.
+    def _nums(x):
+        if isinstance(x, float):
+            return int(x) if x.is_integer() else x
+        if isinstance(x, dict):
+            return {k: _nums(v) for k, v in x.items()}
+        if isinstance(x, list):
+            return [_nums(v) for v in x]
+        return x
+    d = _nums(d)
     return json.dumps(d, sort_keys=True, separators=(",", ":"), ensure_ascii=False).encode("utf-8")
 
 

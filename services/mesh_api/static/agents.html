@@ -1055,9 +1055,16 @@ shopper = LlmAgent(
       if (!pubKeyBytes || pubKeyBytes.length !== 32) {
         throw new Error('failed to extract 32-byte Ed25519 public key from did.json');
       }
-      // Pull the same bundle output the mesh signed: canonical JSON of `output`.
-      const canonical = JSON.stringify(lastBundle.output, Object.keys(lastBundle.output).sort());
-      const msg = new TextEncoder().encode(canonical);
+      // Reproduce the server's transport-stable canonical (shared.canonical_bundle_bytes):
+      // recursively sort keys, drop `signature` + the derived `bundle_urn`, compact separators.
+      const canon = (o) => Array.isArray(o)
+        ? '[' + o.map(canon).join(',') + ']'
+        : (o && typeof o === 'object')
+          ? '{' + Object.keys(o).sort().map(k => JSON.stringify(k) + ':' + canon(o[k])).join(',') + '}'
+          : JSON.stringify(o);
+      const signed = { ...lastBundle.output };
+      delete signed.signature; delete signed.bundle_urn;
+      const msg = new TextEncoder().encode(canon(signed));
       // Parse signature: format is `ed25519:<did>#owner:<base64>`
       const sigStr = lastBundle.bundle_signature || '';
       const sigB64 = sigStr.split(':').pop();
@@ -1073,7 +1080,7 @@ shopper = LlmAgent(
         verifyBtn.textContent = '✓ Verified';
       } else {
         verifyResult.className = 'verify-result fail';
-        verifyResult.textContent = '✗ Signature did NOT verify against the published public key. (Note: canonical-JSON ordering may differ between this browser-side check and the mesh\'s server-side canonical form. Use the Python snippet above for the authoritative check.)';
+        verifyResult.textContent = '✗ Signature did NOT verify against the published key — this bundle does not match what the mesh signed (tampered or altered in transit).';
         verifyBtn.disabled = false;
       }
     } catch (err) {

@@ -1737,6 +1737,11 @@
           <span class="pp-label">Run a live A2A verify → real task_id</span>
           <span class="pp-arrow">→</span>
         </button>
+        <button class="pp-btn pp-btn-run" type="button" id="verifySigBtn">
+          <span class="pp-mono">verify Ed25519 signature</span>
+          <span class="pp-label">Check a signed bundle in your browser</span>
+          <span class="pp-arrow">→</span>
+        </button>
       </div>
       <!-- Output of the live POST. Hidden until user clicks "Run live curl". -->
       <pre class="pp-output" id="pipesOutput" hidden></pre>
@@ -3224,6 +3229,53 @@ function setBilling(period) {
         ppOut.textContent = 'Error contacting /a2a/v1/tasks/send: ' + err.message;
       } finally {
         runBtn.classList.remove('running');
+      }
+    });
+  }
+
+  // Inspect-the-pipes · in-browser Ed25519 verify. Fetches a real signed
+  // bundle + the published DID key and checks the signature client-side,
+  // reproducing the server's transport-stable canonical (sorted keys, minus
+  // signature + bundle_urn). No trust in this API's verdict.
+  const verifySigBtn = document.getElementById('verifySigBtn');
+  if (verifySigBtn && ppOut) {
+    const B58 = '123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz';
+    const b58decode = (s) => {
+      let n = 0n;
+      for (const c of s) n = n * 58n + BigInt(B58.indexOf(c));
+      let hex = n.toString(16); if (hex.length % 2) hex = '0' + hex;
+      return Uint8Array.from(hex.match(/../g).map(h => parseInt(h, 16)));
+    };
+    const canon = (o) => Array.isArray(o)
+      ? '[' + o.map(canon).join(',') + ']'
+      : (o && typeof o === 'object')
+        ? '{' + Object.keys(o).sort().map(k => JSON.stringify(k) + ':' + canon(o[k])).join(',') + '}'
+        : JSON.stringify(o);
+    verifySigBtn.addEventListener('click', async () => {
+      if (verifySigBtn.classList.contains('running')) return;
+      verifySigBtn.classList.add('running');
+      ppOut.hidden = false;
+      ppOut.innerHTML = '<span class="out-key">// verifying</span> fetching a signed bundle + the public key …';
+      try {
+        const url = 'https://www.greengruff.com/products/ease';
+        const b = await (await fetch('/a2a/v1/lookup?url=' + encodeURIComponent(url))).json();
+        const did = await (await fetch('/.well-known/did.json')).json();
+        const mb = did.verificationMethod[0].publicKeyMultibase;
+        const pk = b58decode(mb.slice(1)).slice(2, 34);   // strip 'z' + 0xed01 multicodec
+        const signed = { ...b.output }; delete signed.signature; delete signed.bundle_urn;
+        const msg = new TextEncoder().encode(canon(signed));
+        const sig = Uint8Array.from(atob((b.bundle_signature || '').split(':').pop()), c => c.charCodeAt(0));
+        const key = await crypto.subtle.importKey('raw', pk, { name: 'Ed25519' }, false, ['verify']);
+        const ok = await crypto.subtle.verify('Ed25519', key, sig, msg);
+        const av = (b.output.audit || []).map(a => a.verdict);
+        const v = av.includes('FAIL') ? 'FAIL' : (av.includes('CONDITIONAL') ? 'CONDITIONAL' : 'PASS');
+        ppOut.innerHTML = ok
+          ? '<span class="out-key">// ' + (b.product_label || 'signed bundle') + '</span>\n✓ SIGNATURE VALID — verified in your browser against the Ed25519 key in /.well-known/did.json.\nverdict: ' + v + '  ·  you did not have to trust this API.'
+          : '✗ signature did NOT verify against the published key.';
+      } catch (err) {
+        ppOut.innerHTML = 'In-browser Ed25519 verify is not available in this browser (' + (err.message || err) + ').\nThe signature is still independently verifiable: run <code>python examples/shopper_agent.py</code> or see <a href="/agents" style="color:var(--electric)">/agents</a>.';
+      } finally {
+        verifySigBtn.classList.remove('running');
       }
     });
   }
