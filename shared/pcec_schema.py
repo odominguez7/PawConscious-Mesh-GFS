@@ -15,7 +15,14 @@ def canonical_bundle_bytes(obj: Any) -> bytes:
 
     The bytes any party (server OR an external verifier) can reproduce from the
     bundle alone: JSON-mode primitives (datetimes -> ISO strings, enums ->
-    values), the `signature` field dropped, keys sorted, compact separators.
+    values), keys sorted, compact separators.
+
+    Two fields are excluded because they are NOT signed content:
+    - `signature` — the signature can't sign itself.
+    - `bundle_urn` — it is derived from bundle_hash (urn_for_hash) and is set
+      AFTER hashing/signing, so it must be excluded or the signed bytes (urn
+      absent) won't match the served bytes (urn populated). A verifier can
+      recompute it from the hash.
 
     Critically, this is reproducible from the *served* bundle dict — unlike
     Pydantic's `model_dump_json` (field-definition order, not transport-stable),
@@ -24,6 +31,7 @@ def canonical_bundle_bytes(obj: Any) -> bytes:
     """
     d = obj.model_dump(mode="json") if hasattr(obj, "model_dump") else dict(obj)
     d.pop("signature", None)
+    d.pop("bundle_urn", None)
     return json.dumps(d, sort_keys=True, separators=(",", ":"), ensure_ascii=False).encode("utf-8")
 
 
