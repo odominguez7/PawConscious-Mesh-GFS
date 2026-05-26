@@ -450,6 +450,160 @@
     color: var(--muted);
   }
 
+  /* ASK GEMINI · Path 2 · public Gemini-grounded chat widget (2026-05-25 night).
+     Real Gemini 2.5 Flash call via /api/ask-gemini · grounded on PawConscious
+     verified bundles. First public Google AI surface on the landing. */
+  .askgem {
+    display: flex; flex-direction: column; gap: 12px;
+  }
+  .askgem-eyebrow {
+    display: flex; align-items: center; gap: 8px;
+    font: 700 11px/1 'JetBrains Mono', ui-monospace, monospace;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--electric);
+  }
+  .askgem-icon {
+    display: inline-flex; align-items: center; justify-content: center;
+    width: 18px; height: 18px;
+    background: linear-gradient(135deg, #4285F4, #9B72CB, #E56C83);
+    color: #FFF;
+    border-radius: 4px;
+    font: 700 10px/1 'Geist', ui-sans-serif, system-ui, sans-serif;
+  }
+  .askgem-subline {
+    font: 500 12.5px/1.5 'Geist', ui-sans-serif, system-ui, sans-serif;
+    color: var(--muted);
+  }
+  .askgem-chip-row {
+    display: flex; flex-direction: column; gap: 6px;
+  }
+  .askgem-chip {
+    text-align: left;
+    padding: 8px 12px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    color: var(--ink);
+    font: 500 12.5px/1.35 'Geist', ui-sans-serif, system-ui, sans-serif;
+    cursor: pointer;
+    transition: border-color 180ms, background 180ms, transform 180ms;
+  }
+  .askgem-chip::before {
+    content: "›  ";
+    color: var(--electric);
+    font: 700 12px var(--mono);
+  }
+  .askgem-chip:hover {
+    border-color: var(--electric);
+    background: rgba(0,212,255,0.04);
+    transform: translateX(2px);
+  }
+  .askgem-input-row {
+    display: flex; gap: 8px;
+  }
+  .askgem-input {
+    flex: 1; min-width: 0;
+    background: var(--surface);
+    border: 1px solid var(--border-strong);
+    border-radius: 8px;
+    color: var(--ink);
+    padding: 11px 13px;
+    font: 500 13px 'Geist', ui-sans-serif, system-ui, sans-serif;
+    transition: border-color 180ms, box-shadow 180ms;
+  }
+  .askgem-input:focus {
+    outline: none;
+    border-color: var(--electric);
+    box-shadow: 0 0 0 3px rgba(0,212,255,0.15);
+  }
+  .askgem-go {
+    flex-shrink: 0;
+    display: inline-flex; align-items: center; gap: 7px;
+    padding: 11px 18px;
+    background: linear-gradient(135deg, #4285F4, #9B72CB, #E56C83);
+    color: #FFF;
+    border: 0; border-radius: 8px;
+    font: 600 13px 'Geist', ui-sans-serif, system-ui, sans-serif;
+    cursor: pointer;
+    box-shadow: 0 8px 20px rgba(155,114,203,0.30);
+    transition: transform 180ms, filter 180ms;
+  }
+  .askgem-go:hover { filter: brightness(1.06); transform: translateY(-1px); }
+  .askgem-go:disabled { opacity: 0.55; cursor: wait; transform: none; }
+
+  .askgem-status[hidden] { display: none !important; }
+  .askgem-status {
+    padding: 9px 12px;
+    background: rgba(0,212,255,0.06);
+    border: 1px solid rgba(0,212,255,0.30);
+    border-radius: 6px;
+    font: 500 11.5px/1.35 'JetBrains Mono', ui-monospace, monospace;
+    color: var(--electric);
+    letter-spacing: 0.04em;
+  }
+  .askgem-status[data-mode="error"] {
+    background: rgba(255,138,77,0.06);
+    border-color: #FF8A4D;
+    color: #FF8A4D;
+  }
+
+  .askgem-answer[hidden] { display: none !important; }
+  .askgem-answer {
+    padding: 14px 16px;
+    background: var(--bg-elevated);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    font: 400 13.5px/1.6 'Geist', ui-sans-serif, system-ui, sans-serif;
+    color: var(--ink);
+    white-space: pre-wrap;
+    word-wrap: break-word;
+  }
+  .askgem-answer strong { font-weight: 700; color: var(--electric); }
+  .askgem-answer p { margin: 0 0 10px; }
+  .askgem-answer p:last-child { margin-bottom: 0; }
+
+  .askgem-meta[hidden] { display: none !important; }
+  .askgem-meta {
+    display: flex; align-items: center; gap: 8px;
+    padding-top: 10px;
+    border-top: 1px dashed rgba(255,255,255,0.10);
+    font: 500 10.5px/1 'JetBrains Mono', ui-monospace, monospace;
+    letter-spacing: 0.06em;
+    color: var(--dim);
+  }
+  .askgem-meta .ag-meta-spacer { flex: 1; }
+  .askgem-meta .ag-meta-link { color: var(--electric); text-decoration: none; }
+  .askgem-meta .ag-meta-link:hover { text-decoration: underline; }
+
+  .askgem-empty {
+    padding: 22px 16px;
+    background: var(--bg-elevated);
+    border: 1px dashed var(--border);
+    border-radius: 10px;
+    text-align: center;
+  }
+  .askgem-empty[hidden] { display: none !important; }
+  .askgem-empty-icon {
+    display: inline-flex; align-items: center; justify-content: center;
+    width: 28px; height: 28px;
+    background: linear-gradient(135deg, #4285F4, #9B72CB, #E56C83);
+    color: #FFF;
+    border-radius: 6px;
+    font: 700 14px/1 'Geist', ui-sans-serif, system-ui, sans-serif;
+    margin-bottom: 8px;
+  }
+  .askgem-empty-line {
+    font: 500 13px/1.4 'Geist', ui-sans-serif, system-ui, sans-serif;
+    color: var(--ink);
+    margin-bottom: 6px;
+  }
+  .askgem-empty-meta {
+    font: 500 11px/1.4 'JetBrains Mono', ui-monospace, monospace;
+    color: var(--muted);
+    letter-spacing: 0.04em;
+  }
+
   /* OPTION A · Verdict-first restructure (2026-05-25 night, Omar approved).
      The bundle card now leads with a HUMAN verdict (brand-owner readable) and
      demotes the cryptographic proof to a footer. Stripe / Vercel / Reducto
@@ -1760,132 +1914,53 @@
          ================================================================= -->
     <div class="bundle-card" aria-label="PawConscious signed bundle · live verifier">
 
-      <!-- AI-AGENT READINESS CHECK · landing right column (2026-05-25 night)
-           Reframed from generic "verify" to a free product audit that
-           mirrors the Visible tier's "Monthly AEO scan" promise. The
-           section now has a clear job: brand owners check if their
-           product is AI-agent ready in one click. Pre-cached brands
-           teach "what good looks like". On PASS, an inline upsell points
-           to the Visible tier (#biz). -->
-      <div class="vw" id="verifyWidget">
-        <div class="vw-eyebrow">Free · AI-Agent Readiness Check</div>
-        <div class="vw-subline">Paste your product URL · we show what an AI agent reads about your brand</div>
-        <div class="vw-input-row">
-          <input type="text" class="vw-url" id="vwUrl"
-                 value="https://www.greengruff.com/products/ease"
-                 placeholder="https://your-brand.com/product/...">
-          <button type="button" class="vw-go" id="vwGo">
-            <span class="vw-go-label">Check my product</span>
-            <span class="vw-go-arrow">→</span>
+      <!-- ASK GEMINI · public Gemini-grounded chat surface (Path 2 · 2026-05-25 night)
+           The first PUBLIC Google AI surface on PawConscious. Internal agents
+           use Gemini for verification; THIS is where a dog parent / brand
+           owner / retailer can ASK Gemini something and watch it answer using
+           our verified bundles as the grounding source.
+
+           Real Gemini 2.5 Flash via Vertex AI · grounded on the 3 seeded
+           bundles + any future real bundles. Rate-limited backend. No mocks. -->
+      <div class="askgem" id="askgem">
+        <div class="askgem-eyebrow">
+          <span class="askgem-icon">✦</span>
+          <span>Ask Gemini · grounded on verified pet products</span>
+        </div>
+        <div class="askgem-subline">Real Gemini 2.5 · grounding source: PawConscious verified bundles. Ask anything a dog parent would ask.</div>
+
+        <div class="askgem-chip-row">
+          <button type="button" class="askgem-chip" data-q="Best hip and joint chews for my senior lab with inflammation?">Best hip and joint chews for senior dogs</button>
+          <button type="button" class="askgem-chip" data-q="What calming chews work for puppies during fireworks?">Calming chews for fireworks</button>
+          <button type="button" class="askgem-chip" data-q="Which products have published lab tests and DVM language?">DVM-language compliant products</button>
+        </div>
+
+        <div class="askgem-input-row">
+          <input type="text" class="askgem-input" id="askgemInput"
+                 placeholder="Ask about a pet product…"
+                 maxlength="500">
+          <button type="button" class="askgem-go" id="askgemGo">
+            <span class="askgem-go-label">Ask</span>
+            <span class="askgem-go-arrow">→</span>
           </button>
         </div>
-        <div class="vw-chip-row">
-          <span class="vw-chip-label">Or see what good looks like:</span>
-          <button type="button" class="vw-chip active" data-brand="greengruff">Green Gruff EASE</button>
-          <button type="button" class="vw-chip" data-brand="nativepet">Native Pet H&amp;J</button>
-          <button type="button" class="vw-chip" data-brand="jffd">JFFD Calming</button>
-        </div>
-        <div class="vw-status" id="vwStatus" hidden>
-          <span class="vw-timer" id="vwTimer">00:00.0</span>
-          <span class="vw-mode" id="vwMode">elapsed</span>
-        </div>
-      </div>
 
-      <div class="bundle-divider"></div>
+        <div class="askgem-status" id="askgemStatus" hidden></div>
 
-      <div class="bundle-header">
-        <span class="bundle-mark">◆ PCEC v0.1 · Signed Bundle</span>
-        <span class="bundle-status" id="bundleStatus">● VERIFIED</span>
-      </div>
+        <div class="askgem-answer" id="askgemAnswer" hidden></div>
 
-      <!-- VERDICT PANEL (Option A · brand-owner-facing top half).
-           Per-brand verdict status + headline + subline. Colored by status:
-           pass = moss, pass_with_issues = amber, fail = red. -->
-      <div class="bundle-product-name" id="bundleProductName">Green Gruff EASE · Joint &amp; Hip</div>
-      <div class="verdict-panel" id="verdictPanel" data-status="pass">
-        <div class="verdict-headline">
-          <span class="verdict-icon" id="verdictIcon">✓</span>
-          <span class="verdict-text" id="verdictHeadline">Fully verified</span>
+        <div class="askgem-meta" id="askgemMeta" hidden>
+          <span class="ag-meta-stack">gemini-2.5-flash · vertex ai · us-central1</span>
+          <span class="ag-meta-spacer"></span>
+          <a class="ag-meta-link" href="/agents" target="_blank" rel="noopener">See the A2A reference ↗</a>
         </div>
-        <div class="verdict-subline" id="verdictSubline">AI agents have everything they need to recommend this product with confidence.</div>
-        <!-- Visible-tier upsell · appears only on PASS verdicts (CSS-gated).
-             Closes the loop between the free readiness check and the
-             "Monthly AEO scan" promise of the $0 Visible tier. -->
-        <a class="verdict-upsell" href="#biz">Want monthly checks? See the Visible tier →</a>
-      </div>
 
-      <!-- Four plain-English summary rows. Brand owner reads these and knows
-           exactly what's substantiated, what's flagged, and what to fix. -->
-      <div class="verdict-summary">
-        <div class="vs-row">
-          <span class="vs-label">Substantiated</span>
-          <span class="vs-value" id="vs-substantiated">3 / 3 claims backed by 3 PubMed PMIDs</span>
-        </div>
-        <div class="vs-row">
-          <span class="vs-label">Compliance</span>
-          <span class="vs-value" id="vs-compliance">Clean · 0 FTC §255 flags</span>
-        </div>
-        <div class="vs-row">
-          <span class="vs-label">Vet rubric</span>
-          <span class="vs-value" id="vs-vet-row">4 / 5 · CBD dose matches published canine OA studies</span>
-        </div>
-        <div class="vs-row">
-          <span class="vs-label">Lab evidence</span>
-          <span class="vs-value" id="vs-lab">1 public COA · 37 findings extracted via Document AI</span>
+        <div class="askgem-empty" id="askgemEmpty">
+          <div class="askgem-empty-icon">✦</div>
+          <div class="askgem-empty-line">Click a question above, or type your own.</div>
+          <div class="askgem-empty-meta">Answers come from a real Gemini 2.5 call · grounded on 3 verified brands · live Cloud Run · ~2-4&nbsp;s response.</div>
         </div>
       </div>
-
-      <!-- Optional action CTA · appears when verdict has issues to fix. -->
-      <a class="verdict-cta" id="verdictCta" href="/agents" hidden>
-        <span class="vc-label" id="vc-label">Fix the §255 flag</span>
-        <span class="vc-arrow">→</span>
-      </a>
-
-      <!-- Legacy compat mirrors · old render code wrote into these. Kept hidden
-           so old code paths still find their targets without throwing. -->
-      <div class="bundle-body" id="bundleMeta" hidden>
-        <div class="bundle-row"><span class="bk">product</span><span class="bv" id="bv-product">Green Gruff EASE · Joint &amp; Hip</span></div>
-        <div class="bundle-row"><span class="bk">claims</span><span class="bv" id="bv-claims"></span></div>
-        <div class="bundle-row"><span class="bk">evidence</span><span class="bv" id="bv-evidence"></span></div>
-        <div class="bundle-row"><span class="bk">vet rubric</span><span class="bv" id="bv-vet"></span></div>
-      </div>
-
-      <div class="bundle-divider"></div>
-
-      <!-- TECHNICAL PROOF (Option A · demoted footer for legal · AI agents · transparency log) -->
-      <div class="proof-eyebrow">Proof · for legal, AI agents, transparency log</div>
-
-      <div class="bundle-body bundle-body--mono">
-        <div class="bundle-row" title="This bundle's chain link: sha256(bundle_hash · prev_anchor). Different for every signed bundle.">
-          <span class="bk">chain_anchor</span>
-          <span class="bv bv-hash"><a id="bv-anchor" href="/pcec/v0/chain/head" target="_blank" rel="noopener">sha256:b66c42f87f7ba0c5ce7ae3d74ac594c79c89b1…</a></span>
-        </div>
-        <div class="bundle-row" title="Ed25519 signature over the canonical bundle JSON. Verifiable offline via the public key at /.well-known/did.json.">
-          <span class="bk">signature</span>
-          <span class="bv bv-hash" id="bv-sig">Ed25519:6f8a3d1c…</span>
-        </div>
-      </div>
-
-      <div class="bundle-foot bundle-foot--illustration">
-        <span class="bf-stack" id="bv-stack">A2A v0.3 · 7 agents · 142ms</span>
-        <span class="bf-spacer"></span>
-        <span class="bf-example" id="bv-mode-tag">Example · from a real verified brand</span>
-      </div>
-
-      <!-- Transparency log "HEAD" pointer (NOT per-bundle).
-           2026-05-25 (Omar feedback): users were confused why all 3 brand
-           chips showed the same hash here. Renamed + tooltip clarifies that
-           this is the current Firestore log head, like git HEAD — one
-           value globally, updates whenever a new bundle is appended. The
-           per-bundle chain link is the chain_anchor row above. -->
-      <div class="bundle-live" id="bundleLive" data-status="loading" aria-live="polite"
-           title="Current transparency-log HEAD pointer. One value globally — like git HEAD. Updates each time a new bundle is appended to Firestore.">
-        <span class="bl-dot"></span>
-        <span class="bl-label">Transparency log · HEAD</span>
-        <a class="bl-hash" id="bundleLiveHash" href="/pcec/v0/chain/head" target="_blank" rel="noopener">checking…</a>
-        <span class="bl-age" id="bundleLiveAge"></span>
-      </div>
-    </div>
 
     <!-- "Inspect the pipes" — three one-click proofs that the demo is
          running on real Google Cloud infra, not a frontend mockup. Sits
@@ -3805,6 +3880,92 @@ const BRAND_BUNDLES = {
   // Also: clearMissState when a chip is clicked (so the user can recover
   // by clicking a known brand after a missed paste).
   vwChips.forEach(chip => chip.addEventListener('click', () => clearMissState()));
+
+  // ============================================================
+  // ASK GEMINI · Path 2 (2026-05-25 night)
+  // Public Gemini-grounded chat surface. Real Gemini 2.5 Flash call via
+  // /api/ask-gemini · grounded on PawConscious verified bundles.
+  // ============================================================
+  const askgemInput  = document.getElementById('askgemInput');
+  const askgemGo     = document.getElementById('askgemGo');
+  const askgemStatus = document.getElementById('askgemStatus');
+  const askgemAnswer = document.getElementById('askgemAnswer');
+  const askgemMeta   = document.getElementById('askgemMeta');
+  const askgemEmpty  = document.getElementById('askgemEmpty');
+  const askgemChips  = document.querySelectorAll('.askgem-chip');
+
+  function setStatus(text, mode) {
+    if (!askgemStatus) return;
+    askgemStatus.hidden = false;
+    askgemStatus.textContent = text;
+    if (mode) askgemStatus.setAttribute('data-mode', mode);
+    else askgemStatus.removeAttribute('data-mode');
+  }
+  function clearStatus() { if (askgemStatus) askgemStatus.hidden = true; }
+  function showAnswer(text) {
+    if (!askgemAnswer) return;
+    // Simple markdown rendering: **bold** + paragraphs
+    const html = text
+      .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+      .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
+      .split(/\n\n+/).map(p => '<p>' + p.replace(/\n/g, '<br>') + '</p>').join('');
+    askgemAnswer.innerHTML = html;
+    askgemAnswer.hidden = false;
+    if (askgemMeta) askgemMeta.hidden = false;
+    if (askgemEmpty) askgemEmpty.hidden = true;
+  }
+  function showError(text) {
+    setStatus(text, 'error');
+    if (askgemAnswer) askgemAnswer.hidden = true;
+    if (askgemMeta) askgemMeta.hidden = true;
+  }
+
+  async function askGemini(query) {
+    if (!query) return;
+    askgemGo.disabled = true;
+    setStatus('Asking Gemini 2.5… (~2-4s)', '');
+    if (askgemAnswer) askgemAnswer.hidden = true;
+    if (askgemMeta) askgemMeta.hidden = true;
+    if (askgemEmpty) askgemEmpty.hidden = true;
+    try {
+      const t0 = performance.now();
+      const r = await fetch('/api/ask-gemini', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ query }),
+      });
+      const elapsed = Math.round(performance.now() - t0);
+      const data = await r.json();
+      if (r.ok && data.answer) {
+        setStatus(`Answer · grounded on PawConscious bundles · ${elapsed}ms`, '');
+        showAnswer(data.answer);
+      } else if (r.status === 429) {
+        showError('Rate limited. Try another query in a minute.');
+      } else {
+        showError(data.answer || 'Gemini is unavailable right now.');
+      }
+    } catch (err) {
+      showError('Network error · ' + err.message);
+    } finally {
+      askgemGo.disabled = false;
+    }
+  }
+
+  if (askgemGo && askgemInput) {
+    askgemGo.addEventListener('click', () => askGemini(askgemInput.value.trim()));
+    askgemInput.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') { e.preventDefault(); askGemini(askgemInput.value.trim()); }
+    });
+  }
+  askgemChips.forEach(chip => {
+    chip.addEventListener('click', () => {
+      const q = chip.dataset.q;
+      if (q && askgemInput) {
+        askgemInput.value = q;
+        askGemini(q);
+      }
+    });
+  });
 })();
 </script>
 
