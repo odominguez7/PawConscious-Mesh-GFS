@@ -1341,45 +1341,54 @@ async def api_ask_gemini(request: Request) -> JSONResponse:
             "answer": "Keep the question under 500 characters.",
         })
 
-    try:
-        from google import genai as _genai
-        from google.genai import types as _genai_types
+    # Resilience: retry once on transient Gemini errors (cold start, quota
+    # blip, network) before falling back to the graceful 502 message.
+    last_err = None
+    for attempt in range(2):
+        try:
+            from google import genai as _genai
+            from google.genai import types as _genai_types
 
-        bundles_json = await _build_bundles_context()
-        prompt = GEMINI_GROUNDING_PROMPT.format(
-            bundles_json=bundles_json,
-            user_query=query,
-        )
-        client = _genai.Client(vertexai=True, project="pawconscious-mesh-2026", location="us-central1")
-        # Use 2.5 Flash for the public chat surface · sub-2s latency, no
-        # thinking-budget overhead, much cheaper for high-frequency public calls.
-        # Pro lives in our internal agents where reasoning depth matters.
-        response = client.models.generate_content(
-            model="gemini-2.5-flash",
-            contents=prompt,
-            config=_genai_types.GenerateContentConfig(
-                temperature=0.4,
-                max_output_tokens=1200,
-            ),
-        )
-        answer = (response.text or "").strip()
-        if not answer:
-            answer = "Gemini did not return an answer. Try rephrasing your question."
+            bundles_json = await _build_bundles_context()
+            prompt = GEMINI_GROUNDING_PROMPT.format(
+                bundles_json=bundles_json,
+                user_query=query,
+            )
+            client = _genai.Client(vertexai=True, project="pawconscious-mesh-2026", location="us-central1")
+            # Use 2.5 Flash for the public chat surface · sub-2s latency, no
+            # thinking-budget overhead, much cheaper for high-frequency public calls.
+            response = client.models.generate_content(
+                model="gemini-2.5-flash",
+                contents=prompt,
+                config=_genai_types.GenerateContentConfig(
+                    temperature=0.4,
+                    max_output_tokens=1200,
+                ),
+            )
+            answer = (response.text or "").strip()
+            if not answer:
+                answer = "Gemini didn't return text for that query. Try rephrasing — for example, ask about a specific concern like 'joint health for older dogs'."
 
-        return JSONResponse(status_code=200, content={
-            "status": "ok",
-            "answer": answer,
-            "model": "gemini-2.5-flash",
-            "grounded_on": "PawConscious verified bundles",
-            "served_from": "Vertex AI · us-central1",
-        })
-    except Exception as e:
-        import logging as _l
-        _l.getLogger(__name__).warning("/api/ask-gemini failed: %s", e)
-        return JSONResponse(status_code=502, content={
-            "status": "upstream_error",
-            "answer": "Gemini is unavailable right now. The verified bundles are still queryable via /a2a/v1/lookup.",
-        })
+            return JSONResponse(status_code=200, content={
+                "status": "ok",
+                "answer": answer,
+                "model": "gemini-2.5-flash",
+                "grounded_on": "PawConscious verified bundles",
+                "served_from": "Vertex AI · us-central1",
+                "attempt": attempt + 1,
+            })
+        except Exception as e:
+            last_err = e
+            import logging as _l
+            _l.getLogger(__name__).warning("/api/ask-gemini attempt %d failed: %s", attempt + 1, e)
+            # Brief backoff between attempts
+            await asyncio.sleep(0.4)
+
+    return JSONResponse(status_code=502, content={
+        "status": "upstream_error",
+        "answer": "Gemini didn't respond after a retry. Try again in a few seconds — or browse the verified directory via /agents.",
+        "error_hint": str(last_err)[:120] if last_err else None,
+    })
 
 
 @app.get("/a2a/v1/lookup")

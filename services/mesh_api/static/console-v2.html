@@ -3940,12 +3940,24 @@ const BRAND_BUNDLES = {
         setStatus(`Answer · grounded on PawConscious bundles · ${elapsed}ms`, '');
         showAnswer(data.answer);
       } else if (r.status === 429) {
-        showError('Rate limited. Try another query in a minute.');
+        showError('Rate limited · 5 questions per minute · try again in a few seconds.');
+      } else if (r.status === 502) {
+        // Transient Gemini issue · offer a retry button instead of leaving the user stuck
+        showError(data.answer || "Gemini didn't respond. Try again.");
+        // Append a retry button to the status row
+        if (askgemStatus) {
+          const btn = document.createElement('button');
+          btn.textContent = 'Retry →';
+          btn.className = 'askgem-retry';
+          btn.style.cssText = 'margin-left:10px;padding:4px 10px;background:transparent;border:1px solid currentColor;border-radius:4px;color:inherit;font:600 10.5px var(--mono);cursor:pointer;';
+          btn.addEventListener('click', () => askGemini(query));
+          askgemStatus.appendChild(btn);
+        }
       } else {
-        showError(data.answer || 'Gemini is unavailable right now.');
+        showError(data.answer || 'Unexpected response. Try a different query.');
       }
     } catch (err) {
-      showError('Network error · ' + err.message);
+      showError('Network issue · ' + err.message + ' · check your connection and retry.');
     } finally {
       askgemGo.disabled = false;
     }
