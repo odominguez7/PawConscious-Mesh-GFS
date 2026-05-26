@@ -3,10 +3,28 @@
 Draft proposal — not a standard. Single operator (PawConscious) v0.1.
 See docs/PCEC-v0.md for the full schema specification.
 """
+import json
 from datetime import datetime
 from enum import Enum
 from typing import Optional, Any
 from pydantic import BaseModel, Field
+
+
+def canonical_bundle_bytes(obj: Any) -> bytes:
+    """Transport-stable canonical bytes for hashing + signing a bundle.
+
+    The bytes any party (server OR an external verifier) can reproduce from the
+    bundle alone: JSON-mode primitives (datetimes -> ISO strings, enums ->
+    values), the `signature` field dropped, keys sorted, compact separators.
+
+    Critically, this is reproducible from the *served* bundle dict — unlike
+    Pydantic's `model_dump_json` (field-definition order, not transport-stable),
+    which a client cannot reconstruct after a JSON round-trip. Accepts either an
+    EndorsementClaimBundle (uses model_dump) or a plain dict (a received bundle).
+    """
+    d = obj.model_dump(mode="json") if hasattr(obj, "model_dump") else dict(obj)
+    d.pop("signature", None)
+    return json.dumps(d, sort_keys=True, separators=(",", ":"), ensure_ascii=False).encode("utf-8")
 
 
 class ClaimKind(str, Enum):

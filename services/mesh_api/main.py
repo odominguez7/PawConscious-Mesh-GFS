@@ -38,7 +38,7 @@ from fastapi.responses import JSONResponse, PlainTextResponse
 from pydantic import BaseModel, Field
 
 from agents.orchestrator import run_mesh, summarize
-from shared.pcec_schema import EndorsementClaimBundle
+from shared.pcec_schema import EndorsementClaimBundle, canonical_bundle_bytes
 from shared.task_store import task_store, TaskState
 from shared.transparency_log import (
     append_bundle_async, fetch_bundle_async, get_head_anchor_async, urn_for_hash,
@@ -833,9 +833,11 @@ A2ATaskStatusResponse.model_rebuild()
 
 
 def compute_bundle_hash(bundle: EndorsementClaimBundle) -> str:
-    """Per codex G10 #7 — per-bundle hash for integrity verification."""
-    canonical = bundle.model_dump_json(exclude={"signature"}, indent=None)
-    return "sha256:" + hashlib.sha256(canonical.encode("utf-8")).hexdigest()
+    """Per codex G10 #7 — per-bundle hash for integrity verification.
+
+    Hashes the transport-stable canonical bytes (shared.canonical_bundle_bytes)
+    so an external verifier can reproduce this hash from the served bundle."""
+    return "sha256:" + hashlib.sha256(canonical_bundle_bytes(bundle)).hexdigest()
 
 
 @lru_cache(maxsize=1)
@@ -869,7 +871,7 @@ def sign_bundle(bundle: EndorsementClaimBundle) -> str:
     signer = _load_signer()
     if signer is None:
         return f"unsigned (no signer available); bundle_hash={compute_bundle_hash(bundle)}"
-    canonical = bundle.model_dump_json(exclude={"signature"}, indent=None).encode("utf-8")
+    canonical = canonical_bundle_bytes(bundle)
     sig = signer.sign(canonical)
     sig_b64 = base64.b64encode(sig).decode("ascii")
     return f"ed25519:{SIGNER_DID}:{sig_b64}"
