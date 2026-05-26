@@ -101,7 +101,12 @@
     font: 400 13px/1.6 var(--mono);
     color: var(--ink);
     margin: 12px 0;
+    max-width: 100%;
+    /* min-width:0 lets the element shrink below content size in flex parents
+       (2026-05-25 audit · pre was forcing body to 681px on 390px viewport). */
+    min-width: 0;
   }
+  body { overflow-x: hidden; }
   pre.with-copy { position: relative; }
   pre code { color: inherit; }
   .tok-key    { color: #8AB4F8; }
@@ -271,6 +276,99 @@
   .tryit-output .ok { color: var(--moss-glow); }
   .tryit-output .fail { color: var(--warning); }
   .tryit-output .head { color: var(--electric); }
+
+  /* 2026-05-25 Omar L1+timer: two-tier latency explainer above the try-it widget. */
+  .latency-explainer {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 12px;
+    margin: 14px 0 18px;
+  }
+  .le-tier {
+    padding: 14px 16px;
+    background: var(--bg-elevated);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    border-left: 3px solid var(--border-strong);
+  }
+  .le-tier.le-hot { border-left-color: var(--moss-glow); }
+  .le-tier.le-cold { border-left-color: var(--electric); }
+  .le-pill {
+    display: inline-block;
+    font: 700 9px/1 var(--mono); letter-spacing: 0.22em; text-transform: uppercase;
+    padding: 4px 8px; border-radius: 4px;
+    background: rgba(255,255,255,0.04);
+    color: var(--muted);
+  }
+  .le-tier.le-hot .le-pill { color: var(--moss-glow); background: rgba(99,154,96,0.10); }
+  .le-tier.le-cold .le-pill { color: var(--electric); background: rgba(0,212,255,0.10); }
+  .le-head {
+    margin-top: 8px;
+    font: 700 22px/1 var(--mono); letter-spacing: -0.01em;
+    color: var(--ink);
+  }
+  .le-body {
+    margin-top: 8px;
+    font: 500 12px/1.55 var(--sans);
+    color: var(--muted);
+  }
+  .le-body code { font-size: 11px; color: var(--electric); }
+
+  /* Elapsed timer chip — ticks alongside the Submit button while a task is in flight. */
+  .tryit-timer[hidden] { display: none !important; }
+  .tryit-timer {
+    display: inline-flex; align-items: baseline; gap: 6px;
+    margin-left: 12px; padding: 6px 11px;
+    background: rgba(0,212,255,0.06);
+    border: 1px solid var(--electric);
+    border-radius: 100px;
+    font: 600 13px var(--mono);
+    color: var(--electric);
+    letter-spacing: 0.04em;
+  }
+  .tryit-timer .tt-elapsed { font-variant-numeric: tabular-nums; }
+  .tryit-timer .tt-label {
+    font: 500 9.5px var(--mono); letter-spacing: 0.14em; text-transform: uppercase;
+    color: var(--muted);
+  }
+  .tryit-timer[data-mode="hot"] { border-color: var(--moss-glow); background: rgba(99,154,96,0.08); color: var(--moss-glow); }
+  .tryit-timer[data-mode="done"] { border-color: var(--moss-glow); color: var(--moss-glow); }
+
+  /* Stage strip — 7-agent chips that activate sequentially during the cold-path mesh. */
+  .stage-strip {
+    display: flex; gap: 8px; flex-wrap: wrap;
+    margin-top: 14px;
+  }
+  .stage-chip {
+    padding: 6px 10px;
+    background: var(--bg-elevated);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    font: 500 11px/1 var(--mono); letter-spacing: 0.04em;
+    color: var(--dim);
+    transition: border-color 200ms, color 200ms, background 200ms;
+  }
+  .stage-chip.running {
+    border-color: var(--electric); color: var(--electric);
+    background: rgba(0,212,255,0.06);
+    animation: chip-pulse 1.6s ease-in-out infinite;
+  }
+  .stage-chip.done {
+    border-color: var(--moss-glow); color: var(--moss-glow);
+    background: rgba(99,154,96,0.06);
+  }
+  @keyframes chip-pulse {
+    0%, 100% { box-shadow: 0 0 0 0 rgba(0,212,255,0.42); }
+    50%      { box-shadow: 0 0 0 5px rgba(0,212,255,0); }
+  }
+
+  @media (max-width: 720px) {
+    .latency-explainer { grid-template-columns: 1fr; }
+    /* 2026-05-25 audit: pre code blocks were extending past viewport on 390px
+       (681 > 390). Force them to scroll inside the container. */
+    pre { max-width: 100%; overflow-x: auto; }
+    .container { padding: 36px 14px 64px; }
+    .stage-strip { gap: 6px; }
+    .stage-chip { font-size: 10px; padding: 5px 7px; }
+  }
 
   /* Bundle render panel (codex P0 from /agents audit: surface the cert HTML
    * + bundle JSON + Second Opinion + Ed25519 instead of 5 lines of plaintext). */
@@ -535,10 +633,49 @@ task_id = r.json()[<span class="tok-str">"task_id"</span>]
 
   <h2>Try it from the browser</h2>
   <p>Paste any pet-supplement product URL. Your demo key is pre-loaded. The call goes to our live Cloud Run mesh.</p>
+
+  <!-- 2026-05-25 (Omar): two-tier latency story panel. Frames the latency
+       judges will see when they click Submit. Hot path is real (GET /a2a/v1/lookup);
+       cold path is the full 7-agent mesh. -->
+  <div class="latency-explainer">
+    <div class="le-tier le-hot">
+      <div class="le-pill">HOT PATH</div>
+      <div class="le-head">~50-200&nbsp;ms</div>
+      <div class="le-body">
+        <code class="inline">GET /a2a/v1/lookup?url=...</code> · in-memory cache hit.
+        Bundles are immutable: a re-run produces the same signed evidence, so the cached
+        bundle is semantically identical. Used by agent-to-agent traffic at scale.
+      </div>
+    </div>
+    <div class="le-tier le-cold">
+      <div class="le-pill">COLD PATH</div>
+      <div class="le-head">60-180&nbsp;s</div>
+      <div class="le-body">
+        <code class="inline">POST /a2a/v1/tasks/send</code> · first-time URL triggers the
+        full 7-agent adversarial mesh: Document AI OCR, BioMCP PubMed, Vertex AI Search,
+        Gemini 2.5 Pro vet sim, Ed25519 sign, Firestore append.
+      </div>
+    </div>
+  </div>
+
   <div class="tryit">
     <input type="text" id="tryit-url" placeholder="https://www.nativepet.com/products/hip-joint" value="https://www.nativepet.com/products/hip-joint">
     <button class="tryit-btn" id="tryit-go">Submit A2A task</button>
+    <span class="tryit-timer" id="tryit-timer" hidden><span class="tt-elapsed" id="tt-elapsed">00:00.0</span><span class="tt-label" id="tt-label">elapsed</span></span>
     <span style="font: 500 12px var(--mono); color: var(--dim); margin-left: 14px;" id="tryit-status">ready</span>
+
+    <!-- Stage progress strip: each chip lights up as the mesh hits that agent.
+         Bound by JS to the progress_message field returned by /tasks/get. -->
+    <div class="stage-strip" id="stageStrip" hidden>
+      <span class="stage-chip" data-stage="claim">①&nbsp;Claim&nbsp;Extractor</span>
+      <span class="stage-chip" data-stage="evidence">②&nbsp;Evidence</span>
+      <span class="stage-chip" data-stage="vet">③&nbsp;Vet&nbsp;Rubric</span>
+      <span class="stage-chip" data-stage="compliance">④&nbsp;FTC&nbsp;§255</span>
+      <span class="stage-chip" data-stage="auditor">⑤&nbsp;Auditor</span>
+      <span class="stage-chip" data-stage="sign">⑥&nbsp;Ed25519&nbsp;Sign</span>
+      <span class="stage-chip" data-stage="adversarial">⑦&nbsp;2nd&nbsp;Opinion</span>
+    </div>
+
     <div class="tryit-output" id="tryit-out">Click "Submit A2A task" to send a real A2A v0.3 request to the mesh.</div>
 
     <!-- Bundle render panel · surfaces when a task completes.
@@ -932,6 +1069,82 @@ pub.verify(base64.b64decode(bundle[<span class="tok-str">"signature"</span>]), c
     tryitOut.scrollTop = tryitOut.scrollHeight;
   }
 
+  // 2026-05-25 (Omar L1+timer): timer + stage progress + hot-path lookup.
+  const timerEl   = document.getElementById('tryit-timer');
+  const elapsedEl = document.getElementById('tt-elapsed');
+  const labelEl   = document.getElementById('tt-label');
+  const stageStripEl = document.getElementById('stageStrip');
+  const stageChips   = Array.from(document.querySelectorAll('.stage-chip'));
+
+  function fmtElapsed(ms) {
+    const total = ms / 1000;
+    const m = String(Math.floor(total / 60)).padStart(2, '0');
+    const s = (total % 60).toFixed(1).padStart(4, '0');
+    return `${m}:${s}`;
+  }
+
+  let _timerHandle = null;
+  function startTimer(label = 'elapsed', mode = '') {
+    timerEl.hidden = false;
+    timerEl.setAttribute('data-mode', mode);
+    labelEl.textContent = label;
+    const t0 = performance.now();
+    clearInterval(_timerHandle);
+    elapsedEl.textContent = '00:00.0';
+    _timerHandle = setInterval(() => {
+      elapsedEl.textContent = fmtElapsed(performance.now() - t0);
+    }, 100);
+    return t0;
+  }
+  function stopTimer(finalMs, mode = 'done', label = 'total') {
+    clearInterval(_timerHandle);
+    timerEl.setAttribute('data-mode', mode);
+    labelEl.textContent = label;
+    elapsedEl.textContent = fmtElapsed(finalMs);
+  }
+
+  // Map progress_message tokens → stage chip data-stage attribute.
+  // The mesh log strings are stable; this maps prefix substrings to chips.
+  const STAGE_PATTERNS = [
+    { match: /claim extraction|claim_ext/i,     stage: 'claim' },
+    { match: /evidence|evidence_grad|pubmed/i,  stage: 'evidence' },
+    { match: /vet rubric|vet_rubric|vet sim/i,  stage: 'vet' },
+    { match: /compliance|ftc/i,                 stage: 'compliance' },
+    { match: /auditor|audit|pre-sign/i,         stage: 'auditor' },
+    { match: /sign|ed25519|merge/i,             stage: 'sign' },
+    { match: /second opinion|adversarial|composer/i, stage: 'adversarial' },
+  ];
+  let _stagesSeen = new Set();
+  function updateStage(progressMsg) {
+    if (!progressMsg) return;
+    for (const { match, stage } of STAGE_PATTERNS) {
+      if (match.test(progressMsg)) {
+        // Mark previous stages done, mark this one running.
+        stageChips.forEach(ch => {
+          if (_stagesSeen.has(ch.dataset.stage) && ch.dataset.stage !== stage) {
+            ch.classList.remove('running');
+            ch.classList.add('done');
+          }
+          if (ch.dataset.stage === stage) {
+            ch.classList.add('running');
+          }
+        });
+        _stagesSeen.add(stage);
+        return;
+      }
+    }
+  }
+  function finalizeStages() {
+    stageChips.forEach(ch => {
+      ch.classList.remove('running');
+      if (_stagesSeen.has(ch.dataset.stage)) ch.classList.add('done');
+    });
+  }
+  function resetStages() {
+    _stagesSeen.clear();
+    stageChips.forEach(ch => { ch.classList.remove('running', 'done'); });
+  }
+
   tryitBtn.addEventListener('click', async () => {
     const url = tryitUrl.value.trim();
     if (!url.startsWith('http')) {
@@ -941,7 +1154,41 @@ pub.verify(base64.b64decode(bundle[<span class="tok-str">"signature"</span>]), c
     }
     tryitBtn.disabled = true;
     tryitOut.innerHTML = '';
-    tryitStatus.textContent = 'submitting...';
+    resetStages();
+    stageStripEl.hidden = true;
+
+    // ---- HOT PATH FIRST: GET /a2a/v1/lookup ----
+    log(`GET ${BASE}/a2a/v1/lookup?url=${encodeURIComponent(url).slice(0, 60)}…`, 'head');
+    log(`# In-memory cache check before triggering the full mesh.`);
+    log('');
+    const t0 = startTimer('hot path', 'hot');
+    try {
+      const lookupRes = await fetch(`${BASE}/a2a/v1/lookup?url=${encodeURIComponent(url)}`);
+      const lookupMs = performance.now() - t0;
+      if (lookupRes.ok) {
+        const cached = await lookupRes.json();
+        stopTimer(lookupMs, 'done', 'hot path · cache hit');
+        log(`HTTP 200 · cached bundle returned in ${lookupMs.toFixed(0)} ms`, 'ok');
+        log(`served_from=${cached.served_from}`);
+        log(`age_seconds=${(cached.age_seconds || 0).toFixed(1)} s`);
+        log(`bundle_hash=${cached.bundle_hash}`);
+        log(`chain_anchor=${cached.chain_anchor}`);
+        log('');
+        log(`✓ HOT PATH · repeat queries skip the 7-agent mesh.`, 'ok');
+        tryitStatus.textContent = `cache hit · ${lookupMs.toFixed(0)} ms`;
+        renderBundle(cached);
+        tryitBtn.disabled = false;
+        return;
+      }
+      log(`HTTP 404 · not cached. Falling through to cold-path mesh.`);
+      log('');
+    } catch (err) {
+      log(`hot-path lookup failed: ${err.message} · falling through`, 'fail');
+    }
+
+    // ---- COLD PATH: POST /a2a/v1/tasks/send ----
+    stageStripEl.hidden = false;
+    const tCold = startTimer('cold path · 7-agent mesh', 'cold');
     log(`POST ${BASE}/a2a/v1/tasks/send`, 'head');
     log(`X-API-Key: demo-key-2026-06`);
     log(`body: {message:{role:"user",parts:[{type:"text",text:"${url}"}]}, skill:"verify_claim"}`);
@@ -960,6 +1207,7 @@ pub.verify(base64.b64decode(bundle[<span class="tok-str">"signature"</span>]), c
         const detail = await r.text();
         log(`HTTP ${r.status}: ${detail}`, 'fail');
         tryitStatus.textContent = 'failed';
+        stopTimer(performance.now() - tCold, 'done', 'failed');
         tryitBtn.disabled = false;
         return;
       }
@@ -979,11 +1227,17 @@ pub.verify(base64.b64decode(bundle[<span class="tok-str">"signature"</span>]), c
           headers: { 'X-API-Key': KEY },
         });
         const s = await sr.json();
-        tryitStatus.textContent = `${s.status} (poll ${attempts})`;
-        if (s.progress_message) log(`  · ${s.progress_message}`);
+        tryitStatus.textContent = `${s.status} · poll ${attempts}`;
+        if (s.progress_message) {
+          log(`  · ${s.progress_message}`);
+          updateStage(s.progress_message);
+        }
         if (s.status === 'completed') {
+          const totalMs = performance.now() - tCold;
+          stopTimer(totalMs, 'done', 'cold path · complete');
+          finalizeStages();
           log('');
-          log(`✓ COMPLETED`, 'ok');
+          log(`✓ COMPLETED in ${(totalMs / 1000).toFixed(1)} s`, 'ok');
           log(`bundle_hash=${s.bundle_hash}`);
           log(`bundle_signature=${(s.bundle_signature || '').slice(0,40)}…`);
           log(`chain_anchor=${s.chain_anchor}`);
@@ -991,21 +1245,26 @@ pub.verify(base64.b64decode(bundle[<span class="tok-str">"signature"</span>]), c
             log(`claims=${(s.output.claims || []).length}`);
             log(`audit_verdict=${s.output.audit_verdict || '(none)'}`);
           }
+          log('');
+          log(`ⓘ This bundle is now cached. A repeat lookup for this URL will hit the hot path.`);
           tryitStatus.textContent = 'completed';
-          renderBundle(s);   // surface the cert, JSON, Second Opinion, signature
+          renderBundle(s);
           break;
         }
         if (s.status === 'failed') {
+          stopTimer(performance.now() - tCold, 'done', 'failed');
           log(`✗ FAILED: ${s.error || 'unknown'}`, 'fail');
           tryitStatus.textContent = 'failed';
           break;
         }
       }
       if (attempts >= maxAttempts) {
+        stopTimer(performance.now() - tCold, 'done', 'timeout');
         log('timeout. Task still running. Poll manually: /a2a/v1/tasks/get/' + sub.task_id, 'fail');
         tryitStatus.textContent = 'timeout';
       }
     } catch (e) {
+      stopTimer(performance.now() - tCold, 'done', 'error');
       log(`error: ${e.message}`, 'fail');
       tryitStatus.textContent = 'error';
     }

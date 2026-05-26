@@ -651,6 +651,64 @@ html, body {
 .scene-4.confirmed .replay-scene { opacity: 1; pointer-events: auto; }
 .scene-4 .replay-scene:hover { background: #000; }
 
+/* 2026-05-24 night (Omar): always-available escape hatch back to the
+   landing. Sits in the unused space above the Gemini sidebar so it does
+   not eat into the cinematic viewport budget. */
+.demo-exit {
+  position: fixed; top: 12px; left: 16px;
+  z-index: 250;
+  display: inline-flex; align-items: center; gap: 7px;
+  padding: 6px 12px;
+  background: rgba(20,20,20,0.78);
+  backdrop-filter: blur(14px) saturate(140%);
+  border: 1px solid rgba(255,255,255,0.10);
+  border-radius: 100px;
+  color: rgba(255,255,255,0.82);
+  font: 500 11.5px 'JetBrains Mono', ui-monospace, monospace;
+  letter-spacing: 0.04em;
+  text-decoration: none;
+  transition: background 180ms, color 180ms, transform 180ms;
+}
+.demo-exit:hover { background: rgba(20,20,20,0.92); color: #FFF; transform: translateY(-1px); }
+.demo-exit .arrow { font-size: 12px; }
+.demo-exit .word { font-weight: 600; letter-spacing: 0.02em; }
+
+/* Receipt-scene completion CTA. Appears once the receipt has rendered
+   (.scene-4.confirmed). The natural "you've seen it work, try your own"
+   beat. */
+.receipt-cta-row {
+  display: none;
+  margin-top: 18px;
+  justify-content: center;
+  opacity: 0;
+  transform: translateY(8px);
+  transition: opacity 520ms 520ms, transform 520ms 520ms;
+}
+.scene-4.confirmed .receipt-cta-row { display: flex; opacity: 1; transform: translateY(0); }
+.receipt-cta {
+  display: inline-flex; align-items: center; gap: 10px;
+  background: var(--g-grad); color: #FFF;
+  font: 600 14px var(--sans);
+  padding: 13px 24px;
+  border: 0; border-radius: 100px;
+  cursor: pointer;
+  text-decoration: none;
+  box-shadow: 0 10px 28px rgba(155,114,203,0.35);
+  transition: transform 200ms, box-shadow 200ms, filter 200ms;
+}
+.receipt-cta:hover { transform: translateY(-2px); filter: brightness(1.05); }
+.receipt-cta .arrow { transition: transform 200ms; }
+.receipt-cta:hover .arrow { transform: translateX(3px); }
+
+/* Card visited-during-tour glow. Triggered by JS on each step of the
+   pool pointer journey so the user sees each card "register" the visit. */
+.pool-card.visited {
+  border-color: var(--pc-moss);
+  box-shadow: 0 0 0 2px rgba(99, 154, 96, 0.18), 0 6px 18px rgba(99, 154, 96, 0.12);
+  transform: translateY(-2px) scale(1.03);
+  transition: all 180ms cubic-bezier(.34,1.56,.64,1);
+}
+
 /* Keyboard hint near controls */
 .kbd-hint {
   position: fixed; bottom: 70px; left: 50%; transform: translateX(-50%);
@@ -2970,6 +3028,16 @@ html, body {
             </div>
           </div>
         </div>
+        <!-- 2026-05-24 night (Omar): receipt-scene completion CTA.
+             2026-05-25 A-v3: brand-test path removed from the hero,
+             so this CTA now navigates back to the home pitch instead
+             of promising a self-serve verify that doesn't exist yet. -->
+        <div class="receipt-cta-row">
+          <a class="receipt-cta" href="/">
+            <span>Back to PawConscious</span>
+            <span class="arrow">→</span>
+          </a>
+        </div>
       </div>
     </div>
   </section>
@@ -2984,6 +3052,12 @@ html, body {
   </svg>
 </div>
 <div class="demo-click-ripple" id="demoRipple"></div>
+
+<!-- Always-available exit back to the landing page (Omar 2026-05-24 night) -->
+<a class="demo-exit" href="/#verify" title="Back to PawConscious — try your own product">
+  <span class="arrow">←</span>
+  <span class="word">PawConscious</span>
+</a>
 
 <!-- Keyboard hint shown briefly on the first scene -->
 <div class="kbd-hint" id="kbdHint">Tip: press <kbd>→</kbd> to advance, <kbd>R</kbd> to restart</div>
@@ -3282,56 +3356,57 @@ async function runScene2(token) {
   }
 }
 
-// Verified Browser scene-pool — single 15-card grid, no pagination dance.
-// 2026-05-24 night /devex-review pass: cycling 5-card pages was slow and
-// proved nothing the static grid couldn't. We now render 15 cards (1 real
-// Green Gruff + 14 synthetic examples), the pointer browses a handful, then
-// lands on Green Gruff and hands control to the user. ~3s total.
+// Verified Browser scene-pool — single 15-card grid with a kinetic pointer.
+// 2026-05-24 night (Omar /devex-review): the 4-card-220ms tour felt slow
+// and static. New behaviour: pointer makes 2 quick scout visits with a
+// brief "visited" glow on each card it touches, then lock-on to Green
+// Gruff. Cards retain their visual receipt so the judge sees the path
+// the pointer took.
 async function runScenePool(token) {
   showScene(2);
   showScenePool();
   pointerHide();
-  await wait(520, token); if (token !== runToken) return;
+  await wait(200, token); if (token !== runToken) return;
 
   const grid         = scenePool.querySelector('.pool-grid-15');
   const greenGruffCd = scenePool.querySelector('.pool-card.real');
   const ctaBtn       = document.getElementById('poolPickGreenGruff');
+  const allCards     = grid.querySelectorAll('.pool-card');
 
-  // Reset selection if scene replays.
-  grid.querySelectorAll('.pool-card').forEach(c => c.classList.remove('selected'));
+  // Reset any visual state from a previous replay.
+  allCards.forEach(c => c.classList.remove('selected', 'visited'));
 
-  // Pointer browses 4 representative cards across rows so the judge sees
-  // depth without the autonomous segment dragging on. Indices chosen so
-  // pointer moves through row 1, then row 2 middle, then row 3 right edge
-  // (visual sweep across the grid).
-  const browseIdxs = [4, 7, 11, 13];
-  const allCards = grid.querySelectorAll('.pool-card');
-  for (let n = 0; n < browseIdxs.length; n++) {
+  // Scout: only 2 cards, ~100ms each. Cards keep a green "visited" glow
+  // so the path is visible after the pointer moves on.
+  const scoutIdxs = [7, 12];
+  for (let n = 0; n < scoutIdxs.length; n++) {
     if (token !== runToken) return;
-    const card = allCards[browseIdxs[n]];
+    const card = allCards[scoutIdxs[n]];
     if (!card) continue;
     await pointerMoveTo(card, n === 0 ? { fromOffscreen: true } : {});
     if (token !== runToken) return;
-    await wait(220, token); if (token !== runToken) return;
+    card.classList.add('visited');
+    await wait(110, token); if (token !== runToken) return;
   }
 
-  // Land on Green Gruff, click to select.
+  // Lock-on to Green Gruff: a deliberate sharper approach. Tiny pause
+  // immediately before the click reads as "found it."
   if (greenGruffCd) {
     await pointerMoveTo(greenGruffCd, {});
     if (token !== runToken) return;
-    await wait(240, token); if (token !== runToken) return;
+    await wait(180, token); if (token !== runToken) return;
     await pointerClick(greenGruffCd);
     sfx.click();
     if (token !== runToken) return;
     greenGruffCd.classList.add('selected');
-    await wait(380, token); if (token !== runToken) return;
+    await wait(320, token); if (token !== runToken) return;
   }
 
-  // Hover the Continue CTA, hand control to user.
+  // Drift to the CTA and hand off.
   if (ctaBtn) {
     await pointerMoveTo(ctaBtn, {});
     if (token !== runToken) return;
-    await wait(1100, token); if (token !== runToken) return;
+    await wait(900, token); if (token !== runToken) return;
     pointerHide();
   }
 }

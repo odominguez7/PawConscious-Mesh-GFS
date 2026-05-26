@@ -105,6 +105,67 @@ class TaskStore:
         for tid in expired:
             del self._tasks[tid]
 
+    async def find_completed_by_url(self, product_url: str) -> Optional[TaskState]:
+        """Hot-path lookup (2026-05-25 Omar L1): if the same product_url was
+        verified recently and the bundle is still in memory, return it. Lets
+        the A2A consumer skip the 60-180s cold-path mesh for repeat queries.
+
+        Walks newest-first. Returns the most recent completed bundle whose
+        input.product_url normalizes to the same canonical form. Returns
+        None if not cached.
+
+        URL normalization (Omar 2026-05-25 audit):
+        - Strip trailing slashes
+        - Lowercase scheme and host
+        - Drop common tracking query params (utm_*, fbclid, gclid, etc.)
+        This catches the most frequent "looks like the same URL but doesn't
+        hit cache" variants from copy-paste flows.
+        """
+        target = _canonical_url(product_url)
+        async with self._lock:
+            await self._purge_expired_unlocked()
+            ordered = sorted(
+                (s for s in self._tasks.values() if s.status == "completed" and s.completed_at),
+                key=lambda s: s.completed_at,
+                reverse=True,
+            )
+            for state in ordered:
+                stored = state.input.get("product_url")
+                if stored and _canonical_url(stored) == target:
+                    return state
+            return None
+
+
+# URL normalization (Omar audit 2026-05-25): tolerant matching for the hot
+# path. We do NOT use this for the signed bundle URN / hash — those stay
+# anchored to the exact URL the verifier processed. This is just for cache
+# lookup.
+_TRACKING_PARAMS = {
+    "utm_source", "utm_medium", "utm_campaign", "utm_term", "utm_content",
+    "fbclid", "gclid", "gad_source", "msclkid", "yclid", "ref",
+    "mc_eid", "mc_cid", "_hsenc", "_hsmi",
+}
+
+def _canonical_url(u: str) -> str:
+    if not u:
+        return ""
+    try:
+        from urllib.parse import urlsplit, urlunsplit, parse_qsl, urlencode
+        parts = urlsplit(u.strip())
+        scheme = (parts.scheme or "https").lower()
+        netloc = parts.netloc.lower()
+        # Strip default ports for canonical form
+        if (scheme == "https" and netloc.endswith(":443")) or (scheme == "http" and netloc.endswith(":80")):
+            netloc = netloc.rsplit(":", 1)[0]
+        path = parts.path.rstrip("/")
+        query_pairs = [(k, v) for k, v in parse_qsl(parts.query, keep_blank_values=True)
+                       if k.lower() not in _TRACKING_PARAMS]
+        query = urlencode(query_pairs)
+        # Drop fragment — copy-paste from PDPs often carries it accidentally
+        return urlunsplit((scheme, netloc, path, query, ""))
+    except Exception:
+        return u.strip().rstrip("/").lower()
+
 
 # Module-level singleton for the mesh_api process
 task_store = TaskStore(ttl_seconds=86400)
