@@ -1652,12 +1652,28 @@
            belong in the judge-critical first 5 seconds. Honest copy:
            "See the live demo" replaces "Watch the 60-sec demo" because
            the cinematic is interactive, not a fixed 60-second runtime. -->
+      <style>
+        .pc-verify-chips{display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin-top:14px}
+        .pc-chip-lead{font:500 12px/1 var(--mono,monospace);color:var(--dim)}
+        .pc-chip{font:600 12px/1 var(--mono,monospace);color:var(--ink);background:rgba(255,255,255,0.04);border:1px solid var(--border);border-radius:999px;padding:7px 13px;cursor:pointer;transition:border-color .15s,color .15s}
+        .pc-chip:hover{border-color:var(--electric);color:var(--electric)}
+        .pc-verify-status{margin-top:14px;font:500 12.5px/1.5 var(--mono,monospace);color:var(--electric)}
+        .pc-demo-link{display:inline-block;margin-top:16px;font:500 13px/1 var(--sans);color:var(--muted);text-decoration:none}
+        .pc-demo-link:hover{color:var(--ink)}
+      </style>
       <div class="hero-actions" id="verify">
-        <a class="hero-primary" href="/demo" aria-label="See the live demo">
-          <span class="play">▶</span>
-          <span class="label">See the live demo</span>
-          <span class="arrow">→</span>
-        </a>
+        <form class="hero-cta" id="pcVerifyForm" onsubmit="return false;" autocomplete="off">
+          <input type="text" id="pcVerifyInput" placeholder="Paste your product URL" spellcheck="false" aria-label="Your product URL">
+          <button type="submit" id="pcVerifyBtn">Verify your product</button>
+        </form>
+        <div class="pc-verify-chips">
+          <span class="pc-chip-lead">or try a verified brand:</span>
+          <button type="button" class="pc-chip" data-url="https://www.cosequin.com/product/cosequin-maximum-strength-plus-msm-chewable-tablets/">Cosequin</button>
+          <button type="button" class="pc-chip" data-url="https://www.greengruff.com/products/ease">Green Gruff</button>
+          <button type="button" class="pc-chip" data-url="https://www.justfoodfordogs.com/product/calming-chews-for-dogs/50020180.html">JustFoodForDogs</button>
+        </div>
+        <div class="pc-verify-status" id="pcVerifyStatus" hidden></div>
+        <a class="pc-demo-link" href="/demo">or watch the cinematic demo &rarr;</a>
       </div>
       <!-- Proof line (2026-05-27): gives the left column vertical weight against
            the tall card + states the trust primitives in 3 seconds. -->
@@ -1692,9 +1708,9 @@
       <div class="askgem" id="askgem">
         <div class="askgem-eyebrow">
           <span class="askgem-icon">✦</span>
-          <span>Ask Gemini · grounded on verified pet products</span>
+          <span>The other side · what an AI agent recommends</span>
         </div>
-        <div class="askgem-subline">Every answer cites its PubMed evidence · and flags what failed verification.</div>
+        <div class="askgem-subline">Ask like a shopper would. Every answer cites its evidence · and flags what failed verification.</div>
 
         <div class="askgem-chip-row">
           <button type="button" class="askgem-chip" data-q="Which joint-health products would an AI agent recommend for a senior dog, and why?">Which products would an AI agent recommend?</button>
@@ -1733,32 +1749,19 @@
          running on real Google Cloud infra, not a frontend mockup. Sits
          directly below the bundle card so the narrative is "here's what
          we produce → here's how to verify it for yourself." -->
-    <div class="pipes-panel" aria-label="Inspect the live pipes">
-      <div class="pp-eyebrow">Inspect the pipes</div>
+    <!-- 2026-05-27 (product-page restructure): the four developer proof buttons
+         moved to the Developers tab ("Verify it yourself"). The Product page keeps
+         ONE understated proof link (TASTE Rule 7: the wires stay inspectable)
+         without competing with the Verify CTA. -->
+    <div class="pipes-panel" aria-label="Inspect the live infrastructure">
+      <div class="pp-eyebrow">Don't trust us — inspect it</div>
       <div class="pp-row">
         <a class="pp-btn" href="/pcec/v0/chain/head" target="_blank" rel="noopener">
           <span class="pp-mono">GET /pcec/v0/chain/head</span>
-          <span class="pp-label">Live Firestore chain anchor</span>
+          <span class="pp-label">Live Firestore signing chain · verifiable by any agent</span>
           <span class="pp-arrow">↗</span>
         </a>
-        <a class="pp-btn" href="/.well-known/agent-card.json" target="_blank" rel="noopener">
-          <span class="pp-mono">GET /.well-known/agent-card.json</span>
-          <span class="pp-label">A2A v0.3 agent descriptor</span>
-          <span class="pp-arrow">↗</span>
-        </a>
-        <button class="pp-btn pp-btn-run" type="button" id="runLiveCurl">
-          <span class="pp-mono">POST /a2a/v1/tasks/send</span>
-          <span class="pp-label">Run a live A2A verify → real task_id</span>
-          <span class="pp-arrow">→</span>
-        </button>
-        <button class="pp-btn pp-btn-run" type="button" id="verifySigBtn">
-          <span class="pp-mono">verify Ed25519 signature</span>
-          <span class="pp-label">Check a signed bundle in your browser</span>
-          <span class="pp-arrow">→</span>
-        </button>
       </div>
-      <!-- Output of the live POST. Hidden until user clicks "Run live curl". -->
-      <pre class="pp-output" id="pipesOutput" hidden></pre>
     </div>
   </div>
 
@@ -1770,7 +1773,7 @@
       <span class="hs-label">Powered by</span>
       <span class="hs-chips">
         <span>A2A v0.3</span>
-        <span>Gemini 2.5 Pro</span>
+        <span>Google Gemini</span>
         <span>ADK</span>
         <span>BioMCP · PubMed</span>
         <span>Vertex AI Search</span>
@@ -1783,59 +1786,10 @@
 </section>
 
 <!-- ===================== API CALL → SIGNED BUNDLE split panel =====================
-     Stripe Connect pattern: API request on the left, resulting data structure on the
-     right, side by side. The pipes made visible. Codex T3-K, the cheap T3 codex
-     green-lit · 2026-05-24. -->
-<section class="pipes-split" aria-label="API call to signed bundle pipeline">
-  <div class="container">
-    <div class="pipes-head">
-      <div class="eyebrow">The pipes</div>
-      <h2>One HTTP call. A signed bundle out.</h2>
-    </div>
-    <div class="pipes-grid">
-      <div class="pipes-call">
-        <div class="pipes-label">A2A v0.3 request · curl</div>
-<pre class="pipes-code"><span class="tok-cmt"># Public demo key for GFS judges</span>
-curl -X POST <span class="tok-str">"<!--PUBLIC_BASE_URL-->/a2a/v1/tasks/send"</span> \
-  -H <span class="tok-str">"X-API-Key: demo-key-2026-06"</span> \
-  -H <span class="tok-str">"Content-Type: application/json"</span> \
-  -d <span class="tok-str">'{"message":{"role":"user","parts":[
-    {"type":"text","text":"https://www.nativepet.com/products/hip-joint"}
-  ]},"skill":"verify_claim"}'</span>
-
-<span class="tok-cmt"># Returns 202 + task_id, then poll:</span>
-curl <span class="tok-str">"<!--PUBLIC_BASE_URL-->/a2a/v1/tasks/get/&lt;task_id&gt;"</span> \
-  -H <span class="tok-str">"X-API-Key: demo-key-2026-06"</span></pre>
-      </div>
-      <div class="pipes-bundle">
-        <div class="pipes-label">PCEC v0.1 signed bundle · live</div>
-<pre class="pipes-code"><span class="tok-key">{</span>
-  <span class="tok-k">"bundle_urn"</span>: <span class="tok-s">"urn:pcec:claim:…"</span>,
-  <span class="tok-k">"bundle_hash"</span>: <span class="tok-s">"<span id="pipesHash">sha256:…</span>"</span>,
-  <span class="tok-k">"bundle_signature"</span>: <span class="tok-s">"ed25519:did:web:…"</span>,
-  <span class="tok-k">"chain_anchor"</span>: <span class="tok-s">"<span id="pipesAnchor">sha256:…</span>"</span>,
-  <span class="tok-k">"chain_anchor_status"</span>: <span class="tok-s">"appended"</span>,
-  <span class="tok-k">"output"</span>: <span class="tok-key">{</span>
-    <span class="tok-k">"claims"</span>: [<span class="tok-cmt">// claim_extractor agent</span>],
-    <span class="tok-k">"evidence"</span>: [<span class="tok-cmt">// BioMCP PubMed PMIDs</span>],
-    <span class="tok-k">"vet_scores"</span>: [<span class="tok-cmt">// 5-criterion rubric</span>],
-    <span class="tok-k">"compliance"</span>: [<span class="tok-cmt">// FTC §255 + AAFCO via Vertex AI Search</span>],
-    <span class="tok-k">"audit"</span>: <span class="tok-s">"PASS"</span>,
-    <span class="tok-k">"second_opinion"</span>: <span class="tok-key">{</span>
-      <span class="tok-k">"overall_verdict"</span>: <span class="tok-s">"PASS"</span>,
-      <span class="tok-k">"tests"</span>: [<span class="tok-cmt">// 4 Google-Search-grounded stress tests</span>]
-    <span class="tok-key">}</span>
-  <span class="tok-key">}</span>,
-  <span class="tok-k">"cert_html"</span>: <span class="tok-s">"&lt;executive cert · ~16 KB&gt;"</span>
-<span class="tok-key">}</span></pre>
-        <div class="pipes-foot">
-          <a href="/pcec/v0/chain/head" target="_blank" rel="noopener">/pcec/v0/chain/head ↗</a>
-          <a href="/agents">full developer reference ↗</a>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
+     2026-05-27 (product-page restructure): the curl + signed-bundle JSON panel
+     was developer-persona content that repeated the Developers tab. Moved to
+     /agents (Quickstart + What we return). The buyer sees the signed report
+     itself in the RESULT REPORT below after running Verify. -->
 
 <!-- ===================== RESULT REPORT (cert as independent full-width section) =====================
      v0.10.3 ISSUE 1: cert leaves the demo container entirely. After a cycle
@@ -3207,10 +3161,10 @@ function setBilling(period) {
   });
 }
 
-// 2026-05-25 (Omar A-v3): brand-readiness drawer was removed from the
-// hero. The single primary CTA "See the live demo" is the entire hero
-// action. The /#verify hash now just scrolls to the hero (which has
-// id="verify" on the action row) — no drawer to open.
+// 2026-05-27 (product-page restructure): the single primary CTA is now
+// "Verify your product" (URL input + 3 verified-brand chips), wired to the
+// hot-path/cold-path flow in the HERO VERIFY script below. The /#verify hash
+// scrolls to the hero (id="verify" on the action row).
 
 (function () {
   const liveRow  = document.getElementById('bundleLive');
@@ -3422,6 +3376,93 @@ function setBilling(period) {
         askGemini(q);
       }
     });
+  });
+})();
+</script>
+
+<!-- ===================== HERO VERIFY (2026-05-27 product-page restructure) =====================
+     The Product page's ONE primary action: paste a product URL (or click a verified
+     brand) -> hot-path /a2a/v1/lookup for an instant signed bundle, else cold-path
+     mesh with progress. Reuses the live renderCertHtml / renderSecondOpinion /
+     showResultReport helpers + the RESULT REPORT section. Self-contained; does not
+     touch the orphaned demo-svg machinery. Cert-race-safe poll mirrors the /agents
+     try-it widget (wait for cert_html OR "second opinion delivered" OR ~54s grace). -->
+<script>
+(function () {
+  const form   = document.getElementById('pcVerifyForm');
+  const input  = document.getElementById('pcVerifyInput');
+  const btn    = document.getElementById('pcVerifyBtn');
+  const status = document.getElementById('pcVerifyStatus');
+  if (!form || !input || !btn) return;
+
+  function setStatus(msg) { if (status) { status.hidden = false; status.textContent = msg; } }
+
+  function render(d) {
+    if (typeof renderCertHtml === 'function' && d.cert_html) renderCertHtml(d.cert_html, d.bundle_urn);
+    if (typeof renderSecondOpinion === 'function' && d.second_opinion) renderSecondOpinion(d.second_opinion);
+    if (typeof showResultReport === 'function') showResultReport();
+  }
+
+  let running = false;
+  async function run(rawUrl) {
+    const url = (rawUrl || '').trim();
+    if (!url || !url.startsWith('http')) { setStatus('Paste a full https:// product URL.'); input.focus(); return; }
+    if (running) return;
+    running = true;
+    const label = btn.textContent;
+    btn.disabled = true; btn.textContent = 'Verifying…';
+    setStatus('Checking the verified cache…');
+    try {
+      // Hot path: instant for any brand already verified + cached (the 3 seed brands).
+      const hp = await fetch('/a2a/v1/lookup?url=' + encodeURIComponent(url));
+      if (hp.ok) {
+        const d = await hp.json();
+        if (d && d.cert_html) {
+          setStatus('Verified · signed bundle below. (cached · hot path)');
+          render(d);
+          return;
+        }
+      }
+      // Cold path: first-time URL runs the live 7-agent mesh.
+      setStatus('New product · running the live 7-agent mesh (60-180s)…');
+      const sub = await fetch('/a2a/v1/tasks/send', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'X-API-Key': 'demo-key-2026-06' },
+        body: JSON.stringify({ skill: 'verify_claim', input: { product_url: url, max_claims: 3 } }),
+      });
+      if (!sub.ok) throw new Error('submit ' + sub.status);
+      const { task_id } = await sub.json();
+      let attempts = 0, completedAttempt = -1;
+      while (true) {
+        attempts++;
+        await new Promise(r => setTimeout(r, 3000));
+        const g = await fetch('/a2a/v1/tasks/get/' + task_id);
+        if (!g.ok) continue;
+        const s = await g.json();
+        if (s.status === 'failed') { setStatus('Verification failed: ' + (s.error || 'unknown')); break; }
+        if (s.progress_message && s.status !== 'completed') setStatus('Mesh running · ' + s.progress_message);
+        if (s.status === 'completed') {
+          if (completedAttempt < 0) completedAttempt = attempts;
+          render(s);
+          const finalized = /second opinion delivered/i.test(s.progress_message || '');
+          if (s.cert_html || finalized || (attempts - completedAttempt) >= 18) {
+            setStatus('Verified · signed bundle below.');
+            break;
+          }
+          setStatus('Signed · composing cert…');
+        }
+      }
+    } catch (e) {
+      setStatus('Something went wrong: ' + (e && e.message ? e.message : e));
+    } finally {
+      running = false;
+      btn.disabled = false; btn.textContent = label;
+    }
+  }
+
+  form.addEventListener('submit', (e) => { e.preventDefault(); run(input.value); });
+  document.querySelectorAll('.pc-chip').forEach((c) => {
+    c.addEventListener('click', () => { input.value = c.dataset.url; run(c.dataset.url); });
   });
 })();
 </script>
