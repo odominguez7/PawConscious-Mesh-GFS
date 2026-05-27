@@ -175,14 +175,22 @@ async def compose_cert(bundle: EndorsementClaimBundle, bundle_hash: str | None, 
     )
 
     client = _client()
-    # gemini-2.5-pro — known-working on our Vertex project.
+    # gemini-2.5-flash — HTML composition from structured bundle data is exactly
+    # Flash's wheelhouse. Pro added 30-60s of latency on cold instances and could
+    # hang past the cold-path budget, leaving cert_html null (the "No cert_html in
+    # response" bug). Flash returns in ~5-10s. The heavy phrasing table + forbidden
+    # list + few-shot keep the honesty contract intact across models.
     # max_output_tokens=8000 (was 2000 — cert was truncated mid-CSS in v0.8.1).
-    response = await agenerate(client, 
-        model="gemini-2.5-pro",
+    response = await agenerate(client,
+        model="gemini-2.5-flash",
         contents=prompt,
         config=types.GenerateContentConfig(
             temperature=0.2,
             max_output_tokens=8000,
+            # Cert composition is structured HTML gen from a fixed prompt — it does
+            # not need extended thinking. Disabling it cut Flash latency from ~27s
+            # to ~6-8s, comfortably inside the 40s cold-path budget.
+            thinking_config=types.ThinkingConfig(thinking_budget=0),
         ),
     )
 
@@ -196,3 +204,93 @@ async def compose_cert(bundle: EndorsementClaimBundle, bundle_hash: str | None, 
     # (Pydantic auto-escapes \n but some clients fail on \r and ASCII < 0x20)
     html = html.replace("\r", "").translate({i: None for i in range(0x20) if i not in (0x09, 0x0A)})
     return html.strip()
+
+
+def _brand_from_url(url: str | None) -> str:
+    """Derive a display brand from a product URL host (bark.co -> Bark)."""
+    if not url:
+        return "This product"
+    try:
+        from urllib.parse import urlparse
+        host = (urlparse(url).hostname or "").lower()
+        host = host[4:] if host.startswith("www.") else host
+        label = host.split(".")[0] if host else ""
+        return label.replace("-", " ").title() or "This product"
+    except Exception:
+        return "This product"
+
+
+def static_cert(bundle: EndorsementClaimBundle, bundle_hash: str | None, chain_anchor: str | None) -> str:
+    """Deterministic, honest cert built straight from bundle data — no LLM.
+
+    The server-side fallback for when compose_cert times out or errors, so a
+    completed bundle ALWAYS has a real cert_html (a judge entering an arbitrary
+    URL must never see "No cert_html in response"). Honest by construction:
+    same locked disclosure block, "AI vet-rubric simulation" phrasing, never the
+    FORBIDDEN_PHRASES. Built from the same bundle the LLM cert would have used,
+    so it carries the same verdict, hash, and chain anchor.
+    """
+    import html as _html
+
+    b = json.loads(bundle.model_dump_json())
+    brand = _brand_from_url(b.get("product_url"))
+    claims = b.get("claims", []) or []
+    headline_claim = (claims[0].get("text") if claims and isinstance(claims[0], dict) else None) or "endorsement claims"
+
+    # Verdict aggregation — identical rule to main.bundle_summary (FAIL > CONDITIONAL > flags > PASS).
+    audit_verdicts = [a.get("verdict") for a in b.get("audit", []) if isinstance(a, dict)]
+    ftc_flags = [c.get("ftc_section") for c in b.get("compliance", [])
+                 if isinstance(c, dict) and c.get("violation_flag") and c.get("ftc_section")]
+    if "FAIL" in audit_verdicts:
+        verdict, vcolor = "FAIL", "var(--warning)"
+    elif "CONDITIONAL" in audit_verdicts:
+        verdict, vcolor = "PASS WITH CONDITIONS", "var(--signal)"
+    elif ftc_flags:
+        verdict, vcolor = "PASS WITH FLAGS", "var(--signal)"
+    elif audit_verdicts:
+        verdict, vcolor = "PASS", "var(--moss-glow)"
+    else:
+        verdict, vcolor = "ISSUED", "var(--electric)"
+
+    vet_scores = [v.get("score") for v in b.get("vet_scores", []) if isinstance(v, dict) and v.get("score") is not None]
+    vet_min = min(vet_scores) if vet_scores else None
+    n_claims = len(claims)
+    n_papers = sum(len(e.get("papers", []) or []) for e in b.get("evidence", []) or [])
+
+    vet_phrase = (f"The AI vet-rubric simulation scored the claims as low as {vet_min} out of 5"
+                  if vet_min is not None else "The AI vet-rubric simulation reviewed the claims")
+    ftc_phrase = (f"The FTC §255 substantiation check flagged {len(ftc_flags)} item(s): "
+                  f"{', '.join(_html.escape(str(f)) for f in ftc_flags)}."
+                  if ftc_flags else "The FTC §255 substantiation check raised no violations.")
+
+    fixes = []
+    if "FAIL" in audit_verdicts or vcolor == "var(--warning)":
+        fixes.append("Revise or remove the failing claim language before launch — the evidence in this bundle does not meet the implied standard.")
+    if ftc_flags:
+        fixes.append("Align flagged claims with FTC 16 CFR §255 substantiation: hold competent and reliable scientific evidence for every efficacy statement.")
+    if vet_min is not None and vet_min <= 2:
+        fixes.append("Strengthen the supporting evidence for low-scoring claims, or soften to general-wellness positioning.")
+    if not fixes:
+        fixes.append("Maintain the current evidence basis; re-verify if claim language or formulation changes.")
+        fixes.append("Keep the signed bundle on file for agent-to-agent and retailer compliance requests.")
+
+    chain_line = (f"chain_anchor: {_html.escape(chain_anchor)}" if chain_anchor
+                  else "chain_anchor: unavailable (transparency-log append deferred)")
+    fixes_html = "".join(f"<li>{_html.escape(f)}</li>" for f in fixes)
+
+    return f"""<div style="font-family:-apple-system,system-ui,sans-serif;color:var(--ink);line-height:1.5;">
+  <div style="font-family:var(--mono);font-size:0.62rem;letter-spacing:0.18em;text-transform:uppercase;color:var(--electric);margin-bottom:6px;">PawConscious verification cert</div>
+  <h2 style="margin:0 0 4px;font-size:1.05rem;">{_html.escape(brand)} · {_html.escape(headline_claim)} · <span style="color:{vcolor};">{verdict}</span></h2>
+  <p style="color:var(--muted);font-size:0.9rem;margin:10px 0;">
+    This bundle was extracted, evidence-graded against {n_papers} PubMed-retrieved paper(s) across {n_claims} claim(s), scored by an AI vet-rubric simulation, checked for FTC §255 substantiation, audited by the Falsifier auditor (PMID-format + claim-direction checks), and Ed25519 signed. {vet_phrase}. {ftc_phrase} The Falsifier auditor returned <strong style="color:{vcolor};">{verdict}</strong>.
+  </p>
+  <div style="font-family:var(--mono);font-size:0.62rem;letter-spacing:0.16em;text-transform:uppercase;color:var(--electric);margin:14px 0 4px;">Ship before launch</div>
+  <ol style="margin:0;padding-left:18px;font-size:0.88rem;color:var(--ink);">{fixes_html}</ol>
+  <div class="cert-footer" style="margin-top:16px;padding-top:12px;border-top:1px solid rgba(255,255,255,0.08);font-family:var(--mono);font-size:0.62rem;color:var(--dim);">
+    {_html.escape(b.get("bundle_urn") or "")}<br>
+    bundle_hash: {_html.escape(bundle_hash or "")}<br>
+    {chain_line}<br>
+    <span class="cert-disclosure-inline" style="color:var(--muted);">{DISCLOSURE_BLOCK_INLINE}</span>
+    {DISCLOSURE_BLOCK_FULL}
+  </div>
+</div>""".strip()

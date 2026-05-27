@@ -1287,10 +1287,12 @@ shopper = LlmAgent(
           // BEFORE the cert + second opinion attach. Keep polling until cert_html
           // arrives (or a short grace) so the CERT tab isn't rendered empty.
           // Break when the cert has attached, OR the backend signals the final
-          // post-sign step is done, OR a generous grace (~36s) elapses. The
-          // verdict + chips already rendered; this only waits for the cert tab.
+          // post-sign step is done, OR a grace (~54s) elapses. The grace must
+          // outlast the server's 40s cert-composer timeout + static-cert attach,
+          // so even a Gemini stall still lands the deterministic fallback cert.
+          // The verdict + chips already rendered; this only waits for the cert tab.
           const finalized = /second opinion delivered/i.test(s.progress_message || '');
-          if (s.cert_html || finalized || (attempts - completedAttempt) >= 12) {
+          if (s.cert_html || finalized || (attempts - completedAttempt) >= 18) {
             tryitStatus.textContent = 'completed';
             log('');
             log(`ⓘ This bundle is now cached. A repeat lookup for this URL will hit the hot path.`);

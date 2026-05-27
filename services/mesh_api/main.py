@@ -974,14 +974,25 @@ async def _run_verify_claim_background(task_id: str, product_url: str, max_claim
             chain_anchor_status=chain_anchor_status,
         )
 
-        # AGENT 6 — Cert Composer. Best-effort: if Gemini fails, frontend falls back
-        # to its static cert template so verify is never blocked by composition.
+        # AGENT 6 — Cert Composer. Hard 40s timeout: gemini-2.5-flash returns in
+        # ~5-10s, but a cold instance or a model stall must NEVER leave the cert
+        # hanging (that froze progress at "composing cert" → "No cert_html in
+        # response"). On timeout OR error we attach a deterministic static cert
+        # built from the same bundle, so a completed bundle ALWAYS has a real
+        # cert_html. The verdict, hash, and chain anchor are identical either way.
+        from agents.report_writer import compose_cert, static_cert
         try:
-            from agents.report_writer import compose_cert
-            cert_html = await compose_cert(bundle, bundle_hash, chain_anchor)
+            cert_html = await asyncio.wait_for(
+                compose_cert(bundle, bundle_hash, chain_anchor), timeout=40
+            )
             await task_store.update(task_id, cert_html=cert_html, progress_message="cert composed · running second opinion")
         except Exception as cert_err:
-            print(f"[mesh_api] WARN: cert composer failed: {cert_err}")
+            print(f"[mesh_api] WARN: cert composer failed ({type(cert_err).__name__}: {cert_err}); using static cert")
+            try:
+                cert_html = static_cert(bundle, bundle_hash, chain_anchor)
+                await task_store.update(task_id, cert_html=cert_html, progress_message="cert composed (static) · running second opinion")
+            except Exception as static_err:
+                print(f"[mesh_api] WARN: static cert failed too: {static_err}")
 
         # AGENT 7 — Second Opinion. Adversarial double-validation via Google Search
         # grounding. Best-effort: if it fails, base bundle stands.
