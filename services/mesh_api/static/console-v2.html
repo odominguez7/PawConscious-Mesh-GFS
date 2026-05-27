@@ -75,7 +75,7 @@
       radial-gradient(60% 50% at 80% 20%, rgba(0,212,255,0.08), transparent 60%),
       radial-gradient(50% 40% at 10% 80%, rgba(123,108,255,0.07), transparent 60%);
   }
-  .hero-grid { position: relative; display: grid; grid-template-columns: 1fr 1.2fr; gap: 56px; align-items: center; }
+  .hero-grid { position: relative; display: grid; grid-template-columns: 1fr 1.2fr; gap: 56px; align-items: start; }
   .hero h1 {
     font-family: var(--sans); font-weight: 600; font-size: 56px; line-height: 1.02;
     letter-spacing: -0.03em; color: var(--ink); margin: 18px 0 22px; max-width: 540px;
@@ -225,23 +225,27 @@
      in-hero trust paragraph + pills used to (but now reads as proof, not
      noise). */
   .hero-stack {
+    grid-column: 1 / -1;   /* span the full hero grid, not just the 1fr left column */
     margin-top: 56px;
     padding-top: 22px;
     border-top: 1px solid var(--border);
   }
   .hero-stack .container {
-    display: flex; align-items: center; gap: 18px; flex-wrap: wrap;
+    display: grid; grid-template-columns: auto 1fr; align-items: center; gap: 18px;
   }
+  @media (max-width: 760px) { .hero-stack .container { grid-template-columns: 1fr; } }
   .hero-stack .hs-label {
     font: 600 10px/1 var(--mono); letter-spacing: 0.22em; text-transform: uppercase;
     color: var(--dim);
     flex-shrink: 0;
   }
   .hero-stack .hs-chips {
-    display: flex; gap: 10px; flex-wrap: wrap;
+    display: flex; gap: 10px; flex-wrap: wrap; width: 100%;
+    justify-content: space-between;
     font: 500 11.5px/1 var(--mono); letter-spacing: 0.04em;
     color: var(--muted);
   }
+  @media (max-width: 760px) { .hero-stack .hs-chips { justify-content: flex-start; } }
   .hero-stack .hs-chips span {
     padding: 5px 9px;
     background: var(--surface);
@@ -1654,6 +1658,16 @@
           <span class="label">See the live demo</span>
           <span class="arrow">→</span>
         </a>
+      </div>
+      <!-- Proof line (2026-05-27): gives the left column vertical weight against
+           the tall card + states the trust primitives in 3 seconds. -->
+      <style>
+        .hero-proof{display:flex;flex-wrap:wrap;gap:9px 18px;margin-top:26px;font:500 11.5px/1.4 var(--mono,monospace);color:var(--dim);letter-spacing:0.02em}
+        .hero-proof span{display:inline-flex;align-items:center;gap:6px}
+        .hero-proof span::before{content:"✓";color:#00D49B;font-weight:700}
+      </style>
+      <div class="hero-proof">
+        <span>Ed25519-signed bundles</span><span>grounded on real PubMed</span><span>verifiable by any A2A agent</span>
       </div>
     </div>
 
