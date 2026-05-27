@@ -1851,11 +1851,11 @@
         <div class="adt-row" style="border-top:none;padding:0">
           <span class="adt-prod">Green Gruff (forged)</span>
           <span class="adt-sig bad">signature INVALID</span>
-          <span class="adt-verdict">canonical hash mismatch</span>
+          <span class="adt-verdict">signature doesn't match</span>
           <span class="adt-action rej">REJECTED</span>
         </div>
       </div>
-      <div class="adt-foot">Every decision is gated on a verified Ed25519 signature. A forged verdict can never pass. <a href="/agents#try">Run the agent yourself →</a></div>
+      <div class="adt-foot">Every decision depends on a verified signature. A forged verdict can never pass. <a href="/agents#try">Run the agent yourself →</a></div>
     </div>
   </div>
 </section>
@@ -2098,10 +2098,8 @@
       <div class="how-step">
         <div class="n">01 · Submit</div>
         <div class="title">Paste a product URL</div>
-        <div class="desc">Firecrawl fetches the PDP; claim-extractor pulls every health claim.</div>
-        <div class="code">POST /a2a/v1/tasks/send
-{ "skill": "verify_claim",
-  "input": { "product_url": … } }</div>
+        <div class="desc">We read your product page and pull every health claim.</div>
+        <div class="code">Any product page URL. No code, no setup.</div>
       </div>
       <div class="how-step">
         <div class="n">02 · Mesh</div>
@@ -2111,11 +2109,9 @@
       </div>
       <div class="how-step">
         <div class="n">03 · Sign</div>
-        <div class="title">Ed25519 + chain anchor</div>
-        <div class="desc">Bundle signed against the mesh DID, appended to Firestore log. Any A2A v0.3 agent can verify.</div>
-        <div class="code">GET /a2a/v1/tasks/get/{id}
-→ { bundle_hash, signature,
-    chain_anchor, output: {…} }</div>
+        <div class="title">Signed and published</div>
+        <div class="desc">We sign it and publish it to a public record any AI agent can check.</div>
+        <div class="code">A public, tamper-proof record.</div>
       </div>
     </div>
     <!-- Compact 7-agent / 3-stage flow strip (2026-05-27, four-voice IA fix).
@@ -2215,9 +2211,9 @@
         <div class="tp"><span class="amount">$0</span><span class="u">/forever</span></div>
         <a class="tier-cta" href="mailto:omar@pawconscious.com?subject=PawConscious%20Visible%20waitlist">Join waitlist</a>
         <ul class="tier-features">
-          <li>Public agent card</li>
-          <li>JSON-LD product markup</li>
-          <li>Monthly AEO scan</li>
+          <li>Listed in the AI agent directory</li>
+          <li>AI-readable product data</li>
+          <li>Monthly AI-visibility scan</li>
         </ul>
       </div>
 
@@ -2228,8 +2224,8 @@
         <a class="tier-cta" href="/agents">Start verifying</a>
         <ul class="tier-features">
           <li>10 SKUs</li>
-          <li>Signed PCEC bundle per claim</li>
-          <li>Public chain anchor</li>
+          <li>Signed evidence certificate per claim</li>
+          <li>Public transparency record</li>
           <li>Insurance discount packet</li>
         </ul>
       </div>
@@ -3473,7 +3469,7 @@ function setBilling(period) {
     const sigShort=sig?sig.slice(0,44)+'…':'(signature pending)';
     const anchor=(d.chain_anchor||'').toString();
     const ts=d.completed_at?new Date(d.completed_at*1000).toISOString().replace('T',' ').slice(0,19)+' UTC':'';
-    card.sig.innerHTML='<b>Ed25519</b> '+esc(sigShort)+'<br><b>chain</b> '+esc(anchor.slice(0,44))+(anchor.length>44?'…':'')+(ts?'<br><b>issued</b> '+esc(ts):'');
+    card.sig.innerHTML='<b>Tamper-proof signature</b><br>'+esc(sigShort)+'<br><b>Public log entry</b><br>'+esc(anchor.slice(0,44))+(anchor.length>44?'…':'')+(ts?'<br><b>Issued</b> '+esc(ts):'');
     lastBundle=d;
     const bl=document.getElementById('resultBundleLink');
     if(bl&&d.bundle_urn) bl.href='/pcec/v0/claim/'+encodeURIComponent(d.bundle_urn);
