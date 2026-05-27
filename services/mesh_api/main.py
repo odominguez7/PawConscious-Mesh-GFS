@@ -1506,6 +1506,7 @@ async def a2a_lookup(url: str) -> JSONResponse:
         "url": url,
         "product_label": state.input.get("product_label"),
         "second_opinion": state.second_opinion,
+        "cert_html": state.cert_html,
         "task_id": state.task_id,
         "bundle_urn": bundle_urn,
         "bundle_hash": state.bundle_hash,
