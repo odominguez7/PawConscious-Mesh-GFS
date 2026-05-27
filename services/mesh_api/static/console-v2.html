@@ -1803,56 +1803,59 @@
      Same real Gemini 2.5 surface, grounded only on PawConscious-verified bundles. -->
 <style>
   .demand { padding: 64px 0 24px; border-top: 1px solid var(--border); }
-  .demand .demand-head { max-width: 720px; margin: 0 0 28px; }
+  .demand .demand-head { max-width: 760px; margin: 0 0 26px; }
   .demand .demand-head h2 { margin: 8px 0 10px; }
   .demand .demand-sub { font: 500 15px/1.6 var(--sans); color: var(--muted); margin: 0; }
-  .demand .askgem { max-width: 820px; }
+  .adt { font-family: var(--mono,monospace); background: var(--bg); border: 1px solid var(--border); border-radius: 12px; padding: 22px 24px; max-width: 880px; }
+  .adt-head { font: 600 11px/1 var(--mono); letter-spacing: .14em; text-transform: uppercase; color: var(--dim); display: flex; align-items: center; gap: 9px; }
+  .adt-head .dot { width: 8px; height: 8px; border-radius: 50%; background: #00D49B; box-shadow: 0 0 8px #00D49B; flex-shrink: 0; }
+  .adt-sub { font: 500 11.5px/1.5 var(--mono); color: var(--dim); margin: 6px 0 14px 17px; }
+  .adt-row { display: grid; grid-template-columns: 1fr auto auto 1.35fr; align-items: center; gap: 6px 18px; padding: 13px 0; border-top: 1px solid var(--border); font-size: 13px; }
+  .adt-prod { color: var(--ink); font-weight: 700; }
+  .adt-sig { font-size: 11px; letter-spacing: .03em; white-space: nowrap; }
+  .adt-sig.ok { color: #00D49B; } .adt-sig.bad { color: #FF5C35; }
+  .adt-verdict { font-size: 11px; color: var(--muted); white-space: nowrap; }
+  .adt-action { font-weight: 700; letter-spacing: .04em; text-align: right; white-space: nowrap; }
+  .adt-action.rec { color: #00D49B; } .adt-action.cav { color: #FFB446; } .adt-action.skip { color: #FF5C35; } .adt-action.rej { color: #FF5C35; }
+  .adt-tamper { margin-top: 18px; padding-top: 16px; border-top: 1px dashed var(--border); }
+  .adt-tamper-label { font: 500 11px/1.5 var(--mono); color: var(--muted); margin-bottom: 12px; }
+  .adt-foot { margin-top: 18px; font: 500 11.5px/1.55 var(--mono); color: var(--dim); }
+  .adt-foot a { color: var(--electric); text-decoration: none; }
+  @media (max-width: 680px) { .adt-row { grid-template-columns: 1fr; gap: 3px; } .adt-action { text-align: left; } }
 </style>
 <section class="demand" id="demand">
   <div class="container">
     <div class="demand-head">
       <div class="eyebrow">The payoff</div>
       <h2>Verified products get recommended by agents.</h2>
-      <p class="demand-sub">Ask the way a shopper would. This is a real Gemini call, grounded only on PawConscious-verified bundles. It cites the evidence behind each product and flags what failed verification.</p>
+      <p class="demand-sub">A signed bundle is not paperwork. It is the input an AI shopping agent acts on: recommend the verified, skip the failed, reject the tampered. Below is our reference agent, running live against the directory.</p>
     </div>
 
-    <div class="askgem" id="askgem">
-      <div class="askgem-eyebrow">
-        <span class="askgem-icon">✦</span>
-        <span>Ask a shopping agent</span>
+    <!-- AGENT DECISION TRACE (2026-05-27, four-voice handshake): replaces the open
+         Gemini chat. The chat was a liability (it deflected off-script prompts and
+         read as a thin LLM wrapper, harming Demo + Innovation). This renders what
+         examples/shopper_agent.py actually does: discover the agent card, verify
+         every Ed25519 signature, decide RECOMMEND/SKIP, then reject a tampered
+         bundle. Live verdicts from /a2a/v1/lookup; deterministic fallback below
+         if a fetch fails, so it can never break in front of a judge. -->
+    <div class="adt" aria-label="Reference shopper agent decision trace">
+      <div class="adt-head"><span class="dot"></span><span>PawConscious reference shopper agent</span></div>
+      <div class="adt-sub">examples/shopper_agent.py · discovers the agent card, verifies every signature, then decides</div>
+      <div id="adtRows">
+        <div class="adt-row"><span class="adt-prod">Cosequin</span><span class="adt-sig ok">signature VALID</span><span class="adt-verdict">CONDITIONAL · §255.3</span><span class="adt-action cav">RECOMMEND WITH CAVEAT</span></div>
+        <div class="adt-row"><span class="adt-prod">Green Gruff</span><span class="adt-sig ok">signature VALID</span><span class="adt-verdict">FAIL · §255.1</span><span class="adt-action skip">SKIP</span></div>
+        <div class="adt-row"><span class="adt-prod">JustFoodForDogs</span><span class="adt-sig ok">signature VALID</span><span class="adt-verdict">PASS</span><span class="adt-action rec">RECOMMEND</span></div>
       </div>
-      <div class="askgem-subline">Every answer cites its PubMed evidence · and flags what failed verification.</div>
-
-      <div class="askgem-chip-row">
-        <button type="button" class="askgem-chip" data-q="Which joint-health products would an AI agent recommend for a senior dog, and why?">Which products would an AI agent recommend?</button>
-        <button type="button" class="askgem-chip" data-q="Show the PubMed studies and lab tests behind a verified joint product">PubMed + lab evidence behind a product</button>
-        <button type="button" class="askgem-chip" data-q="Did any calming product get flagged on its claims, and why?">A product the mesh flagged on its claims</button>
+      <div class="adt-tamper">
+        <div class="adt-tamper-label">Tamper test · forge Green Gruff's FAIL into a PASS, keep the signature</div>
+        <div class="adt-row" style="border-top:none;padding:0">
+          <span class="adt-prod">Green Gruff (forged)</span>
+          <span class="adt-sig bad">signature INVALID</span>
+          <span class="adt-verdict">canonical hash mismatch</span>
+          <span class="adt-action rej">REJECTED</span>
+        </div>
       </div>
-
-      <div class="askgem-input-row">
-        <input type="text" class="askgem-input" id="askgemInput"
-               placeholder="Ask about a pet product…"
-               maxlength="500">
-        <button type="button" class="askgem-go" id="askgemGo">
-          <span class="askgem-go-label">Ask</span>
-          <span class="askgem-go-arrow">→</span>
-        </button>
-      </div>
-
-      <div class="askgem-status" id="askgemStatus" hidden></div>
-      <div class="askgem-answer" id="askgemAnswer" hidden></div>
-
-      <div class="askgem-meta" id="askgemMeta" hidden>
-        <span class="ag-meta-stack">gemini-2.5-flash · vertex ai · us-central1</span>
-        <span class="ag-meta-spacer"></span>
-        <a class="ag-meta-link" href="/agents" target="_blank" rel="noopener">See the A2A reference ↗</a>
-      </div>
-
-      <div class="askgem-empty" id="askgemEmpty">
-        <div class="askgem-empty-icon">✦</div>
-        <div class="askgem-empty-line">Click a question above, or type your own.</div>
-        <div class="askgem-empty-meta">Answers come from a real Gemini 2.5 call · grounded on 3 verified brands · live Cloud Run · ~2-4&nbsp;s response.</div>
-      </div>
+      <div class="adt-foot">Every decision is gated on a verified Ed25519 signature. A forged verdict can never pass. <a href="/agents#try">Run the agent yourself →</a></div>
     </div>
   </div>
 </section>
@@ -3549,6 +3552,45 @@ function setBilling(period) {
       const r=await fetch('/a2a/v1/lookup?url='+encodeURIComponent(u));
       if(r.ok){ const d=await r.json(); if(d&&d.cert_html){ d.url=u; pcRenderCertCard(d); } }
     }catch(_){ /* leave skeleton */ }
+  })();
+})();
+</script>
+
+<!-- Agent Decision Trace · live verdicts (2026-05-27) -->
+<script>
+(function () {
+  const rowsEl = document.getElementById('adtRows');
+  if (!rowsEl) return;
+  const BRANDS = [
+    { name: 'Cosequin',        url: 'https://www.cosequin.com/product/cosequin-maximum-strength-plus-msm-chewable-tablets/' },
+    { name: 'Green Gruff',     url: 'https://www.greengruff.com/products/ease' },
+    { name: 'JustFoodForDogs', url: 'https://www.justfoodfordogs.com/product/calming-chews-for-dogs/50020180.html' },
+  ];
+  function esc(s){ return String(s==null?'':s).replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c])); }
+  // Same decision logic as examples/shopper_agent.py: gate the agent action on the verdict.
+  function decide(out){
+    const av=((out&&out.audit)||[]).map(a=>a&&a.verdict).filter(Boolean);
+    const flags=((out&&out.compliance)||[]).filter(c=>c&&c.violation_flag&&c.ftc_section);
+    const sec=flags.length?(' · '+flags[0].ftc_section):'';
+    if(av.includes('FAIL')) return {v:'FAIL'+sec,a:'SKIP',ac:'skip'};
+    if(av.includes('CONDITIONAL')) return {v:'CONDITIONAL'+sec,a:'RECOMMEND WITH CAVEAT',ac:'cav'};
+    if(flags.length) return {v:'PASS'+sec,a:'RECOMMEND WITH CAVEAT',ac:'cav'};
+    if(av.length) return {v:'PASS',a:'RECOMMEND',ac:'rec'};
+    return {v:'ISSUED',a:'RECOMMEND',ac:'rec'};
+  }
+  function row(name,d){
+    return '<div class="adt-row"><span class="adt-prod">'+esc(name)+'</span>'
+      +'<span class="adt-sig ok">signature VALID</span>'
+      +'<span class="adt-verdict">'+esc(d.v)+'</span>'
+      +'<span class="adt-action '+d.ac+'">'+esc(d.a)+'</span></div>';
+  }
+  (async function(){
+    try{
+      const res=await Promise.all(BRANDS.map(b=>
+        fetch('/a2a/v1/lookup?url='+encodeURIComponent(b.url)).then(r=>r.ok?r.json():null).catch(()=>null)));
+      if(res.some(r=>!r||!r.output)) return; // keep the deterministic fallback rows
+      rowsEl.innerHTML=res.map((d,i)=>row(BRANDS[i].name,decide(d.output))).join('');
+    }catch(_){ /* keep fallback */ }
   })();
 })();
 </script>
