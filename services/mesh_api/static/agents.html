@@ -1141,20 +1141,24 @@ shopper = LlmAgent(
     { match: /sign|ed25519|merge/i,             stage: 'sign' },
     { match: /second opinion|adversarial|composer/i, stage: 'adversarial' },
   ];
+  // Canonical stage order. The mesh runs evidence/vet/compliance/auditor in a
+  // silent asyncio.gather (no per-agent progress message), so reaching a later
+  // stage is the signal that all earlier ones finished — a signed bundle proves
+  // evidence/vet/compliance/auditor ran. Light every preceding chip too.
+  const STAGE_ORDER = ['claim', 'evidence', 'vet', 'compliance', 'auditor', 'sign', 'adversarial'];
   let _stagesSeen = new Set();
   function updateStage(progressMsg) {
     if (!progressMsg) return;
     for (const { match, stage } of STAGE_PATTERNS) {
       if (match.test(progressMsg)) {
-        // Mark previous stages done, mark this one running.
+        const idx = STAGE_ORDER.indexOf(stage);
         stageChips.forEach(ch => {
-          if (_stagesSeen.has(ch.dataset.stage) && ch.dataset.stage !== stage) {
-            ch.classList.remove('running');
-            ch.classList.add('done');
+          const ci = STAGE_ORDER.indexOf(ch.dataset.stage);
+          if (ci > -1 && ci < idx) {          // every stage before this one is done
+            ch.classList.remove('running'); ch.classList.add('done');
+            _stagesSeen.add(ch.dataset.stage);
           }
-          if (ch.dataset.stage === stage) {
-            ch.classList.add('running');
-          }
+          if (ch.dataset.stage === stage) ch.classList.add('running');
         });
         _stagesSeen.add(stage);
         return;
@@ -1162,10 +1166,8 @@ shopper = LlmAgent(
     }
   }
   function finalizeStages() {
-    stageChips.forEach(ch => {
-      ch.classList.remove('running');
-      if (_stagesSeen.has(ch.dataset.stage)) ch.classList.add('done');
-    });
+    // "completed" == signed bundle + second opinion delivered → all 7 ran.
+    stageChips.forEach(ch => { ch.classList.remove('running'); ch.classList.add('done'); });
   }
   function resetStages() {
     _stagesSeen.clear();
