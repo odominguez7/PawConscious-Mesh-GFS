@@ -231,8 +231,9 @@
     border-top: 1px solid var(--border);
   }
   .hero-stack .container {
-    display: grid; grid-template-columns: auto 1fr; align-items: center; gap: 18px;
+    display: grid; grid-template-columns: auto 1fr; align-items: center; column-gap: 18px; row-gap: 12px;
   }
+  .hero-stack .hs-label.hs-gcp { color: var(--electric); }
   @media (max-width: 760px) { .hero-stack .container { grid-template-columns: 1fr; } }
   .hero-stack .hs-label {
     font: 600 10px/1 var(--mono); letter-spacing: 0.22em; text-transform: uppercase;
@@ -1697,72 +1698,47 @@
          ================================================================= -->
     <div class="bundle-card" aria-label="PawConscious signed bundle · live verifier">
 
-      <!-- ASK GEMINI · public Gemini-grounded chat surface (Path 2 · 2026-05-25 night)
-           The first PUBLIC Google AI surface on PawConscious. Internal agents
-           use Gemini for verification; THIS is where a dog parent / brand
-           owner / retailer can ASK Gemini something and watch it answer using
-           our verified bundles as the grounding source.
-
-           Real Gemini 2.5 Flash via Vertex AI · grounded on the 3 seeded
-           bundles + any future real bundles. Rate-limited backend. No mocks. -->
-      <div class="askgem" id="askgem">
-        <div class="askgem-eyebrow">
-          <span class="askgem-icon">✦</span>
-          <span>The other side · what an AI agent recommends</span>
+      <!-- LIVE SIGNED CERTIFICATE (2026-05-27, four-voice handshake): the hero's
+           right half now shows the PRODUCT'S CORE OUTPUT, not a derivative chat.
+           This card is the live result of the Verify action on the left. Click a
+           brand chip (or paste a URL) and this renders that product's REAL signed
+           certificate: verdict, evidence count, Ed25519 signature, chain anchor.
+           Defaults to a real cached cert on load so the product is visible before
+           any click. The demand-side Gemini chat moved to its own beat below. -->
+      <style>
+        .pccert{display:flex;flex-direction:column;font-family:var(--sans);min-height:340px}
+        .pccert-top{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:14px}
+        .pccert-eyebrow{font:700 10.5px/1 var(--mono,monospace);letter-spacing:.16em;text-transform:uppercase;color:var(--electric)}
+        .pccert-verdict{font:700 11px/1 var(--mono,monospace);letter-spacing:.06em;text-transform:uppercase;padding:6px 11px;border-radius:999px;border:1px solid currentColor;white-space:nowrap}
+        .pccert-verdict.v-pass{color:#00D49B}.pccert-verdict.v-cond{color:#FFB446}.pccert-verdict.v-fail{color:#FF5C35}.pccert-verdict.v-load{color:var(--dim)}
+        .pccert-brand{font:700 19px/1.25 var(--sans);color:var(--ink);margin-bottom:6px}
+        .pccert-summary{font:500 12.5px/1.5 var(--mono,monospace);color:var(--muted);margin-bottom:14px}
+        .pccert-claim{padding:11px 0;border-top:1px solid var(--border);font:400 13px/1.45 var(--ink)}
+        .pccert-claim .pcc-q{color:var(--muted);font-size:12px;display:block;margin-top:4px}
+        .pccert-sig{margin-top:auto;padding:12px 14px;background:var(--bg);border:1px solid var(--border);border-radius:8px;font:500 10.5px/1.75 var(--mono,monospace);color:var(--dim);word-break:break-all}
+        .pccert-sig b{color:var(--electric);font-weight:700}
+        .pccert-foot{display:flex;flex-wrap:wrap;gap:8px 18px;margin-top:14px}
+        .pccert-link{font:600 12px/1 var(--mono,monospace);color:var(--electric);text-decoration:none;cursor:pointer}
+        .pccert-link:hover{text-decoration:underline}
+      </style>
+      <div class="pccert" id="pcCert" aria-live="polite">
+        <div class="pccert-top">
+          <span class="pccert-eyebrow">✓ Signed evidence certificate</span>
+          <span class="pccert-verdict v-load" id="pcCertVerdict">loading…</span>
         </div>
-        <div class="askgem-subline">Ask like a shopper would. Every answer cites its evidence · and flags what failed verification.</div>
-
-        <div class="askgem-chip-row">
-          <button type="button" class="askgem-chip" data-q="Which joint-health products would an AI agent recommend for a senior dog, and why?">Which products would an AI agent recommend?</button>
-          <button type="button" class="askgem-chip" data-q="Show the PubMed studies and lab tests behind a verified joint product">PubMed + lab evidence behind a product</button>
-          <button type="button" class="askgem-chip" data-q="Did any calming product get flagged on its claims, and why?">A product the mesh flagged on its claims</button>
-        </div>
-
-        <div class="askgem-input-row">
-          <input type="text" class="askgem-input" id="askgemInput"
-                 placeholder="Ask about a pet product…"
-                 maxlength="500">
-          <button type="button" class="askgem-go" id="askgemGo">
-            <span class="askgem-go-label">Ask</span>
-            <span class="askgem-go-arrow">→</span>
-          </button>
-        </div>
-
-        <div class="askgem-status" id="askgemStatus" hidden></div>
-
-        <div class="askgem-answer" id="askgemAnswer" hidden></div>
-
-        <div class="askgem-meta" id="askgemMeta" hidden>
-          <span class="ag-meta-stack">gemini-2.5-flash · vertex ai · us-central1</span>
-          <span class="ag-meta-spacer"></span>
-          <a class="ag-meta-link" href="/agents" target="_blank" rel="noopener">See the A2A reference ↗</a>
-        </div>
-
-        <div class="askgem-empty" id="askgemEmpty">
-          <div class="askgem-empty-icon">✦</div>
-          <div class="askgem-empty-line">Click a question above, or type your own.</div>
-          <div class="askgem-empty-meta">Answers come from a real Gemini 2.5 call · grounded on 3 verified brands · live Cloud Run · ~2-4&nbsp;s response.</div>
+        <div class="pccert-brand" id="pcCertBrand">Loading a verified product…</div>
+        <div class="pccert-summary" id="pcCertSummary">Fetching a live signed bundle from the mesh.</div>
+        <div id="pcCertClaims"></div>
+        <div class="pccert-sig" id="pcCertSig">Ed25519 signature · chain anchor will appear here.</div>
+        <div class="pccert-foot">
+          <a class="pccert-link" id="pcCertLogLink" href="/pcec/v0/chain/head" target="_blank" rel="noopener">Verify on the transparency log ↗</a>
+          <a class="pccert-link" id="pcCertFullLink">See the full signed report →</a>
         </div>
       </div>
 
-    <!-- "Inspect the pipes" — three one-click proofs that the demo is
-         running on real Google Cloud infra, not a frontend mockup. Sits
-         directly below the bundle card so the narrative is "here's what
-         we produce → here's how to verify it for yourself." -->
-    <!-- 2026-05-27 (product-page restructure): the four developer proof buttons
-         moved to the Developers tab ("Verify it yourself"). The Product page keeps
-         ONE understated proof link (TASTE Rule 7: the wires stay inspectable)
-         without competing with the Verify CTA. -->
-    <div class="pipes-panel" aria-label="Inspect the live infrastructure">
-      <div class="pp-eyebrow">Don't trust us — inspect it</div>
-      <div class="pp-row">
-        <a class="pp-btn" href="/pcec/v0/chain/head" target="_blank" rel="noopener">
-          <span class="pp-mono">Public transparency log</span>
-          <span class="pp-label">Every signed bundle chains here · open it live</span>
-          <span class="pp-arrow">↗</span>
-        </a>
-      </div>
-    </div>
+    <!-- 2026-05-27 (hero rework): the standalone inspect link folded INTO the
+         certificate card above (its "Verify on the transparency log" link),
+         anchoring the proof to the artifact it proves. -->
   </div>
 
   <!-- 2026-05-25 (Omar Proposal 1): thin tech-stack strip directly below the
@@ -1770,16 +1746,20 @@
        contrast — for tech-judge legibility without competing with the headline. -->
   <div class="hero-stack">
     <div class="container">
-      <span class="hs-label">Powered by</span>
+      <span class="hs-label hs-gcp">Built on Google Cloud</span>
+      <span class="hs-chips">
+        <span>Gemini</span>
+        <span>ADK</span>
+        <span>Vertex AI Search</span>
+        <span>Vertex AI Agent Engine</span>
+        <span>Cloud Run</span>
+        <span>Firestore</span>
+      </span>
+      <span class="hs-label">Open standards</span>
       <span class="hs-chips">
         <span>A2A v0.3</span>
-        <span>Google Gemini</span>
-        <span>ADK</span>
+        <span>Ed25519 · did:web</span>
         <span>BioMCP · PubMed</span>
-        <span>Vertex AI Search</span>
-        <span>Ed25519</span>
-        <span>Firestore</span>
-        <span>Cloud Run</span>
       </span>
     </div>
   </div>
@@ -1813,6 +1793,68 @@
     <aside class="result-second-opinion" id="resultSecondOpinion" hidden>
       <!-- renderSecondOpinion(so) injects the adversarial Second Opinion here. -->
     </aside>
+  </div>
+</section>
+
+<!-- ===================== DEMAND SIDE · recommended by agents (2026-05-27) =====================
+     Moved here from the hero (four-voice handshake). The hero sells the SUPPLY
+     side (a brand verifies its product). This beat shows the DEMAND side (an AI
+     shopping agent recommends the verified product). Sequence, not split-screen,
+     so the buyer first grasps the value to them, then sees the downstream pull.
+     Same real Gemini 2.5 surface, grounded only on PawConscious-verified bundles. -->
+<style>
+  .demand { padding: 64px 0 24px; border-top: 1px solid var(--border); }
+  .demand .demand-head { max-width: 720px; margin: 0 0 28px; }
+  .demand .demand-head h2 { margin: 8px 0 10px; }
+  .demand .demand-sub { font: 500 15px/1.6 var(--sans); color: var(--muted); margin: 0; }
+  .demand .askgem { max-width: 820px; }
+</style>
+<section class="demand" id="demand">
+  <div class="container">
+    <div class="demand-head">
+      <div class="eyebrow">The payoff</div>
+      <h2>Verified products get recommended by agents.</h2>
+      <p class="demand-sub">Ask the way a shopper would. This is a real Gemini call, grounded only on PawConscious-verified bundles. It cites the evidence behind each product and flags what failed verification.</p>
+    </div>
+
+    <div class="askgem" id="askgem">
+      <div class="askgem-eyebrow">
+        <span class="askgem-icon">✦</span>
+        <span>Ask a shopping agent</span>
+      </div>
+      <div class="askgem-subline">Every answer cites its PubMed evidence · and flags what failed verification.</div>
+
+      <div class="askgem-chip-row">
+        <button type="button" class="askgem-chip" data-q="Which joint-health products would an AI agent recommend for a senior dog, and why?">Which products would an AI agent recommend?</button>
+        <button type="button" class="askgem-chip" data-q="Show the PubMed studies and lab tests behind a verified joint product">PubMed + lab evidence behind a product</button>
+        <button type="button" class="askgem-chip" data-q="Did any calming product get flagged on its claims, and why?">A product the mesh flagged on its claims</button>
+      </div>
+
+      <div class="askgem-input-row">
+        <input type="text" class="askgem-input" id="askgemInput"
+               placeholder="Ask about a pet product…"
+               maxlength="500">
+        <button type="button" class="askgem-go" id="askgemGo">
+          <span class="askgem-go-label">Ask</span>
+          <span class="askgem-go-arrow">→</span>
+        </button>
+      </div>
+
+      <div class="askgem-status" id="askgemStatus" hidden></div>
+      <div class="askgem-answer" id="askgemAnswer" hidden></div>
+
+      <div class="askgem-meta" id="askgemMeta" hidden>
+        <span class="ag-meta-stack">gemini-2.5-flash · vertex ai · us-central1</span>
+        <span class="ag-meta-spacer"></span>
+        <a class="ag-meta-link" href="/agents" target="_blank" rel="noopener">See the A2A reference ↗</a>
+      </div>
+
+      <div class="askgem-empty" id="askgemEmpty">
+        <div class="askgem-empty-icon">✦</div>
+        <div class="askgem-empty-line">Click a question above, or type your own.</div>
+        <div class="askgem-empty-meta">Answers come from a real Gemini 2.5 call · grounded on 3 verified brands · live Cloud Run · ~2-4&nbsp;s response.</div>
+      </div>
+    </div>
   </div>
 </section>
 
@@ -3386,89 +3428,129 @@ function setBilling(period) {
   const input  = document.getElementById('pcVerifyInput');
   const btn    = document.getElementById('pcVerifyBtn');
   const status = document.getElementById('pcVerifyStatus');
-  if (!form || !input || !btn) return;
 
-  function setStatus(msg) { if (status) { status.hidden = false; status.textContent = msg; } }
+  // Live certificate card (hero right column).
+  const card = {
+    verdict: document.getElementById('pcCertVerdict'),
+    brand:   document.getElementById('pcCertBrand'),
+    summary: document.getElementById('pcCertSummary'),
+    claims:  document.getElementById('pcCertClaims'),
+    sig:     document.getElementById('pcCertSig'),
+    full:    document.getElementById('pcCertFullLink'),
+  };
+  let lastBundle = null; // stashed for the full report + copy link
 
-  function render(d) {
-    if (typeof renderCertHtml === 'function' && d.cert_html) renderCertHtml(d.cert_html, d.bundle_urn);
-    if (typeof renderSecondOpinion === 'function' && d.second_opinion) renderSecondOpinion(d.second_opinion);
-    if (typeof showResultReport === 'function') showResultReport();
+  function esc(s){ return String(s==null?'':s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c])); }
+  function brandFromUrl(u){ try{ const h=new URL(u).hostname.replace(/^www\./,''); return h.split('.')[0].replace(/-/g,' ').replace(/\b\w/g,c=>c.toUpperCase()); }catch(e){ return 'This product'; } }
+
+  // Same aggregation rule as main.bundle_summary (FAIL > CONDITIONAL > flags > PASS).
+  function deriveVerdict(out){
+    const av=((out&&out.audit)||[]).map(a=>a&&a.verdict).filter(Boolean);
+    const ftc=((out&&out.compliance)||[]).filter(c=>c&&c.violation_flag);
+    if(av.includes('FAIL')) return ['FAIL','v-fail'];
+    if(av.includes('CONDITIONAL')) return ['PASS · conditions','v-cond'];
+    if(ftc.length) return ['PASS · flags','v-cond'];
+    if(av.length) return ['PASS','v-pass'];
+    return ['ISSUED','v-pass'];
   }
 
-  let running = false;
-  async function run(rawUrl) {
-    const url = (rawUrl || '').trim();
-    if (!url || !url.startsWith('http')) { setStatus('Paste a full https:// product URL.'); input.focus(); return; }
-    if (running) return;
-    running = true;
-    const label = btn.textContent;
-    btn.disabled = true; btn.textContent = 'Verifying…';
-    setStatus('Checking the verified cache…');
-    try {
-      // Hot path: instant for any brand already verified + cached (the 3 seed brands).
-      const hp = await fetch('/a2a/v1/lookup?url=' + encodeURIComponent(url));
-      if (hp.ok) {
-        const d = await hp.json();
-        if (d && d.cert_html) {
-          setStatus('Verified · signed bundle below. (cached · hot path)');
-          render(d);
-          return;
-        }
+  function pcRenderCertCard(d){
+    if(!card.verdict) return;
+    const out=d.output||{};
+    const [vtext,vclass]=deriveVerdict(out);
+    card.verdict.className='pccert-verdict '+vclass; card.verdict.textContent=vtext;
+    card.brand.textContent=d.product_label||brandFromUrl(d.url||'');
+    const nClaims=((out.claims)||[]).length;
+    const nPapers=((out.evidence)||[]).reduce((a,e)=>a+(((e.papers)||[]).length),0);
+    const ftc=((out.compliance)||[]).filter(c=>c&&c.violation_flag).length;
+    card.summary.textContent=nClaims+' claim'+(nClaims===1?'':'s')+' · '+nPapers+' PubMed paper'+(nPapers===1?'':'s')+' · '+ftc+' FTC §255 flag'+(ftc===1?'':'s');
+    const c0=((out.claims)||[])[0];
+    const c0text=c0?(c0.text||c0):'';
+    card.claims.innerHTML=c0text?'<div class="pccert-claim">'+esc(c0text)+'<span class="pcc-q">graded against '+nPapers+' PubMed paper'+(nPapers===1?'':'s')+'</span></div>':'';
+    const sig=(d.bundle_signature||'').toString().replace(/^ed25519:/,'');
+    const sigShort=sig?sig.slice(0,44)+'…':'(signature pending)';
+    const anchor=(d.chain_anchor||'').toString();
+    const ts=d.completed_at?new Date(d.completed_at*1000).toISOString().replace('T',' ').slice(0,19)+' UTC':'';
+    card.sig.innerHTML='<b>Ed25519</b> '+esc(sigShort)+'<br><b>chain</b> '+esc(anchor.slice(0,44))+(anchor.length>44?'…':'')+(ts?'<br><b>issued</b> '+esc(ts):'');
+    lastBundle=d;
+    const bl=document.getElementById('resultBundleLink');
+    if(bl&&d.bundle_urn) bl.href='/pcec/v0/claim/'+encodeURIComponent(d.bundle_urn);
+  }
+
+  function setStatus(msg){ if(status){ status.hidden=false; status.textContent=msg; } }
+
+  // "See the full signed report" -> reveal the detailed report below (full cert + second opinion).
+  if(card.full){
+    card.full.addEventListener('click',(e)=>{
+      e.preventDefault();
+      if(lastBundle){
+        if(typeof renderCertHtml==='function'&&lastBundle.cert_html) renderCertHtml(lastBundle.cert_html,lastBundle.bundle_urn);
+        if(typeof renderSecondOpinion==='function'&&lastBundle.second_opinion) renderSecondOpinion(lastBundle.second_opinion);
       }
+      if(typeof showResultReport==='function') showResultReport();
+    });
+  }
+
+  let running=false;
+  async function run(rawUrl){
+    const url=(rawUrl||'').trim();
+    if(!url||!url.startsWith('http')){ setStatus('Paste a full https:// product URL.'); if(input) input.focus(); return; }
+    if(running) return; running=true;
+    const label=btn?btn.textContent:''; if(btn){ btn.disabled=true; btn.textContent='Verifying…'; }
+    if(card.verdict){ card.verdict.className='pccert-verdict v-load'; card.verdict.textContent='running…'; }
+    setStatus('Checking the verified cache…');
+    try{
+      // Hot path: instant for any brand already verified + cached.
+      const hp=await fetch('/a2a/v1/lookup?url='+encodeURIComponent(url));
+      if(hp.ok){ const d=await hp.json(); if(d&&d.cert_html){ d.url=url; pcRenderCertCard(d); setStatus('Verified · cached (hot path).'); return; } }
       // Cold path: first-time URL runs the live 7-agent mesh.
       setStatus('New product · running the live 7-agent mesh (60-180s)…');
-      const sub = await fetch('/a2a/v1/tasks/send', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json', 'X-API-Key': 'demo-key-2026-06' },
-        body: JSON.stringify({ skill: 'verify_claim', input: { product_url: url, max_claims: 3 } }),
-      });
-      if (!sub.ok) throw new Error('submit ' + sub.status);
-      const { task_id } = await sub.json();
-      let attempts = 0, completedAttempt = -1;
-      while (true) {
-        attempts++;
-        await new Promise(r => setTimeout(r, 3000));
-        const g = await fetch('/a2a/v1/tasks/get/' + task_id);
-        if (!g.ok) continue;
-        const s = await g.json();
-        if (s.status === 'failed') { setStatus('Verification failed: ' + (s.error || 'unknown')); break; }
-        if (s.progress_message && s.status !== 'completed') setStatus('Mesh running · ' + s.progress_message);
-        if (s.status === 'completed') {
-          if (completedAttempt < 0) completedAttempt = attempts;
-          render(s);
-          const finalized = /second opinion delivered/i.test(s.progress_message || '');
-          if (s.cert_html || finalized || (attempts - completedAttempt) >= 18) {
-            setStatus('Verified · signed bundle below.');
-            break;
-          }
+      if(card.brand) card.brand.textContent=brandFromUrl(url);
+      if(card.summary) card.summary.textContent='Running claim extraction, evidence, vet rubric, FTC §255, audit, signing…';
+      const sub=await fetch('/a2a/v1/tasks/send',{method:'POST',headers:{'Content-Type':'application/json','X-API-Key':'demo-key-2026-06'},body:JSON.stringify({skill:'verify_claim',input:{product_url:url,max_claims:3}})});
+      if(!sub.ok) throw new Error('submit '+sub.status);
+      const {task_id}=await sub.json();
+      let attempts=0,completedAttempt=-1;
+      while(true){
+        attempts++; await new Promise(r=>setTimeout(r,3000));
+        const g=await fetch('/a2a/v1/tasks/get/'+task_id); if(!g.ok) continue;
+        const s=await g.json(); s.url=url;
+        if(s.status==='failed'){ setStatus('Verification failed: '+(s.error||'unknown')); break; }
+        if(s.progress_message&&s.status!=='completed') setStatus('Mesh running · '+s.progress_message);
+        if(s.status==='completed'){
+          if(completedAttempt<0) completedAttempt=attempts;
+          pcRenderCertCard(s);
+          const finalized=/second opinion delivered/i.test(s.progress_message||'');
+          if(s.cert_html||finalized||(attempts-completedAttempt)>=18){ setStatus('Verified · signed.'); break; }
           setStatus('Signed · composing cert…');
         }
       }
-    } catch (e) {
-      setStatus('Something went wrong: ' + (e && e.message ? e.message : e));
-    } finally {
-      running = false;
-      btn.disabled = false; btn.textContent = label;
-    }
+    }catch(e){ setStatus('Something went wrong: '+(e&&e.message?e.message:e)); }
+    finally{ running=false; if(btn){ btn.disabled=false; btn.textContent=label; } }
   }
 
-  form.addEventListener('submit', (e) => { e.preventDefault(); run(input.value); });
-  document.querySelectorAll('.pc-chip').forEach((c) => {
-    c.addEventListener('click', () => { input.value = c.dataset.url; run(c.dataset.url); });
-  });
+  if(form) form.addEventListener('submit',(e)=>{ e.preventDefault(); run(input.value); });
+  document.querySelectorAll('.pc-chip').forEach((c)=>{ c.addEventListener('click',()=>{ if(input) input.value=c.dataset.url; run(c.dataset.url); }); });
 
-  // Copy the public certificate link (the signed-bundle URL renderCertHtml set).
-  const copyBtn = document.getElementById('resultCopyLink');
-  const bundleLink = document.getElementById('resultBundleLink');
-  if (copyBtn && bundleLink) {
-    copyBtn.addEventListener('click', async () => {
-      const href = new URL(bundleLink.getAttribute('href'), location.origin).href;
-      try { await navigator.clipboard.writeText(href); copyBtn.textContent = 'Copied'; }
-      catch (_) { copyBtn.textContent = href; }
-      setTimeout(() => { copyBtn.textContent = 'Copy public link'; }, 1800);
+  // Copy the public certificate link.
+  const copyBtn=document.getElementById('resultCopyLink'), bundleLink=document.getElementById('resultBundleLink');
+  if(copyBtn&&bundleLink){
+    copyBtn.addEventListener('click',async()=>{
+      const href=new URL(bundleLink.getAttribute('href'),location.origin).href;
+      try{ await navigator.clipboard.writeText(href); copyBtn.textContent='Copied'; }catch(_){ copyBtn.textContent=href; }
+      setTimeout(()=>{ copyBtn.textContent='Copy public link'; },1800);
     });
   }
+
+  // Default state: render a real cached certificate (Cosequin) so the product is
+  // visible before any interaction. Stripe pattern: the hero always shows the product.
+  (async function(){
+    try{
+      const u='https://www.cosequin.com/product/cosequin-maximum-strength-plus-msm-chewable-tablets/';
+      const r=await fetch('/a2a/v1/lookup?url='+encodeURIComponent(u));
+      if(r.ok){ const d=await r.json(); if(d&&d.cert_html){ d.url=u; pcRenderCertCard(d); } }
+    }catch(_){ /* leave skeleton */ }
+  })();
 })();
 </script>
 
