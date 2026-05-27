@@ -1683,7 +1683,7 @@
         .hero-proof span::before{content:"✓";color:#00D49B;font-weight:700}
       </style>
       <div class="hero-proof">
-        <span>Ed25519-signed bundles</span><span>grounded on real PubMed</span><span>verifiable by any A2A agent</span>
+        <span>Digitally signed</span><span>Grounded on real PubMed research</span><span>Verifiable by any AI agent</span>
       </div>
     </div>
 
@@ -1757,8 +1757,8 @@
       <div class="pp-eyebrow">Don't trust us — inspect it</div>
       <div class="pp-row">
         <a class="pp-btn" href="/pcec/v0/chain/head" target="_blank" rel="noopener">
-          <span class="pp-mono">GET /pcec/v0/chain/head</span>
-          <span class="pp-label">Live Firestore signing chain · verifiable by any agent</span>
+          <span class="pp-mono">Public transparency log</span>
+          <span class="pp-label">Every signed bundle chains here · open it live</span>
           <span class="pp-arrow">↗</span>
         </a>
       </div>
@@ -1802,7 +1802,9 @@
       <h2 class="result-title">The mesh produced this signed report.</h2>
       <div class="result-meta">
         <span class="meta-pill" id="resultUrnPill">urn:pcec:claim:…</span>
+        <button type="button" class="meta-link" id="resultCopyLink" style="background:none;border:none;cursor:pointer;font:inherit;color:var(--electric);padding:0;">Copy public link</button>
         <a class="meta-link" id="resultBundleLink" href="/pcec/v0/chain/head" target="_blank" rel="noopener">View signed bundle &nearr;</a>
+        <a class="meta-link" href="/agents#try" target="_blank" rel="noopener">Raw bundle + verify the signature &nearr;</a>
       </div>
     </div>
     <article class="result-body" id="resultBody">
@@ -2108,7 +2110,6 @@
 </div><!-- /.how (id=how) -->
 </section><!-- /#how-it-works -->
 
-<!-- v0.15.0 U4: proof block relocated into #why-trust-this group below biz. -->
 
 <!-- ===================== USE CASES + PRICING ===================== -->
 <section class="biz" id="biz">
@@ -2231,20 +2232,12 @@
      in the Devpost long-form description and investor deck, not on the marketing
      page. Reference doc: internal/docs/MOONSHOT_RETHINK_2026-05-24.md. -->
 
-<!-- ===================== TRACK 3 MANDATE BAND ===================== -->
-<section id="why-trust-this" class="why-trust-this-group">
-<div class="track3">
-  <div class="container track3-inner">
-    <span class="label">Track 3 mandates · met</span>
-    <a class="badge" href="https://github.com/odominguez7/PawConscious-Mesh-GFS/blob/main/BUSINESS_PLAN.md">B2B Focus</a>
-    <a class="badge" href="/health">Cloud Run</a>
-    <a class="badge" href="https://github.com/odominguez7/PawConscious-Mesh-GFS/blob/main/agents/orchestrator.py">Gemini · ADK</a>
-    <a class="badge" href="/.well-known/agent-card.json">A2A v0.3</a>
-    <a class="badge" href="/health/agent-engine">Agent Engine</a>
-    <a class="badge" href="/architecture">Architecture ↗</a>
-  </div>
-</div>
-</section>
+<!-- 2026-05-27 (pre-submission fine-tune, four-voice handshake): the "Track 3
+     mandates · met" band was cut from the buyer page. World-class infra brands
+     (Stripe / Vercel) never show a "competition mandates" checklist; they trust
+     the audience to connect the dots. The 4 Track 3 mandates are labeled for
+     judges on /architecture, and the Developers tab carries the Google-stack
+     proof + agent card. Show, don't tell. -->
 
 <footer class="footer">
   <div class="container footer-inner">
@@ -3464,6 +3457,18 @@ function setBilling(period) {
   document.querySelectorAll('.pc-chip').forEach((c) => {
     c.addEventListener('click', () => { input.value = c.dataset.url; run(c.dataset.url); });
   });
+
+  // Copy the public certificate link (the signed-bundle URL renderCertHtml set).
+  const copyBtn = document.getElementById('resultCopyLink');
+  const bundleLink = document.getElementById('resultBundleLink');
+  if (copyBtn && bundleLink) {
+    copyBtn.addEventListener('click', async () => {
+      const href = new URL(bundleLink.getAttribute('href'), location.origin).href;
+      try { await navigator.clipboard.writeText(href); copyBtn.textContent = 'Copied'; }
+      catch (_) { copyBtn.textContent = href; }
+      setTimeout(() => { copyBtn.textContent = 'Copy public link'; }, 1800);
+    });
+  }
 })();
 </script>
 

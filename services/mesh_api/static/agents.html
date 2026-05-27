@@ -524,17 +524,24 @@
 
   <section class="hero">
     <div class="eyebrow">PawConscious for Agents · A2A v0.3 reference</div>
-    <h1>The <span class="accent">trust layer</span> AI agents call before recommending a consumer product.</h1>
+    <h1>Call the <span class="accent">trust layer</span> in one A2A request.</h1>
     <p class="lede">One curl call. 60-90 seconds per claim (typical product = 2 to 4 minutes total). A2A v0.3 + JSON-RPC 2.0 envelopes, Ed25519-signed PCEC v0.1 bundles, idempotency keys, discoverable agent card. Drop-in for any A2A v0.3 client. Demo key for GFS judges below.</p>
   </section>
 
-  <div class="mandates">
-    <span class="mandate">Linux Foundation A2A v0.3 spec</span>
-    <span class="mandate">7 agents · 4 on ADK · asyncio.gather</span>
-    <span class="mandate">JSON-RPC 2.0 envelope</span>
-    <span class="mandate">Ed25519 signed bundles</span>
-    <span class="mandate">Async tasks with idempotency</span>
-    <span class="mandate">Marketplace-ready discovery</span>
+  <!-- Google-stack proof (2026-05-27): names every Google Cloud tool in the
+       mesh so a Technical-30% judge maps the stack in one glance. Each chip is
+       the real, shipped integration; the protocol chips follow. -->
+  <div class="mandates" aria-label="Built on Google Cloud">
+    <span class="mandate" style="border-color:var(--electric);color:var(--electric);">Built on Google Cloud</span>
+    <span class="mandate">Gemini 2.5 Pro + Flash</span>
+    <span class="mandate">ADK 2.0 · 4 of 7 agents</span>
+    <span class="mandate">Vertex AI Search</span>
+    <span class="mandate">Google Search grounding</span>
+    <span class="mandate">Vertex AI Agent Engine</span>
+    <span class="mandate">Cloud Run</span>
+    <span class="mandate">Firestore transparency log</span>
+    <span class="mandate">A2A v0.3 · JSON-RPC 2.0</span>
+    <span class="mandate">Ed25519 · did:web</span>
   </div>
 
   <section class="quickstart">
@@ -631,8 +638,8 @@ task_id = r.json()[<span class="tok-str">"task_id"</span>]
     <p style="margin: 12px 0 0; font: 500 12px/1.55 var(--sans); color: var(--muted);">Calls without the header receive <code class="inline">HTTP 401 missing_api_key</code>. Calls with an unknown key receive <code class="inline">HTTP 401 invalid_api_key</code>. The demo key has no rate limit during the judging window; production keys ship with per-tenant pacing.</p>
   </div>
 
-  <h2>Try it from the browser</h2>
-  <p>Paste any pet-supplement product URL. Your demo key is pre-loaded. The call goes to our live Cloud Run mesh.</p>
+  <h2 id="try">Live API sandbox</h2>
+  <p>Run the exact A2A call above against the live Cloud Run mesh, then inspect the raw signed bundle and verify the Ed25519 signature yourself. Your demo key is pre-loaded. Just want the brand-facing verdict and certificate? <a href="/" style="color:var(--electric);">See the Product page &rarr;</a></p>
 
   <!-- 2026-05-25 (Omar): two-tier latency story panel. Frames the latency
        judges will see when they click Submit. Hot path is real (GET /a2a/v1/lookup);
