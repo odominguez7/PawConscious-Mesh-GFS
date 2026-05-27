@@ -2104,6 +2104,38 @@ curl <span class="tok-str">"<!--PUBLIC_BASE_URL-->/a2a/v1/tasks/get/&lt;task_id&
     chain_anchor, output: {…} }</div>
       </div>
     </div>
+    <!-- Compact 7-agent / 3-stage flow strip (2026-05-27, four-voice IA fix).
+         A judge who only scrolls the landing now sees the mesh shape in one
+         glance; the full interactive diagram lives on /architecture. -->
+    <style>
+      .agent-flow{display:flex;align-items:stretch;gap:10px;flex-wrap:wrap;margin-top:30px;padding:18px;border:1px solid var(--border);border-radius:12px;background:var(--surface)}
+      .agent-flow .af-stage{display:flex;flex-direction:column;gap:8px;flex:1;min-width:170px}
+      .agent-flow .af-stage-label{font:700 10px var(--mono,monospace);letter-spacing:.16em;text-transform:uppercase;color:var(--electric)}
+      .agent-flow .af-chips{display:flex;flex-wrap:wrap;gap:6px}
+      .agent-flow .af-chip{font:600 11.5px var(--mono,monospace);color:var(--ink);background:rgba(255,255,255,0.04);border:1px solid var(--border);border-radius:6px;padding:5px 9px;white-space:nowrap}
+      .agent-flow .af-chip.af-sign{border-color:#00D49B;color:#00D49B}
+      .agent-flow .af-arrow{align-self:center;color:var(--dim);font-size:16px}
+      .agent-flow-cap{margin-top:12px;font:500 12px var(--mono,monospace);color:var(--dim)}
+      .agent-flow-cap a{color:var(--electric);text-decoration:none}
+      @media(max-width:760px){.agent-flow{flex-direction:column}.agent-flow .af-arrow{transform:rotate(90deg)}}
+    </style>
+    <div class="agent-flow" aria-label="PawConscious mesh: 7 agents across 3 stages">
+      <div class="af-stage">
+        <span class="af-stage-label">Stage 1 · Reasoning mesh</span>
+        <div class="af-chips"><span class="af-chip">① Claim</span><span class="af-chip">② Evidence · PubMed</span><span class="af-chip">③ Vet rubric</span><span class="af-chip">④ Compliance · FTC</span><span class="af-chip">⑤ Auditor</span></div>
+      </div>
+      <span class="af-arrow">→</span>
+      <div class="af-stage">
+        <span class="af-stage-label">Stage 2 · Sign</span>
+        <div class="af-chips"><span class="af-chip af-sign">Ed25519 + Firestore chain</span></div>
+      </div>
+      <span class="af-arrow">→</span>
+      <div class="af-stage">
+        <span class="af-stage-label">Stage 3 · Adversarial</span>
+        <div class="af-chips"><span class="af-chip">⑥ Cert</span><span class="af-chip">⑦ Second Opinion · Google Search</span></div>
+      </div>
+    </div>
+    <div class="agent-flow-cap">7 agents · 3 stages · a signed-evidence trust chain. <a href="/architecture">See the full mesh →</a></div>
   </div>
 </div><!-- /.how (id=how) -->
 </section><!-- /#how-it-works -->

@@ -96,3 +96,34 @@ Per claim extraction: ~$0.01 (single Gemini 2.5 Pro call).
 Per evidence grading (with PubMed search): ~$0.05 (3 Gemini calls + free BioMCP query).
 
 Full hackathon-period spend estimate: under $50 across Vertex AI + Cloud Run.
+
+## Deploy (and the gcloud project trap)
+
+The `mesh-api` Cloud Run service runs in project **`pawconscious-mesh-2026`**.
+
+> ⚠️ gcloud's *active configuration* is global per-user (one file:
+> `~/.config/gcloud/active_config`). If you also work in another project (e.g.
+> YU / `resolution-hack`) in a second terminal, whichever ran
+> `gcloud config configurations activate` last wins for BOTH terminals — a bare
+> `gcloud builds submit` then deploys to the wrong project. This bit us.
+
+**Pin this terminal to PawConscious (no extra tools, this shell only):**
+
+```bash
+export CLOUDSDK_ACTIVE_CONFIG_NAME=pawconscious-mesh
+gcloud config get-value project        # → pawconscious-mesh-2026
+```
+
+(With `direnv` installed, the repo's `.envrc` sets this automatically on `cd`.)
+
+**Deploy (belt-and-suspenders — always pass `--project` too):**
+
+```bash
+gcloud builds submit --config=cloudbuild.mesh-api.yaml --project=pawconscious-mesh-2026
+```
+
+**Verify the live result (7 checks, no trust required):**
+
+```bash
+./verify.sh
+```

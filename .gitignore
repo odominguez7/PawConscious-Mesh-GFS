@@ -65,3 +65,6 @@ demo/captures/__pycache__/
 # macOS
 .DS_Store
 **/.DS_Store
+
+# direnv: per-terminal gcloud project pin (local, per-developer)
+.envrc
