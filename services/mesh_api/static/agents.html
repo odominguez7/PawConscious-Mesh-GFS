@@ -1246,6 +1246,7 @@ shopper = LlmAgent(
 
       // Poll
       let attempts = 0;
+      let completedAttempt = -1;   // poll# when status first hit "completed"
       const maxAttempts = 60;  // ~3 min cap
       while (attempts < maxAttempts) {
         attempts++;
@@ -1260,23 +1261,36 @@ shopper = LlmAgent(
           updateStage(s.progress_message);
         }
         if (s.status === 'completed') {
-          const totalMs = performance.now() - tCold;
-          stopTimer(totalMs, 'done', 'cold path · complete');
-          finalizeStages();
-          log('');
-          log(`✓ COMPLETED in ${(totalMs / 1000).toFixed(1)} s`, 'ok');
-          log(`bundle_hash=${s.bundle_hash}`);
-          log(`bundle_signature=${(s.bundle_signature || '').slice(0,40)}…`);
-          log(`chain_anchor=${s.chain_anchor}`);
-          if (s.output) {
-            log(`claims=${(s.output.claims || []).length}`);
-            log(`audit_verdict=${s.output.audit_verdict || '(none)'}`);
+          if (completedAttempt < 0) {
+            completedAttempt = attempts;
+            const totalMs = performance.now() - tCold;
+            stopTimer(totalMs, 'done', 'cold path · complete');
+            finalizeStages();
+            log('');
+            log(`✓ COMPLETED in ${(totalMs / 1000).toFixed(1)} s`, 'ok');
+            log(`bundle_hash=${s.bundle_hash}`);
+            log(`bundle_signature=${(s.bundle_signature || '').slice(0,40)}…`);
+            log(`chain_anchor=${s.chain_anchor}`);
+            if (s.output) {
+              const av = (s.output.audit || []).map(a => a && a.verdict).filter(Boolean);
+              const verdict = av.includes('FAIL') ? 'FAIL'
+                : av.includes('CONDITIONAL') ? 'CONDITIONAL'
+                : av.length ? 'PASS' : (s.output.audit_verdict || '(none)');
+              log(`claims=${(s.output.claims || []).length}`);
+              log(`audit_verdict=${verdict}`);
+            }
           }
-          log('');
-          log(`ⓘ This bundle is now cached. A repeat lookup for this URL will hit the hot path.`);
-          tryitStatus.textContent = 'completed';
-          renderBundle(s);
-          break;
+          renderBundle(s);   // re-render as cert_html + second_opinion attach post-sign
+          // The bundle is signed (status flips to "completed") a few seconds
+          // BEFORE the cert + second opinion attach. Keep polling until cert_html
+          // arrives (or a short grace) so the CERT tab isn't rendered empty.
+          if (s.cert_html || (attempts - completedAttempt) >= 5) {
+            tryitStatus.textContent = 'completed';
+            log('');
+            log(`ⓘ This bundle is now cached. A repeat lookup for this URL will hit the hot path.`);
+            break;
+          }
+          tryitStatus.textContent = 'completed · finalizing cert…';
         }
         if (s.status === 'failed') {
           stopTimer(performance.now() - tCold, 'done', 'failed');
