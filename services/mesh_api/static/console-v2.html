@@ -1710,7 +1710,7 @@
         .pccert-eyebrow{font:700 10.5px/1 var(--mono,monospace);letter-spacing:.16em;text-transform:uppercase;color:var(--electric);display:flex;align-items:center;gap:8px}
         .pccert-example{font:700 9px/1 var(--mono,monospace);letter-spacing:.14em;text-transform:uppercase;color:#FFB446;border:1px solid #FFB446;border-radius:4px;padding:3px 6px}
         .pccert-verdict{font:700 11px/1 var(--mono,monospace);letter-spacing:.06em;text-transform:uppercase;padding:6px 11px;border-radius:999px;border:1px solid currentColor;white-space:nowrap;transition:color .25s,font-size .25s}
-        .pccert-verdict.v-pass{color:#00D49B}.pccert-verdict.v-cond{color:#FFB446}.pccert-verdict.v-fail{color:#FF5C35}.pccert-verdict.v-load{color:var(--dim)}
+        .pccert-verdict.v-pass{color:#00D49B}.pccert-verdict.v-cond{color:#FFB446}.pccert-verdict.v-fail{color:#FF5C35}.pccert-verdict.v-none{color:var(--muted)}.pccert-verdict.v-load{color:var(--dim)}
         .pccert-verdict.v-big{font-size:14px;padding:8px 15px}
         .pccert-brand{font:700 19px/1.25 var(--sans);color:var(--ink);margin-bottom:6px;min-height:24px}
         .pccert-brand .pcb-cursor{color:var(--electric);animation:pcblink 1s steps(1) infinite}
@@ -1882,7 +1882,7 @@
   .adt-sig.ok { color: #00D49B; } .adt-sig.bad { color: #FF5C35; }
   .adt-verdict { font-size: 11px; color: var(--muted); white-space: nowrap; }
   .adt-action { font-weight: 700; letter-spacing: .04em; text-align: right; white-space: nowrap; }
-  .adt-action.rec { color: #00D49B; } .adt-action.cav { color: #FFB446; } .adt-action.skip { color: #FF5C35; } .adt-action.rej { color: #FF5C35; }
+  .adt-action.rec { color: #00D49B; } .adt-action.cav { color: #FFB446; } .adt-action.skip { color: #FF5C35; } .adt-action.rej { color: #FF5C35; } .adt-action.none { color: var(--muted); }
   .adt-tamper { margin-top: 18px; padding-top: 16px; border-top: 1px dashed var(--border); }
   .adt-tamper-label { font: 500 11px/1.5 var(--mono); color: var(--muted); margin-bottom: 12px; }
   .adt-foot { margin-top: 18px; font: 500 11.5px/1.55 var(--mono); color: var(--dim); }
@@ -1910,7 +1910,7 @@
       <div id="adtRows">
         <div class="adt-row"><span class="adt-prod">Cosequin</span><span class="adt-sig ok">signature VALID</span><span class="adt-verdict">CONDITIONAL · §255.3</span><span class="adt-action cav">RECOMMEND WITH CAVEAT</span></div>
         <div class="adt-row"><span class="adt-prod">Green Gruff</span><span class="adt-sig ok">signature VALID</span><span class="adt-verdict">FAIL · §255.1</span><span class="adt-action skip">SKIP</span></div>
-        <div class="adt-row"><span class="adt-prod">JustFoodForDogs</span><span class="adt-sig ok">signature VALID</span><span class="adt-verdict">PASS</span><span class="adt-action rec">RECOMMEND</span></div>
+        <div class="adt-row"><span class="adt-prod">JustFoodForDogs</span><span class="adt-sig ok">signature VALID</span><span class="adt-verdict">UNVERIFIED</span><span class="adt-action none">NO RECOMMENDATION</span></div>
       </div>
       <div class="adt-tamper">
         <div class="adt-tamper-label">Tamper test · forge Green Gruff's FAIL into a PASS, keep the signature</div>
@@ -3473,6 +3473,32 @@ function setBilling(period) {
 })();
 </script>
 
+<!-- Verdict · single source of truth on the client. MUST stay in sync with
+     shared/verdict.py. Folds in the vet rubric + the adversarial Second Opinion;
+     a green PASS is earned (a substantiated testable claim), never a default for
+     puffery. A vet score of 1/5 marks a claim as non-testable. -->
+<script>
+function pcVerdict(output, secondOpinion){
+  const out=output||{};
+  const av=((out.audit)||[]).map(a=>a&&a.verdict).filter(Boolean);
+  const ftc=((out.compliance)||[]).filter(c=>c&&c.violation_flag);
+  const vet=((out.vet_scores)||[]).map(v=>v&&v.score).filter(s=>typeof s==='number');
+  const testable=vet.filter(s=>s>1);
+  const so=String((secondOpinion||{}).overall_verdict||'').trim().toUpperCase();
+  const V=(key,label,color,explain)=>({key:key,label:label,color:color,explain:explain});
+  if(av.indexOf('FAIL')>=0) return V('FAIL','FAIL','fail','The audit failed on at least one claim: the evidence does not support it.');
+  if(so==='FAIL') return V('FAIL','FAIL','fail','The adversarial Second Opinion found evidence that contradicts the claims.');
+  if(vet.length && !testable.length) return V('NO_CLAIMS','Unverified','none','No health claim on this product could be substantiated. Its claims are either marketing language or lack supporting evidence.');
+  if(so==='NEEDS REVIEW'||so==='NEEDS_REVIEW') return V('CONDITIONAL','Conditional','cond','The adversarial Second Opinion advises review before relying on these claims.');
+  if(av.indexOf('CONDITIONAL')>=0) return V('CONDITIONAL','Conditional','cond','The audit cleared the claims with caveats.');
+  if(ftc.length) return V('CONDITIONAL','Conditional','cond','An FTC §255 substantiation flag should be addressed before launch.');
+  if(testable.length && (testable.reduce((a,b)=>a+b,0)/testable.length)<2.5) return V('CONDITIONAL','Conditional','cond','The claims are testable but the supporting evidence is weak.');
+  if(testable.length) return V('VERIFIED','Verified','pass','Health claims are substantiated by graded PubMed evidence.');
+  if(av.length) return V('CONDITIONAL','Conditional','cond','Issued; claim substance could not be fully assessed.');
+  return V('ISSUED','Issued','cond','Bundle issued.');
+}
+</script>
+
 <!-- ===================== HERO VERIFY (2026-05-27 product-page restructure) =====================
      The Product page's ONE primary action: paste a product URL (or click a verified
      brand) -> hot-path /a2a/v1/lookup for an instant signed bundle, else cold-path
@@ -3520,16 +3546,15 @@ function setBilling(period) {
     const st=document.getElementById('pcCertStage'); if(st) st.hidden=true;
     card.verdict.classList.remove('v-big');
     const out=d.output||{};
-    const [vtext,vclass]=deriveVerdict(out);
-    card.verdict.className='pccert-verdict '+vclass; card.verdict.textContent=vtext;
+    const vd=pcVerdict(out, d.second_opinion);
+    card.verdict.className='pccert-verdict v-'+vd.color; card.verdict.textContent=vd.label;
     card.brand.textContent=d.product_label||brandFromUrl(d.url||'');
     const nClaims=((out.claims)||[]).length;
     const nPapers=((out.evidence)||[]).reduce((a,e)=>a+(((e.papers)||[]).length),0);
     const ftc=((out.compliance)||[]).filter(c=>c&&c.violation_flag).length;
     card.summary.textContent=nClaims+' claim'+(nClaims===1?'':'s')+' · '+nPapers+' PubMed paper'+(nPapers===1?'':'s')+' · '+ftc+' FTC §255 flag'+(ftc===1?'':'s');
-    const c0=((out.claims)||[])[0];
-    const c0text=c0?(c0.text||c0):'';
-    card.claims.innerHTML=c0text?'<div class="pccert-claim">'+esc(c0text)+'<span class="pcc-q">graded against '+nPapers+' PubMed paper'+(nPapers===1?'':'s')+'</span></div>':'';
+    const c0=((out.claims)||[])[0]; const c0text=c0?(c0.text||c0):'';
+    card.claims.innerHTML='<div class="pccert-claim">'+(c0text?esc(c0text):'No testable health claim')+'<span class="pcc-q">'+esc(vd.explain)+'</span></div>';
     const sig=(d.bundle_signature||'').toString().replace(/^ed25519:/,'');
     const sigShort=sig?sig.slice(0,44)+'…':'(signature pending)';
     const anchor=(d.chain_anchor||'').toString();
@@ -3650,15 +3675,15 @@ function setBilling(period) {
   ];
   function esc(s){ return String(s==null?'':s).replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c])); }
   // Same decision logic as examples/shopper_agent.py: gate the agent action on the verdict.
-  function decide(out){
-    const av=((out&&out.audit)||[]).map(a=>a&&a.verdict).filter(Boolean);
-    const flags=((out&&out.compliance)||[]).filter(c=>c&&c.violation_flag&&c.ftc_section);
+  function decide(d){
+    const out=(d&&d.output)||{};
+    const vd=pcVerdict(out, d&&d.second_opinion);
+    const flags=((out.compliance)||[]).filter(c=>c&&c.violation_flag&&c.ftc_section);
     const sec=flags.length?(' · '+flags[0].ftc_section):'';
-    if(av.includes('FAIL')) return {v:'FAIL'+sec,a:'SKIP',ac:'skip'};
-    if(av.includes('CONDITIONAL')) return {v:'CONDITIONAL'+sec,a:'RECOMMEND WITH CAVEAT',ac:'cav'};
-    if(flags.length) return {v:'PASS'+sec,a:'RECOMMEND WITH CAVEAT',ac:'cav'};
-    if(av.length) return {v:'PASS',a:'RECOMMEND',ac:'rec'};
-    return {v:'ISSUED',a:'RECOMMEND',ac:'rec'};
+    const ACT={ VERIFIED:['RECOMMEND','rec'], CONDITIONAL:['RECOMMEND WITH CAVEAT','cav'], NO_CLAIMS:['NO RECOMMENDATION','none'], FAIL:['SKIP','skip'], ISSUED:['RECOMMEND','rec'] };
+    const a=ACT[vd.key]||ACT.ISSUED;
+    const v = vd.label.toUpperCase() + (vd.key==='NO_CLAIMS'?'':sec);
+    return {v:v, a:a[0], ac:a[1]};
   }
   function row(name,d){
     return '<div class="adt-row"><span class="adt-prod">'+esc(name)+'</span>'
@@ -3671,7 +3696,7 @@ function setBilling(period) {
       const res=await Promise.all(BRANDS.map(b=>
         fetch('/a2a/v1/lookup?url='+encodeURIComponent(b.url)).then(r=>r.ok?r.json():null).catch(()=>null)));
       if(res.some(r=>!r||!r.output)) return; // keep the deterministic fallback rows
-      rowsEl.innerHTML=res.map((d,i)=>row(BRANDS[i].name,decide(d.output))).join('');
+      rowsEl.innerHTML=res.map((d,i)=>row(BRANDS[i].name,decide(d))).join('');
     }catch(_){ /* keep fallback */ }
   })();
 })();

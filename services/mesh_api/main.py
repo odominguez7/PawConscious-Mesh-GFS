@@ -39,6 +39,7 @@ from pydantic import BaseModel, Field
 
 from agents.orchestrator import run_mesh, summarize
 from shared.pcec_schema import EndorsementClaimBundle, canonical_bundle_bytes
+from shared.verdict import compute_verdict
 from shared.task_store import task_store, TaskState
 from shared.transparency_log import (
     append_bundle_async, fetch_bundle_async, get_head_anchor_async, urn_for_hash,
@@ -1344,21 +1345,12 @@ def bundle_summary(state) -> dict[str, Any]:
     else:
         ftc_flags = out.get("ftc_flags", [])
 
-    # audit verdict: aggregate across claims (FAIL > CONDITIONAL > PASS)
-    audit_verdicts = [a.get("verdict") for a in out.get("audit", []) if isinstance(a, dict)]
-    if audit_verdicts:
-        if "FAIL" in audit_verdicts:
-            verdict = "FAIL"
-        elif "CONDITIONAL" in audit_verdicts:
-            verdict = "PASS_WITH_CONDITIONS"
-        elif ftc_flags:
-            verdict = "PASS_WITH_FLAGS"
-        else:
-            verdict = "PASS"
-    else:
-        verdict = out.get("audit_verdict")
-
+    # Verdict: single source of truth (shared/verdict.py). Folds in the vet rubric
+    # and the adversarial Second Opinion, and never gives a green PASS to a product
+    # whose claims are all puffery. The JS mirror pcVerdict() must stay in sync.
     so = getattr(state, "second_opinion", None) or {}
+    v = compute_verdict(out, so if isinstance(so, dict) else None)
+
     return {
         "product": inp.get("product_label") or out.get("product_label") or "(unnamed)",
         "url": inp.get("product_url"),
@@ -1367,7 +1359,9 @@ def bundle_summary(state) -> dict[str, Any]:
         "vet_score": vet_score,
         "vet_note": vet_note,
         "ftc_flags": ftc_flags,
-        "audit_verdict": verdict,
+        "audit_verdict": v["key"],
+        "verdict_label": v["label"],
+        "verdict_explain": v["explain"],
         "second_opinion": so.get("overall_verdict") if isinstance(so, dict) else None,
     }
 

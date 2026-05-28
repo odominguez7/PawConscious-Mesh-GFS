@@ -741,7 +741,7 @@ task_id = r.json()[<span class="tok-str">"task_id"</span>]
 
   Cosequin     signature VALID ✅   CONDITIONAL · §255.3   → RECOMMEND WITH CAVEAT
   Green Gruff  signature VALID ✅   FAIL · §255.1          → SKIP
-  JFFD         signature VALID ✅   PASS                   → RECOMMEND
+  JFFD         signature VALID ✅   UNVERIFIED             → NO RECOMMENDATION
 
   TAMPER TEST · forge Green Gruff's FAIL into a PASS, keep the signature:
   signature INVALID ❌ → forged bundle rejected</code></pre>
@@ -1281,12 +1281,23 @@ shopper = LlmAgent(
             log(`bundle_signature=${(s.bundle_signature || '').slice(0,40)}…`);
             log(`chain_anchor=${s.chain_anchor}`);
             if (s.output) {
-              const av = (s.output.audit || []).map(a => a && a.verdict).filter(Boolean);
-              const verdict = av.includes('FAIL') ? 'FAIL'
-                : av.includes('CONDITIONAL') ? 'CONDITIONAL'
-                : av.length ? 'PASS' : (s.output.audit_verdict || '(none)');
-              log(`claims=${(s.output.claims || []).length}`);
-              log(`audit_verdict=${verdict}`);
+              // Mirrors shared/verdict.py: folds in vet rubric + Second Opinion,
+              // never a green PASS for unsubstantiated claims.
+              const out = s.output;
+              const av = (out.audit || []).map(a => a && a.verdict).filter(Boolean);
+              const vet = (out.vet_scores || []).map(v => v && v.score).filter(x => typeof x === 'number');
+              const testable = vet.filter(x => x > 1);
+              const ftc = (out.compliance || []).filter(c => c && c.violation_flag);
+              const so = String((s.second_opinion || {}).overall_verdict || '').toUpperCase();
+              let verdict;
+              if (av.includes('FAIL') || so === 'FAIL') verdict = 'FAIL';
+              else if (vet.length && !testable.length) verdict = 'UNVERIFIED (no substantiated claim)';
+              else if (so === 'NEEDS REVIEW' || av.includes('CONDITIONAL') || ftc.length) verdict = 'CONDITIONAL';
+              else if (testable.length && testable.reduce((a,b)=>a+b,0)/testable.length < 2.5) verdict = 'CONDITIONAL';
+              else if (testable.length) verdict = 'VERIFIED';
+              else verdict = 'ISSUED';
+              log(`claims=${(out.claims || []).length}`);
+              log(`verdict=${verdict}`);
             }
           }
           renderBundle(s);   // re-render as cert_html + second_opinion attach post-sign
