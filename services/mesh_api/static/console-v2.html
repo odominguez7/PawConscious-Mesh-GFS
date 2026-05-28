@@ -1309,14 +1309,26 @@
   /* 2026-05-24 taste pass: drop biz section border so biz + becomes read as one continuous arc. */
   /* USE CASES beat — three scenarios + proof stats. Replaces the old buyer-card
      matrix that read as deck content rather than product copy. */
-  .usecases { margin-bottom: 80px; }
-  .usecases-head { max-width: 760px; margin: 0 0 44px; }
+  .usecases { margin: 80px 0; padding-top: 16px; }
+  .usecases-head { max-width: 760px; margin: 0 0 52px; }
   .usecases-head .eyebrow { color: var(--electric); }
-  .usecases-head h2 { font-size: 36px; font-weight: 600; letter-spacing: -0.025em; line-height: 1.1; margin: 12px 0 0; color: var(--ink); font-family: var(--sans); }
+  .usecases-head h2 { font-size: 38px; font-weight: 600; letter-spacing: -0.02em; line-height: 1.08; margin: 12px 0 0; color: var(--ink); font-family: var(--sans); }
   .usecases-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 36px; margin-bottom: 36px; }
-  .usecase-num { font: 600 11px/1 var(--mono); letter-spacing: 0.22em; text-transform: uppercase; color: var(--electric); margin-bottom: 14px; }
-  .usecase-trigger { font-family: var(--sans); font-weight: 600; font-size: 18px; line-height: 1.3; letter-spacing: -0.012em; color: var(--ink); margin: 0 0 12px; }
-  .usecase-body { font-size: 14px; line-height: 1.62; color: var(--muted); margin: 0; }
+  /* Each cell becomes a stage with an oversized background numeral (Gemini in-brand:
+     12rem mono numeral at 0.05 opacity, brightens to 0.10 on hover). Body content
+     sits on top — clean editorial hierarchy without breaking the dark slate brand. */
+  .usecase { position: relative; padding: 28px 24px 24px; border-top: 1px solid var(--border); overflow: hidden; transition: border-color .25s; }
+  .usecase:hover { border-top-color: var(--electric); }
+  .usecase::before { content: attr(data-num); position: absolute; top: -28px; right: -8px; font: 700 12rem/1 var(--mono); letter-spacing: -0.05em; color: var(--electric); opacity: 0.05; pointer-events: none; transition: opacity .35s, transform .35s; font-variant-numeric: tabular-nums; }
+  .usecase:hover::before { opacity: 0.12; transform: translateY(-2px); }
+  .usecase > * { position: relative; z-index: 1; }
+  .usecase-num { font: 700 11px/1 var(--mono); letter-spacing: 0.22em; text-transform: uppercase; color: var(--electric); margin-bottom: 18px; }
+  .usecase-trigger { font-family: var(--sans); font-weight: 600; font-size: 19px; line-height: 1.3; letter-spacing: -0.012em; color: var(--ink); margin: 0 0 14px; }
+  /* The trigger keyword gets a 1px cyan underline that thickens on hover —
+     subtle editorial accent inside the brand. */
+  .usecase-trigger .kw { border-bottom: 1px solid var(--electric); padding-bottom: 1px; transition: border-bottom-width .25s, padding-bottom .25s; }
+  .usecase:hover .usecase-trigger .kw { border-bottom-width: 3px; padding-bottom: 0; }
+  .usecase-body { font-size: 14.5px; line-height: 1.62; color: var(--muted); margin: 0; }
   /* Centered single-number cost band. No PawConscious pricing here. */
   .usecase-proof {
     padding: 44px 32px;
@@ -1826,21 +1838,33 @@
   .stakes .stakes-head { max-width: 720px; margin: 0 0 32px; }
   .stakes .stakes-head h2 { margin: 8px 0 10px; }
   .stakes .stakes-head p { font: 500 15px/1.6 var(--sans); color: var(--muted); margin: 0; }
-  .stakes-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; max-width: 920px; }
+  .stakes-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; max-width: 920px; }
   @media (max-width: 720px) { .stakes-grid { grid-template-columns: 1fr; } }
-  .stakes-col { border: 1px solid var(--border); border-radius: 14px; padding: 22px 24px; background: var(--surface); }
+  .stakes-col { border: 1px solid var(--border); border-radius: 14px; padding: 24px 26px; background: var(--surface); position: relative; overflow: hidden; transition: border-color .25s, transform .25s; }
+  .stakes-col:hover { transform: translateY(-2px); }
   .stakes-col.bad { border-color: rgba(255,92,53,0.35); }
+  .stakes-col.bad:hover { border-color: rgba(255,92,53,0.6); }
   .stakes-col.good { border-color: rgba(0,212,155,0.35); }
-  .stakes-col .sc-label { font: 700 11px/1 var(--mono,monospace); letter-spacing: .14em; text-transform: uppercase; margin-bottom: 16px; }
+  .stakes-col.good:hover { border-color: rgba(0,212,155,0.6); }
+  /* Animated "NON-COMPLIANT" stamp (Gemini in-brand handshake): scale + tilt land
+     when section enters viewport. Stays semi-transparent so the list reads. */
+  .stakes-col.bad::after { content: "NON-COMPLIANT"; position: absolute; top: 50%; right: -10px; transform: translateY(-50%) rotate(-9deg) scale(1.45); transform-origin: center; font: 800 26px/1 var(--sans); letter-spacing: 0.06em; color: rgba(255,92,53,0.08); border: 2px solid rgba(255,92,53,0.22); padding: 8px 14px; border-radius: 6px; pointer-events: none; opacity: 0; transition: opacity .9s cubic-bezier(.16,1,.3,1), transform .9s cubic-bezier(.16,1,.3,1); }
+  .stakes.in .stakes-col.bad::after { opacity: 1; transform: translateY(-50%) rotate(-9deg) scale(1); }
+  .stakes-col .sc-label { font: 700 11px/1 var(--mono,monospace); letter-spacing: .14em; text-transform: uppercase; margin-bottom: 18px; position: relative; z-index: 1; }
   .stakes-col.bad .sc-label { color: #FF5C35; }
   .stakes-col.good .sc-label { color: #00D49B; }
-  .stakes-col .sc-row { display: flex; gap: 10px; align-items: flex-start; padding: 11px 0; border-top: 1px solid var(--border); font: 500 14px/1.45 var(--sans); color: var(--ink); }
+  .stakes-col .sc-row { display: flex; gap: 12px; align-items: flex-start; padding: 13px 0; border-top: 1px solid var(--border); font: 500 14.5px/1.5 var(--sans); color: var(--ink); position: relative; z-index: 1; }
   .stakes-col .sc-row:first-of-type { border-top: none; }
   .stakes-col .sc-ic { flex-shrink: 0; font-weight: 700; }
   .stakes-col.bad .sc-ic { color: #FF5C35; } .stakes-col.good .sc-ic { color: #00D49B; }
-  .stakes-knockout { max-width: 920px; margin: 24px 0 0; padding: 20px 24px; border: 1px solid rgba(255,92,53,0.4); border-radius: 14px; background: rgba(255,92,53,0.05); font: 500 15px/1.55 var(--sans); color: var(--ink); }
-  .stakes-knockout b { color: #FF5C35; }
-  .stakes-knockout a { color: var(--electric); text-decoration: none; }
+  /* Knockout band as an "Exhibit A" piece of evidence — court-docket framing,
+     case number in mono with letter-spacing. Stays in the brand palette. */
+  .stakes-knockout { max-width: 920px; margin: 32px 0 0; padding: 24px 26px 22px; border: 1px solid rgba(255,92,53,0.4); border-radius: 14px; background: rgba(255,92,53,0.05); font: 500 16px/1.55 var(--sans); color: var(--ink); position: relative; }
+  .stakes-knockout::before { content: "EXHIBIT A"; position: absolute; top: -8px; left: 22px; background: var(--bg); padding: 0 10px; font: 700 10px/1 var(--mono); letter-spacing: 0.22em; color: #FF5C35; }
+  .stakes-knockout .case { display: block; font: 500 11px/1.5 var(--mono); letter-spacing: 0.14em; text-transform: uppercase; color: var(--dim); margin-bottom: 10px; }
+  .stakes-knockout b { color: #FF5C35; font-weight: 700; font-variant-numeric: tabular-nums; }
+  .stakes-knockout a { color: var(--electric); text-decoration: none; border-bottom: 1px solid rgba(0,212,255,0.4); }
+  .stakes-knockout a:hover { border-bottom-color: var(--electric); }
 </style>
 <section class="stakes pc-reveal" id="stakes">
   <div class="container">
@@ -1864,6 +1888,7 @@
       </div>
     </div>
     <div class="stakes-knockout">
+      <span class="case">U.S. District Court · N.D. Cal · Case 3:22-cv-01573 · settled 2024</span>
       In 2024, the makers of Cosequin paid <b>$11.5M</b> to settle a class action over claims they could not back up. That is the cost of "your word alone." <a href="https://topclassactions.com/lawsuit-settlements/open-lawsuit-settlements/11-5m-cosequin-dog-supplements-class-action-settlement/" target="_blank" rel="noopener">source</a>
     </div>
   </div>
@@ -1907,25 +1932,52 @@
      so the buyer first grasps the value to them, then sees the downstream pull.
      Same real Gemini 2.5 surface, grounded only on PawConscious-verified bundles. -->
 <style>
-  .demand { padding: 64px 0 24px; border-top: 1px solid var(--border); }
-  .demand .demand-head { max-width: 760px; margin: 0 0 26px; }
-  .demand .demand-head h2 { margin: 8px 0 10px; }
-  .demand .demand-sub { font: 500 15px/1.6 var(--sans); color: var(--muted); margin: 0; }
-  .adt { font-family: var(--mono,monospace); background: var(--bg); border: 1px solid var(--border); border-radius: 12px; padding: 22px 24px; max-width: 880px; }
+  .demand { padding: 96px 0 80px; border-top: 1px solid var(--border); }
+  .demand .demand-head { max-width: 760px; margin: 0 0 36px; }
+  .demand .demand-head h2 { margin: 8px 0 12px; font-size: 38px; line-height: 1.08; letter-spacing: -0.02em; }
+  .demand .demand-sub { font: 500 16px/1.6 var(--sans); color: var(--muted); margin: 0; max-width: 60ch; }
+  .adt { font-family: var(--mono,monospace); background: var(--bg); border: 1px solid var(--border); border-radius: 12px; padding: 24px 26px; max-width: 920px; }
   .adt-head { font: 600 11px/1 var(--mono); letter-spacing: .14em; text-transform: uppercase; color: var(--dim); display: flex; align-items: center; gap: 9px; }
-  .adt-head .dot { width: 8px; height: 8px; border-radius: 50%; background: #00D49B; box-shadow: 0 0 8px #00D49B; flex-shrink: 0; }
-  .adt-sub { font: 500 11.5px/1.5 var(--mono); color: var(--dim); margin: 6px 0 14px 17px; }
-  .adt-row { display: grid; grid-template-columns: 1fr auto auto 1.35fr; align-items: center; gap: 6px 18px; padding: 13px 0; border-top: 1px solid var(--border); font-size: 13px; }
-  .adt-prod { color: var(--ink); font-weight: 700; }
-  .adt-sig { font-size: 11px; letter-spacing: .03em; white-space: nowrap; }
+  /* Continuous moss-glow pulse on the live indicator (in-brand). */
+  .adt-head .dot { width: 8px; height: 8px; border-radius: 50%; background: #00D49B; box-shadow: 0 0 8px #00D49B; flex-shrink: 0; animation: adtDotPulse 2.2s ease-in-out infinite; }
+  @keyframes adtDotPulse { 0%,100% { box-shadow: 0 0 8px rgba(0,212,155,0.5); } 50% { box-shadow: 0 0 16px rgba(0,212,155,0.9); } }
+  .adt-sub { font: 500 11.5px/1.5 var(--mono); color: var(--dim); margin: 6px 0 16px 17px; }
+  .adt-row { display: grid; grid-template-columns: 1fr auto auto 1.35fr; align-items: center; gap: 6px 18px; padding: 15px 0; border-top: 1px solid var(--border); font-size: 13px; position: relative; transition: background .25s; }
+  .adt-row:hover { background: rgba(0,212,255,0.03); }
+  /* Sequential cyan line-wipe on scroll-reveal — each row's underline scales in (Gemini in-brand). */
+  .adt-row::after { content: ""; position: absolute; left: 0; bottom: -1px; height: 1px; width: 100%; background: linear-gradient(90deg, transparent, var(--electric), transparent); transform: scaleX(0); transform-origin: left; transition: transform .65s cubic-bezier(.16,1,.3,1); }
+  .demand.in .adt-row::after { transform: scaleX(1); }
+  .demand.in .adt-row:nth-of-type(1)::after { transition-delay: 0.10s; }
+  .demand.in .adt-row:nth-of-type(2)::after { transition-delay: 0.30s; }
+  .demand.in .adt-row:nth-of-type(3)::after { transition-delay: 0.50s; }
+  /* Product names get clear hierarchy in-brand (Geist 600 18px) */
+  .adt-prod { color: var(--ink); font: 600 18px/1.2 var(--sans); }
+  .adt-sig { font-size: 11px; letter-spacing: .04em; white-space: nowrap; transition: color .25s, text-shadow .25s; }
   .adt-sig.ok { color: #00D49B; } .adt-sig.bad { color: #FF5C35; }
-  .adt-verdict { font-size: 11px; color: var(--muted); white-space: nowrap; }
-  .adt-action { font-weight: 700; letter-spacing: .04em; text-align: right; white-space: nowrap; }
+  .adt-row:hover .adt-sig.ok { text-shadow: 0 0 14px rgba(0,212,255,0.55); color: var(--electric); }
+  .adt-verdict { font: 600 11px/1 var(--mono); letter-spacing: .08em; text-transform: uppercase; color: var(--muted); white-space: nowrap; }
+  /* Verdict labels feel STAMPED — bolder weight, generous letter-spacing, with a
+     subtle scale-land on first reveal. */
+  .adt-action { font: 800 12px/1 var(--mono); letter-spacing: .14em; text-align: right; white-space: nowrap; transform: scale(1); opacity: 1; transition: transform .25s; }
+  .adt-row:hover .adt-action { transform: scale(1.04); }
+  .demand .adt-action { animation: adtStampLand .6s cubic-bezier(.18,1.4,.4,1) both; }
+  .demand .adt-row:nth-of-type(1) .adt-action { animation-delay: .15s; }
+  .demand .adt-row:nth-of-type(2) .adt-action { animation-delay: .35s; }
+  .demand .adt-row:nth-of-type(3) .adt-action { animation-delay: .55s; }
+  @keyframes adtStampLand { 0% { opacity: 0; transform: scale(1.6); } 60% { opacity: 1; transform: scale(0.96); } 100% { opacity: 1; transform: scale(1); } }
   .adt-action.rec { color: #00D49B; } .adt-action.cav { color: #FFB446; } .adt-action.skip { color: #FF5C35; } .adt-action.rej { color: #FF5C35; } .adt-action.none { color: var(--muted); }
-  .adt-tamper { margin-top: 18px; padding-top: 16px; border-top: 1px dashed var(--border); }
-  .adt-tamper-label { font: 500 11px/1.5 var(--mono); color: var(--muted); margin-bottom: 12px; }
-  .adt-foot { margin-top: 18px; font: 500 11.5px/1.55 var(--mono); color: var(--dim); }
-  .adt-foot a { color: var(--electric); text-decoration: none; }
+  /* Forged row glitches — subtle horizontal jitter on the REJECTED stamp. */
+  .adt-action.rej { animation: adtStampLand .6s cubic-bezier(.18,1.4,.4,1) both, adtGlitch 3.6s infinite 1.2s; }
+  @keyframes adtGlitch { 0%,92%,100% { transform: translate(0,0); } 93% { transform: translate(-2px,0); } 95% { transform: translate(2px,-1px); } 97% { transform: translate(-1px,1px); } }
+  .adt-tamper { margin-top: 22px; padding-top: 18px; border-top: 1px dashed var(--border); }
+  .adt-tamper-label { font: 500 11px/1.5 var(--mono); letter-spacing: 0.08em; color: var(--muted); margin-bottom: 14px; }
+  .adt-foot { margin-top: 22px; font: 500 12px/1.55 var(--mono); color: var(--dim); }
+  .adt-foot a { color: var(--electric); text-decoration: none; border-bottom: 1px solid rgba(0,212,255,0.4); }
+  .adt-foot a:hover { border-bottom-color: var(--electric); }
+  /* Editorial pull-quote BELOW the trace (Gemini in-brand). Italic Geist, dim ink,
+     cyan-accented em. Adds the author's voice without breaking the dark+cyan brand. */
+  .demand-pullquote { max-width: 760px; margin: 30px 0 0; font: italic 500 19px/1.5 var(--sans); color: rgba(237,238,241,0.78); padding-left: 18px; border-left: 2px solid var(--electric); }
+  .demand-pullquote em { font-style: italic; color: var(--electric); font-weight: 500; }
   @media (max-width: 680px) { .adt-row { grid-template-columns: 1fr; gap: 3px; } .adt-action { text-align: left; } }
 </style>
 <section class="demand pc-reveal" id="demand">
@@ -1962,6 +2014,11 @@
       </div>
       <div class="adt-foot">Every decision depends on a verified signature. A forged verdict can never pass. <a href="/agents#try">Run the agent yourself →</a></div>
     </div>
+
+    <!-- Editorial pull-quote (Gemini in-brand handshake). Italic Geist, dim ink,
+         cyan-accented final clause. Adds the author's voice without breaking the
+         dark+cyan palette — replaces the "developer log" feel with a thesis. -->
+    <p class="demand-pullquote">A brand can write any claim it likes on the back of a bottle. An agent only acts on what it can <em>verify</em>.</p>
   </div>
 </section>
 
@@ -2269,19 +2326,19 @@
         <h2>Three moments this is built for</h2>
       </div>
       <div class="usecases-grid">
-        <div class="usecase">
+        <div class="usecase" data-num="01">
           <div class="usecase-num">01 · Launch</div>
-          <p class="usecase-trigger">Before you ship a new product page</p>
+          <p class="usecase-trigger">Before you <span class="kw">ship a new product page</span></p>
           <p class="usecase-body">The mesh reads every claim, checks it against real research, and flags anything regulators could question, so you ship what holds up and rewrite what doesn't</p>
         </div>
-        <div class="usecase">
+        <div class="usecase" data-num="02">
           <div class="usecase-num">02 · Retailer</div>
-          <p class="usecase-trigger">When a retailer asks for proof</p>
+          <p class="usecase-trigger">When a retailer <span class="kw">asks for proof</span></p>
           <p class="usecase-body">You send one link that opens to a signed record of every claim, every source paper, every check, all dated and timestamped</p>
         </div>
-        <div class="usecase">
+        <div class="usecase" data-num="03">
           <div class="usecase-num">03 · Legal</div>
-          <p class="usecase-trigger">When a lawyer threatens to sue</p>
+          <p class="usecase-trigger">When a lawyer <span class="kw">threatens to sue</span></p>
           <p class="usecase-body">Two years of dated proof in one folder, every claim audited, every source linked, in your attorney's inbox before lunch</p>
         </div>
       </div>
