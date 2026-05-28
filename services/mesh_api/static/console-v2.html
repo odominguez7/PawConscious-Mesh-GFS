@@ -3570,12 +3570,14 @@ function pcVerdict(output, secondOpinion){
 
   // "See the full signed report" -> reveal the detailed report below (full cert + second opinion).
   if(card.full){
+    // Opens the standalone, shareable, print-to-PDF signed report at /report/<urn>.
+    // (Replaces the old in-page reveal that landed below the Stakes section and
+    // broke the page flow.)
+    card.full.setAttribute('target','_blank');
     card.full.addEventListener('click',(e)=>{
       e.preventDefault();
-      if(!lastBundle){ if(input) input.focus(); setStatus('Verify a product first to see its full signed report.'); return; }
-      if(typeof renderCertHtml==='function'&&lastBundle.cert_html) renderCertHtml(lastBundle.cert_html,lastBundle.bundle_urn);
-      if(typeof renderSecondOpinion==='function'&&lastBundle.second_opinion) renderSecondOpinion(lastBundle.second_opinion);
-      if(typeof showResultReport==='function') showResultReport();
+      if(!lastBundle||!lastBundle.bundle_urn){ if(input) input.focus(); setStatus('Verify a product first to see its full signed report.'); return; }
+      window.open('/report/'+encodeURIComponent(lastBundle.bundle_urn),'_blank','noopener');
     });
   }
 
