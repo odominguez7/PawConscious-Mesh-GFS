@@ -1752,6 +1752,14 @@
         .pcprog-row.done .pp-name{color:var(--ink)}.pcprog-row.done .pp-tool{color:#00D49B;opacity:.9}
         @keyframes ppPulse{0%{box-shadow:0 0 0 0 rgba(0,212,255,.5)}70%{box-shadow:0 0 0 6px rgba(0,212,255,0)}100%{box-shadow:0 0 0 0 rgba(0,212,255,0)}}
         .pcprog-foot{margin-top:14px;font:500 10px/1.5 var(--mono,monospace);color:var(--dim)}
+        /* Resolved-run recap: total time + the Google stack that ran. Persistent +
+           self-explanatory so a user who left the tab understands it at a glance. */
+        #pcCertRecap{display:none;margin:0 0 14px;padding:12px 14px;background:rgba(0,212,155,.05);border:1px solid rgba(0,212,155,.25);border-radius:10px}
+        .pcrecap-head{font:600 12px/1 var(--mono,monospace);color:#00D49B;margin-bottom:10px}
+        .pcrecap-head b{color:var(--ink);font-weight:700}
+        .pcrecap-tools{display:flex;flex-wrap:wrap;gap:6px}
+        .pcrecap-chip{font:600 10px/1 var(--mono,monospace);color:#00D49B;border:1px solid rgba(0,212,155,.4);border-radius:999px;padding:5px 9px;opacity:0;transform:translateY(5px);animation:pcrecapIn .45s cubic-bezier(.16,1,.3,1) forwards}
+        @keyframes pcrecapIn{to{opacity:1;transform:none}}
       </style>
       <div class="pccert" id="pcCert" aria-live="polite">
         <div class="pccert-top">
@@ -1760,6 +1768,10 @@
         </div>
         <div class="pccert-brand" id="pcCertBrand">&nbsp;</div>
         <div class="pccert-summary" id="pcCertSummary">&nbsp;</div>
+        <div id="pcCertRecap">
+          <div class="pcrecap-head"><span style="margin-right:4px">✓</span>Checked in <b id="pcRecapTime">0:00</b> · powered by Google Cloud</div>
+          <div class="pcrecap-tools" id="pcRecapTools"></div>
+        </div>
         <div class="pccert-stage" id="pcCertStage" hidden></div>
         <div id="pcCertClaims"></div>
         <div id="pcCertProgress">
@@ -3572,6 +3584,7 @@ function pcVerdict(output, secondOpinion){
     const eb=document.getElementById('pcCertEyebrowText'); if(eb) eb.textContent='Signed evidence certificate';
     const st=document.getElementById('pcCertStage'); if(st) st.hidden=true;
     const cardEl=document.getElementById('pcCert'); if(cardEl) cardEl.classList.remove('running');
+    hideRecap();
     card.verdict.classList.remove('v-big');
     const out=d.output||{};
     const vd=pcVerdict(out, d.second_opinion);
@@ -3652,21 +3665,46 @@ function pcVerdict(output, secondOpinion){
   }
   function progStop(){ clearInterval(progTick); clearTimeout(progSched); progTick=progSched=null; const c=document.getElementById('pcCert'); if(c) c.classList.remove('running'); }
 
+  // Resolved-run recap: total time + the stack that ran. Self-explanatory end
+  // state for someone who left the tab while the 60-180s mesh ran.
+  const RECAP_TOOLS=['Gemini','BioMCP · PubMed','Vertex AI Search','Google Search','Ed25519','Firestore'];
+  function showRecap(ms){
+    const box=document.getElementById('pcCertRecap'), t=document.getElementById('pcRecapTime'), tools=document.getElementById('pcRecapTools');
+    if(!box) return;
+    if(t) t.textContent=progFmt(ms);
+    if(tools) tools.innerHTML=RECAP_TOOLS.map((x,i)=>'<span class="pcrecap-chip" style="animation-delay:'+(i*70)+'ms">✓ '+x+'</span>').join('');
+    box.style.display='block';
+  }
+  function hideRecap(){ const b=document.getElementById('pcCertRecap'); if(b) b.style.display='none'; }
+  function cardError(detail){
+    progStop(); hideRecap();
+    if(card.verdict){ card.verdict.className='pccert-verdict v-fail'; card.verdict.textContent='Error'; }
+    const eb=document.getElementById('pcCertEyebrowText'); if(eb) eb.textContent='Verification';
+    if(card.summary) card.summary.textContent=detail;
+    if(card.claims) card.claims.innerHTML='';
+    if(card.sig) card.sig.innerHTML='&nbsp;';
+  }
+
   let running=false;
-  async function run(rawUrl){
-    stopTeaching();
+  // allowCache=true ONLY for the 3 demo brand chips (instant hot path). Every
+  // typed URL (a judge's product) ALWAYS triggers the live workflow, never a
+  // cached result - this is a demo and the judge should watch the mesh run.
+  async function run(rawUrl, allowCache){
+    stopTeaching(); hideRecap();
     const url=(rawUrl||'').trim();
     if(!url||!url.startsWith('http')){ setStatus('Paste a full https:// product URL.'); if(input) input.focus(); return; }
     if(running) return; running=true;
     const label=btn?btn.textContent:''; if(btn){ btn.disabled=true; btn.textContent='Verifying…'; }
     if(card.verdict){ card.verdict.className='pccert-verdict v-load'; card.verdict.textContent='running…'; }
-    setStatus('Checking the verified cache…');
     try{
-      // Hot path: instant for any brand already verified + cached.
-      const hp=await fetch('/a2a/v1/lookup?url='+encodeURIComponent(url));
-      if(hp.ok){ const d=await hp.json(); if(d&&d.cert_html){ d.url=url; pcRenderCertCard(d); setStatus('Verified · cached (hot path).'); return; } }
-      // Cold path: first-time URL runs the live 7-agent mesh. Show the timed
-      // pipeline so the user watches the Google stack work in real time.
+      // Hot path: ONLY for the verified-brand chips (allowCache). Instant.
+      if(allowCache){
+        setStatus('Checking the verified cache…');
+        const hp=await fetch('/a2a/v1/lookup?url='+encodeURIComponent(url));
+        if(hp.ok){ const d=await hp.json(); if(d&&d.cert_html){ d.url=url; pcRenderCertCard(d); setStatus('Verified · cached (hot path).'); return; } }
+      }
+      // Cold path: the live 7-agent mesh. Show the timed pipeline so the user
+      // watches the Google stack work in real time.
       setStatus('Running the live 7-agent mesh on Google Cloud…');
       progStart(brandFromUrl(url));
       const sub=await fetch('/a2a/v1/tasks/send',{method:'POST',headers:{'Content-Type':'application/json','X-API-Key':'demo-key-2026-06'},body:JSON.stringify({skill:'verify_claim',input:{product_url:url,max_claims:3}})});
@@ -3677,20 +3715,25 @@ function pcVerdict(output, secondOpinion){
         attempts++; await new Promise(r=>setTimeout(r,3000));
         const g=await fetch('/a2a/v1/tasks/get/'+task_id); if(!g.ok) continue;
         const s=await g.json(); s.url=url;
-        if(s.status==='failed'){ progStop(); setStatus('Verification failed: '+(s.error||'unknown')); break; }
+        if(s.status==='failed'){ cardError('We could not finish verifying that URL. Make sure it is a public product page, then try again.'); setStatus('Verification failed: '+(s.error||'unknown')); break; }
         if(s.progress_message) progSignal(s.progress_message);
         if(s.status==='completed'){
           if(completedAttempt<0) completedAttempt=attempts;
           const finalized=/second opinion delivered/i.test(s.progress_message||'');
-          if(s.cert_html||finalized||(attempts-completedAttempt)>=18){ progStop(); pcRenderCertCard(s); setStatus('Verified · signed.'); break; }
+          if(s.cert_html||finalized||(attempts-completedAttempt)>=18){
+            const elapsed=Date.now()-progT0;   // accurate even if the tab was backgrounded
+            progStop(); pcRenderCertCard(s); showRecap(elapsed);
+            setStatus('Mesh complete · signed in '+progFmt(elapsed)+'.');
+            break;
+          }
         }
       }
-    }catch(e){ progStop(); setStatus('Something went wrong: '+(e&&e.message?e.message:e)); }
+    }catch(e){ cardError('Something went wrong reaching the mesh. Please try again.'); setStatus('Something went wrong: '+(e&&e.message?e.message:e)); }
     finally{ running=false; if(btn){ btn.disabled=false; btn.textContent=label; } }
   }
 
-  if(form) form.addEventListener('submit',(e)=>{ e.preventDefault(); run(input.value); });
-  document.querySelectorAll('.pc-chip').forEach((c)=>{ c.addEventListener('click',()=>{ if(input) input.value=c.dataset.url; run(c.dataset.url); }); });
+  if(form) form.addEventListener('submit',(e)=>{ e.preventDefault(); run(input.value, false); });   // typed -> always live
+  document.querySelectorAll('.pc-chip').forEach((c)=>{ c.addEventListener('click',()=>{ if(input) input.value=c.dataset.url; run(c.dataset.url, true); }); });   // example -> cached/instant
 
   // Copy the public certificate link.
   const copyBtn=document.getElementById('resultCopyLink'), bundleLink=document.getElementById('resultBundleLink');
