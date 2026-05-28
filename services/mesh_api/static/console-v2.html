@@ -1730,6 +1730,28 @@
         .pccert-foot{display:flex;flex-wrap:wrap;gap:8px 18px;margin-top:14px}
         .pccert-link{font:600 12px/1 var(--mono,monospace);color:var(--electric);text-decoration:none;cursor:pointer}
         .pccert-link:hover{text-decoration:underline}
+        /* Cold-path live progress: timer + the 7-agent pipeline, each tagged with
+           its Google tool. Reasoning agents (1-5) are an estimated parallel-mesh
+           schedule; sign + cert + Second Opinion snap to the real backend signals. */
+        #pcCertProgress{display:none}
+        .pccert.running #pcCertProgress{display:block}
+        .pccert.running .pccert-summary,.pccert.running #pcCertClaims,.pccert.running .pccert-sig,.pccert.running .pccert-foot,.pccert.running #pcCertStage{display:none}
+        .pcprog-top{display:flex;align-items:baseline;gap:12px;margin:2px 0 16px}
+        .pcprog-timer{font:700 24px/1 var(--mono,monospace);color:var(--electric);font-variant-numeric:tabular-nums}
+        .pcprog-est{font:500 10px/1 var(--mono,monospace);letter-spacing:.12em;text-transform:uppercase;color:var(--dim)}
+        .pcprog-stages{display:flex;flex-direction:column;gap:1px}
+        .pcprog-row{display:grid;grid-template-columns:14px 1fr auto;align-items:center;gap:10px;padding:6px 8px;border-radius:6px;transition:background .3s}
+        .pcprog-row .pp-dot{width:8px;height:8px;border-radius:50%;border:1.5px solid var(--dim);justify-self:center}
+        .pcprog-row .pp-name{font:500 12.5px/1 var(--sans);color:var(--dim)}
+        .pcprog-row .pp-tool{font:600 9.5px/1 var(--mono,monospace);letter-spacing:.02em;color:var(--dim);white-space:nowrap;opacity:.6}
+        .pcprog-row.run{background:rgba(0,212,255,.07)}
+        .pcprog-row.run .pp-dot{border-color:var(--electric);background:var(--electric);animation:ppPulse 1.5s infinite}
+        .pcprog-row.run .pp-name{color:var(--ink)}.pcprog-row.run .pp-tool{color:var(--electric);opacity:1}
+        .pcprog-row.est .pp-dot{border-color:var(--muted)}.pcprog-row.est .pp-name{color:var(--muted)}
+        .pcprog-row.done .pp-dot{border-color:#00D49B;background:#00D49B}
+        .pcprog-row.done .pp-name{color:var(--ink)}.pcprog-row.done .pp-tool{color:#00D49B;opacity:.9}
+        @keyframes ppPulse{0%{box-shadow:0 0 0 0 rgba(0,212,255,.5)}70%{box-shadow:0 0 0 6px rgba(0,212,255,0)}100%{box-shadow:0 0 0 0 rgba(0,212,255,0)}}
+        .pcprog-foot{margin-top:14px;font:500 10px/1.5 var(--mono,monospace);color:var(--dim)}
       </style>
       <div class="pccert" id="pcCert" aria-live="polite">
         <div class="pccert-top">
@@ -1740,6 +1762,11 @@
         <div class="pccert-summary" id="pcCertSummary">&nbsp;</div>
         <div class="pccert-stage" id="pcCertStage" hidden></div>
         <div id="pcCertClaims"></div>
+        <div id="pcCertProgress">
+          <div class="pcprog-top"><span class="pcprog-timer" id="pcProgTimer">0:00</span><span class="pcprog-est">live mesh · est. 1&ndash;3 min</span></div>
+          <div class="pcprog-stages" id="pcProgStages"></div>
+          <div class="pcprog-foot">Reasoning agents run in parallel (timing estimated). Sign &amp; Second Opinion are live.</div>
+        </div>
         <div class="pccert-sig" id="pcCertSig">&nbsp;</div>
         <div class="pccert-foot">
           <a class="pccert-link" id="pcCertLogLink" href="/pcec/v0/chain/head" target="_blank" rel="noopener">Verify on the transparency log ↗</a>
@@ -3544,6 +3571,7 @@ function pcVerdict(output, secondOpinion){
     const ex=document.getElementById('pcCertExample'); if(ex) ex.hidden=true;
     const eb=document.getElementById('pcCertEyebrowText'); if(eb) eb.textContent='Signed evidence certificate';
     const st=document.getElementById('pcCertStage'); if(st) st.hidden=true;
+    const cardEl=document.getElementById('pcCert'); if(cardEl) cardEl.classList.remove('running');
     card.verdict.classList.remove('v-big');
     const out=d.output||{};
     const vd=pcVerdict(out, d.second_opinion);
@@ -3581,6 +3609,49 @@ function pcVerdict(output, secondOpinion){
     });
   }
 
+  // --- Cold-path live progress: timer + 7-agent pipeline with Google tool tags.
+  //     Reasoning agents (rows 0-4) advance on an estimated schedule (they run in
+  //     parallel server-side with no per-agent signal); sign + cert + Second
+  //     Opinion (rows 5-7) snap to the REAL backend progress messages. ---
+  const PROG_STAGES=[
+    {n:'Claim extraction', t:'Gemini 2.5 Pro'},
+    {n:'Evidence', t:'BioMCP · PubMed'},
+    {n:'Vet rubric', t:'Gemini 2.5 Pro'},
+    {n:'FTC §255 compliance', t:'Vertex AI Search'},
+    {n:'Auditor', t:'Gemini 2.5 Flash'},
+    {n:'Ed25519 sign + chain', t:'Ed25519 · Firestore'},
+    {n:'Cert composer', t:'Gemini 2.5 Flash'},
+    {n:'Second Opinion', t:'Gemini · Google Search'},
+  ];
+  const progTimerEl=document.getElementById('pcProgTimer');
+  const progStagesEl=document.getElementById('pcProgStages');
+  let progTick=null, progSched=null, progT0=0, progAt=0;
+  function progFmt(ms){ const s=Math.floor(ms/1000); return Math.floor(s/60)+':'+String(s%60).padStart(2,'0'); }
+  function progSet(i,state){ const r=progStagesEl&&progStagesEl.children[i]; if(r) r.className='pcprog-row '+state; }
+  function progStart(product){
+    if(!progStagesEl) return;
+    const cardEl=document.getElementById('pcCert'); if(cardEl) cardEl.classList.add('running');
+    const ex=document.getElementById('pcCertExample'); if(ex) ex.hidden=true;
+    const eb=document.getElementById('pcCertEyebrowText'); if(eb) eb.textContent='Verifying evidence';
+    if(card.verdict){ card.verdict.className='pccert-verdict v-load'; card.verdict.textContent='RUNNING'; }
+    if(card.brand) card.brand.textContent=product;
+    progStagesEl.innerHTML=PROG_STAGES.map(s=>'<div class="pcprog-row queued"><span class="pp-dot"></span><span class="pp-name">'+s.n+'</span><span class="pp-tool">'+s.t+'</span></div>').join('');
+    progAt=0; progSet(0,'run');
+    progT0=Date.now();
+    progTick=setInterval(()=>{ if(progTimerEl) progTimerEl.textContent=progFmt(Date.now()-progT0); },200);
+    // Each reasoning agent holds 'running' for ~14s before the estimate advances;
+    // the 5th stays 'running' until the real "bundle signed" signal snaps it done.
+    function step(){ if(progAt<4){ progSet(progAt,'est'); progAt++; progSet(progAt,'run'); progSched=setTimeout(step,14000); } }
+    progSched=setTimeout(step,14000);
+  }
+  function progSignal(msg){
+    msg=(msg||'').toLowerCase();
+    if(/second opinion delivered/.test(msg)){ for(let i=0;i<8;i++) progSet(i,'done'); }
+    else if(/cert composed|running second opinion/.test(msg)){ for(let i=0;i<=6;i++) progSet(i,'done'); progSet(7,'run'); }
+    else if(/bundle signed|composing cert/.test(msg)){ for(let i=0;i<=5;i++) progSet(i,'done'); progSet(6,'run'); }
+  }
+  function progStop(){ clearInterval(progTick); clearTimeout(progSched); progTick=progSched=null; const c=document.getElementById('pcCert'); if(c) c.classList.remove('running'); }
+
   let running=false;
   async function run(rawUrl){
     stopTeaching();
@@ -3594,29 +3665,27 @@ function pcVerdict(output, secondOpinion){
       // Hot path: instant for any brand already verified + cached.
       const hp=await fetch('/a2a/v1/lookup?url='+encodeURIComponent(url));
       if(hp.ok){ const d=await hp.json(); if(d&&d.cert_html){ d.url=url; pcRenderCertCard(d); setStatus('Verified · cached (hot path).'); return; } }
-      // Cold path: first-time URL runs the live 7-agent mesh.
-      setStatus('New product · running the live 7-agent mesh (60-180s)…');
-      if(card.brand) card.brand.textContent=brandFromUrl(url);
-      if(card.summary) card.summary.textContent='Running claim extraction, evidence, vet rubric, FTC §255, audit, signing…';
+      // Cold path: first-time URL runs the live 7-agent mesh. Show the timed
+      // pipeline so the user watches the Google stack work in real time.
+      setStatus('Running the live 7-agent mesh on Google Cloud…');
+      progStart(brandFromUrl(url));
       const sub=await fetch('/a2a/v1/tasks/send',{method:'POST',headers:{'Content-Type':'application/json','X-API-Key':'demo-key-2026-06'},body:JSON.stringify({skill:'verify_claim',input:{product_url:url,max_claims:3}})});
-      if(!sub.ok) throw new Error('submit '+sub.status);
+      if(!sub.ok){ progStop(); throw new Error('submit '+sub.status); }
       const {task_id}=await sub.json();
       let attempts=0,completedAttempt=-1;
       while(true){
         attempts++; await new Promise(r=>setTimeout(r,3000));
         const g=await fetch('/a2a/v1/tasks/get/'+task_id); if(!g.ok) continue;
         const s=await g.json(); s.url=url;
-        if(s.status==='failed'){ setStatus('Verification failed: '+(s.error||'unknown')); break; }
-        if(s.progress_message&&s.status!=='completed') setStatus('Mesh running · '+s.progress_message);
+        if(s.status==='failed'){ progStop(); setStatus('Verification failed: '+(s.error||'unknown')); break; }
+        if(s.progress_message) progSignal(s.progress_message);
         if(s.status==='completed'){
           if(completedAttempt<0) completedAttempt=attempts;
-          pcRenderCertCard(s);
           const finalized=/second opinion delivered/i.test(s.progress_message||'');
-          if(s.cert_html||finalized||(attempts-completedAttempt)>=18){ setStatus('Verified · signed.'); break; }
-          setStatus('Signed · composing cert…');
+          if(s.cert_html||finalized||(attempts-completedAttempt)>=18){ progStop(); pcRenderCertCard(s); setStatus('Verified · signed.'); break; }
         }
       }
-    }catch(e){ setStatus('Something went wrong: '+(e&&e.message?e.message:e)); }
+    }catch(e){ progStop(); setStatus('Something went wrong: '+(e&&e.message?e.message:e)); }
     finally{ running=false; if(btn){ btn.disabled=false; btn.textContent=label; } }
   }
 
