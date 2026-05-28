@@ -34,11 +34,12 @@ sys.path.insert(0, str(Path(__file__).resolve().parent.parent.parent))
 from cryptography.hazmat.primitives.asymmetric.ed25519 import Ed25519PrivateKey
 from cryptography.hazmat.primitives import serialization
 from fastapi import FastAPI, HTTPException, Header, Request
-from fastapi.responses import JSONResponse, PlainTextResponse
+from fastapi.responses import JSONResponse, PlainTextResponse, HTMLResponse
 from pydantic import BaseModel, Field
 
 from agents.orchestrator import run_mesh, summarize
 from shared.pcec_schema import EndorsementClaimBundle, canonical_bundle_bytes
+from shared.verdict import compute_verdict
 from shared.task_store import task_store, TaskState
 from shared.transparency_log import (
     append_bundle_async, fetch_bundle_async, get_head_anchor_async, urn_for_hash,
@@ -1240,6 +1241,99 @@ async def resolve_claim(urn: str) -> JSONResponse:
     return JSONResponse(status_code=200, content=entry)
 
 
+@app.get("/report/{urn}", response_class=HTMLResponse)
+async def signed_report(urn: str) -> HTMLResponse:
+    """Standalone, shareable, print-to-PDF signed report for a bundle URN.
+
+    Resolves from the in-memory task store first (seeds + recent verifies), then
+    the Firestore transparency log. This is the professional artifact a brand
+    sends a retailer or a lawyer: one clean URL, the full cert, the verdict, the
+    Ed25519 signature, and a Save-as-PDF button.
+    """
+    out: dict = {}
+    cert_html = ""
+    so: dict = {}
+    sig = anchor = ""
+    product = "Verified product"
+    issued = ""
+    for s in task_store._tasks.values():
+        if s.status == "completed" and s.bundle_hash and urn_for_hash(s.bundle_hash) == urn:
+            out = s.output or {}
+            cert_html = s.cert_html or ""
+            so = s.second_opinion or {}
+            sig = s.bundle_signature or ""
+            anchor = s.chain_anchor or ""
+            product = (s.input or {}).get("product_label") or product
+            issued = (datetime.fromtimestamp(s.completed_at, tz=timezone.utc).strftime("%Y-%m-%d %H:%M UTC")
+                      if s.completed_at else "")
+            break
+    else:
+        entry = await fetch_bundle_async(urn)
+        if entry is None:
+            return HTMLResponse(status_code=404, content=(
+                "<!doctype html><meta charset=utf-8><body style='background:#0A0B0D;color:#EDEEF1;"
+                "font-family:system-ui;padding:64px;text-align:center'>"
+                f"<h1>Report not found</h1><p style='color:#9aa0a6'>No signed bundle for <code>{urn}</code>. "
+                "It may have expired from the cache. Re-verify the product to issue a fresh one.</p>"
+                "<p><a href='/' style='color:#00D4FF'>&larr; PawConscious</a></p></body>"))
+        out = entry.get("output") or {}
+        cert_html = entry.get("cert_html") or ""
+        so = entry.get("second_opinion") or {}
+        sig = entry.get("bundle_signature") or ""
+        anchor = entry.get("chain_anchor") or ""
+        product = entry.get("product_label") or product
+
+    v = compute_verdict(out, so if isinstance(so, dict) else None)
+    vcolor = {"pass": "#00D49B", "cond": "#FFB446", "none": "#9aa0a6", "fail": "#FF5C35"}.get(v["color"], "#00D4FF")
+    so_overall = (so.get("overall_verdict") if isinstance(so, dict) else None) or "—"
+    so_summary = (so.get("summary") if isinstance(so, dict) else None) or ""
+    import html as _html
+    body = cert_html or f"<p style='color:#9aa0a6'>{_html.escape(v['explain'])}</p>"
+    page = f"""<!doctype html><html lang=en><head><meta charset=utf-8>
+<meta name=viewport content="width=device-width,initial-scale=1">
+<title>{_html.escape(product)} · Signed Evidence Report · PawConscious</title>
+<style>
+  :root{{--ink:#EDEEF1;--muted:#9aa0a6;--dim:#6b7177;--bg:#0A0B0D;--surface:#121317;--border:rgba(255,255,255,.1);--electric:#00D4FF;--moss-glow:#00D49B;--signal:#FFB446;--warning:#FF5C35;--mono:'JetBrains Mono',ui-monospace,monospace;--sans:'Geist','Inter',system-ui,sans-serif}}
+  *{{box-sizing:border-box}} body{{margin:0;background:var(--bg);color:var(--ink);font-family:var(--sans);line-height:1.5}}
+  .wrap{{max-width:820px;margin:0 auto;padding:40px 28px 80px}}
+  .rep-top{{display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid var(--border);padding-bottom:18px;margin-bottom:24px}}
+  .rep-brand{{font:700 16px var(--sans)}} .rep-brand i{{color:var(--electric);font-style:italic;font-weight:500}}
+  .rep-actions a,.rep-actions button{{font:600 12px var(--mono);color:var(--electric);background:none;border:1px solid var(--electric);border-radius:6px;padding:8px 12px;cursor:pointer;text-decoration:none;margin-left:8px}}
+  .rep-eyebrow{{font:700 11px var(--mono);letter-spacing:.16em;text-transform:uppercase;color:var(--electric)}}
+  .rep-h1{{font:700 26px var(--sans);margin:8px 0 14px}}
+  .rep-verdict{{display:inline-block;font:700 13px var(--mono);letter-spacing:.06em;text-transform:uppercase;color:{vcolor};border:1px solid {vcolor};border-radius:999px;padding:7px 14px}}
+  .rep-explain{{color:var(--muted);font-size:14px;margin:12px 0 28px;max-width:620px}}
+  .rep-cert{{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:24px 26px;margin-bottom:24px}}
+  .rep-so{{background:var(--surface);border:1px solid var(--electric);border-radius:12px;padding:20px 24px;margin-bottom:24px}}
+  .rep-so .lbl{{font:700 11px var(--mono);letter-spacing:.14em;text-transform:uppercase;color:var(--electric);margin-bottom:8px}}
+  .rep-crypto{{font:500 12px/1.9 var(--mono);color:var(--dim);background:var(--bg);border:1px solid var(--border);border-radius:10px;padding:18px 20px;word-break:break-all}}
+  .rep-crypto b{{color:var(--moss-glow)}} .rep-crypto a{{color:var(--electric);text-decoration:none}}
+  .rep-foot{{color:var(--dim);font-size:12px;margin-top:28px;text-align:center}}
+  @media print{{ body{{background:#fff;color:#111}} .rep-actions{{display:none}} .rep-cert,.rep-so,.rep-crypto{{background:#fff;border-color:#ccc;color:#111}} .rep-eyebrow,.rep-brand i,.rep-crypto a{{color:#0a7}} }}
+</style></head><body>
+<div class="wrap">
+  <div class="rep-top">
+    <div class="rep-brand">PawConscious<i>Mesh</i></div>
+    <div class="rep-actions"><button onclick="window.print()">Save as PDF</button><a href="/pcec/v0/claim/{_html.escape(urn)}" target="_blank">Raw JSON</a></div>
+  </div>
+  <div class="rep-eyebrow">Signed evidence report</div>
+  <h1 class="rep-h1">{_html.escape(product)}</h1>
+  <span class="rep-verdict">{_html.escape(v['label'])}</span>
+  <p class="rep-explain">{_html.escape(v['explain'])}</p>
+  <div class="rep-cert">{body}</div>
+  <div class="rep-so"><div class="lbl">Adversarial Second Opinion · {_html.escape(str(so_overall))}</div>{_html.escape(so_summary)}</div>
+  <div class="rep-crypto">
+    <b>URN</b> {_html.escape(urn)}<br>
+    <b>Ed25519 signature</b> {_html.escape(sig)}<br>
+    <b>Transparency-log anchor</b> {_html.escape(anchor)}<br>
+    {f'<b>Issued</b> {_html.escape(issued)}<br>' if issued else ''}
+    Verify this signature yourself against the public key at <a href="/.well-known/did.json" target="_blank">/.well-known/did.json</a>.
+  </div>
+  <div class="rep-foot">PawConscious Mesh · verifiable trust for pet-supplement brands · <a href="/" style="color:var(--electric);text-decoration:none">pawconscious</a></div>
+</div></body></html>"""
+    return HTMLResponse(content=page)
+
+
 # ---------------------------------------------------------------------------
 # 2026-05-25 night (Omar Path 2): public Gemini-grounded chat surface.
 #
@@ -1344,21 +1438,12 @@ def bundle_summary(state) -> dict[str, Any]:
     else:
         ftc_flags = out.get("ftc_flags", [])
 
-    # audit verdict: aggregate across claims (FAIL > CONDITIONAL > PASS)
-    audit_verdicts = [a.get("verdict") for a in out.get("audit", []) if isinstance(a, dict)]
-    if audit_verdicts:
-        if "FAIL" in audit_verdicts:
-            verdict = "FAIL"
-        elif "CONDITIONAL" in audit_verdicts:
-            verdict = "PASS_WITH_CONDITIONS"
-        elif ftc_flags:
-            verdict = "PASS_WITH_FLAGS"
-        else:
-            verdict = "PASS"
-    else:
-        verdict = out.get("audit_verdict")
-
+    # Verdict: single source of truth (shared/verdict.py). Folds in the vet rubric
+    # and the adversarial Second Opinion, and never gives a green PASS to a product
+    # whose claims are all puffery. The JS mirror pcVerdict() must stay in sync.
     so = getattr(state, "second_opinion", None) or {}
+    v = compute_verdict(out, so if isinstance(so, dict) else None)
+
     return {
         "product": inp.get("product_label") or out.get("product_label") or "(unnamed)",
         "url": inp.get("product_url"),
@@ -1367,7 +1452,9 @@ def bundle_summary(state) -> dict[str, Any]:
         "vet_score": vet_score,
         "vet_note": vet_note,
         "ftc_flags": ftc_flags,
-        "audit_verdict": verdict,
+        "audit_verdict": v["key"],
+        "verdict_label": v["label"],
+        "verdict_explain": v["explain"],
         "second_opinion": so.get("overall_verdict") if isinstance(so, dict) else None,
     }
 

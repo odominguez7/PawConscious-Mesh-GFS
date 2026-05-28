@@ -237,20 +237,15 @@ def static_cert(bundle: EndorsementClaimBundle, bundle_hash: str | None, chain_a
     claims = b.get("claims", []) or []
     headline_claim = (claims[0].get("text") if claims and isinstance(claims[0], dict) else None) or "endorsement claims"
 
-    # Verdict aggregation — identical rule to main.bundle_summary (FAIL > CONDITIONAL > flags > PASS).
-    audit_verdicts = [a.get("verdict") for a in b.get("audit", []) if isinstance(a, dict)]
+    # Verdict: single source of truth (shared/verdict.py). Second opinion is not
+    # available at static-fallback time, so pass None (it can only downgrade).
+    from shared.verdict import compute_verdict
+    _v = compute_verdict(b, None)
+    verdict = _v["label"].upper()
+    vcolor = {"pass": "var(--moss-glow)", "cond": "var(--signal)",
+              "fail": "var(--warning)", "none": "var(--muted)"}.get(_v["color"], "var(--electric)")
     ftc_flags = [c.get("ftc_section") for c in b.get("compliance", [])
                  if isinstance(c, dict) and c.get("violation_flag") and c.get("ftc_section")]
-    if "FAIL" in audit_verdicts:
-        verdict, vcolor = "FAIL", "var(--warning)"
-    elif "CONDITIONAL" in audit_verdicts:
-        verdict, vcolor = "PASS WITH CONDITIONS", "var(--signal)"
-    elif ftc_flags:
-        verdict, vcolor = "PASS WITH FLAGS", "var(--signal)"
-    elif audit_verdicts:
-        verdict, vcolor = "PASS", "var(--moss-glow)"
-    else:
-        verdict, vcolor = "ISSUED", "var(--electric)"
 
     vet_scores = [v.get("score") for v in b.get("vet_scores", []) if isinstance(v, dict) and v.get("score") is not None]
     vet_min = min(vet_scores) if vet_scores else None

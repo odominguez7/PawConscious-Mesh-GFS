@@ -35,6 +35,7 @@ from pathlib import Path
 # vendor the published schema; same bytes either way.)
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 from shared.pcec_schema import canonical_bundle_bytes  # noqa: E402
+from shared.verdict import compute_verdict  # noqa: E402
 
 from cryptography.exceptions import InvalidSignature  # noqa: E402
 from cryptography.hazmat.primitives.asymmetric.ed25519 import Ed25519PublicKey  # noqa: E402
@@ -89,12 +90,13 @@ def verify_signature(output: dict, signature: str, pubkey: Ed25519PublicKey) -> 
         return False
 
 
-def decide(verdict: str, flags: list) -> str:
-    if verdict == "FAIL":
-        return "SKIP   (a claim failed verification)"
-    if verdict == "CONDITIONAL" or flags:
-        return "RECOMMEND WITH CAVEAT (compliance flags present)"
-    return "RECOMMEND"
+def decide(verdict_key: str) -> str:
+    return {
+        "VERIFIED": "RECOMMEND",
+        "CONDITIONAL": "RECOMMEND WITH CAVEAT",
+        "NO_CLAIMS": "NO RECOMMENDATION (no claim could be substantiated)",
+        "FAIL": "SKIP (a claim failed verification)",
+    }.get(verdict_key, "RECOMMEND")
 
 
 def main() -> int:
@@ -119,16 +121,18 @@ def main() -> int:
             continue
         out = b["output"]
         valid = verify_signature(out, b["bundle_signature"], pubkey)
-        audit = [a.get("verdict") for a in out.get("audit", [])]
-        verdict = "FAIL" if "FAIL" in audit else ("CONDITIONAL" if "CONDITIONAL" in audit else "PASS")
+        # Same verdict logic as the platform (shared/verdict.py): folds in the vet
+        # rubric and the adversarial Second Opinion, never a green pass for puffery.
+        v = compute_verdict(out, b.get("second_opinion"))
+        verdict = v["key"]
         flags = [c.get("ftc_section") for c in out.get("compliance", []) if c.get("violation_flag")]
         print(f"   {b.get('product_label')}")
         print(f"     signature : {'VALID ✅ (Ed25519, issuer DID key)' if valid else 'INVALID ❌'}")
         if not valid:
             print("     decision  : SKIP (cannot trust an unverifiable bundle)\n")
             continue
-        print(f"     verdict   : {verdict}{' · flags ' + str(flags) if flags else ''}")
-        print(f"     decision  : {decide(verdict, flags)}\n")
+        print(f"     verdict   : {v['label'].upper()}{' · flags ' + str(flags) if flags else ''}")
+        print(f"     decision  : {decide(verdict)}\n")
         last_good = (b, out)
         if verdict == "FAIL" and forge_target is None:
             forge_target = (b, out)  # the meaningful forgery: turn a FAIL into a PASS
