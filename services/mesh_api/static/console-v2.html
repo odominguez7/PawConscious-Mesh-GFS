@@ -8,7 +8,7 @@
 <meta name="theme-color" content="#0A0B0D">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&family=Lora:ital,wght@0,400;0,500;0,600;1,400;1,500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
   :root {
     /* Deep-tech dark palette — Vercel × Linear hybrid, deliberately distinct from
@@ -32,17 +32,6 @@
     --grad-3:       #FF5C9F;
     --sans:  'Geist', 'Inter', 'Söhne', -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
     --mono:  'JetBrains Mono', 'IBM Plex Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
-    --serif: 'Lora', 'Source Serif Pro', Georgia, 'Times New Roman', serif;  /* editorial moments */
-    /* Aura palette — warm paper + court-document gold + deep theatre black for the
-       light-dark-light cinematic rhythm across stakes / payoff / use-cases. */
-    --paper:        #F5F1E8;
-    --paper-deep:   #EDE7D7;
-    --ink-paper:    #15110A;
-    --ink-paper-dim:#5C5240;
-    --gold:         #B86E00;          /* evidence / court file accent */
-    --gold-soft:    #C49A2E;
-    --gold-glow:    rgba(196,154,46,0.18);
-    --black-deep:   #07080A;          /* the ledger surface */
   }
   *,*:before,*:after { box-sizing: border-box; }
   html,body { margin:0; padding:0; background: var(--bg); color: var(--ink); }
@@ -1826,67 +1815,56 @@
   </div>
 </section>
 
-<!-- ===================== THE STAKES · editorial exposé (2026-05-28, aura handshake) =====================
-     Lila-style cinematic rhythm begins here: the page shifts from dark hero to
-     warm-paper editorial spread. The two-doors grid is gone. In its place: a
-     left-column problem brief in editorial serif + a single solitary "verifiable
-     proof" line on the right, then a sharply framed evidence exhibit citing the
-     real Cosequin settlement with its real case number. The screenshot moment. -->
+<!-- ===================== THE STAKES · two doors (2026-05-27, wow handshake) =====================
+     The first scroll beat after the hero. The hero shows WHAT happens (URL ->
+     verdict); this shows WHY it matters, in the founder's own stakes: skipped vs
+     recommended, risky vs preferred, exposed vs defensible. The Cosequin $11.5M
+     is used HERE as the cautionary tale (not as a cold hero example), which also
+     resolves the old contradiction. -->
 <style>
-  .stakes { background: var(--paper); color: var(--ink-paper); padding: 120px 0 110px; position: relative; overflow: hidden; }
-  .stakes::before { content: ""; position: absolute; inset: 0; background-image:
-      radial-gradient(circle at 1px 1px, rgba(21,17,10,0.05) 1px, transparent 0);
-      background-size: 22px 22px; pointer-events: none; opacity: 0.55; }
-  .stakes .container { position: relative; }
-  .stakes .st-eyebrow { font: 600 11px/1 var(--mono); letter-spacing: 0.22em; text-transform: uppercase; color: var(--gold); margin: 0 0 28px; }
-  .stakes-spread { display: grid; grid-template-columns: minmax(0,1.4fr) minmax(0,1fr); gap: 84px; align-items: flex-start; max-width: 1180px; }
-  @media (max-width: 880px) { .stakes-spread { grid-template-columns: 1fr; gap: 56px; } }
-  .stakes-head h2 { font: 400 56px/1.04 var(--serif); letter-spacing: -0.018em; color: var(--ink-paper); margin: 0 0 22px; max-width: 16ch; }
-  .stakes-head h2 em { font-style: italic; color: var(--gold); }
-  .stakes-head .lede { font: 400 19px/1.55 var(--serif); color: var(--ink-paper); margin: 0 0 32px; max-width: 34ch; }
-  .stakes-head .lede::first-letter { font: 500 60px/0.9 var(--serif); float: left; padding: 6px 10px 0 0; color: var(--gold); }
-  .stakes-bad { list-style: none; padding: 0; margin: 0; }
-  .stakes-bad li { font: 400 17px/1.55 var(--serif); color: var(--ink-paper); padding: 14px 0 14px 32px; border-top: 1px solid rgba(21,17,10,0.12); position: relative; }
-  .stakes-bad li:last-child { border-bottom: 1px solid rgba(21,17,10,0.12); }
-  .stakes-bad li::before { content: "—"; position: absolute; left: 0; top: 14px; color: var(--gold); font-weight: 600; font-family: var(--serif); }
-  .stakes-good { padding-top: 36px; }
-  .stakes-good .sg-label { font: 600 10.5px/1 var(--mono); letter-spacing: 0.24em; text-transform: uppercase; color: var(--ink-paper-dim); margin-bottom: 18px; }
-  .stakes-good blockquote { font: 500 32px/1.18 var(--serif); color: var(--ink-paper); margin: 0; padding: 0 0 0 22px; border-left: 3px solid var(--gold); letter-spacing: -0.012em; }
-  .stakes-good blockquote em { font-style: italic; color: var(--gold); }
-  .stakes-good .sg-foot { margin-top: 22px; font: 500 13px/1.6 var(--mono); color: var(--ink-paper-dim); padding-left: 22px; }
-  .stakes-good .sg-foot b { color: var(--ink-paper); font-weight: 600; }
-  .stakes-exhibit { max-width: 1180px; margin: 90px 0 0; background: rgba(184,110,0,0.06); border: 1px solid rgba(184,110,0,0.32); border-radius: 4px; padding: 26px 32px 30px; position: relative; }
-  .stakes-exhibit::before { content: "EVIDENCE A"; position: absolute; top: -10px; left: 24px; background: var(--paper); padding: 0 12px; font: 700 10.5px/1 var(--mono); letter-spacing: 0.22em; color: var(--gold); }
-  .stakes-exhibit .ex-case { font: 500 11px/1.5 var(--mono); letter-spacing: 0.14em; text-transform: uppercase; color: var(--ink-paper-dim); margin-bottom: 14px; }
-  .stakes-exhibit .ex-line { font: 400 22px/1.45 var(--serif); color: var(--ink-paper); margin: 0; }
-  .stakes-exhibit .ex-line b { font-weight: 600; color: var(--gold); }
-  .stakes-exhibit .ex-line em { font-style: italic; color: var(--ink-paper-dim); font-weight: 400; }
-  .stakes-exhibit .ex-foot { margin-top: 18px; font: 500 11.5px/1.4 var(--mono); letter-spacing: 0.04em; color: var(--ink-paper-dim); }
-  .stakes-exhibit .ex-foot a { color: var(--gold); text-decoration: underline; text-underline-offset: 3px; }
+  .stakes { padding: 72px 0 56px; border-top: 1px solid var(--border); }
+  .stakes .stakes-head { max-width: 720px; margin: 0 0 32px; }
+  .stakes .stakes-head h2 { margin: 8px 0 10px; }
+  .stakes .stakes-head p { font: 500 15px/1.6 var(--sans); color: var(--muted); margin: 0; }
+  .stakes-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; max-width: 920px; }
+  @media (max-width: 720px) { .stakes-grid { grid-template-columns: 1fr; } }
+  .stakes-col { border: 1px solid var(--border); border-radius: 14px; padding: 22px 24px; background: var(--surface); }
+  .stakes-col.bad { border-color: rgba(255,92,53,0.35); }
+  .stakes-col.good { border-color: rgba(0,212,155,0.35); }
+  .stakes-col .sc-label { font: 700 11px/1 var(--mono,monospace); letter-spacing: .14em; text-transform: uppercase; margin-bottom: 16px; }
+  .stakes-col.bad .sc-label { color: #FF5C35; }
+  .stakes-col.good .sc-label { color: #00D49B; }
+  .stakes-col .sc-row { display: flex; gap: 10px; align-items: flex-start; padding: 11px 0; border-top: 1px solid var(--border); font: 500 14px/1.45 var(--sans); color: var(--ink); }
+  .stakes-col .sc-row:first-of-type { border-top: none; }
+  .stakes-col .sc-ic { flex-shrink: 0; font-weight: 700; }
+  .stakes-col.bad .sc-ic { color: #FF5C35; } .stakes-col.good .sc-ic { color: #00D49B; }
+  .stakes-knockout { max-width: 920px; margin: 24px 0 0; padding: 20px 24px; border: 1px solid rgba(255,92,53,0.4); border-radius: 14px; background: rgba(255,92,53,0.05); font: 500 15px/1.55 var(--sans); color: var(--ink); }
+  .stakes-knockout b { color: #FF5C35; }
+  .stakes-knockout a { color: var(--electric); text-decoration: none; }
 </style>
 <section class="stakes pc-reveal" id="stakes">
   <div class="container">
-    <div class="st-eyebrow">Brief 01 · The stakes</div>
-    <div class="stakes-spread">
-      <div class="stakes-head">
-        <h2>Your word alone <em>is no longer enough</em>.</h2>
-        <p class="lede">For thirty years the rule for a pet supplement claim was the same: write it, ship it, hope nobody asks. That rule is ending. AI shopping agents, retailers and regulators are now reading the same product page — and quietly grading it.</p>
-        <ul class="stakes-bad">
-          <li>An unverified claim is invisible to the agent recommending your category.</li>
-          <li>It is a liability the day Chewy or Amazon asks for substantiation.</li>
-          <li>It is the line a plaintiff's lawyer underlines first.</li>
-        </ul>
-      </div>
-      <aside class="stakes-good">
-        <div class="sg-label">The opposite is a single line.</div>
-        <blockquote>A claim with <em>signed evidence</em> is the only kind a machine will recommend, a retailer will accept, and a court will read.</blockquote>
-        <div class="sg-foot">No badge. No marketing. <b>One verifiable artifact.</b></div>
-      </aside>
+    <div class="stakes-head">
+      <div class="eyebrow">The stakes</div>
+      <h2>The end of "trust me."</h2>
+      <p>Your health claims are about to be read by machines, not just shoppers. Unprovable claims are a liability on three fronts at once.</p>
     </div>
-    <div class="stakes-exhibit">
-      <div class="ex-case">U.S. District Court · N.D. Cal · Case 3:22-cv-01573 · settled 2024</div>
-      <p class="ex-line">Nutramax — the makers of <em>Cosequin</em> — paid <b>$11.5&nbsp;million</b> to settle a class action over joint-health claims they could not back up.</p>
-      <div class="ex-foot">PawConscious surfaces the same class of finding before launch. <a href="https://topclassactions.com/lawsuit-settlements/open-lawsuit-settlements/11-5m-cosequin-dog-supplements-class-action-settlement/" target="_blank" rel="noopener">Read the filing &nearr;</a></div>
+    <div class="stakes-grid">
+      <div class="stakes-col bad">
+        <div class="sc-label">Your word alone</div>
+        <div class="sc-row"><span class="sc-ic">✕</span><span>Skipped by AI shopping agents</span></div>
+        <div class="sc-row"><span class="sc-ic">✕</span><span>Risky for retailers like Chewy and Amazon</span></div>
+        <div class="sc-row"><span class="sc-ic">✕</span><span>Exposed to FTC action and class-action lawsuits</span></div>
+      </div>
+      <div class="stakes-col good">
+        <div class="sc-label">Verifiable proof</div>
+        <div class="sc-row"><span class="sc-ic">✓</span><span>Recommended by AI shopping agents</span></div>
+        <div class="sc-row"><span class="sc-ic">✓</span><span>Preferred by retailers who demand substantiation</span></div>
+        <div class="sc-row"><span class="sc-ic">✓</span><span>Defensible the day a regulator or lawyer asks</span></div>
+      </div>
+    </div>
+    <div class="stakes-knockout">
+      In 2024, the makers of Cosequin paid <b>$11.5M</b> to settle a class action over claims they could not back up. That is the cost of "your word alone." <a href="https://topclassactions.com/lawsuit-settlements/open-lawsuit-settlements/11-5m-cosequin-dog-supplements-class-action-settlement/" target="_blank" rel="noopener">source</a>
     </div>
   </div>
 </section>
@@ -1928,101 +1906,61 @@
      shopping agent recommends the verified product). Sequence, not split-screen,
      so the buyer first grasps the value to them, then sees the downstream pull.
      Same real Gemini 2.5 surface, grounded only on PawConscious-verified bundles. -->
-<!-- Section 2 reframe (2026-05-28 aura): the developer-log trace becomes a
-     dramatic "Verification Ledger" - deep-theatre black, large editorial heading,
-     each row a notary stamp that lands with a scale animation on first paint.
-     The forged row subtly glitches. The cryptographic signature is the hero. -->
 <style>
-  .demand { background: var(--black-deep); padding: 120px 0 110px; position: relative; overflow: hidden; }
-  .demand::before { content: ""; position: absolute; inset: 0; background:
-      radial-gradient(900px 600px at 50% 0%, rgba(196,154,46,0.06), transparent 70%); pointer-events: none; }
-  .demand .container { position: relative; }
-  .demand .dm-eyebrow { font: 600 11px/1 var(--mono); letter-spacing: 0.22em; text-transform: uppercase; color: var(--gold-soft); margin: 0 0 22px; }
-  .demand .dm-head { display: grid; grid-template-columns: minmax(0,1.45fr) minmax(0,1fr); gap: 60px; align-items: end; max-width: 1180px; margin-bottom: 64px; }
-  @media (max-width: 880px) { .demand .dm-head { grid-template-columns: 1fr; gap: 22px; } }
-  .demand .dm-head h2 { font: 400 64px/1.02 var(--serif); letter-spacing: -0.022em; color: var(--ink); margin: 0; max-width: 16ch; }
-  .demand .dm-head h2 em { font-style: italic; color: var(--gold-soft); }
-  .demand .dm-head .dm-sub { font: 400 17px/1.55 var(--serif); color: rgba(237,238,241,0.78); margin: 0; padding-bottom: 8px; max-width: 38ch; }
-  /* The Ledger */
-  .ledger { max-width: 1180px; background: linear-gradient(180deg, rgba(255,255,255,0.025), rgba(255,255,255,0.01)); border: 1px solid rgba(196,154,46,0.18); border-radius: 4px; padding: 28px 32px 26px; }
-  .ledger-meta { display: flex; align-items: center; justify-content: space-between; gap: 18px; padding-bottom: 16px; border-bottom: 1px solid rgba(255,255,255,0.07); margin-bottom: 8px; }
-  .ledger-meta .lm-label { font: 600 10.5px/1 var(--mono); letter-spacing: 0.22em; text-transform: uppercase; color: var(--gold-soft); }
-  .ledger-meta .lm-sub { font: 500 11.5px/1 var(--mono); color: var(--dim); }
-  .ledger-row { display: grid; grid-template-columns: minmax(0,1.2fr) minmax(0,1.4fr) minmax(0,1.4fr); gap: 24px; align-items: center; padding: 22px 4px; border-top: 1px solid rgba(255,255,255,0.06); transition: background .3s; }
-  .ledger-row:first-of-type { border-top: none; }
-  .ledger-row:hover { background: rgba(196,154,46,0.04); }
-  .ledger-brand { font: 500 22px/1.2 var(--serif); color: var(--ink); }
-  .ledger-brand .lb-sub { display:block; font: 500 10.5px/1.4 var(--mono); letter-spacing: 0.12em; text-transform: uppercase; color: var(--dim); margin-top: 6px; }
-  .ledger-sig { font: 500 11.5px/1.6 var(--mono); color: var(--dim); transition: color .3s, text-shadow .3s; }
-  .ledger-sig .ls-label { display: block; font-size: 9.5px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--dim); margin-bottom: 4px; }
-  .ledger-row:hover .ledger-sig { color: var(--gold-soft); text-shadow: 0 0 24px var(--gold-glow); }
-  .ledger-sig.bad { color: var(--warning); }
-  .ledger-stamp { justify-self: end; }
-  .stamp { display: inline-flex; align-items: center; gap: 9px; padding: 10px 16px; border: 1.5px solid currentColor; border-radius: 999px; font: 700 12px/1 var(--mono); letter-spacing: 0.14em; text-transform: uppercase;
-    animation: stamp-land 0.6s cubic-bezier(.2,1.4,.4,1) both; transform-origin: center; }
-  .stamp .st-dot { width: 6px; height: 6px; border-radius: 50%; background: currentColor; }
-  .ledger-row:nth-of-type(2) .stamp { animation-delay: 0.12s; }
-  .ledger-row:nth-of-type(3) .stamp { animation-delay: 0.24s; }
-  .ledger-row:nth-of-type(4) .stamp { animation-delay: 0.36s; }
-  .ledger-row:nth-of-type(5) .stamp { animation-delay: 0.48s; }
-  @keyframes stamp-land { 0% { opacity: 0; transform: scale(1.6); } 60% { opacity: 1; transform: scale(0.96); } 100% { opacity: 1; transform: scale(1); } }
-  .stamp.rec  { color: #00D49B; }
-  .stamp.cav  { color: var(--signal); }
-  .stamp.skip { color: var(--warning); }
-  .stamp.none { color: rgba(237,238,241,0.55); }
-  .stamp.rej  { color: var(--warning); animation: stamp-land 0.6s cubic-bezier(.2,1.4,.4,1) both, glitch 3.2s infinite 1s; }
-  @keyframes glitch { 0%,90%,100% { transform: translate(0,0); } 92% { transform: translate(-2px,0); } 94% { transform: translate(2px,-1px); } 96% { transform: translate(-1px,1px); } }
-  .ledger-divider { border-top: 1px dashed rgba(255,255,255,0.12); margin: 14px 0 0; padding-top: 14px; }
-  .ledger-divider .lv-label { font: 500 10.5px/1.5 var(--mono); letter-spacing: 0.18em; text-transform: uppercase; color: var(--gold-soft); margin-bottom: 6px; }
-  .ledger-foot { margin-top: 28px; display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 14px; max-width: 1180px; }
-  .ledger-foot .lf-line { font: 400 17px/1.5 var(--serif); color: rgba(237,238,241,0.78); max-width: 56ch; }
-  .ledger-foot .lf-line em { color: var(--gold-soft); font-style: italic; }
-  .ledger-foot a.lf-cta { font: 600 12px/1 var(--mono); letter-spacing: 0.14em; text-transform: uppercase; color: var(--gold-soft); border: 1px solid var(--gold-soft); border-radius: 999px; padding: 12px 18px; text-decoration: none; transition: background .2s, color .2s; }
-  .ledger-foot a.lf-cta:hover { background: var(--gold-soft); color: var(--black-deep); }
-  @media (max-width: 720px) { .ledger-row { grid-template-columns: 1fr; gap: 8px; } .ledger-stamp { justify-self: start; } }
+  .demand { padding: 64px 0 24px; border-top: 1px solid var(--border); }
+  .demand .demand-head { max-width: 760px; margin: 0 0 26px; }
+  .demand .demand-head h2 { margin: 8px 0 10px; }
+  .demand .demand-sub { font: 500 15px/1.6 var(--sans); color: var(--muted); margin: 0; }
+  .adt { font-family: var(--mono,monospace); background: var(--bg); border: 1px solid var(--border); border-radius: 12px; padding: 22px 24px; max-width: 880px; }
+  .adt-head { font: 600 11px/1 var(--mono); letter-spacing: .14em; text-transform: uppercase; color: var(--dim); display: flex; align-items: center; gap: 9px; }
+  .adt-head .dot { width: 8px; height: 8px; border-radius: 50%; background: #00D49B; box-shadow: 0 0 8px #00D49B; flex-shrink: 0; }
+  .adt-sub { font: 500 11.5px/1.5 var(--mono); color: var(--dim); margin: 6px 0 14px 17px; }
+  .adt-row { display: grid; grid-template-columns: 1fr auto auto 1.35fr; align-items: center; gap: 6px 18px; padding: 13px 0; border-top: 1px solid var(--border); font-size: 13px; }
+  .adt-prod { color: var(--ink); font-weight: 700; }
+  .adt-sig { font-size: 11px; letter-spacing: .03em; white-space: nowrap; }
+  .adt-sig.ok { color: #00D49B; } .adt-sig.bad { color: #FF5C35; }
+  .adt-verdict { font-size: 11px; color: var(--muted); white-space: nowrap; }
+  .adt-action { font-weight: 700; letter-spacing: .04em; text-align: right; white-space: nowrap; }
+  .adt-action.rec { color: #00D49B; } .adt-action.cav { color: #FFB446; } .adt-action.skip { color: #FF5C35; } .adt-action.rej { color: #FF5C35; } .adt-action.none { color: var(--muted); }
+  .adt-tamper { margin-top: 18px; padding-top: 16px; border-top: 1px dashed var(--border); }
+  .adt-tamper-label { font: 500 11px/1.5 var(--mono); color: var(--muted); margin-bottom: 12px; }
+  .adt-foot { margin-top: 18px; font: 500 11.5px/1.55 var(--mono); color: var(--dim); }
+  .adt-foot a { color: var(--electric); text-decoration: none; }
+  @media (max-width: 680px) { .adt-row { grid-template-columns: 1fr; gap: 3px; } .adt-action { text-align: left; } }
 </style>
 <section class="demand pc-reveal" id="demand">
   <div class="container">
-    <div class="dm-eyebrow">Brief 02 · The ledger</div>
-    <div class="dm-head">
-      <h2>Every recommendation is <em>an unforgeable</em> entry.</h2>
-      <p class="dm-sub">A signed bundle is not paperwork. It is the input an AI shopping agent acts on — recommend the verified, skip the failed, reject anything tampered. Below: our reference agent, the same one any A2A v0.3 client can run.</p>
+    <div class="demand-head">
+      <div class="eyebrow">The payoff</div>
+      <h2>Verified products get recommended by agents.</h2>
+      <p class="demand-sub">A signed bundle is not paperwork. It is the input an AI shopping agent acts on: recommend the verified, skip the failed, reject the tampered. Below is our reference agent, running live against the directory.</p>
     </div>
 
-    <div class="ledger" aria-label="Reference shopper agent verification ledger">
-      <div class="ledger-meta">
-        <span class="lm-label">PawConscious · verification ledger</span>
-        <span class="lm-sub">examples/shopper_agent.py · live · public chain</span>
-      </div>
+    <!-- AGENT DECISION TRACE (2026-05-27, four-voice handshake): replaces the open
+         Gemini chat. The chat was a liability (it deflected off-script prompts and
+         read as a thin LLM wrapper, harming Demo + Innovation). This renders what
+         examples/shopper_agent.py actually does: discover the agent card, verify
+         every Ed25519 signature, decide RECOMMEND/SKIP, then reject a tampered
+         bundle. Live verdicts from /a2a/v1/lookup; deterministic fallback below
+         if a fetch fails, so it can never break in front of a judge. -->
+    <div class="adt" aria-label="Reference shopper agent decision trace">
+      <div class="adt-head"><span class="dot"></span><span>PawConscious reference shopper agent</span></div>
+      <div class="adt-sub">examples/shopper_agent.py · discovers the agent card, verifies every signature, then decides</div>
       <div id="adtRows">
-        <div class="ledger-row">
-          <div class="ledger-brand">Cosequin <span class="lb-sub">Maximum Strength + MSM</span></div>
-          <div class="ledger-sig"><span class="ls-label">Ed25519 · valid</span>sig 3a · 8f12 · 47df · b021</div>
-          <div class="ledger-stamp"><span class="stamp cav"><span class="st-dot"></span>Conditional · §255.3</span></div>
-        </div>
-        <div class="ledger-row">
-          <div class="ledger-brand">Green Gruff <span class="lb-sub">EASE · Joint &amp; Hip</span></div>
-          <div class="ledger-sig"><span class="ls-label">Ed25519 · valid</span>sig 9c · 1a04 · 3f55 · e0c2</div>
-          <div class="ledger-stamp"><span class="stamp skip"><span class="st-dot"></span>FAIL · §255.1</span></div>
-        </div>
-        <div class="ledger-row">
-          <div class="ledger-brand">JustFoodForDogs <span class="lb-sub">Calming chews</span></div>
-          <div class="ledger-sig"><span class="ls-label">Ed25519 · valid</span>sig 7e · 22b5 · 9d10 · 4caa</div>
-          <div class="ledger-stamp"><span class="stamp none"><span class="st-dot"></span>Unverified</span></div>
+        <div class="adt-row"><span class="adt-prod">Cosequin</span><span class="adt-sig ok">signature VALID</span><span class="adt-verdict">CONDITIONAL · §255.3</span><span class="adt-action cav">RECOMMEND WITH CAVEAT</span></div>
+        <div class="adt-row"><span class="adt-prod">Green Gruff</span><span class="adt-sig ok">signature VALID</span><span class="adt-verdict">FAIL · §255.1</span><span class="adt-action skip">SKIP</span></div>
+        <div class="adt-row"><span class="adt-prod">JustFoodForDogs</span><span class="adt-sig ok">signature VALID</span><span class="adt-verdict">UNVERIFIED</span><span class="adt-action none">NO RECOMMENDATION</span></div>
+      </div>
+      <div class="adt-tamper">
+        <div class="adt-tamper-label">Tamper test · forge Green Gruff's FAIL into a PASS, keep the signature</div>
+        <div class="adt-row" style="border-top:none;padding:0">
+          <span class="adt-prod">Green Gruff (forged)</span>
+          <span class="adt-sig bad">signature INVALID</span>
+          <span class="adt-verdict">signature doesn't match</span>
+          <span class="adt-action rej">REJECTED</span>
         </div>
       </div>
-      <div class="ledger-divider">
-        <div class="lv-label">Tamper test · forge Green Gruff's FAIL into a PASS, keep the signature</div>
-        <div class="ledger-row" style="border-top:none;padding-top:0;padding-bottom:4px">
-          <div class="ledger-brand">Green Gruff <span class="lb-sub">forged bundle</span></div>
-          <div class="ledger-sig bad"><span class="ls-label">Ed25519 · invalid</span>canonical hash does not match</div>
-          <div class="ledger-stamp"><span class="stamp rej"><span class="st-dot"></span>Rejected</span></div>
-        </div>
-      </div>
-    </div>
-    <div class="ledger-foot">
-      <div class="lf-line">A forged verdict <em>cannot</em> pass the signature. The trust does not come from what we say. It comes from what the bundle proves.</div>
-      <a class="lf-cta" href="/agents#try">Run the agent yourself ↗</a>
+      <div class="adt-foot">Every decision depends on a verified signature. A forged verdict can never pass. <a href="/agents#try">Run the agent yourself →</a></div>
     </div>
   </div>
 </section>
@@ -2325,72 +2263,32 @@
     <!-- Beat 1: Use Cases. Three scenarios brands actually face, with the ROI
          proof band sitting at the end of the third one (the plaintiff-letter
          moment) where avoided-cost math is most relevant. -->
-    <!-- Section 3 reframe (2026-05-28 aura): editorial spread on warm paper.
-         Returns to the Stakes surface for a deliberate light-dark-light rhythm
-         across the page. Three "moments" presented as chapters: huge faded number,
-         italic Lora trigger line, prose-grade body, signed line. Visceral founder
-         pain ("When Chewy asks for proof") is the screenshot moment. -->
-    <style>
-      .usecases-paper { background: var(--paper); color: var(--ink-paper); padding: 120px 0 110px; margin: 0 -32px; padding-left: 32px; padding-right: 32px; position: relative; overflow: hidden; }
-      .usecases-paper::before { content: ""; position: absolute; inset: 0; background-image:
-          radial-gradient(circle at 1px 1px, rgba(21,17,10,0.05) 1px, transparent 0);
-          background-size: 22px 22px; pointer-events: none; opacity: 0.55; }
-      .usecases-paper .uc-inner { position: relative; max-width: 1180px; }
-      .usecases-paper .uc-eyebrow { font: 600 11px/1 var(--mono); letter-spacing: 0.22em; text-transform: uppercase; color: var(--gold); margin: 0 0 24px; }
-      .usecases-paper h2 { font: 400 56px/1.04 var(--serif); letter-spacing: -0.018em; color: var(--ink-paper); margin: 0 0 70px; max-width: 18ch; }
-      .usecases-paper h2 em { font-style: italic; color: var(--gold); }
-      .usecases-list { display: flex; flex-direction: column; gap: 8px; }
-      .usecases-list .uc-row { display: grid; grid-template-columns: 140px minmax(0,1.2fr) minmax(0,1.6fr); align-items: start; gap: 36px; padding: 38px 0; border-top: 1px solid rgba(21,17,10,0.14); transition: background .25s; }
-      .usecases-list .uc-row:hover { background: rgba(184,110,0,0.04); }
-      .usecases-list .uc-row:last-child { border-bottom: 1px solid rgba(21,17,10,0.14); }
-      .usecases-list .uc-num { font: 500 96px/1 var(--serif); color: var(--gold); opacity: 0.55; letter-spacing: -0.03em; }
-      .usecases-list .uc-trigger { font: italic 500 30px/1.18 var(--serif); color: var(--ink-paper); letter-spacing: -0.012em; }
-      .usecases-list .uc-meta { font: 500 11px/1 var(--mono); letter-spacing: 0.18em; text-transform: uppercase; color: var(--ink-paper-dim); margin-top: 14px; }
-      .usecases-list .uc-body { font: 400 17px/1.6 var(--serif); color: var(--ink-paper); margin: 0; max-width: 42ch; }
-      .usecases-list .uc-body b { font-weight: 600; }
-      .usecases-list .uc-sign { display: block; margin-top: 16px; font: 500 11px/1 var(--mono); letter-spacing: 0.14em; text-transform: uppercase; color: var(--gold); }
-      @media (max-width: 880px) { .usecases-list .uc-row { grid-template-columns: 1fr; gap: 14px; padding: 32px 0; } .usecases-list .uc-num { font-size: 72px; } .usecases-list .uc-trigger { font-size: 26px; } }
-    </style>
-    <div class="usecases-paper">
-      <div class="uc-inner">
-        <div class="uc-eyebrow">Brief 03 · Three moments</div>
-        <h2>Three moments where <em>your word alone</em> is no longer enough.</h2>
-        <div class="usecases-list">
-          <div class="uc-row">
-            <div class="uc-num">01</div>
-            <div>
-              <div class="uc-trigger">Before you ship the next SKU.</div>
-              <div class="uc-meta">Launch</div>
-            </div>
-            <div>
-              <p class="uc-body">The mesh reads every claim on the page, grades it against real PubMed evidence, and surfaces every line a regulator could open the file on. You ship what holds up and rewrite what doesn't &mdash; <b>before</b> the rewrite has to happen on someone else's terms.</p>
-              <span class="uc-sign">→ Signed and ready for the agent index.</span>
-            </div>
-          </div>
-          <div class="uc-row">
-            <div class="uc-num">02</div>
-            <div>
-              <div class="uc-trigger">When Chewy asks for proof.</div>
-              <div class="uc-meta">Retailer</div>
-            </div>
-            <div>
-              <p class="uc-body">One link replaces the forty-page PDF. The retailer opens a signed record of every claim, every source paper, every check, all dated and timestamped &mdash; the same artifact an AI agent reads in milliseconds.</p>
-              <span class="uc-sign">→ Verifiable by Chewy. By Amazon. By any A2A client.</span>
-            </div>
-          </div>
-          <div class="uc-row">
-            <div class="uc-num">03</div>
-            <div>
-              <div class="uc-trigger">When a lawyer's letter arrives.</div>
-              <div class="uc-meta">Defense</div>
-            </div>
-            <div>
-              <p class="uc-body">Two years of dated, signed proof in one folder. Every claim audited, every source linked, the Ed25519 signature standing in for affidavit. In your attorney's inbox before lunch &mdash; the same hour the demand letter lands on your desk.</p>
-              <span class="uc-sign">→ Defensible the day a regulator or plaintiff asks.</span>
-            </div>
-          </div>
+    <div class="usecases">
+      <div class="usecases-head">
+        <div class="eyebrow">Use cases</div>
+        <h2>Three moments this is built for</h2>
+      </div>
+      <div class="usecases-grid">
+        <div class="usecase">
+          <div class="usecase-num">01 · Launch</div>
+          <p class="usecase-trigger">Before you ship a new product page</p>
+          <p class="usecase-body">The mesh reads every claim, checks it against real research, and flags anything regulators could question, so you ship what holds up and rewrite what doesn't</p>
+        </div>
+        <div class="usecase">
+          <div class="usecase-num">02 · Retailer</div>
+          <p class="usecase-trigger">When a retailer asks for proof</p>
+          <p class="usecase-body">You send one link that opens to a signed record of every claim, every source paper, every check, all dated and timestamped</p>
+        </div>
+        <div class="usecase">
+          <div class="usecase-num">03 · Legal</div>
+          <p class="usecase-trigger">When a lawyer threatens to sue</p>
+          <p class="usecase-body">Two years of dated proof in one folder, every claim audited, every source linked, in your attorney's inbox before lunch</p>
         </div>
       </div>
+
+      <!-- 2026-05-27: the $11.5M Cosequin cost band moved UP into the new Stakes
+           section (right after the hero), where it lands as the why-now instead
+           of repeating here. -->
     </div>
 
 
