@@ -2473,14 +2473,16 @@ html, body {
         </div>
         <div class="gem-thread">
           <div class="gem-thread-inner">
-            <div class="user-msg">PawConscious recommends Green Gruff EASE. Verify the claims.</div>
+            <div class="user-msg">Check Green Gruff EASE before I recommend it.</div>
             <div class="assistant-msg">
               <svg class="av" viewBox="0 0 24 24" fill="url(#gstarGrad)"><path d="M12 2 L14 10 L22 12 L14 14 L12 22 L10 14 L2 12 L10 10 Z"/></svg>
               <div class="body">
-                <!-- Path B (2026-05-24): verified-alternative beat. Runs AFTER the
-                     block scene. Same bento shell as before, repurposed for
-                     Green Gruff EASE evidence (real public COA + supporting
-                     PubMed evidence + qualified claim language). -->
+                <!-- Path B (2026-05-28 reframe per Option-3 handshake): the agent's job is
+                     not to find a 'yes'. It is to find the truth. Green Gruff EASE was
+                     framed here as 'verified' but the real captured bundle is FAIL
+                     (§255.1 substantiation issue + audit mismatch on one claim). The
+                     scene now shows the honest discrimination: the agent caught a
+                     claim-language problem before the user bought. -->
                 <div class="tool-use-card" id="toolUseCard">
                   <div class="tool-use-header">
                     <div class="tool-use-icon">
@@ -2525,16 +2527,16 @@ html, body {
                       <div class="judge-label">Gemini 2.5 Pro · prompt-only</div>
                       <div class="head"><div class="label">Vet rubric</div><div class="badge">5-vet simulation</div><span class="latency" data-ms="246">246ms</span></div>
                       <div class="body stream">
-                        <div class="vet-score">4<small>/ 5</small></div>
-                        <div class="vet-note">CBD dose matches canine OA studies. Language qualified, not promissory.</div>
+                        <div class="vet-score" style="color:#FFB446">2<small>/ 5</small></div>
+                        <div class="vet-note">CBD-for-OA evidence is real but thin. Marketing language ("Inflammatory Care") risks drug-claim interpretation.</div>
                       </div>
                     </div>
                     <div class="b-card b-ftc" data-stage="ftc">
                       <div class="judge-label">Vertex AI Search</div>
                       <div class="head"><div class="label">FTC §255 compliance</div><div class="badge">Vertex AI Search</div><span class="latency" data-ms="328">328ms</span></div>
                       <div class="body stream">
-                        <div class="ftc-result">No violation flags</div>
-                        <div class="ftc-rule">§255.1(a) truthful · §255.2 typical results disclosed</div>
+                        <div class="ftc-result" style="color:#FF5C35">§255.1 General · flagged</div>
+                        <div class="ftc-rule">Efficacy claim needs "competent and reliable scientific evidence" the bundle does not yet show.</div>
                       </div>
                     </div>
                     <div class="b-card b-sign" data-stage="sign">
@@ -2546,22 +2548,24 @@ html, body {
                     </div>
                   </div>
 
-                  <!-- When the verification completes, the bento collapses
-                       to this compact "Trust Report" summary. Keeps the
-                       chain anchor on-screen, hides the per-card detail. -->
-                  <div class="trust-report" id="trustReport">
+                  <!-- When the verification completes, the bento collapses to this
+                       compact "Trust Report" summary. Reframed 2026-05-28: the agent
+                       caught a §255.1 substantiation gap; the bundle is still signed
+                       (FAILs are signed too) so the brand can fix the language and
+                       re-verify. -->
+                  <div class="trust-report fail" id="trustReport">
                     <div class="tr-row">
-                      <div class="tr-seal">✓</div>
+                      <div class="tr-seal" style="background:#FF5C35;color:#0A0B0D">!</div>
                       <div class="tr-main">
-                        <div class="tr-title"><b>Verified.</b> Substantiated evidence · 0 FTC §255 flags</div>
-                        <a class="tr-anchor" href="/pcec/v0/chain/head" target="_blank" rel="noopener" title="Open the live chain head in a new tab">sha256:26ca807353b3e8242370f7843eace8e58a6781f2fc0131009a563c1d6ace9455</a>
+                        <div class="tr-title"><b style="color:#FF5C35">Not verified.</b> §255.1 General flag · claim language not substantiated</div>
+                        <a class="tr-anchor" href="/pcec/v0/chain/head" target="_blank" rel="noopener" title="Bundle is still signed - the FAIL is itself the proof. Open the live chain head.">sha256:26ca807353b3e8242370f7843eace8e58a6781f2fc0131009a563c1d6ace9455</a>
                       </div>
                     </div>
                   </div>
                 </div>
 
                 <div class="post-tool-row">
-                  <button class="advance-cta" id="goToRecommend">Continue to purchase <span class="arrow">→</span></button>
+                  <button class="advance-cta" id="goToRecommend">See what the brand needs to fix <span class="arrow">→</span></button>
                   <a class="show-block-link" href="/agents" target="_blank" rel="noopener" title="A2A v0.3 developer reference. Paste any product URL into the live curl example.">Open developer reference →</a>
                 </div>
               </div>
@@ -2923,7 +2927,7 @@ html, body {
         <div class="product-detail">
           <div class="product-hero">
             <img src="/assets/native-pet-hip-joint-alt-warm.png" alt="Green Gruff EASE Joint and Hip">
-            <div class="verified-stamp"><span class="seal">✓</span> Verified by PawConscious</div>
+            <div class="verified-stamp" style="background:rgba(255,180,70,0.12);color:#B86E00;border:1px solid rgba(184,110,0,0.35)"><span class="seal" style="background:#B86E00;color:#fff">!</span> Flagged by PawConscious · §255.1</div>
           </div>
           <div class="product-info">
             <div class="crumb">Joint health · Soft chews</div>
@@ -2964,13 +2968,13 @@ html, body {
           </div>
         </div>
         <div class="confirm-block">
-          <div class="check">✓</div>
-          <div class="confirm-title">You're all set.</div>
-          <div class="confirm-sub">Your dog's hip and joint chews are on the way.</div>
+          <div class="check" style="background:#B86E00">!</div>
+          <div class="confirm-title">Caught before purchase.</div>
+          <div class="confirm-sub">The agent recommends waiting until Green Gruff updates the substantiation for its §255.1-flagged claim.</div>
           <div class="pc-footer">
-            <span class="seal">✓</span>
+            <span class="seal" style="background:#B86E00;color:#fff">!</span>
             <div>
-              This purchase was <b>verified by PawConscious</b> for substantiated evidence and no FTC §255 concern flags at the time the AI recommended it.
+              <b>PawConscious flagged §255.1 General</b> on this product before purchase. The agent's job is to catch this. The brand can update its claim language and re-verify; the signed bundle is itself the proof of what was reviewed.
               <span class="anchor">sha256:26ca807353b3e8242370f7843eace8e58a6781f2fc0131009a563c1d6ace9455</span>
             </div>
           </div>
