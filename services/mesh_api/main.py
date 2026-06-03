@@ -1673,6 +1673,7 @@ _GLOBAL_NAV_TEMPLATE = """
       <a href="/agents" data-page="developers" {active_developers}>Developers</a>
       <a href="/architecture" data-page="architecture" {active_architecture}>Architecture</a>
       <a href="/demo" data-page="demo" {active_demo}>Demo</a>
+      <a href="/founder" data-page="founder" {active_founder}>Founder</a>
     </nav>
     <a class="pc-globalnav-github" href="https://github.com/odominguez7/PawConscious-Mesh-GFS" target="_blank" rel="noopener">GitHub ↗</a>
   </div>
@@ -1722,13 +1723,14 @@ _GLOBAL_FOOTER_HTML = """
 def _global_nav(active: str) -> str:
     """Render the global nav with the active page link styled.
 
-    `active` is one of: product · developers · architecture · demo.
+    `active` is one of: product · developers · architecture · demo · founder.
     """
     flags = {
         "active_product": "",
         "active_developers": "",
         "active_architecture": "",
         "active_demo": "",
+        "active_founder": "",
     }
     key = f"active_{active}"
     if key in flags:
@@ -1787,6 +1789,15 @@ async def agents_page() -> HTMLResponse:
     pitch surface judges land on when they click `Agents` in primary nav.
     """
     return HTMLResponse(content=_render_page("agents.html", active="developers"))
+
+
+@app.get("/founder", response_class=HTMLResponse)
+async def founder_page() -> HTMLResponse:
+    """Founder surface. Leads with Omar (Founder & CEO), the why-I-built-this
+    letter, evidence links (taste rule #4), and the two-cofounder team credit
+    kept coherent with the global footer and the investor deck.
+    """
+    return HTMLResponse(content=_render_page("founder.html", active="founder"))
 
 
 @app.get("/architecture", response_class=HTMLResponse)
