@@ -1,6 +1,6 @@
 """Provision Vertex AI Search data store + ingest regulator corpus from GCS.
 
-Per codex G13 Phase 8: "smallest credible corpus = FTC §255 text + 3-5 AAFCO public docs"
+Smallest credible corpus: FTC §255 text + 3-5 AAFCO public docs.
 We ingest 7 docs (5 FTC §255 sections + AAFCO PF7 + NASC public).
 
 After this script runs, the compliance agent can use Vertex AI Search as a

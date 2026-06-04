@@ -1,4 +1,4 @@
-"""Orchestrator (ParallelAgent fan-out + SequentialAgent merge per PLAN.md §2).
+"""Orchestrator (ParallelAgent fan-out + SequentialAgent merge).
 
 End-to-end mesh pipeline:
 1. claim-extractor pulls all claims from a product URL
@@ -6,11 +6,11 @@ End-to-end mesh pipeline:
 3. auditor reviews the merged evidence per claim
 4. Returns full EndorsementClaimBundle (PCEC v0.1 shape)
 
-For Phase 3 we use asyncio.gather as the parallel primitive (deterministic, works
+We use asyncio.gather as the parallel primitive (deterministic, works
 without Agent Engine deployment). ADK ParallelAgent + SequentialAgent wrappers are
-declared for the public API surface in services/mesh_api/ (Phase 4).
+declared for the public API surface in services/mesh_api/.
 
-Per codex G9 #6: retry/timeout via shared.llm_retry; deterministic sampling
+Retry/timeout via shared.llm_retry; deterministic sampling
 (temperature 0) already enforced in each agent module.
 """
 from __future__ import annotations
@@ -158,9 +158,9 @@ _ORCHESTRATOR_ADK_TOPOLOGY: Optional[SequentialAgent] = None
 def build_orchestrator_adk_topology() -> SequentialAgent:
     """Construct (or return the cached) ADK SequentialAgent representing the mesh.
 
-    Day 21 scope: 4/7 agents on ADK — claim_extractor, evidence_grader,
+    4/7 agents run on ADK: claim_extractor, evidence_grader,
     compliance, and auditor. vet_rubric + report_writer + second_opinion stay
-    direct genai per locked Day-19 decision.
+    on direct genai.
 
     Topology shape:
       acp_orchestrator (SequentialAgent)
@@ -184,7 +184,7 @@ def build_orchestrator_adk_topology() -> SequentialAgent:
             description=(
                 "Mesh orchestrator: claim extraction → per-claim ParallelAgent "
                 "fan-out (evidence + compliance) → SequentialAgent auditor pass. "
-                "4/7 agents on ADK per locked Day-19 decision."
+                "4/7 agents on ADK."
             ),
             sub_agents=[
                 claim_extractor_adk,
@@ -267,7 +267,7 @@ def _adk_version() -> str:
 
 
 async def main() -> None:
-    """Phase 3 verification: full mesh against real Native Pet PDP, top 5 claims for speed."""
+    """Verification: full mesh against real Native Pet PDP, top 5 claims for speed."""
     url = "https://www.nativepet.com/products/hip-joint"
     bundle = await run_mesh(url, max_claims=5)
     print(summarize(bundle))

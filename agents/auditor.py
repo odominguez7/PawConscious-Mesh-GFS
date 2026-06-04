@@ -1,4 +1,4 @@
-"""Auditor Agent — DIRECTION-ONLY FALSIFIER (v0) per PLAN.md §2 + codex G7.3 P1.6 + G10 #5 + G11 #7.
+"""Auditor Agent — DIRECTION-ONLY FALSIFIER (v0).
 
 Labeled v0 EVERYWHERE in outputs so judges understand this is the simple consistency
 check, not full ADK Eval (which requires datasets not available in 18 days). Two
@@ -9,7 +9,7 @@ challenges:
    to the claim's direction.
 
 Cherry-pick detection + sample-size adequacy + statistical-significance check =
-post-hackathon (codex G7.3).
+post-hackathon.
 
 Model: gemini-2.5-flash (cheaper + faster for adversarial pass).
 """
@@ -120,7 +120,7 @@ async def audit_bundle(bundle: EvidenceBundle) -> AuditVerdict:
     if verdict not in {"PASS", "FAIL", "CONDITIONAL"}:
         verdict = "CONDITIONAL"
 
-    # Per codex G10 #5 + G11 #7 — explicit v0 label in challenges_run and verdict
+    # Explicit v0 label in challenges_run and verdict
     # so demo + judges see the scope of the auditor v0 (direction-only, not cherry-pick)
     challenges = list(payload.get("challenges_run", ["citation_existence", "claim_direction_match"]))
     if "direction_only_falsifier_v0" not in challenges:
@@ -165,7 +165,7 @@ auditor_adk = LlmAgent(
     name="acp_auditor",
     description=(
         "Direction-only falsifier v0: validates PMID format + claim-direction "
-        "consistency on EvidenceBundle. On ADK per locked Day-19 decision."
+        "consistency on EvidenceBundle. Runs on ADK."
     ),
     model="gemini-2.5-flash",
     instruction=AUDITOR_ADK_INSTRUCTION,
@@ -174,7 +174,7 @@ auditor_adk = LlmAgent(
 
 
 async def main() -> None:
-    """Phase 3 verification: audit a synthetic bundle and a real evidence-grader output."""
+    """Verification: audit a synthetic bundle and a real evidence-grader output."""
     # Test 1: clean bundle
     clean = EvidenceBundle(
         claim=Claim(text="Supports joint mobility", kind=ClaimKind.EFFICACY),

@@ -1,4 +1,4 @@
-"""Fast-path Phase B verification — codex amendment A-codex-5.
+"""Fast-path verification.
 
 Renders the Agent 6 prompt against a JFFD-shaped fixture bundle and runs
 a single Gemini 2.5 Pro call to verify the new prompt produces honest
@@ -15,7 +15,7 @@ Requires:
 Output:
     1. Cert HTML pretty-printed to stdout for human review
     2. Honesty regex sweep — fails if any FORBIDDEN_PHRASES appear
-    3. Semantic-diff contract (A-codex-6) — fails if required structure missing
+    3. Semantic-diff contract — fails if required structure missing
 """
 from __future__ import annotations
 
@@ -42,10 +42,10 @@ def test_agent6_prompt_against_jffd_fixture() -> None:
     """Render the prompt + call Gemini + grep output. ~30s round trip.
 
     Gated behind env flag so default `pytest` runs DON'T fire this test
-    on dev machines with ADC available (codex B.5 P2). Opt in explicitly:
+    on dev machines with ADC available. Opt in explicitly:
         AGENT6_FIXTURE_LIVE=1 python -m pytest tests/test_cert_prompt_fixture.py
     """
-    # Explicit opt-in via env var; codex flagged that mark-only gating
+    # Explicit opt-in via env var; mark-only gating
     # doesn't actually prevent default-pytest execution.
     if not os.environ.get("AGENT6_FIXTURE_LIVE"):
         pytest.skip("AGENT6_FIXTURE_LIVE not set — fast-path Gemini call gated to opt-in")
@@ -125,7 +125,7 @@ def test_agent6_prompt_against_jffd_fixture() -> None:
         "\n".join(f"  · {p!r} at {i}: ...{s}..." for p, i, s in violations)
     )
 
-    # 2. Semantic-diff contract (A-codex-6) — required structural elements
+    # 2. Semantic-diff contract — required structural elements
     # Gemini may add inline style/attrs to the wrapper div; check for the class
     # via regex rather than exact string match.
     required_regex = [

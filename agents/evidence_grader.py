@@ -1,12 +1,12 @@
-"""Evidence Grader Agent (PRODUCTION-quality per declared depth in PLAN.md §2).
+"""Evidence Grader Agent (PRODUCTION-quality).
 
 Takes a Claim and returns an EvidenceBundle: real PubMed papers retrieved via
 BioMCP, graded by relevance, then enriched with citation influence via
 `agents.citation_enricher` (Semantic Scholar Graph API batch).
 
-Per codex G7 P0.2: dual path is documented (BioMCP + Vertex AI Search over
-PubMed-in-BigQuery). Phase 2 implements the BioMCP path; the Vertex AI Search
-path is a Phase 5 corpus-ingest follow-up.
+A dual path is documented (BioMCP + Vertex AI Search over PubMed-in-BigQuery).
+This implements the BioMCP path; the Vertex AI Search path is a corpus-ingest
+follow-up.
 
 Model: gemini-2.5-pro for grading reasoning.
 """
@@ -228,7 +228,7 @@ async def search_pubmed_for_adk(
     receives in the asyncio runtime path. The downstream LlmAgent parses the
     text for PMIDs + titles + abstracts.
 
-    Codex Day-20 P2: BioMCP's `search_articles` does NOT return JSON, it returns
+    Note: BioMCP's `search_articles` does NOT return JSON, it returns
     markdown text. The prior implementation called `json.loads` which would
     raise JSONDecodeError as soon as an LlmAgent invoked this tool.
     """
@@ -265,7 +265,7 @@ evidence_grader_adk = LlmAgent(
     description=(
         "Grades a Claim against PubMed evidence via BioMCP. Returns an "
         "EvidenceBundle with PMIDs, relevance scores, direction-of-support, "
-        "and notes. On ADK per locked Day-19 decision."
+        "and notes. Runs on ADK."
     ),
     model="gemini-2.5-pro",
     instruction=EVIDENCE_GRADER_ADK_INSTRUCTION,
@@ -275,7 +275,7 @@ evidence_grader_adk = LlmAgent(
 
 
 async def main() -> None:
-    """Phase 2 verification: grade a real Native Pet claim end-to-end."""
+    """Verification: grade a real Native Pet claim end-to-end."""
     test_claim = Claim(
         text="Supports joint health and mobility",
         kind=ClaimKind.EFFICACY,

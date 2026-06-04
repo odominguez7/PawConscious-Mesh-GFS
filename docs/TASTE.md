@@ -2,7 +2,7 @@
 
 **Source:** Sarah Tavel, ["Taste"](https://saranormous.substack.com/p/taste). **Authored:** 2026-05-21. **Status:** v0. Every rule below has been earned in a shipped commit, not asserted.
 
-Taste, in Tavel's framing, is *"the relentless, almost painful ability to know what should exist, what shouldn't, and where quality matters."* It compounds. Features can be copied; the feeling of using something built with intention cannot. This document encodes our point of view so every future move tests against it.
+Taste, in Tavel's framing, is *"the relentless, almost painful ability to know what should exist, what shouldn't, and where quality matters."* It compounds. Features can be copied; the feeling of using something built with intention cannot. This document encodes our point of view so every future change tests against it.
 
 These rules apply to PawConscious Mesh code, copy, visual surfaces, demo, and any external surface a judge or buyer will encounter.
 
@@ -24,7 +24,7 @@ We say the orchestrator is `asyncio.gather`. We say 4-of-7 on ADK, not 7-of-7. W
 
 ### 3. One primary CTA per page.
 
-Product (`/`) = Verify your product. Developers (`/agents`) = Submit A2A task. Architecture (`/architecture`) = View a signed bundle in action. Demo (`/demo/shopper`) = Ask. No competing buttons. Day 22 U6 was this rule made code.
+Product (`/`) = Verify your product. Developers (`/agents`) = Submit A2A task. Architecture (`/architecture`) = View a signed bundle in action. Demo (`/demo/shopper`) = Ask. No competing buttons. The U6 pass was this rule made code.
 
 **Why:** Tavel: coherence over completeness. A page with three primary buttons has none.
 
@@ -34,11 +34,11 @@ Product (`/`) = Verify your product. Developers (`/agents`) = Submit A2A task. A
 
 **Why:** Tavel: *"respect your audience's intelligence."* A judge with three minutes does not read; they click.
 
-### 5. Codex handshake before next move.
+### 5. Adversarial review before the next change.
 
-Every Move clears codex before the next Move starts. P0 / P1 blocks. P2 / P3 absorbs or argues. The handshake is on the diff that exists, not on the diff that is promised. Memory and reviews lag the code; only the diff itself is reviewable.
+Every change clears an adversarial review before the next one starts. Blocking findings must be resolved; lower-severity findings are absorbed or argued. The review is on the diff that exists, not the diff that is promised. Memory and reviews lag the code; only the diff itself is reviewable.
 
-**Why:** Tavel: *"track delight debt alongside technical debt."* Codex catches both. This is also our highest-leverage discipline. Eight rounds of adversarial reviews drove the 4/7 ADK split, the timeout absorption, the chain_anchor_status field, the BioMCP json-parse fix, the verifiability blanket-claim trim.
+**Why:** Tavel: *"track delight debt alongside technical debt."* Adversarial review catches both. This is also our highest-leverage discipline. Eight rounds of adversarial reviews drove the 4/7 ADK split, the timeout absorption, the chain_anchor_status field, the BioMCP json-parse fix, the verifiability blanket-claim trim.
 
 ### 6. Dogfood the demo before a judge does.
 
@@ -60,7 +60,7 @@ We don't hide the calls. The A2A traffic feed, the bundle hash, the chain anchor
 
 ### 9. Same vocabulary across every surface.
 
-ADK 4/7. asyncio.gather runtime. A2A v0.3 at the edge. PCEC v0.1 spec. did:web Ed25519. If `/`, `/agents`, `/architecture`, `/demo/shopper`, README, and Devpost disagree on a number or a name, we fix all of them in one commit. The R5 honest-language pass (Day 22) was this rule applied retroactively. We don't do it twice.
+ADK 4/7. asyncio.gather runtime. A2A v0.3 at the edge. PCEC v0.1 spec. did:web Ed25519. If `/`, `/agents`, `/architecture`, `/demo/shopper`, README, and Devpost disagree on a number or a name, we fix all of them in one commit. The R5 honest-language pass was this rule applied retroactively. We don't do it twice.
 
 **Why:** Tavel: *"coherence compounds."* Inconsistency reads as carelessness even when it's just stale state.
 
@@ -78,7 +78,7 @@ A judge has roughly three minutes per project. We do not bury the demo key in pa
 
 ### 12. When in doubt, remove before adding.
 
-Day 20 collapsed 9 sections to 5 on `/` (U4). Day 28 compressed the Devpost copy from 2,462 words to 1,115. The "On the word mesh" paragraph kills a hype framing before it leaves us. Day 24 moved 10 internal planning docs out of the repo root into `docs/internal/`. Subtraction is taste.
+The U4 pass collapsed 9 sections to 5 on `/`. A later pass compressed the Devpost copy from 2,462 words to 1,115. The "On the word mesh" paragraph kills a hype framing before it leaves us. Another pass moved 10 internal planning docs out of the repo root into `docs/internal/`. Subtraction is taste.
 
 **Why:** Tavel: *"real taste is saying no to features that would triple your TAM."* Saying yes is the cheap mode of operation.
 
@@ -92,7 +92,7 @@ When a new feature or surface is proposed, run the rules in this order:
 2. **Honesty first.** Rule #2. Then internal review against #4 (every claim points at evidence).
 3. **Coherence audit.** Rule #9. Does this new word, number, or pattern match every other surface that says the same thing? If no, fix all of them together.
 4. **Subtraction pass.** Rule #12. Can this surface lose 25% of its words / sections / buttons and still hit the same point?
-5. **Codex handshake.** Rule #5. Adversarial review before push.
+5. **Adversarial review.** Rule #5. Adversarial review before push.
 6. **Dogfood pass.** Rule #6. Run it ourselves end-to-end with the canonical SKU.
 
 If any step fails, back to step 1 with a sharper brief.
@@ -101,6 +101,6 @@ If any step fails, back to step 1 with a sharper brief.
 
 ## Where this lives
 
-This document is referenced from [`CLAUDE.md`](../CLAUDE.md) so every future agent assist (Claude, codex, OpenClaw) reads it on session start. New rules land here only after they have been earned on a shipped Move. Rules that turn out to be wrong get edited, not deleted; the original is preserved as a strikethrough so the history of judgment is legible.
+This document is referenced from the repo guidelines so every contributor reads it. New rules land here only after they have been earned on a shipped change. Rules that turn out to be wrong get edited, not deleted; the original is preserved as a strikethrough so the history of judgment is legible.
 
 Tavel's closing line is the standing brief: *"the feeling of using something crafted with intention, that's irreplaceable."* Everything in this repo is held to that.

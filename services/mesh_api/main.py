@@ -2,17 +2,16 @@
 
 FastAPI service exposing:
 - GET  /.well-known/agent-card.json — A2A v0.3 agent card (public discovery)
-- GET  /.well-known/did.json — DID doc for did:web:pawconscious.com (codex G10 #6)
-- POST /a2a/v1/tasks/send — A2A protocol task endpoint (API-key gated per G7.3)
+- GET  /.well-known/did.json — DID doc for did:web:pawconscious.com
+- POST /a2a/v1/tasks/send — A2A protocol task endpoint (API-key gated)
 - GET  /pcec/v0/claim/{urn} — PCEC v0.1 resolver
 - GET  /health — Cloud Run health probe
 
-Demo API key gating per codex G7.3 P1.7 + G10 #4 — hackathon period only.
+Demo API key gating — hackathon period only.
 Public open access ships post-hackathon once abuse controls validated.
 
-Per codex G10 #6 + #7: per-bundle hash + signature verification baked into
-demo output; tamper-evident transparency log via hash chaining on Firestore (deferred
-to Phase 5 deploy).
+Per-bundle hash + signature verification is baked into the demo output;
+tamper-evident transparency log via hash chaining on Firestore.
 """
 from __future__ import annotations
 
@@ -46,9 +45,9 @@ from shared.transparency_log import (
 )
 from shared.llm_retry import agenerate
 
-# G19 #6 amendment: idempotency cache for /a2a/v1/tasks/send.
+# Idempotency cache for /a2a/v1/tasks/send.
 # Maps Idempotency-Key -> task_id so client retries return the same task.
-# In-process for v0.1 (Cloud Run min=max=1); Phase 5.6 promotes to Firestore.
+# In-process for v0.1 (Cloud Run min=max=1); promotes to Firestore for scale-out.
 _idempotency_cache: dict[str, str] = {}
 _idempotency_lock = asyncio.Lock()
 
@@ -89,7 +88,7 @@ DEFAULT_MAX_CLAIMS = int(os.environ.get("ACP_DEFAULT_MAX_CLAIMS", "3"))
 
 # Real Ed25519 public key — generated 2026-05-18, private in GCP Secret Manager
 # acp-bundle-signer-ed25519 (project pawconscious-mesh-2026)
-# Per codex G11 P0.3 — no placeholder
+# Real key, no placeholder.
 SIGNER_PUBLIC_KEY_MULTIBASE = "z6MkfYpcbqZEdKKKg6qdNb3kpa1z5kTE27XaujSdp56CoBkZ"
 SIGNER_PUBLIC_KEY_HEX = "10486ac1a48c4f6731e36115b0e4e3fe5b92a587c88c7ede9677bf4feaab48c6"
 SIGNER_DID = f"{PUBLIC_DID}#owner"
@@ -217,12 +216,12 @@ _ACP_AGENT_ENGINE_P95_GATE = float(os.environ.get("ACP_AGENT_ENGINE_P95_GATE", "
 _ACP_AGENT_ENGINE_MIN_SAMPLES = int(os.environ.get("ACP_AGENT_ENGINE_MIN_SAMPLES", "5"))
 _ACP_LATENCY_WINDOW_SIZE = int(os.environ.get("ACP_LATENCY_WINDOW_SIZE", "20"))
 _AGENT_ENGINE_CONSEC_FAIL_LIMIT = 3
-# Codex Day-19 P2 amendment: when flag starts ON, no inline samples ever accrue
+# When the flag starts ON, no inline samples ever accrue
 # so the p95 gate can only close via consecutive failures. Set a documented
 # baseline (ms) and the gate falls back to it when the live inline window is empty.
 # Default 90000ms (90s) matches observed inline p95 from L1 eval; override per env.
 _ACP_INLINE_P95_BASELINE_MS = float(os.environ.get("ACP_INLINE_P95_BASELINE_MS", "90000"))
-# Codex Day-19 amend pass: hung engine.query() leaves the task stuck in `working`,
+# A hung engine.query() leaves the task stuck in `working`,
 # no latency sample lands, and the p95 gate can never close → no fallback to inline.
 # Hard upper bound per request. Default 180s = 3x typical p95 observed in L1 eval.
 # Treat asyncio.TimeoutError as a failure: records latency = timeout value, falls
@@ -276,7 +275,7 @@ async def _route_verify_path() -> str:
 
 
 async def _route_verify_path_snapshot() -> tuple[str, bool, str]:
-    """Section 6 (codex P1): atomic snapshot of (path, gate_open, gate_reason)
+    """Atomic snapshot of (path, gate_open, gate_reason)
     under a single lock acquisition. Use this when logging the routing
     decision so the snapshot can't drift between the read and the log emit
     under concurrent traffic."""
@@ -334,7 +333,7 @@ async def _run_mesh_via_agent_engine(product_url: str, max_claims: int) -> Endor
     rebuild EndorsementClaimBundle from the returned JSON so the caller can
     hash + sign + log identically to the inline path.
 
-    Codex Day-19 amend pass: wrap the query in asyncio.wait_for so a stalled
+    Wrap the query in asyncio.wait_for so a stalled
     Vertex AI backend can't strand the background task in `working` indefinitely.
     On timeout, asyncio.TimeoutError raises out and the caller's existing
     `except Exception` records the failure + falls through to inline.
@@ -481,7 +480,7 @@ async def health() -> dict[str, Any]:
 
 @app.get("/health/agent-engine")
 async def health_agent_engine() -> dict[str, Any]:
-    """Codex G18 amendment — judges can verify Agent Engine deployment exists
+    """Lets judges verify the Agent Engine deployment exists
     without needing Vertex AI console credentials.
 
     R2 update: also surfaces traffic gate state so judges can see whether the
@@ -551,8 +550,8 @@ async def health_agent_engine_traffic() -> dict[str, Any]:
             "gate auto-closes and subsequent requests fall back to inline. Three consecutive "
             "Agent Engine failures also close the gate. Each engine.query() call has a "
             "hard timeout (ACP_AGENT_ENGINE_QUERY_TIMEOUT_S, default 180s); a timeout is "
-            "treated as a failure so the gate logic + fallback path still fire. Codex "
-            "Day-19 P2: when the flag starts ON and no live inline samples exist, the "
+            "treated as a failure so the gate logic + fallback path still fire. "
+            "When the flag starts ON and no live inline samples exist, the "
             "gate compares against ACP_INLINE_P95_BASELINE_MS instead so the latency gate still fires."
         ),
     }
@@ -565,7 +564,7 @@ async def health_vertex_search() -> dict[str, Any]:
 
     Returns the data store path, sources count, and a sample retrieval against
     a canonical claim. If the corpus is missing or empty, this endpoint surfaces
-    that fact rather than silently swallowing the failure (per N3 amendment).
+    that fact rather than silently swallowing the failure.
     """
     try:
         from agents.compliance import (
@@ -641,7 +640,7 @@ async def agent_card() -> dict[str, Any]:
 
 @app.get("/.well-known/did.json")
 async def did_doc() -> dict[str, Any]:
-    """DID document for did:web:pawconscious.com (codex G10 #6)."""
+    """DID document for did:web:pawconscious.com."""
     return DID_DOC
 
 
@@ -663,7 +662,7 @@ class A2AMessage(BaseModel):
 
 
 class A2ATaskRequest(BaseModel):
-    """A2A v0.3 task envelope — dual-shape acceptance (B4 amendment 2026-05-21).
+    """A2A v0.3 task envelope — dual-shape acceptance.
 
     Accepts BOTH:
     - Flat shape (PawConscious proprietary, also documented in agent card):
@@ -717,7 +716,7 @@ class A2ATaskRequest(BaseModel):
             skill = "verify_claim"
         # Resolve URL or URN — flat input wins; fall back to parts[*] extraction.
         # For fetch_substantiation_bundle the "url" slot carries the URN.
-        # Codex Day 18 P1: URN-shaped values are only accepted when the resolved
+        # URN-shaped values are only accepted when the resolved
         # skill is fetch_substantiation_bundle; for verify_claim we require a real
         # URL so a misrouted URN cannot reach the downstream fetcher.
         url = None
@@ -790,7 +789,7 @@ class A2ATaskRequest(BaseModel):
 class A2ASubmittedResponse(BaseModel):
     """202 Accepted response per A2A v0.3 async task lifecycle.
 
-    G19 #4 amendment: include head_anchor_at_submit so the client can later
+    Includes head_anchor_at_submit so the client can later
     verify chain continuity without a second round trip.
     """
     task_id: str
@@ -834,7 +833,7 @@ A2ATaskStatusResponse.model_rebuild()
 
 
 def compute_bundle_hash(bundle: EndorsementClaimBundle) -> str:
-    """Per codex G10 #7 — per-bundle hash for integrity verification.
+    """Per-bundle hash for integrity verification.
 
     Hashes the transport-stable canonical bytes (shared.canonical_bundle_bytes)
     so an external verifier can reproduce this hash from the served bundle."""
@@ -868,7 +867,7 @@ def _load_signer() -> Optional[Ed25519PrivateKey]:
 
 
 def sign_bundle(bundle: EndorsementClaimBundle) -> str:
-    """Real Ed25519 signature over the canonical bundle JSON (codex G11 P0.4)."""
+    """Real Ed25519 signature over the canonical bundle JSON."""
     signer = _load_signer()
     if signer is None:
         return f"unsigned (no signer available); bundle_hash={compute_bundle_hash(bundle)}"
@@ -881,7 +880,7 @@ def sign_bundle(bundle: EndorsementClaimBundle) -> str:
 async def _run_verify_claim_background(task_id: str, product_url: str, max_claims: int) -> None:
     """Background worker per A2A v0.3 async lifecycle: submitted → working → completed/failed.
 
-    On success, appends the signed bundle to the Firestore transparency log (Phase 11)
+    On success, appends the signed bundle to the Firestore transparency log
     so /pcec/v0/claim/{urn} can resolve it.
 
     R2: when ACP_USE_AGENT_ENGINE=true AND the p95 gate is open, the mesh runs via
@@ -889,12 +888,12 @@ async def _run_verify_claim_background(task_id: str, product_url: str, max_claim
     Latency per path is recorded; if Agent Engine p95 > N x inline p95, gate auto-closes.
     """
     try:
-        # Section 6 — bind task_id to the contextvar so every agent_span
+        # Bind task_id to the contextvar so every agent_span
         # emitted downstream picks it up for correlation in Cloud Logging.
         from shared.telemetry import log_route_decision, set_task_id
         set_task_id(task_id)
         # Atomic snapshot of routing decision + gate state under one lock
-        # (codex P1: prevents drift between read and log emit).
+        # (prevents drift between read and log emit).
         path, gate_open_snap, gate_reason_snap = await _route_verify_path_snapshot()
         log_route_decision(
             path,
@@ -1019,7 +1018,7 @@ async def a2a_send(
 ) -> A2ASubmittedResponse:
     """A2A v0.3 async task entry. Returns 202 with task_id; client polls /tasks/get/{id}.
 
-    G19 amendments:
+    Reliability guarantees:
     - Idempotency-Key header: client retries with the same key return the same task_id
       (prevents duplicate appends to the transparency log on transient network errors).
     - head_anchor_at_submit: current chain head returned so the client can verify the
@@ -1106,7 +1105,7 @@ async def a2a_send(
         )
     max_claims = int(resolved_input.get("max_claims", DEFAULT_MAX_CLAIMS))
 
-    # G19 #6: idempotency replay — same Idempotency-Key returns the same task.
+    # Idempotency replay — same Idempotency-Key returns the same task.
     if idempotency_key:
         async with _idempotency_lock:
             existing_task_id = _idempotency_cache.get(idempotency_key)
@@ -1147,7 +1146,7 @@ async def a2a_send(
     # Fire-and-forget background processing per A2A v0.3 async spec
     asyncio.create_task(_run_verify_claim_guarded(state.task_id, product_url, max_claims))
 
-    # G19 #4: return chain head at submit time
+    # Return chain head at submit time
     head_anchor = await get_head_anchor_async()
 
     return A2ASubmittedResponse(
@@ -1189,7 +1188,7 @@ async def a2a_cancel(task_id: str) -> JSONResponse:
     """Cancel a submitted/working task per A2A v0.3 lifecycle.
 
     v0.1 doesn't actually halt the underlying asyncio task (best-effort marker only);
-    Phase 5.6 wires real cancellation via asyncio.CancelledError + task tracking.
+    a future revision wires real cancellation via asyncio.CancelledError + task tracking.
     """
     state = await task_store.get(task_id)
     if state is None:
@@ -1204,12 +1203,12 @@ async def a2a_cancel(task_id: str) -> JSONResponse:
 
 
 # ---------------------------------------------------------------------------
-# PCEC v0 resolver (stub — real implementation in Phase 5 with Firestore)
+# PCEC v0 resolver (Firestore-backed transparency log lookup)
 # ---------------------------------------------------------------------------
 
 @app.get("/pcec/v0/claim/{urn}")
 async def resolve_claim(urn: str) -> JSONResponse:
-    """PCEC v0.1 resolver — Phase 11 transparency log lookup.
+    """PCEC v0.1 resolver — transparency log lookup.
 
     The Firestore-backed `acp-claims` collection stores every signed bundle on issuance.
     GET returns the full PCEC bundle + signature + chain_anchor for verification.
@@ -1619,7 +1618,7 @@ async def a2a_lookup(url: str) -> JSONResponse:
 
 @app.get("/pcec/v0/chain/head")
 async def chain_head() -> dict[str, Any]:
-    """Latest chain anchor for the transparency log (Phase 11 tamper evidence)."""
+    """Latest chain anchor for the transparency log (tamper evidence)."""
     head = await get_head_anchor_async()
     return {
         "current_chain_anchor": head,
@@ -1794,8 +1793,8 @@ async def agents_page() -> HTMLResponse:
 @app.get("/founder", response_class=HTMLResponse)
 async def founder_page() -> HTMLResponse:
     """Founder surface. Leads with Omar (Founder & CEO), the why-I-built-this
-    letter, evidence links (taste rule #4), and the two-cofounder team credit
-    kept coherent with the global footer and the investor deck.
+    letter, and evidence links (taste rule #4), kept coherent with the global
+    footer and the investor deck.
     """
     return HTMLResponse(content=_render_page("founder.html", active="founder"))
 
@@ -1979,7 +1978,7 @@ async def architecture() -> HTMLResponse:
     The orchestrator fans them out per claim via <code style="color:var(--electric); font-family:'JetBrains Mono', monospace; font-size: 12px;">asyncio.gather</code> for deterministic latency. ADK <code style="color:var(--electric); font-family:'JetBrains Mono', monospace; font-size: 12px;">ParallelAgent</code> + <code style="color:var(--electric); font-family:'JetBrains Mono', monospace; font-size: 12px;">SequentialAgent</code> wrappers are the declared topology shape, with feature-flagged migration to Vertex AI Agent Engine Runtime (<a href="/health/agent-engine" style="color:var(--electric);">verify</a>).
   </p>
 
-  <!-- Section 3 (codex 2026-05-22) — Track 3 Mandate Map. Every required
+  <!-- Section 3 — Track 3 Mandate Map. Every required
        mandate plus the bonus signals the rubric emphasizes, mapped to the
        component that ships it and the live URL a judge can click. -->
   <section class="mandate-map" id="mandate-map">

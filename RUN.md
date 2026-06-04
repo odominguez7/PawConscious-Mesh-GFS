@@ -1,6 +1,6 @@
 # Run PawConscious Mesh in 3 commands
 
-Judge-ready reproducibility per codex G9 #7.
+Judge-ready reproducibility.
 
 ## Prerequisites
 
@@ -73,22 +73,22 @@ Returned 4 graded papers:
 - **Evidence grader** uses Gemini to extract PubMed-suitable search terms, queries PubMed via BioMCP (10k+ char real markdown response with real PMIDs), then uses Gemini again to grade each result's relevance to the claim and whether it supports the claim direction.
 - Both agents return Pydantic-validated objects per the PCEC v0.1 schema in `shared/pcec_schema.py`.
 
-## What's NOT in this command set (build pipeline)
+## What's NOT in this command set
 
-- The 3 thin agents (vet-panel, compliance, auditor) — Phase 3, in progress
-- The orchestrator (ParallelAgent fan-out + SequentialAgent merge) — Phase 3
-- The public A2A v0.3 agent card endpoint — Phase 4
-- The ShopperAgent external consumer — Phase 4
-- Cloud Run deployment + public hosted URL — Phase 5
+These commands verify the two core agents end to end. The rest of the mesh runs in the hosted deployment:
 
-See `PLAN.md` for the full 18-day build.
+- The 3 thin agents (vet-panel, compliance, auditor)
+- The orchestrator (ParallelAgent fan-out + SequentialAgent merge)
+- The public A2A v0.3 agent card endpoint
+- The ShopperAgent external consumer
+- Cloud Run deployment + public hosted URL
 
 ## Known limitations (honest)
 
-- **MCP protocol layer:** v0.1 calls BioMCP via direct Python lib import (the `biomcp-python` package). Per codex G9 P0, full MCP protocol compliance requires running `biomcp serve` and calling via MCP client. Phase 2.5 refactor scheduled.
-- **AI2 Asta citation grading:** deferred to Phase 2.5 (cite-count + influential-cite-count currently 0/0).
-- **Vet attestation + signing:** Phase 3-4.
-- **Continuous monitoring + cert TTL:** Phase 4-5.
+- **MCP protocol layer:** v0.1 calls BioMCP via direct Python lib import (the `biomcp-python` package). Full MCP protocol compliance requires running `biomcp serve` and calling via MCP client; this is on the roadmap.
+- **AI2 Asta citation grading:** on the roadmap (cite-count + influential-cite-count currently 0/0).
+- **Vet attestation + signing:** on the roadmap.
+- **Continuous monitoring + cert TTL:** on the roadmap.
 
 ## Cost expectations
 

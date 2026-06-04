@@ -1,9 +1,9 @@
-"""Claim Extractor Agent (PRODUCTION-quality per declared depth in PLAN.md §2).
+"""Claim Extractor Agent (PRODUCTION-quality).
 
 Takes a product detail page URL, fetches the page, and extracts every health/efficacy
 claim using Gemini reasoning. Returns a structured list of Claim objects per PCEC v0.1.
 
-Per codex G8 Phase 2 blocking risk: PDP fetch may be blocked by anti-bot. Simple
+PDP fetch may be blocked by anti-bot. Simple
 httpx + BeautifulSoup primary path; fall back documented in docs/agents/claim-extractor.md.
 
 Model: gemini-2.5-pro (GA). Upgrade path to gemini-3-pro on Vertex AI GA.
@@ -142,7 +142,7 @@ async def fetch_pdp_html(url: str) -> str:
     2. Firecrawl fallback on 4xx/5xx (residential proxies + headless, handles
        Akamai/Cloudflare/PerimeterX anti-bot on retailers like Chewy/Petco)
 
-    Per codex G7 P0.7 + G14 economics: Firecrawl is the bridge to brand-push
+    Firecrawl is the bridge to brand-push
     architecture (Shopify App / PIM integrations). Never the long-term primary.
     """
     headers = {
@@ -239,7 +239,7 @@ def build_claim_extractor_agent() -> LlmAgent:
         model="gemini-2.5-pro",
         description=(
             "Extracts every health/efficacy claim from a pet supplement product detail page. "
-            "Production-quality agent per PLAN.md §2. Returns structured PCEC Claim objects."
+            "Production-quality agent. Returns structured PCEC Claim objects."
         ),
         instruction=(
             "When called with a product URL, use the fetch_pdp_html tool to retrieve the page text. "
@@ -253,7 +253,7 @@ def build_claim_extractor_agent() -> LlmAgent:
 async def extract_claims(url: str) -> list[Claim]:
     """High-level wrapper: URL in, list[Claim] out.
 
-    Standalone helper for testing without the full ADK runtime — used by Phase 2 verification.
+    Standalone helper for testing without the full ADK runtime.
     """
     pdp_text = await fetch_pdp_html(url)
 
@@ -301,7 +301,7 @@ async def extract_claims(url: str) -> list[Claim]:
 
 
 async def main() -> None:
-    """Phase 2 verification: extract claims from a real Honest Paws PDP."""
+    """Verification: extract claims from a real Honest Paws PDP."""
     # Native Pet Hip & Joint — verified live PDP
     test_url = "https://www.nativepet.com/products/hip-joint"
 

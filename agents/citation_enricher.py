@@ -1,4 +1,4 @@
-"""Citation Enricher (Phase 10 — codex G21).
+"""Citation Enricher.
 
 Enriches `Evidence` with real `citation_count` and `influential_citation_count`
 from AI2's Semantic Scholar Graph API — the public surface of the Asta product

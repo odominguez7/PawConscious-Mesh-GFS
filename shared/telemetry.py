@@ -33,7 +33,7 @@ from typing import Any, AsyncIterator
 _SVC = os.environ.get("ACP_SERVICE_NAME", "mesh-api")
 _REV = os.environ.get("K_REVISION", "local")  # Cloud Run sets K_REVISION
 
-# Section 6 (codex P2): thread task_id through agent spans without changing
+# Thread task_id through agent spans without changing
 # every call site. Set this once at the top of the verify task handler;
 # every span emitted in the same async task picks it up automatically.
 _current_task_id: contextvars.ContextVar[str | None] = contextvars.ContextVar(
@@ -75,7 +75,7 @@ async def agent_span(
         "span_name": "agent_call",
         "agent": agent,
     }
-    # Section 6 (codex P2): pick up task_id from contextvar if set so all
+    # Pick up task_id from contextvar if set so all
     # span lines inside a verify task share the same correlation id.
     bound_task = _current_task_id.get()
     if bound_task is not None:

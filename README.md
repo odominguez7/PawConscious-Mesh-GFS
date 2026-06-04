@@ -12,7 +12,7 @@ The check every AI shopping agent should run before recommending a consumer prod
 
 ## What this is
 
-Paste a product page URL. Seven agents on Google Cloud return a signed evidence bundle in 60 to 90 seconds. Grounded in PubMed via BioMCP. Cross-checked against FTC §255 and AAFCO via Vertex AI Search. Adversarially stress-tested with Google Search grounding. Signed with Ed25519 and anchored to a public Firestore transparency log.
+Paste a product page URL. Seven agents on Google Cloud return a signed evidence bundle in about 90 seconds, up to a few minutes on a cold start. Grounded in PubMed via BioMCP. Cross-checked against FTC §255 and AAFCO via Vertex AI Search. Adversarially stress-tested with Google Search grounding. Signed with Ed25519 and anchored to a public Firestore transparency log.
 
 The shopping agent gets a verdict it can act on. The brand gets a receipt it can show plaintiffs, retailers, and buyers. The verdict is independently verifiable offline.
 
@@ -30,7 +30,7 @@ curl -X POST "https://mesh-api-40952019806.us-central1.run.app/a2a/v1/tasks/send
   }'
 # → 202 { task_id, poll_url, head_anchor_at_submit }
 
-# Then poll until status=completed (~2 to 4 minutes typical):
+# Then poll until status=completed (about 1 to 3 minutes):
 curl "https://mesh-api-40952019806.us-central1.run.app/a2a/v1/tasks/get/<task_id>" \
   -H "X-API-Key: demo-key-2026-06"
 ```
@@ -73,7 +73,7 @@ git clone https://github.com/odominguez7/PawConscious-Mesh-GFS.git
 cd PawConscious-Mesh-GFS
 python -m venv .venv && source .venv/bin/activate
 pip install -e .
-pytest tests/                          # ~150 tests · ADK eval baseline
+pytest tests/                          # 31 unit tests + ADK eval baseline
 cd services/mesh_api && PORT=8088 python main.py
 # → http://localhost:8088
 ```

@@ -3,7 +3,7 @@
 **Status:** **DRAFT PROPOSAL v0.1 — NOT A STANDARD.** Single operator (PawConscious). No external members. No neutral governance yet. Open for comment.
 **Date:** 2026-05-18 · **License:** CC-BY-4.0 · **Maintainer:** PawConscious
 
-## Honest scope of v0.1 (codex G7 P0.1)
+## Honest scope of v0.1
 
 This document describes a JSON-LD schema for endorsement claims plus a minimal reference flow:
 1. **One JSON-LD schema** (`EndorsementClaim` only — `EvidenceBundle`, `ExpertAttestation`, `AuditVerdict` are stubs that will evolve in v0.2)

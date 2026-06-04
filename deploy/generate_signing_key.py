@@ -1,11 +1,11 @@
 """Generate Ed25519 keypair for ACP bundle signing + publish to Secret Manager.
 
-Per codex G11 P0.3 + P0.4: real Ed25519 signing, not placeholders. Private key
+Real Ed25519 signing, not placeholders. Private key
 goes to GCP Secret Manager (never to git). Public key emitted in two encodings:
 - multibase z-prefix for DID doc publicKeyMultibase (per W3C did:key / did:web spec)
 - hex / base64 for human-readable reference
 
-Run once during Phase 5 deploy setup. The output public key string is copy-pasted
+Run once during deploy setup. The output public key string is copy-pasted
 into services/mesh_api/main.py DID_DOC.
 """
 from __future__ import annotations

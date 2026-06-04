@@ -1,6 +1,6 @@
 """Retry + timeout wrapper for Gemini Vertex AI calls.
 
-Per codex G9 #6: Phase 3 blocking risk is model quota/latency spikes and
+The main reliability risk is model quota/latency spikes and
 inconsistent grading. Wrap every Gemini call with deterministic sampling
 (temperature 0) + retry with exponential backoff + hard timeout.
 """

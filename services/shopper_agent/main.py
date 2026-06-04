@@ -1,4 +1,4 @@
-"""ShopperAgent — verifiable external A2A consumer (codex G7.3 P0.4).
+"""ShopperAgent — verifiable external A2A consumer.
 
 A separate Cloud Run service that demonstrates an external client calling the
 PawConscious Mesh A2A endpoint. Source is in the same MIT public repo so judges
@@ -14,7 +14,7 @@ Native Pet / Honest Paws URL while the audience watches the live A2A round-trip
 in the log view.
 
 We DO NOT claim Perplexity, Rufus, ChatGPT, or Gemini Shopping have integrated
-the protocol (codex G7.3 P0.4). The ShopperAgent is our own consumer demonstrating
+the protocol. The ShopperAgent is our own consumer demonstrating
 the protocol works end-to-end.
 """
 from __future__ import annotations
@@ -76,7 +76,7 @@ async def fetch_agent_card(client: httpx.AsyncClient) -> dict[str, Any]:
 async def call_verify_claim(client: httpx.AsyncClient, product_url: str, max_claims: int) -> tuple[dict[str, Any], int]:
     """A2A v0.3 async task call to verify_claim.
 
-    Full round-trip (codex C1 P0#2 fix):
+    Full round-trip:
       1. POST /a2a/v1/tasks/send → 202 {task_id, poll_url, status: 'submitted'}
       2. Poll /a2a/v1/tasks/get/{task_id} every 5s up to ~5min
       3. Return the completed task response (with output, bundle_hash, signature, chain_anchor)

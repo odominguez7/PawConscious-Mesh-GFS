@@ -1,4 +1,4 @@
-"""Cert honesty guard — codex amendment A-codex-10 (plan 2026-05-21).
+"""Cert honesty guard.
 
 Catches future regressions where a prompt change reintroduces overclaim
 language into cert HTML output. Runs on every cert-touching commit (CI),
@@ -46,7 +46,7 @@ FORBIDDEN_PHRASES: list[tuple[str, str | None]] = [
     ("citations were verified", None),
     # No real DVMs in v0.1. Allowed only when negated. Catches both
     # "licensed DVM" (space) and "licensed-DVM" (hyphen) variants since
-    # the disclosure block uses the hyphenated form (codex B.5 P3).
+    # the disclosure block uses the hyphenated form.
     ("licensed DVM", r"\b(no|zero|without|not\b|replaces?\b|attestation by|roadmap)\b"),
     ("licensed dvm", r"\b(no|zero|without|not\b|replaces?\b|attestation by|roadmap)\b"),
     ("licensed-DVM", r"\b(no|zero|without|not\b|replaces?\b|attestation by|roadmap)\b"),
@@ -108,7 +108,7 @@ def test_console_v2_jffd_cached_cert_html_is_honest() -> None:
 
 
 def test_disclosure_constants_present_in_report_writer() -> None:
-    """Phase B locked the disclosure block as Python constants. Both must be
+    """The disclosure block is locked as Python constants. Both must be
     importable and non-empty so the prompt format() always has substitutions."""
     src = (REPO_ROOT / "agents/report_writer.py").read_text()
     assert "DISCLOSURE_BLOCK_INLINE" in src, (
@@ -127,7 +127,7 @@ def test_disclosure_constants_present_in_report_writer() -> None:
 
 def test_required_phrasing_in_cert_prompt() -> None:
     """Agent 6 prompt must encode the positive phrasing dictionary + few-shot
-    exemplars + forbidden phrases (codex A-codex-2)."""
+    exemplars + forbidden phrases."""
     src = (REPO_ROOT / "agents/report_writer.py").read_text()
     assert "REQUIRED PHRASING" in src
     assert "FORBIDDEN PHRASES" in src

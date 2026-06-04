@@ -55,8 +55,8 @@ This is a working subset, not exhaustive. Each row points at the file or live en
 |---|---|---|
 | **GOVERN 1.1** Legal and regulatory requirements understood and documented | `agents/compliance.py` maps every claim to FTC 16 CFR §255 + AAFCO PF7 + NASC. `corpus/` holds the public-redistributable source passages. | `/health/vertex-search` returns the live indexed corpus. |
 | **GOVERN 1.4** Transparency in process and outcomes | Public chain anchor + signed bundles + did:web + MIT license + public agent card. | [`/.well-known/agent-card.json`](https://mesh-api-40952019806.us-central1.run.app/.well-known/agent-card.json), [`/pcec/v0/chain/head`](https://mesh-api-40952019806.us-central1.run.app/pcec/v0/chain/head) |
-| **GOVERN 4.1** Critical-thinking + safety-first design mindset | Eight rounds of adversarial codex review through this 5-day session; every "block" verdict absorbed before next move. | git log + `reviews/day19-claude-supplementary-review.md` |
-| **GOVERN 4.3** Testing, incident identification, info sharing | Codex review per Move; before/after evidence saved in `reviews/`; `docs/FOLLOWUP_pre_flag_on.md` captures known limits. | Repo public after toggle. |
+| **GOVERN 4.1** Critical-thinking + safety-first design mindset | Multiple rounds of adversarial self-review during development; every blocking finding was resolved before the next change. | git log |
+| **GOVERN 4.3** Testing, incident identification, info sharing | Adversarial review per change; `docs/FOLLOWUP_pre_flag_on.md` captures known limits. | Repo public after toggle. |
 | **GOVERN 6.1** Third-party risk addressed | `BioMCP`, `Semantic Scholar Graph API`, `Vertex AI Search`, `Firecrawl` are each documented with their failure modes in code comments + N3c audit. | `agents/compliance.py:N3c` block, `agents/claim_extractor.py:N3c` block. |
 
 ### Map — already satisfied

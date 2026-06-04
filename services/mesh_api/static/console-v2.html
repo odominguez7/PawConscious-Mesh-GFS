@@ -107,7 +107,7 @@
   .hero-cta button:hover:not(:disabled) { filter: brightness(1.1); }
   .hero-cta button:active:not(:disabled) { transform: translateY(1px); }
   .hero-cta button:disabled { background: var(--surface-2); color: var(--dim); cursor: not-allowed; }
-  /* v0.10.0b / codex A6: soft pulse on the Verify button — telegraphs "click me"
+  /* v0.10.0b: soft pulse on the Verify button — telegraphs "click me"
      without the autoplay distraction. Animation halts after first click. */
   .hero-cta button.pulse:not(:disabled) {
     animation: ctaPulse 2.4s ease-in-out infinite;
@@ -118,7 +118,7 @@
     50%      { box-shadow: 0 0 0 8px rgba(0,212,255,0); }
   }
 
-  /* v0.10.0b / codex A8: inline three-tier error element under URL input. */
+  /* v0.10.0b: inline three-tier error element under URL input. */
   .hero-error {
     margin-top: 12px; padding: 12px 14px;
     background: rgba(255,92,53,0.08); border: 1px solid var(--warning);
@@ -131,7 +131,7 @@
   .hero-error .err-fix     { color: var(--ink); }
   .hero-error .err-fix::before { content: "→ "; color: var(--electric); font-weight: 700; }
 
-  /* v0.10.0b / codex A7: honest footnote below CTA. "Top-risk" copy scrubbed. */
+  /* v0.10.0b: honest footnote below CTA. "Top-risk" copy scrubbed. */
   .hero-footnote {
     margin-top: 14px; max-width: 540px;
     font: 500 11px/1.55 var(--mono); color: var(--dim);
@@ -255,7 +255,7 @@
   }
   .hero-stack .hs-chips span:hover { border-color: var(--electric); color: var(--electric); }
 
-  /* v0.10.1c / codex A-codex-8: first-10s trust anchor above the URL input.
+  /* v0.10.1c: first-10s trust anchor above the URL input.
      Buyers (compliance / GC / CMO) need a "why should I trust this" cue
      before they commit to pasting a URL. Single line, mono, electric accent. */
   .hero-trust {
@@ -268,9 +268,9 @@
   .hero-trust strong { color: var(--ink); font-weight: 700; }
   .hero-trust .icon { color: var(--electric); margin-right: 6px; font-weight: 700; }
 
-  /* v0.10.1c / codex A-codex-7: mobile breakpoints moved to the
+  /* v0.10.1c: mobile breakpoints moved to the
      RESPONSIVE section near end of file (was here, but cascaded before
-     base .demo definitions and got overridden — codex C.combined P2 fix). */
+     base .demo definitions and got overridden). */
 
   /* ===================== HERO SIGNED-BUNDLE SCHEMATIC (2026-05-25 Omar A-v2) =====
      Dark-theme stylized output card. Mirrors Stripe Connect's pattern of
@@ -714,8 +714,8 @@
 
   /* ===================== DEMO CONTAINER (unified — cached/live/replay) =====================
      v0.10.0a (commit 1 of hero rebuild) — FIXED-HEIGHT 520px container.
-     Codex amendment A4: mode distinction = badge color + ●/▶ icon + outer border color.
-     Codex amendment A5: SVG geometry locked here BEFORE rewiring JS in v0.10.0b.
+     Mode distinction = badge color + ●/▶ icon + outer border color.
+     SVG geometry locked here BEFORE rewiring JS in v0.10.0b.
      ============================================================================ */
   .demo {
     position: relative; background: var(--bg-elevated);
@@ -736,7 +736,7 @@
   .demo[data-mode="replay"]  { border-color: #B9AEFF; }
   .demo[data-mode="done"]    { border-color: var(--moss-glow); }
 
-  /* v0.10.1c — Phase C perimeter glow narrative per active stage.
+  /* v0.10.1c — perimeter glow narrative per active stage.
      data-stage overrides border-color during stage transitions; the
      pulse animation runs continuously while a stage is "active". */
   .demo[data-stage="stage1"] {
@@ -822,7 +822,7 @@
     color: var(--muted); flex-shrink: 0;
     display: grid; grid-template-columns: 1fr auto; gap: 12px; align-items: center;
   }
-  /* v0.10.0b codex review fix: ellipsis must live on the inline span, not
+  /* v0.10.0b: ellipsis must live on the inline span, not
      the flex container — flex children render text-overflow correctly only
      when the SPAN itself sets white-space/overflow/text-overflow AND has a
      bounded width (parent min-width:0 enables shrinking below content size). */
@@ -856,7 +856,7 @@
   .demo-stage { flex-shrink: 0; height: 260px; position: relative; }
   .demo-svg { width: 100%; height: 100%; display: block; }
 
-  /* Stage cinema cards — codex A-codex-3 trimmed: ≤3 lines each, sequential
+  /* Stage cinema cards — ≤3 lines each, sequential
      show/hide (never two visible at once), positioned in diagram corners. */
   .stage-card {
     position: absolute; top: 8px; right: 8px;
@@ -914,7 +914,7 @@
 
   /* Edges + animation classes preserved from the radial version so existing JS still drives them */
   .demo-svg .edge { stroke: var(--border-strong); stroke-width: 1.4; fill: none; transition: stroke 0.4s ease, stroke-width 0.4s ease; }
-  /* v0.10.2 Phase G: marching-ants flow on active edges — data flowing visualization */
+  /* v0.10.2: marching-ants flow on active edges — data flowing visualization */
   .demo-svg .edge.active {
     stroke: var(--electric); stroke-width: 1.8;
     filter: drop-shadow(0 0 6px var(--electric));
@@ -924,14 +924,14 @@
   .demo-svg .edge.done { stroke: var(--moss-glow); stroke-width: 1.6; }
   @keyframes edgeFlow { to { stroke-dashoffset: -20; } }
 
-  /* Agent chips — numbered circles (codex A1 decision). Labels below, truncate if needed. */
+  /* Agent chips — numbered circles. Labels below, truncate if needed. */
   .demo-svg .node circle.body {
     fill: var(--surface); stroke: var(--border-strong); stroke-width: 1.5;
     transition: fill 0.4s ease, stroke 0.4s ease;
   }
   .demo-svg .node.active circle.body { fill: var(--electric); stroke: var(--electric); filter: drop-shadow(0 0 10px var(--electric)); }
   .demo-svg .node.done circle.body { fill: var(--moss-glow); stroke: var(--moss-glow); }
-  /* v0.10.0b / codex A6: hover-preview — Verify button hover flashes chips in sequence
+  /* v0.10.0b: hover-preview — Verify button hover flashes chips in sequence
      as a 0.8s "this is what's about to happen" cue, without committing to autoplay. */
   .demo-svg .node.preview-on circle.body { fill: var(--electric-dim); stroke: var(--electric); }
   .demo-svg .node.preview-on circle.halo { stroke-width: 1.5; opacity: 0.5; }
@@ -979,7 +979,7 @@
     text-anchor: middle; text-transform: uppercase; letter-spacing: 0.14em;
   }
   .demo-svg .node.active text.label { fill: var(--electric); }
-  /* v0.10.2 Phase G: pulse-link — when a stream row is hovered, the matching
+  /* v0.10.2: pulse-link — when a stream row is hovered, the matching
      chip briefly flashes electric to confirm "this log came from THAT agent". */
   .demo-svg .node.pulse-link circle.body {
     fill: var(--electric); stroke: var(--electric);
@@ -1007,7 +1007,7 @@
   .demo-svg .sonar-ring.fire {
     animation: sonarExpand 1.6s cubic-bezier(.22,.7,.34,1) forwards;
   }
-  /* v0.10.3 codex-1: use transform: scale() instead of animating the `r`
+  /* v0.10.3: use transform: scale() instead of animating the `r`
      attribute via CSS — Safari support for CSS-animated SVG `r` shipped
      in 16+ but is still inconsistent. Scale is universally supported. */
   @keyframes sonarExpand {
@@ -1052,7 +1052,7 @@
     display: flex; gap: 8px; align-items: baseline;
     padding: 2px 4px 2px 8px;
     margin: 0 0 1px 0;
-    /* v0.10.2 A-codex-3: 4px colored left bar keyed to agent/stage
+    /* v0.10.2: 4px colored left bar keyed to agent/stage
        instead of per-row chip badge (less visual clutter). Default is
        border-strong; per-agent selectors below override. */
     border-left: 4px solid var(--border-strong);
@@ -1113,7 +1113,7 @@
   .demo-cert .line .v.pass { color: var(--moss-glow); font-weight: 700; }
   /* v0.10.2 H.toggle: forward-compatible bundle link, routed today to the
      existing /pcec/v0/claim/{urn} JSON endpoint. v0.11.0 swaps target to
-     /cert/{urn} HTML PDF page (codex A-codex-6 stable URL scheme). */
+     /cert/{urn} HTML PDF page (stable URL scheme). */
   .demo-cert .cert-bundle-link {
     margin-top: 10px; padding-top: 10px;
     border-top: 1px dashed var(--border-strong);
@@ -1551,7 +1551,7 @@
   .footer a:hover { color: var(--electric); }
 
   /* ===================== RESPONSIVE =====================
-     v0.10.1c / codex C.combined P2 fix: mobile demo + stage-card overrides
+     v0.10.1c: mobile demo + stage-card overrides
      declared HERE (after base .demo / .stage-card) so the cascade lets them win.
      Previously declared up in the hero section — same specificity meant the
      LATER base rules clobbered them and mobile layout never activated. */
@@ -1575,7 +1575,7 @@
     .demo-stage { height: 200px; }
     .demo-svg { max-height: 200px; }
     /* Cinema cards reposition to bottom of diagram on narrow viewports so
-       they don't cover chips. Codex A-codex-7 says cards must stay readable. */
+       they don't cover chips and cards must stay readable. */
     .stage-card {
       top: auto; bottom: 4px; right: 4px; left: 4px;
       max-width: none; min-width: 0;
@@ -1589,7 +1589,7 @@
     .stage-card[data-card="stage3"] { left: 4px; }
   }
 
-  /* Codex T3-K · 2026-05-24 · curl → signed bundle split panel below hero.
+  /* curl → signed bundle split panel below hero.
    * Stripe Connect pattern (API request left, resulting data right). The pipes
    * made visible right after the hero so the value prop pays off in 5 seconds. */
   .pipes-split { padding: 64px 0 32px; border-top: 1px solid var(--border); }
@@ -1709,7 +1709,7 @@
          ================================================================= -->
     <div class="bundle-card" aria-label="PawConscious signed bundle · live verifier">
 
-      <!-- LIVE SIGNED CERTIFICATE (2026-05-27, four-voice handshake): the hero's
+      <!-- LIVE SIGNED CERTIFICATE: the hero's
            right half now shows the PRODUCT'S CORE OUTPUT, not a derivative chat.
            This card is the live result of the Verify action on the left. Click a
            brand chip (or paste a URL) and this renders that product's REAL signed
@@ -1827,7 +1827,7 @@
   </div>
 </section>
 
-<!-- ===================== THE STAKES · two doors (2026-05-27, wow handshake) =====================
+<!-- ===================== THE STAKES · two doors =====================
      The first scroll beat after the hero. The hero shows WHAT happens (URL ->
      verdict); this shows WHY it matters, in the founder's own stakes: skipped vs
      recommended, risky vs preferred, exposed vs defensible. The Cosequin $11.5M
@@ -1846,7 +1846,7 @@
   .stakes-col.bad:hover { border-color: rgba(255,92,53,0.6); }
   .stakes-col.good { border-color: rgba(0,212,155,0.35); }
   .stakes-col.good:hover { border-color: rgba(0,212,155,0.6); }
-  /* Animated "NON-COMPLIANT" stamp (Gemini in-brand handshake): scale + tilt land
+  /* Animated "NON-COMPLIANT" stamp: scale + tilt land
      when section enters viewport. Stays semi-transparent so the list reads. */
   .stakes-col.bad::after { content: "NON-COMPLIANT"; position: absolute; top: 50%; right: -10px; transform: translateY(-50%) rotate(-9deg) scale(1.45); transform-origin: center; font: 800 26px/1 var(--sans); letter-spacing: 0.06em; color: rgba(255,92,53,0.08); border: 2px solid rgba(255,92,53,0.22); padding: 8px 14px; border-radius: 6px; pointer-events: none; opacity: 0; transition: opacity .9s cubic-bezier(.16,1,.3,1), transform .9s cubic-bezier(.16,1,.3,1); }
   .stakes.in .stakes-col.bad::after { opacity: 1; transform: translateY(-50%) rotate(-9deg) scale(1); }
@@ -1926,7 +1926,7 @@
 </section>
 
 <!-- ===================== DEMAND SIDE · recommended by agents (2026-05-27) =====================
-     Moved here from the hero (four-voice handshake). The hero sells the SUPPLY
+     Moved here from the hero. The hero sells the SUPPLY
      side (a brand verifies its product). This beat shows the DEMAND side (an AI
      shopping agent recommends the verified product). Sequence, not split-screen,
      so the buyer first grasps the value to them, then sees the downstream pull.
@@ -1988,7 +1988,7 @@
       <p class="demand-sub">A signed bundle is not paperwork. It is the input an AI shopping agent acts on: recommend the verified, skip the failed, reject the tampered. Below is our reference agent, running live against the directory.</p>
     </div>
 
-    <!-- AGENT DECISION TRACE (2026-05-27, four-voice handshake): replaces the open
+    <!-- AGENT DECISION TRACE: replaces the open
          Gemini chat. The chat was a liability (it deflected off-script prompts and
          read as a thin LLM wrapper, harming Demo + Innovation). This renders what
          examples/shopper_agent.py actually does: discover the agent card, verify
@@ -2015,7 +2015,7 @@
       <div class="adt-foot">Every decision depends on a verified signature. A forged verdict can never pass. <a href="/agents#try">Run the agent yourself →</a></div>
     </div>
 
-    <!-- Editorial pull-quote (Gemini in-brand handshake). Italic Geist, dim ink,
+    <!-- Editorial pull-quote. Italic Geist, dim ink,
          cyan-accented final clause. Adds the author's voice without breaking the
          dark+cyan palette — replaces the "developer log" feel with a thesis. -->
     <p class="demand-pullquote">A brand can write any claim it likes on the back of a bottle. An agent only acts on what it can <em>verify</em>.</p>
@@ -2224,7 +2224,7 @@
       </div>
       <div class="item">
         <div class="h"><span class="name">ADK 2.0</span><span class="badge">Orchestration</span></div>
-        <p>Four of seven agents wrap as <code style="color:var(--electric);font-family:var(--mono);">google.adk.agents.LlmAgent</code> (<b>claim-extractor, evidence-grader, compliance, auditor</b>); the orchestrator fans them out via <code style="color:var(--electric);font-family:var(--mono);">asyncio.gather</code>. The other 3 call <code style="color:var(--electric);font-family:var(--mono);">google.genai</code> SDK direct for v0.1 deterministic latency. ADK <code style="color:var(--electric);font-family:var(--mono);">ParallelAgent</code> + <code style="color:var(--electric);font-family:var(--mono);">SequentialAgent</code> wrappers are documented as the Phase 4 Vertex AI Agent Engine deployment surface.</p>
+        <p>Four of seven agents wrap as <code style="color:var(--electric);font-family:var(--mono);">google.adk.agents.LlmAgent</code> (<b>claim-extractor, evidence-grader, compliance, auditor</b>); the orchestrator fans them out via <code style="color:var(--electric);font-family:var(--mono);">asyncio.gather</code>. The other 3 call <code style="color:var(--electric);font-family:var(--mono);">google.genai</code> SDK direct for v0.1 deterministic latency. ADK <code style="color:var(--electric);font-family:var(--mono);">ParallelAgent</code> + <code style="color:var(--electric);font-family:var(--mono);">SequentialAgent</code> wrappers are documented as the Vertex AI Agent Engine deployment surface.</p>
       </div>
       <div class="item">
         <div class="h"><span class="name">Gemini 2.5</span><span class="badge">Reasoning</span></div>
@@ -2276,7 +2276,7 @@
         <div class="code">A public, tamper-proof record.</div>
       </div>
     </div>
-    <!-- Compact 7-agent / 3-stage flow strip (2026-05-27, four-voice IA fix).
+    <!-- Compact 7-agent / 3-stage flow strip.
          A judge who only scrolls the landing now sees the mesh shape in one
          glance; the full interactive diagram lives on /architecture. -->
     <style>
@@ -2428,7 +2428,7 @@
      in the Devpost long-form description and investor deck, not on the marketing
      page. Reference doc: internal/docs/MOONSHOT_RETHINK_2026-05-24.md. -->
 
-<!-- 2026-05-27 (pre-submission fine-tune, four-voice handshake): the "Track 3
+<!-- Pre-submission fine-tune: the "Track 3
      mandates · met" band was cut from the buyer page. World-class infra brands
      (Stripe / Vercel) never show a "competition mandates" checklist; they trust
      the audience to connect the dots. The 4 Track 3 mandates are labeled for
@@ -2437,7 +2437,7 @@
 
 <footer class="footer">
   <div class="container footer-inner">
-    <div>Built by Omar Dominguez, MIT Sloan MBA 2026, with COO Jennifer Fremont Smith. did:web:mesh-api-…run.app · MIT License · Google Cloud.</div>
+    <div>Built by Omar Dominguez, Founder & CEO, MIT Sloan MBA 2026. did:web:mesh-api-…run.app · MIT License · Google Cloud.</div>
     <div>
       <a href="/.well-known/agent-card.json">Agent Card</a>
       &nbsp;·&nbsp;
@@ -2582,7 +2582,7 @@ function tsNow() {
   // HH:MM:SS — human local time, not the ambiguous mm:ss format
   return new Date().toTimeString().slice(0,8);
 }
-// v0.10.2 Phase F (A-codex-3): optional agent id tags the row with a colored
+// v0.10.2: optional agent id tags the row with a colored
 // left border keyed to the agent/stage. Hovering the row briefly pulses the
 // matching diagram chip (180ms chipPulseLink animation). Existing callers that
 // pass only (msg, cls) keep working — agent is opt-in.
@@ -2614,15 +2614,15 @@ function setMode(mode, badgeText, modeText, rightText) {
   DEMO_MODE_B.textContent = badgeText;
   DEMO_MODE_T.textContent = modeText;
   if (rightText !== undefined) DEMO_RIGHT.textContent = rightText;
-  // v0.10.0a / codex A4: outer demo border colour swaps with mode so the
+  // v0.10.0a: outer demo border colour swaps with mode so the
   // distinction is peripherally visible even if the chrome bar is below fold.
   const demoEl = document.getElementById('demo');
   if (demoEl) demoEl.setAttribute('data-mode', mode);
 }
 
-/* v0.10.1c / Phase C: per-stage perimeter glow narrative + cinema cards.
+/* v0.10.1c: per-stage perimeter glow narrative + cinema cards.
  * setStage(name) drives BOTH the outer container border animation AND
- * which cinema card is visible. Sequential (never 2 cards at once per A-codex-3).
+ * which cinema card is visible. Sequential (never 2 cards at once).
  * Stages: null (clear) · 'stage1' · 'stage2' · 'stage3' · 'done-pass' · 'done-fail'. */
 const STAGE_CARDS = {
   stage1: document.querySelector('.stage-card[data-card="stage1"]'),
@@ -2649,7 +2649,7 @@ function resetDemo() {
   DEMO_CERT.classList.remove('visible');
   // v0.10.3 ISSUE 1: hide the external result-report on each new cycle so it
   // reveals fresh when this cycle's verdict lands.
-  // v0.10.3 codex-3: also CLEAR resultBody so stale cert HTML can't reappear
+  // v0.10.3: also CLEAR resultBody so stale cert HTML can't reappear
   // if showResultReport() races renderCertHtml on a fast replay.
   const r = document.getElementById('result');
   if (r) r.hidden = true;
@@ -2657,7 +2657,7 @@ function resetDemo() {
   if (body) body.innerHTML = '';
   const so = document.getElementById('resultSecondOpinion');
   if (so) { so.hidden = true; so.innerHTML = ''; }
-  // v0.10.3 codex-2: cancel any pending scrollIntoView from a previous cycle
+  // v0.10.3: cancel any pending scrollIntoView from a previous cycle
   // so a fast Replay doesn't yank the page mid-cycle.
   if (window._resultScrollTimer) {
     clearTimeout(window._resultScrollTimer);
@@ -2694,7 +2694,7 @@ function resetDemo() {
     DEMO_EDGES.appendChild(e);
   }
   // Every edge tagged with its DESTINATION agent so cachedCycle's data-agent
-  // selector lights up the correct segments (codex review P2 fix).
+  // selector lights up the correct segments.
   // Stage 1 → 1 (evidence-grader first parallel child)
   addEdge(165, 100, 165, 116, 'evidence'); // 01 trunk down to junction
   addEdge( 68, 116, 262, 116, 'evidence'); // junction horizontal — shared trunk
@@ -2717,7 +2717,7 @@ function resetDemo() {
   addEdge(SIGN_CX + 22, SIGN_CY + 6, 484, 198, 'opinion');  // Sign → 07
 
   // ---- Build agent chips ---------------------------------------------------
-  // v0.10.2 Phase G: chip body r=14→16, halo r=20→22. Subtle scale-up.
+  // v0.10.2: chip body r=14→16, halo r=20→22. Subtle scale-up.
   // v0.10.3 ISSUE 3: each chip gets an extra .work-pulse rotating dashed ring
   // that fades in while the agent is .active — communicates "thinking now".
   AGENTS.forEach(a => {
@@ -2798,7 +2798,7 @@ async function cachedCycle() {
    * to the live run captured 2026-05-21. claim-extractor produced 3 claims;
    * evidence-grader pulled 7 papers; vet rubric returned 1-2/5 across the
    * board; compliance flagged 2 of 3 under FTC §255.1; auditor surfaced
-   * 1 FAIL. v0.10.0a edge-by-data-agent matching (codex P2) still applies. */
+   * 1 FAIL. v0.10.0a edge-by-data-agent matching still applies. */
   const STEPS = [
     'claim-extractor · ADK + httpx · 3 claims extracted from PDP',
     'evidence-grader · BioMCP → PubMed · 7 papers retrieved · L-Tryptophan + chamomile evidence reviewed',
@@ -2811,14 +2811,14 @@ async function cachedCycle() {
   function edgesFor(agentId) {
     return DEMO_EDGES.querySelectorAll(`.edge[data-agent="${agentId}"]`);
   }
-  // v0.10.1c Phase C: kick off Stage 1 cinema + perimeter glow
+  // v0.10.1c: kick off Stage 1 cinema + perimeter glow
   setStage('stage1');
   for (let i=0; i<nodes.length; i++) {
     if (aborted()) return;
     const agentId = nodes[i].dataset.agent;
     edgesFor(agentId).forEach(e => e.classList.add('active'));
     nodes[i].classList.add('active');
-    // v0.10.2 Phase F: tag stream row with the firing agent so it gets the
+    // v0.10.2: tag stream row with the firing agent so it gets the
     // colored left border + hover linkage back to the diagram chip.
     streamAdd(STEPS[i], '', agentId);
     await sleep(550);
@@ -2838,18 +2838,18 @@ async function cachedCycle() {
     const cls = (c.audit === 'PASS' && !c.flag) ? 'ok' : 'err';
     streamAdd(`claim ${String(c.idx).padStart(2,'0')} · vet ${c.vet}/5 · ${c.ftc}${flag} · audit ${c.audit}`, cls, 'auditor');
   });
-  // v0.10.1c Phase C: Stage 1 → Stage 2 (sign event, dramatic 3s flash)
+  // v0.10.1c: Stage 1 → Stage 2 (sign event, dramatic 3s flash)
   setStage('stage2');
   streamAdd('SequentialAgent · merge + sign · Ed25519', 'ok', 'sign');
   await sleep(500); if (aborted()) return;
   DEMO_ANCHOR.classList.add('done');
-  // v0.10.2 Phase G: particle burst fires when the SIGN anchor turns moss-green
-  // — the actual signature-being-written moment. Codex A-codex-2 stagger met:
+  // v0.10.2: particle burst fires when the SIGN anchor turns moss-green
+  // — the actual signature-being-written moment. Stagger:
   // moss flash on perimeter at t=0, anchor lights at t=+500ms, burst at +600ms.
   setTimeout(fireSignParticles, 100);
   streamAdd(`chain_anchor appended → ${b.anchor.slice(0,40)}…`, 'ok', 'sign');
   await sleep(2200); if (aborted()) return;  // let the Stage 2 flash play
-  // v0.10.1c Phase C: Stage 2 → Stage 3 (adversarial double-check)
+  // v0.10.1c: Stage 2 → Stage 3 (adversarial double-check)
   setStage('stage3');
   await sleep(500); if (aborted()) return;
   // Inject the verbatim Agent 6 cert + Agent 7 Second Opinion via the SAME
@@ -2857,7 +2857,7 @@ async function cachedCycle() {
   renderCertHtml(JFFD_CERT_HTML);
   renderSecondOpinion(JFFD_SECOND_OPINION);
   streamAdd('bundle signed · cached preview matches real urn:pcec:claim:syrz7izwfbatx6go2hgn2ipy', 'ok', 'composer');
-  // v0.10.1c Phase C: Stage 3 done → final verdict state (JFFD = FAIL → amber)
+  // v0.10.1c: Stage 3 done → final verdict state (JFFD = FAIL → amber)
   await sleep(800);
   setStage('done-fail');
   // v0.10.3 ISSUE 1: cert is rendered into the external <section class="result-report">
@@ -2868,7 +2868,7 @@ async function cachedCycle() {
 }
 
 /* ============================================================
- * v0.10.0b: PAGE LANDS STATIC (no autoLoop). Codex amendment A6:
+ * v0.10.0b: PAGE LANDS STATIC (no autoLoop).
  * static state + soft Verify-button pulse + on-hover preview is the
  * "ready" affordance. Cached cycle runs ONLY when user clicks Replay.
  * ============================================================ */
@@ -2883,7 +2883,7 @@ function setCoverage(state, text) {
   if (text !== undefined) COVERAGE_TXT.textContent = text;
 }
 
-/* v0.10.0b / codex A8: three-tier inline error. */
+/* v0.10.0b: three-tier inline error. */
 function setError(problem, cause, fix) {
   if (!problem) { URL_ERROR.hidden = true; return; }
   URL_ERROR.querySelector('.err-problem').textContent = problem;
@@ -2933,7 +2933,7 @@ async function runCached(e) {
  * ============================================================ */
 async function runMesh() {
   const url = URL_INPUT.value.trim();
-  // v0.10.0b / codex A8: three-tier inline errors (problem · cause · fix).
+  // v0.10.0b: three-tier inline errors (problem · cause · fix).
   if (!url) {
     setError('Enter your product URL',
              'We need an HTTPS link to fetch the label.',
@@ -2963,9 +2963,9 @@ async function runMesh() {
   REPLAY_BTN.disabled = true;
   setMode('live', '● LIVE · YOUR URL', `${url.replace(/^https?:\/\//,'').slice(0,40)}…`, 'POST /a2a/v1/tasks/send');
   setCoverage('live', 'Live mesh running · ~60-180s typical · please wait');
-  // v0.10.1c Phase C: kick off Stage 1 perimeter glow + cinema card for the live run.
+  // v0.10.1c: kick off Stage 1 perimeter glow + cinema card for the live run.
   // Live mode stays on Stage 1 until orchestrator emits stage-2 progress (cert/sign);
-  // backend currently only emits 2 progress msgs (codex S2E P2 known limitation),
+  // backend currently only emits 2 progress msgs (known limitation),
   // so the cinema for live is intentionally simpler than the cached cycle.
   setStage('stage1');
   RUN_BTN.disabled = true;
@@ -2976,7 +2976,7 @@ async function runMesh() {
     const submit = await fetch('/a2a/v1/tasks/send', {
       method:'POST',
       headers:{ 'Content-Type':'application/json', 'X-API-Key':'demo-key-2026-06' },
-      // v0.10.0b / codex A7: max_claims hardcoded to 3 (was user-selected from dropdown,
+      // v0.10.0b: max_claims hardcoded to 3 (was user-selected from dropdown,
       // which was confusing buyer UX). Backend ranking isn't built; honest cap = first 3.
       body: JSON.stringify({ skill:'verify_claim', input:{ product_url:url, max_claims: 3 } }),
     });
@@ -2998,7 +2998,7 @@ async function runMesh() {
       if (!get.ok) throw new Error(`get ${get.status}`);
       const data = await get.json();
       const elapsed = Math.round((Date.now()-t0)/1000);
-      // ALWAYS log the poll so user sees activity (codex S2E P2 — backend only emits 2 progress msgs)
+      // ALWAYS log the poll so user sees activity (backend only emits 2 progress msgs)
       if (data.status !== lastStatus || (data.progress_message && data.progress_message !== lastMsg)) {
         lastStatus = data.status;
         if (data.progress_message && data.progress_message !== lastMsg) {
@@ -3019,22 +3019,22 @@ async function runMesh() {
         setError('Live mesh task failed',
                  data.error || 'The orchestrator returned a failure status.',
                  'Click Verify again to retry, or click ▶ Replay cached demo to preview a working run.');
-        // v0.10.0b codex review fix: reset demoMode so Replay isn't gated as 'live'.
+        // Reset demoMode so Replay isn't gated as 'live'.
         setMode('ready', 'Error', 'live mesh failed · retry or run cached', 'PCEC v0.1');
         setCoverage('error', 'Live mesh task failed');
-        clearStage(); // v0.10.1c codex C.combined P2: stop the Stage 1 cyan pulse on failure
+        clearStage(); // v0.10.1c: stop the Stage 1 cyan pulse on failure
         RUN_BTN.disabled=false; REPLAY_BTN.disabled = false;
         return;
       }
     }
     streamAdd('polling timed out after 4min', 'err');
-    // v0.10.0b / codex A8: timeout error with concrete fix path.
+    // v0.10.0b: timeout error with concrete fix path.
     setError('Verification ran longer than 4 minutes',
              'The mesh may be cold-starting (first Cloud Run hit takes ~120s).',
              'Click Verify again to retry, or click ▶ Replay cached demo to preview a pre-recorded run.');
     setMode('ready', 'Timeout', 'live mesh ran >4min · retry or run cached', 'PCEC v0.1');
     setCoverage('error', 'Live mesh timed out · retry or run cached demo');
-    clearStage(); // v0.10.1c codex C.combined P2: clear stale animation on timeout
+    clearStage(); // v0.10.1c: clear stale animation on timeout
   } catch (err) {
     streamAdd(`error: ${err.message}`, 'err');
     setError('Live mesh hit an error',
@@ -3042,11 +3042,11 @@ async function runMesh() {
              'Retry or click ▶ Replay cached demo to confirm the agent flow works.');
     setMode('ready', 'Error', 'live mesh error · retry or run cached', 'PCEC v0.1');
     setCoverage('error', `Live mesh error · ${err.message || 'unknown'}`);
-    clearStage(); // v0.10.1c codex C.combined P2: clear stale animation on exception
+    clearStage(); // v0.10.1c: clear stale animation on exception
   } finally {
     RUN_BTN.disabled = false;
     REPLAY_BTN.disabled = false;
-    // v0.10.0b codex review fix: restore Verify pulse so the user knows
+    // v0.10.0b: restore Verify pulse so the user knows
     // the button is clickable again after error or completion.
     RUN_BTN.classList.remove('pulse-stop');
   }
@@ -3084,7 +3084,7 @@ function renderLive(data) {
   // v0.10.0b: coverage line shows honest verified-count vs total claims found.
   const totalClaims = (bundle.claims && bundle.claims.length) ? bundle.claims.length : audits.length;
   setCoverage('completed', `Verified ${audits.length} of ${totalClaims} claims · ${passing ? 'PASS' : 'NEEDS REVIEW'} · signed bundle below`);
-  // v0.10.1c Phase C: final perimeter glow state — moss for PASS, amber for FAIL/NEEDS REVIEW.
+  // v0.10.1c: final perimeter glow state — moss for PASS, amber for FAIL/NEEDS REVIEW.
   setStage(passing ? 'done-pass' : 'done-fail');
 
   // v0.8.0: continue polling for Agent 6 (cert_html) + Agent 7 (second_opinion)
@@ -3165,7 +3165,7 @@ function renderCertHtml(html, urn=null) {
  * Called from cachedCycle / runMesh at the moment the verdict lands so the
  * full cert report appears immediately. Scrolls into view after a short delay
  * so the user sees the diagram's done state before the page jumps.
- * v0.10.3 codex-2: store the timer on window so resetDemo() can cancel it
+ * v0.10.3: store the timer on window so resetDemo() can cancel it
  * — prevents a fast Replay from yanking the page to a now-hidden section. */
 function showResultReport() {
   const sec = document.getElementById('result');
@@ -3230,7 +3230,7 @@ function escapeHtml(s) {
 }
 
 /* ============================================================
- * v0.10.0b / codex A6: Verify-button hover preview.
+ * v0.10.0b: Verify-button hover preview.
  * Mouse-enter on Verify flashes the 7 agent chips in stage order
  * over ~700ms — gives buyers/judges a 1-sec peek at what's about
  * to happen without committing to autoplay.
@@ -3266,15 +3266,15 @@ if (RUN_BTN) RUN_BTN.addEventListener('mouseenter', () => {
 const ARCH_TIPS = {
   brand: { name:'Brand owner', meta:'Pet supplement brand (CMO / GC / Compliance) submits a product URL.<br>POST <b>/a2a/v1/tasks/send</b> · X-API-Key header.' },
   shopper: { name:'ShopperAgent · external A2A consumer', meta:'Separate Cloud Run service (open source MIT).<br>Discovers the mesh via <b>/.well-known/agent-card.json</b>, calls <b>verify_claim</b>, polls <b>/tasks/get</b>, ranks products by trust score.<br>Lives at shopper-agent-…run.app — the only A2A consumer we ship today.' },
-  'agent-engine': { name:'Orchestrator', meta:'<b>asyncio.gather</b> primitive for parallel fan-out (deterministic).<br>ADK ParallelAgent/SequentialAgent wrappers <i>planned</i> for full Agent Engine deployment per PLAN.md §2.<br>Reasoning Engine resource registered: 1255381144908595200<br>Deterministic sampling (temperature 0) across all 7 agents (Agents 1-5 = base mesh, Agent 6 = Cert Composer post-merge, Agent 7 = Second Opinion adversarial).' },
+  'agent-engine': { name:'Orchestrator', meta:'<b>asyncio.gather</b> primitive for parallel fan-out (deterministic).<br>ADK ParallelAgent/SequentialAgent wrappers <i>planned</i> for full Agent Engine deployment.<br>Reasoning Engine resource registered: 1255381144908595200<br>Deterministic sampling (temperature 0) across all 7 agents (Agents 1-5 = base mesh, Agent 6 = Cert Composer post-merge, Agent 7 = Second Opinion adversarial).' },
   'claim-extractor': { name:'Claim Extractor', meta:'Uses <b>ADK 2.0</b> (<code>google.adk.agents.LlmAgent</code>).<br>PDP fetch: <b>httpx + BeautifulSoup</b> primary; <b>Firecrawl API</b> fallback for anti-bot retailers.<br>Model: <b>Gemini 2.5 Pro</b> · temp 0.0<br>Returns: list[Claim{text, kind, position_on_page}]' },
-  'evidence-grader': { name:'Evidence Grader', meta:'Tool: <b>BioMCP</b> → live PubMed search.<br>Model: <b>Gemini 2.5 Pro</b> · temp 0.0<br>AI2 Asta MCP (citation grading) + Vertex AI Search over PubMed-in-BigQuery: <i>roadmap (Phase 2.5 / 5)</i>, not shipped.' },
-  'vet-rubric': { name:'Vet Rubric · AI simulation', meta:'<b>Prompt-only LLM simulation</b> — Gemini 2.5 Pro role-playing 5 board-certified vets. <b>Zero real DVMs in the loop today.</b><br>No Vertex AI Search, no licensed handbook ingest (codex G7 P0.7).<br>Model: <b>Gemini 2.5 Pro</b> · temp 0.0<br>Score 1-5 + escalate_to_human_vet flag.<br>v0.2 roadmap: <b>attest_expert</b> A2A skill replaces this with licensed-DVM attestation (accredited DVM partners).' },
-  compliance: { name:'Compliance', meta:'Grounding: <b>Vertex AI Search</b> over PUBLIC-redistributable regulator corpus.<br>Corpora: FTC 16 CFR §255 (Endorsement Guides) · AAFCO PF7 (public summary) · NASC public-side seal program.<br>Model: <b>Gemini 2.5 Pro</b> · temp 0.0<br>NO licensed handbook ingest (codex G7 P0.7).' },
-  auditor: { name:'Auditor · Falsifier v0', meta:'Adversarial pre-sign pass · <b>Gemini 2.5 Flash</b> · temp 0.0<br>2 checks: <b>citation_existence</b> (PMID format) + <b>claim_direction_match</b><br>Custom prompt-only. NOT ADK Eval (which requires datasets not built in 18 days, per PLAN.md §2).<br>Roadmap: cherry-pick detection · sample-size adequacy · stat-significance.' },
+  'evidence-grader': { name:'Evidence Grader', meta:'Tool: <b>BioMCP</b> → live PubMed search.<br>Model: <b>Gemini 2.5 Pro</b> · temp 0.0<br>AI2 Asta MCP (citation grading) + Vertex AI Search over PubMed-in-BigQuery: <i>roadmap</i>, not shipped.' },
+  'vet-rubric': { name:'Vet Rubric · AI simulation', meta:'<b>Prompt-only LLM simulation</b> — Gemini 2.5 Pro role-playing 5 board-certified vets. <b>Zero real DVMs in the loop today.</b><br>No Vertex AI Search, no licensed handbook ingest.<br>Model: <b>Gemini 2.5 Pro</b> · temp 0.0<br>Score 1-5 + escalate_to_human_vet flag.<br>v0.2 roadmap: <b>attest_expert</b> A2A skill replaces this with licensed-DVM attestation (accredited DVM partners).' },
+  compliance: { name:'Compliance', meta:'Grounding: <b>Vertex AI Search</b> over PUBLIC-redistributable regulator corpus.<br>Corpora: FTC 16 CFR §255 (Endorsement Guides) · AAFCO PF7 (public summary) · NASC public-side seal program.<br>Model: <b>Gemini 2.5 Pro</b> · temp 0.0<br>NO licensed handbook ingest.' },
+  auditor: { name:'Auditor · Falsifier v0', meta:'Adversarial pre-sign pass · <b>Gemini 2.5 Flash</b> · temp 0.0<br>2 checks: <b>citation_existence</b> (PMID format) + <b>claim_direction_match</b><br>Custom prompt-only. NOT ADK Eval (which requires evaluation datasets not yet built).<br>Roadmap: cherry-pick detection · sample-size adequacy · stat-significance.' },
   'cert-composer': { name:'Cert Composer · post-sign', meta:'Composes the branded human-readable certificate from the already-signed bundle.<br>Model: <b>Gemini 2.5 Pro</b> · temp 0.0<br>Stage 3 · runs in parallel with Second Opinion after Ed25519 signing.<br>Output: standalone HTML cert at <b>/pcec/v0/claim/&#123;urn&#125;/cert</b>.<br>Signing itself happens in the mesh-api layer, not here — Cert Composer never signs.' },
   'second-opinion': { name:'Second Opinion · adversarial', meta:'Independent post-sign adversarial pass · <b>Gemini 2.5 Pro</b> · temp 0.3 (breadth)<br>Grounding: <b>Google Search</b> via google.genai (pulls external regulatory + plaintiff evidence to try to break the conclusion).<br><b>4 stress tests:</b><br>• COURT — would plaintiffs use this against you?<br>• REGULATOR — would FTC flag this?<br>• CONSENSUS — does it match scientific consensus?<br>• PUBLIC SKEPTICISM — what would a skeptical reviewer find?<br>Verdict: PASS · NEEDS REVIEW · FAIL.' },
-  merge: { name:'merge + sign', meta:'Canonical-JSON of EndorsementClaimBundle (excludes signature)<br>Sign: <b>Ed25519</b> via Secret Manager key.<br>DID: did:web:mesh-api-40952019806.us-central1.run.app<br>If signer unavailable → labeled "unsigned (no signer available)" — no silent fakes (codex C1 P1#11 guard).<br>Appends <b>chain_anchor</b> = sha256(bundle_hash + ":" + (prev or "genesis")) to Firestore.' },
+  merge: { name:'merge + sign', meta:'Canonical-JSON of EndorsementClaimBundle (excludes signature)<br>Sign: <b>Ed25519</b> via Secret Manager key.<br>DID: did:web:mesh-api-40952019806.us-central1.run.app<br>If signer unavailable → labeled "unsigned (no signer available)" — no silent fakes.<br>Appends <b>chain_anchor</b> = sha256(bundle_hash + ":" + (prev or "genesis")) to Firestore.' },
   response: { name:'Brand response', meta:'Async lifecycle per A2A v0.3:<br>POST tasks/send → 202 {task_id}<br>poll GET tasks/get/{id} → completed/failed<br>Returns: bundle_hash · bundle_signature · chain_anchor · output={claims, vet_scores, compliance, audit}' },
   firestore: { name:'Firestore transparency log', meta:'Append-only. Formula (from shared/transparency_log.py:105):<br><code>chain_anchor = sha256(bundle_hash + ":" + (prev_hash or "genesis"))</code><br>Head pointer at acp-claims-meta/_chain_head<br>Public: <b>/pcec/v0/chain/head</b>' },
 };
@@ -3307,7 +3307,7 @@ document.querySelectorAll('#archSvg g.box').forEach(box => {
   box.addEventListener('mouseleave', () => ARCH_TIP.classList.remove('show'));
 });
 
-// Codex T2-C + T3-K · 2026-05-24 · live chain anchor surfaced on page load.
+// live chain anchor surfaced on page load.
 // Behind-the-monitor pane (Taste rule #7) visible from the first second.
 // Updates the demo chrome's right-chip + the pipes panel sha256 spans.
 (async () => {

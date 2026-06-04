@@ -1,12 +1,12 @@
-"""Vet Panel Agent (THIN per PLAN.md §2 — codex G7.3 P1.4).
+"""Vet Panel Agent (THIN).
 
 Prompt-encoded 5-vet rubric simulation. No Vertex AI Search, no licensed handbook
 ingest. The rubric is derived from public-domain veterinary nutrition principles +
 standard clinical claim evaluation patterns.
 
-Production note: in v0.1 this is simulated by Gemini. The Phase 3+ roadmap routes
-high-stakes claims to a real Boston vet panel (manual attestation per codex G7.2
-P1.2). The rubric simulation here flags those claims for escalation.
+Production note: in v0.1 this is simulated by Gemini. The roadmap routes
+high-stakes claims to a real Boston vet panel (manual attestation). The rubric
+simulation here flags those claims for escalation.
 
 Model: gemini-2.5-pro (consistency over speed).
 """
@@ -85,7 +85,7 @@ async def score_claim(claim: Claim) -> VetRubricScore:
 
 
 async def main() -> None:
-    """Phase 3 verification: score a few real Native Pet claims."""
+    """Verification: score a few real Native Pet claims."""
     test_claims = [
         Claim(
             text="Supports joint health and mobility",

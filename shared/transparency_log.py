@@ -1,11 +1,10 @@
-"""Firestore-backed PCEC transparency log (Phase 11 + G19 amendments).
+"""Firestore-backed PCEC transparency log.
 
-Per codex G10 #4 + G17 #2 + G18 #6 + G19 #3 #6: an append-only log of issued
-bundles. Documents are keyed by URN. Each document carries the full bundle, its
-signature, hash, issued_at, and a prev_hash plus chain_anchor for tamper
-evident chaining.
+An append-only log of issued bundles. Documents are keyed by URN. Each document
+carries the full bundle, its signature, hash, issued_at, and a prev_hash plus
+chain_anchor for tamper evident chaining.
 
-G19 amendments (2026-05-18):
+Concurrency and idempotency guarantees:
 - append() runs inside a Firestore transaction: read _chain_head, write claim
   doc, write new _chain_head, all atomic. Prevents fork-under-concurrent-writes.
 - get_head_anchor() exposed for callers that want the head at submit time
@@ -71,7 +70,7 @@ class TransparencyLog:
     ) -> dict[str, Any]:
         """Append a new bundle to the log inside a Firestore transaction.
 
-        Atomicity guarantees (G19 #3):
+        Atomicity guarantees:
         1. Read _chain_head inside transaction
         2. If URN already exists, return existing entry (idempotent)
         3. Write claim doc + new _chain_head atomically

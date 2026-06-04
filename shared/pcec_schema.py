@@ -93,7 +93,7 @@ class VetRubricScore(BaseModel):
 
 
 class GroundingSource(BaseModel):
-    """Per codex G14 #7 — grounding provenance for traceability."""
+    """Grounding provenance for traceability."""
     source_id: str = Field(..., description="Document ID from Vertex AI Search")
     snippet: str = Field(..., description="Retrieved passage text")
     snippet_hash: str = Field(..., description="sha256 of snippet for tamper-evidence")
@@ -108,7 +108,7 @@ class ComplianceMapping(BaseModel):
     rationale: str
     grounding_sources: list[GroundingSource] = Field(
         default_factory=list,
-        description="Provenance per codex G14 — Vertex AI Search retrieval results that grounded this mapping",
+        description="Provenance — Vertex AI Search retrieval results that grounded this mapping",
     )
 
 

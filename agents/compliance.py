@@ -1,4 +1,4 @@
-"""Compliance Agent (GROUNDED via Vertex AI Search per codex G13 Phase 8).
+"""Compliance Agent (GROUNDED via Vertex AI Search).
 
 Maps each claim to public-redistributable regulator/standard language using
 Vertex AI Search RAG over a corpus of:
@@ -6,7 +6,7 @@ Vertex AI Search RAG over a corpus of:
 - AAFCO PF7 Substantiation of Claims (public summary)
 - NASC Quality Seal program public-side requirements
 
-NO licensed handbook ingest (codex G7 P0.7). All sources public-redistributable.
+NO licensed handbook ingest. All sources public-redistributable.
 Data store: projects/40952019806/locations/global/.../acp-regulator-corpus
 
 Model: gemini-2.5-pro with vertex_ai_search retrieval grounding.
@@ -91,7 +91,7 @@ async def retrieve_grounding_sources(claim: Claim, max_results: int = 5) -> list
     with response_mime_type='application/json' (controlled generation). We call
     Search directly, inject passages into the prompt, then Gemini with JSON mode.
 
-    Per codex G14 #7 — returns GroundingSource[] with source_id + snippet + sha256
+    Returns GroundingSource[] with source_id + snippet + sha256
     hash so the final bundle has tamper-evident traceability.
     """
     try:
@@ -212,7 +212,7 @@ compliance_adk = LlmAgent(
     description=(
         "Maps a Claim to FTC §255 + AAFCO PF7 + NASC public-side standards "
         "via Vertex AI Search grounding. Returns ComplianceMapping with "
-        "violation_flag + grounded rationale. On ADK per locked Day-19 decision."
+        "violation_flag + grounded rationale. Runs on ADK."
     ),
     model="gemini-2.5-pro",
     instruction=COMPLIANCE_ADK_INSTRUCTION,
@@ -223,7 +223,7 @@ compliance_adk = LlmAgent(
 
 async def map_claim(claim: Claim) -> ComplianceMapping:
     """Map one claim to FTC/AAFCO/NASC standards with manual Vertex AI Search grounding + provenance."""
-    # Step 1: retrieve grounding sources with provenance (per codex G14 #7)
+    # Step 1: retrieve grounding sources with provenance
     sources = await retrieve_grounding_sources(claim)
     if sources:
         grounding_block = (

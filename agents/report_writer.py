@@ -4,7 +4,7 @@ Post-merge agent that takes the signed EndorsementClaimBundle and writes a
 brand-themed executive verification cert in HTML.
 
 Model: gemini-2.5-flash-002 (fast, cheap, good at HTML gen). Bumps to
-gemini-3.5-flash after A/B eval passes (per WIN_PLAN Day 4).
+gemini-3.5-flash after A/B eval passes.
 
 Runs AFTER the bundle is signed but BEFORE the response returns. Output
 attaches to task_store as `cert_html`. Frontend renders it in the cert pane
@@ -27,12 +27,12 @@ from google.genai import types
 from shared.llm_retry import agenerate
 
 
-# v0.10.1a (codex amendment A-codex-2): prompt restructured with positive
+# v0.10.1a: prompt restructured with positive
 # phrasing dictionary + few-shot exemplars + locked disclosure template +
 # belt-and-suspenders negative constraints. Replaces the v0.8.x prompt that
 # leaked "the veterinary panel" because no phrasing dictionary existed.
 #
-# Honesty contract per the plan: every cert produced by this prompt must
+# Honesty contract: every cert produced by this prompt must
 # (1) describe Agent 3 as a simulation, never a panel; (2) describe the
 # auditor as PMID-format check (not real-existence); (3) include the
 # locked DISCLOSURE_BLOCK below verbatim; (4) survive the regression test

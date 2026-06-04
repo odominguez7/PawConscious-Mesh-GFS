@@ -1,12 +1,11 @@
-"""Evidence Grader via MCP Protocol (Phase 3.5 — codex G9 + G10 requirement).
+"""Evidence Grader via MCP Protocol.
 
 Replaces the direct biomcp Python lib import with proper MCP protocol usage:
 - Spawn `biomcp run --mode stdio` as a subprocess
 - Connect via mcp.client.stdio.stdio_client
 - Call tools via ClientSession protocol
 
-Per codex G10 #3: A2A public-facing endpoint promises MCP compliance, so this
-wrap MUST land before Phase 4 ships.
+The A2A public-facing endpoint promises MCP compliance, so this wrap provides it.
 
 The original direct-lib evidence_grader.py is preserved as a reference and a
 fallback if the MCP subprocess fails during the demo.
@@ -119,7 +118,7 @@ async def grade_claim_via_mcp(claim: Claim, debug: bool = False) -> EvidenceBund
 
 
 async def main() -> None:
-    """Phase 3.5 verification: BioMCP via MCP protocol returns real PMIDs."""
+    """Verification: BioMCP via MCP protocol returns real PMIDs."""
     test_claim = Claim(
         text="Supports joint health and mobility",
         kind=ClaimKind.EFFICACY,

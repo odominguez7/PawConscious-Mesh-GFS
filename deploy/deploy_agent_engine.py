@@ -1,4 +1,4 @@
-"""Deploy PawConscious Mesh orchestrator to Vertex AI Agent Engine (Phase 7).
+"""Deploy PawConscious Mesh orchestrator to Vertex AI Agent Engine.
 
 Closes the fifth Track 3 Key Consideration from the GFS rules: 'Focus on the
 deployment of your multi-agent system on Agent Engine.'
@@ -8,7 +8,7 @@ resource is the managed Reasoning Engine the multi-agent system registers as
 under Vertex AI. Judges who inspect the project see a deployed Reasoning Engine
 with a query method that maps to our verify_claim skill.
 
-Per codex G14 #4: deploy the orchestrator as the entrypoint, keep the 5 specialist
+Deploy the orchestrator as the entrypoint, keep the 5 specialist
 agents as Cloud Run workers. The orchestrator on Agent Engine routes by delegating
 through the orchestrator's asyncio.gather fan-out (same code path as the Cloud
 Run service).

@@ -98,12 +98,12 @@ The orchestrator implements a four-step pipeline:
 3. After the three results land, `auditor` runs on the merged per-claim evidence.
 4. Returns an `EndorsementClaimBundle` (PCEC v0.1 shape) to the caller.
 
-Production parallel primitive is `asyncio.gather`. ADK `ParallelAgent` + `SequentialAgent` wrappers are documented in the orchestrator docstring as the Phase 4 Vertex AI Agent Engine deployment surface — v0.1 ships with asyncio for deterministic stability under load.
+Production parallel primitive is `asyncio.gather`. ADK `ParallelAgent` + `SequentialAgent` wrappers are documented in the orchestrator docstring as the Vertex AI Agent Engine deployment surface — v0.1 ships with asyncio for deterministic stability under load.
 
 ### Agent: claim-extractor
 
 - **Runtime SDK:** `google.genai` (called from `agents/orchestrator.py::extract_claims`)
-- **ADK scaffold:** `agents/claim_extractor.py::build_claim_extractor_agent` declares the equivalent ADK `LlmAgent` + `FunctionTool` for Phase 4 Vertex AI Agent Engine deployment. v0.1 executes via `google.genai` direct for deterministic latency under load.
+- **ADK scaffold:** `agents/claim_extractor.py::build_claim_extractor_agent` declares the equivalent ADK `LlmAgent` + `FunctionTool` for Vertex AI Agent Engine deployment. v0.1 executes via `google.genai` direct for deterministic latency under load.
 - **Model:** Gemini 2.5 Pro
 - **Input:** product URL
 - **Tools:** httpx + BeautifulSoup primary path; Firecrawl `/v2/scrape` fallback for retailer PDPs (Chewy/Petco/Amazon) that block direct scraping
@@ -124,7 +124,7 @@ Production parallel primitive is `asyncio.gather`. ADK `ParallelAgent` + `Sequen
 - **SDK:** `google.genai`
 - **Model:** Gemini 2.5 Pro
 - **Input:** `Claim` + `Evidence`
-- **Tools:** Prompt-only 5-vet rubric simulation. No Vertex AI Search, no licensed handbook ingest, no Plumb's (codex G7 P0.7 — avoid licensing risk)
+- **Tools:** Prompt-only 5-vet rubric simulation. No Vertex AI Search, no licensed handbook ingest, no Plumb's (avoid licensing risk)
 - **Output:** per-claim 1-5 rubric score, escalation flag for human-vet review
 
 ### Agent: compliance
