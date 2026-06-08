@@ -1,0 +1,21 @@
+# Keep the Cloud Build upload small. The Dockerfile only needs
+# pyproject.toml, shared/, agents/, services/mesh_api/.
+.git/
+.claude/
+node_modules/
+demo/
+internal/
+docs/
+tests/
+*.mp4
+*.mov
+*.webm
+*.png
+*.jpg
+# but keep the imagery the mesh_api actually serves at /assets
+!services/mesh_api/static/assets/*.png
+!services/mesh_api/static/assets/*.jpg
+__pycache__/
+*.pyc
+.env
+.env.*
