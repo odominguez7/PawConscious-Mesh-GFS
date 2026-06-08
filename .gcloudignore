@@ -3,6 +3,7 @@
 .git/
 .claude/
 node_modules/
+.venv/
 demo/
 internal/
 docs/
