@@ -68,3 +68,5 @@ demo/captures/__pycache__/
 
 # direnv: per-terminal gcloud project pin (local, per-developer)
 .envrc
+
+.claude/
